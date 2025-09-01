@@ -42,6 +42,10 @@ The platform targets:
 
 This project follows the **Angular Commit Message Guidelines**, which help maintain a clear and consistent Git history. The format is:
 
+```
+<type> (<scope>): <content>
+```
+
 ### Common Types
 
 - feat: A new feature
