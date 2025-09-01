@@ -9,9 +9,6 @@ assignees: ''
 ## 🎯 Goal & Description
 <!-- What needs to be done? Brief and clear description. -->
 
-## 🔗 Related Milestone
-- Milestone: <!-- e.g., Sprint 4 -->
-
 ## 🧩 Subtasks (if applicable)
 - [ ] Step 1
 - [ ] Step 2
