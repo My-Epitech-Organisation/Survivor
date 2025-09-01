@@ -27,12 +27,6 @@ assignees: ''
 ## ⚠️ Risks & Mitigations
 <!-- Known risks, edge cases, rollbacks -->
 
-## 📊 Meta (optional)
-- Priority: <!-- P0 / P1 / P2 -->
-- Area: <!-- Frontend / Backend / API / Infra / UX -->
-- Size: <!-- 1 / 2 / 3 / 5 / 8 -->
-- Iteration: <!-- Sprint X -->
-
 ## 💬 Notes
 <!-- Additional context, links, designs, etc. -->
 
