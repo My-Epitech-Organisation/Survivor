@@ -9,9 +9,6 @@ assignees: ''
 ## 🎯 Goal & Description
 <!-- What needs to be done? Brief and clear description. -->
 
-## 🔗 Related Milestone
-- Milestone: <!-- e.g., Sprint 4 -->
-
 ## 🧩 Subtasks (if applicable)
 - [ ] Step 1
 - [ ] Step 2
@@ -29,12 +26,6 @@ assignees: ''
 
 ## ⚠️ Risks & Mitigations
 <!-- Known risks, edge cases, rollbacks -->
-
-## 📊 Meta (optional)
-- Priority: <!-- P0 / P1 / P2 -->
-- Area: <!-- Frontend / Backend / API / Infra / UX -->
-- Size: <!-- 1 / 2 / 3 / 5 / 8 -->
-- Iteration: <!-- Sprint X -->
 
 ## 💬 Notes
 <!-- Additional context, links, designs, etc. -->
