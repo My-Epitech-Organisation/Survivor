@@ -35,7 +35,7 @@ The platform targets:
 
 - **Frontend:** React
 - **Backend:** Django Python
-- **Database:** MySQL
+- **Database:** PostgreSQL
 - **Other tools:** Docker, Github Actions CI/CD
 
 ## Commit Guidelines
