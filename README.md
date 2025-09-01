@@ -40,7 +40,7 @@ The platform targets:
 
 ## Commit Guidelines
 
-This project follows the **Angular Commit Message Guidelines**, which help maintain a clear and consistent Git history. The format is:
+This project follows the **Conventional Commit Message Guidelines**, which help maintain a clear and consistent Git history. The format is:
 
 ```
 <type> (<scope>): <content>
