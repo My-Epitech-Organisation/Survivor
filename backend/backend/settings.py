@@ -11,10 +11,20 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
+
+
+env_path = Path(__file__).resolve().parent.parent / '.env'
+load_dotenv(env_path)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-hk4^cd!2@cymv10@c)0)9!79+rr3lxs341(7x=hmyl)*jm5y1r'
+try:
+    SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+except KeyError:
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is required")
 
 DEBUG = True
 
@@ -30,11 +40,13 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'poc',
+    'init.apps.InitConfig',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -95,7 +107,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -124,3 +137,4 @@ CORS_ALLOW_HEADERS = [
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend', '*']
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

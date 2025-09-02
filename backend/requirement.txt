@@ -7,3 +7,5 @@ python-socketio==5.10.0
 channels==4.0.0
 channels-redis==4.1.0
 uvicorn==0.24.0
+whitenoise==6.7.0
+python-dotenv==1.0.0
