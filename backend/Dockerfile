@@ -22,4 +22,5 @@ RUN adduser --disabled-password --gecos '' appuser \
     && chown -R appuser:appuser $VIRTUAL_ENV
 USER appuser
 EXPOSE 8000
-CMD ["uvicorn", "backend.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+ENTRYPOINT [ "/app/entrypoint.sh" ]
+CMD [ "uvicorn", "backend.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--reload" ]
