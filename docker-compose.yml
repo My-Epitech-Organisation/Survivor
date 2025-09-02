@@ -1,10 +1,31 @@
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      - DEBUG=1
+      - DJANGO_ENV=development
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app:cached
+    networks:
+      - survivor_network
+
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: frontend
     ports:
       - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - survivor_network
 
 networks:
-  default:
-    name: survivor_default
+  survivor_network:
+    driver: bridge

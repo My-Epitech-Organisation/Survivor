@@ -1,6 +1,79 @@
+"use client";
 import Image from "next/image";
+import axios from "axios"
+import { useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import { API_CONFIG } from "../lib/config";
+import { getSocketUrl, getAPIUrl } from "../lib/socket-config";
+
+export const dynamic = 'force-dynamic';
+let socket: Socket | null = null;
+
+type Todo = {
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean;
+};
 
 export default function Home() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [messages, setMessages] = useState<string[]>([]);
+  const [input, setInput] = useState("");
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const APIUrl = getAPIUrl();
+        console.log("Fetching from:", `${APIUrl}/todos`);
+        const response = await axios.get<Todo[]>(`${APIUrl}/todos`);
+        setTodos(response.data);
+        console.log("Todos loaded:", response.data);
+      } catch (error) {
+        console.error('Erreur API:', error);
+      }
+    };
+
+    fetchTodos();
+  }, []);
+
+  useEffect(() => {
+    const socketUrl = getSocketUrl();
+
+    socket = io(socketUrl, {
+      transports: ['websocket', 'polling'],
+      timeout: 20000,
+      forceNew: true
+    });
+
+    socket.on("connect", () => {
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Connection error:", error);
+    });
+
+    socket.on("disconnect", (reason) => {
+    });
+
+    socket.on("message", (msg: string) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, []);
+
+  const sendMessage = () => {
+    if (input.trim() && socket) {
+      socket.emit("message", input);
+      setInput("");
+    }
+  };
+
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
@@ -20,11 +93,12 @@ export default function Home() {
             </code>
             .
           </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
+          {todos.map((todo: Todo) => (
+            <li key={todo.id}>
+              {todo.title} = {todo.description} : {todo.completed ? "✔" : "❌"}
+            </li>
+          ))}
         </ol>
-
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a
             className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
@@ -88,16 +162,20 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
         </a>
       </footer>
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Type a message..."
+      />
+      <button onClick={sendMessage}>Send</button>
+      <ul>
+        {messages.map((msg, idx) => (
+          <li key={idx}>{msg}</li>
+        ))}
+      </ul>
     </div>
   );
 }
