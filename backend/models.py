@@ -33,17 +33,17 @@ class Partner(models.Model):
     partnership_type = models.CharField(max_length=255, null=True)
     id = models.IntegerField(null=False, primary_key=True)
 
-class User(models.Model):
-    """
-    Represents a user.
-    """
+# class User(models.Model):
+#     """
+#     Represents a user.
+#     """
 
-    email = models.CharField(max_length=255, unique=True, null=False)
-    name = models.CharField(max_length=255, null=False)
-    role = models.CharField(max_length=255, null=False)
-    founder_id = models.IntegerField(null=True, blank=True)
-    investor_id = models.IntegerField(null=True, blank=True)
-    id = models.IntegerField(null=False, primary_key=True)
+#     email = models.CharField(max_length=255, unique=True, null=False)
+#     name = models.CharField(max_length=255, null=False)
+#     role = models.CharField(max_length=255, null=False)
+#     founder_id = models.IntegerField(null=True, blank=True)
+#     investor_id = models.IntegerField(null=True, blank=True)
+#     id = models.IntegerField(null=False, primary_key=True)
 
 
 #Message

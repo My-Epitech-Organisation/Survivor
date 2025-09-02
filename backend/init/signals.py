@@ -11,14 +11,15 @@ from django.contrib.auth import get_user_model
 import os
 from django.core.exceptions import ImproperlyConfigured
 from django.apps import apps
-from .utils import fetch_and_create_news, fetch_and_create_events, fetch_and_create_startups
+from .utils import fetch_and_create_news, fetch_and_create_events, fetch_and_create_startups, fetch_and_create_users
 
 # Flag to track if handlers have already run
 _handlers_executed = {
     'create_superuser': False,
     'clear_and_fetch_news': False,
     'clear_and_fetch_events': False,
-    'clear_and_fetch_startups': False
+    'clear_and_fetch_startups': False,
+    'clear_and_fetch_users': False
 }
 
 @receiver(post_migrate)
@@ -122,3 +123,26 @@ def clear_and_fetch_startups(sender, **kwargs):
 
     except Exception as e:
         print(f"Error during startup data management: {e}")
+
+@receiver(post_migrate)
+def clear_and_fetch_users(sender, **kwargs):
+    """
+    Delete all User records and then fetch and create new ones from JEB API
+    Only runs once during server startup
+    """
+
+    if _handlers_executed['clear_and_fetch_users']:
+        return
+    if sender.name != 'admin_panel':
+        return
+    _handlers_executed['clear_and_fetch_users'] = True
+
+    try:
+        User = apps.get_model('admin_panel', 'User')
+
+        User.objects.all().delete()
+
+        fetch_and_create_users()
+
+    except Exception as e:
+        print(f"Error during user data management: {e}")

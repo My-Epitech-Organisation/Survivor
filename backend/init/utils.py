@@ -269,3 +269,55 @@ def fetch_and_create_startups():
         print(f"API request error: {e}")
     except Exception as e:
         print(f"Error creating startups data: {e}")
+
+def fetch_and_create_users():
+    """
+    Fetch users from JEB API and create them in database
+    """
+    try:
+        jeb_token = os.environ.get('JEB_API_TOKEN')
+        if not jeb_token:
+            raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
+
+        print("Fetching users data from JEB API...")
+
+        url = settings.JEB_API_USERS_URL
+        params = settings.JEB_API_DEFAULT_PARAMS
+        headers = {
+            **settings.JEB_API_HEADERS,
+            "X-Group-Authorization": jeb_token
+        }
+
+        response = requests.get(url, params=params, headers=headers)
+        response.raise_for_status()
+        users_data = response.json()
+
+        User = apps.get_model('admin_panel', 'User')
+
+        for item in users_data:
+            user = User(
+                id=item.get('id'),
+                email=item.get('email'),
+                name=item.get('name'),
+                role=item.get('role'),
+                founder_id=item.get('founder_id'),
+                investor_id=item.get('investor_id')
+            )
+
+            try:
+                user_id = item.get('id')
+                image_url = settings.JEB_API_USER_IMAGE_URL.format(user_id=user_id)
+                image_response = requests.get(image_url, headers=headers)
+                if image_response.status_code == 200:
+                    user.image = image_response.content
+            except Exception as e:
+                print(f"Error fetching image for user {item.get('id')}: {e}")
+
+            user.save()
+
+    except ImproperlyConfigured as e:
+        print(f"Configuration error: {e}")
+    except requests.RequestException as e:
+        print(f"API request error: {e}")
+    except Exception as e:
+        print(f"Error creating users data: {e}")
