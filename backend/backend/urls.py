@@ -24,4 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # Django admin
     path('api/', include(router.urls)),
     path('api/admin/', include('admin_panel.urls')),  # Custom admin
+    path('api/news/', include('admin_panel.urls')),  # News endpoints
 ]

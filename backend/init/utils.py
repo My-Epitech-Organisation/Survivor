@@ -20,6 +20,8 @@ def fetch_news_detail(news_id, headers):
     NewsDetail = apps.get_model('admin_panel', 'NewsDetail')
 
     detail_url = settings.JEB_API_NEWS_DETAIL_URL.format(news_id=news_id)
+    image_url = settings.JEB_API_NEWS_IMAGE_URL.format(news_id=news_id)
+
     try:
         detail_response = requests.get(detail_url, headers=headers)
         detail_response.raise_for_status()
@@ -34,9 +36,18 @@ def fetch_news_detail(news_id, headers):
             startup_id=news_detail_data.get('startup_id'),
             description=news_detail_data.get('description')
         )
+
+        try:
+            image_response = requests.get(image_url, headers=headers)
+            if image_response.status_code == 200:
+                news_detail.image = image_response.content
+        except Exception as e:
+            print(f"Error fetching image for news {news_id}: {e}")
+
         news_detail.save()
         return True
-    except Exception:
+    except Exception as e:
+        print(f"Error fetching news details for ID {news_id}: {e}")
         return False
 
 def fetch_and_create_news():

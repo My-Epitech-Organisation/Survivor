@@ -24,3 +24,4 @@ class NewsDetail(models.Model):
     startup_id = models.IntegerField(null=True)
     id = models.IntegerField(null=False, primary_key=True)
     description = models.TextField(null=True, blank=True)
+    image = models.BinaryField(null=True, blank=True)
