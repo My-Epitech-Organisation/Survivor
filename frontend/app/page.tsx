@@ -26,8 +26,8 @@ export default function Home() {
       try {
         const APIUrl = getAPIUrl();
         console.log(APIUrl);
-        console.log("Fetching from:", `${APIUrl}/todos`);
-        const response = await axios.get<Todo[]>(`${APIUrl}/todos`);
+        console.log("Fetching from:", `${APIUrl}/todos/`);
+        const response = await axios.get<Todo[]>(`${APIUrl}/todos/`);
         setTodos(response.data);
         console.log("Todos loaded:", response.data);
       } catch (error) {
