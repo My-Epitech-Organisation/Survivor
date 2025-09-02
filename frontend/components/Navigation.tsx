@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
 export default function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
 
   const navItems = [
     { href: '/', label: 'Home' },
@@ -17,6 +20,14 @@ export default function Navigation() {
     { href: '/search', label: 'Advanced Search' },
     { href: '/about', label: 'About' },
   ];
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const handleSwitchToStartup = () => {
+    router.push('/startup/dashboard');
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -35,11 +46,10 @@ export default function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`transition-colors ${
-                  pathname === item.href
-                    ? 'text-blue-600 font-medium'
-                    : 'text-gray-600 hover:text-blue-600'
-                }`}
+                className={`transition-colors ${pathname === item.href
+                  ? 'text-blue-600 font-medium'
+                  : 'text-gray-600 hover:text-blue-600'
+                  }`}
               >
                 {item.label}
               </Link>
@@ -47,10 +57,27 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Login */}
-          <div className="hidden md:flex items-center">
-            <Link href="/login" className="font-bold text-gray-600 hover:text-blue-600">
-              Login
-            </Link>
+          <div className="hidden md:flex w-fit pl-8 items-center space-x-4">
+            {isAuthenticated ? (
+              <>
+                <button
+                  onClick={handleSwitchToStartup}
+                  className="font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  Startup Area
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="font-bold text-gray-600 hover:text-red-600 transition-colors"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link href="/login" className="font-bold text-gray-600 hover:text-blue-600">
+                Login
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -86,14 +113,37 @@ export default function Navigation() {
                   {item.label}
                 </Link>
               ))}
-              <div className="border-t border-gray-200 pt-2">
-                <Link
-                  href="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors"
-                >
-                  Login
-                </Link>
+              <div className="border-t border-gray-200 pt-2 space-y-1">
+                {isAuthenticated ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        handleSwitchToStartup();
+                        setIsMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors"
+                    >
+                      Startup Area
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-red-600 hover:bg-gray-50 transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                  >
+                    Login
+                  </Link>
+                )}
               </div>
             </div>
           </div>
