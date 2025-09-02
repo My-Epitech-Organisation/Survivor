@@ -1,7 +1,7 @@
 #!/bin/sh
 
-echo "Lancement des migrations..."
+echo "Starting migrations..."
 python manage.py migrate --noinput
 
-echo "Démarrage du serveur..."
+echo "Starting the server..."
 exec "$@"

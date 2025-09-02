@@ -9,6 +9,7 @@ from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 import os
+from django.core.exceptions import ImproperlyConfigured
 
 @receiver(post_migrate)
 def create_superuser(sender, **kwargs):
@@ -17,9 +18,12 @@ def create_superuser(sender, **kwargs):
     """
     User = get_user_model()
 
-    username = 'admin'
-    email = 'admin@example.com'
-    password = 'admin'
+    username = os.environ.get('DJANGO_ADMIN_USERNAME')
+    email = os.environ.get('DJANGO_ADMIN_EMAIL')
+    password = os.environ.get('DJANGO_ADMIN_PASSWORD')
+
+    if not username or not email or not password:
+        raise ImproperlyConfigured("DJANGO_ADMIN_USERNAME, DJANGO_ADMIN_EMAIL, and DJANGO_ADMIN_PASSWORD environment variables are required")
 
     if not User.objects.filter(username=username).exists():
         print(f"Creating default admin user '{username}'")

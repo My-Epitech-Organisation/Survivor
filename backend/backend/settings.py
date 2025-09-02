@@ -11,10 +11,20 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
+
+
+env_path = Path(__file__).resolve().parent.parent / '.env'
+load_dotenv(env_path)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-hk4^cd!2@cymv10@c)0)9!79+rr3lxs341(7x=hmyl)*jm5y1r'
+try:
+    SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+except KeyError:
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is required")
 
 DEBUG = True
 
