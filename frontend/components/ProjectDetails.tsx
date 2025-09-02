@@ -1,19 +1,9 @@
 "use client"
+import { ProjectDetailsProps } from "@/types/project";
 
-import { ProjectDetailsProps } from "@/app/types/project";
-import { 
-  MapPin, 
-  Building, 
-  TrendingUp, 
-  Target, 
-  CheckCircle, 
-  Calendar,
-  Mail,
-  Phone,
-  Globe,
-  Users,
-  Scale
-} from "lucide-react"
+import { FaRegUser } from "react-icons/fa6";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function ProjectDetails(props: ProjectDetailsProps) {
   return (
@@ -170,12 +160,16 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                   <dd className="space-y-3 md:space-y-4">
                     {props.ProjectFounders.map((founder: any, index: number) => (
                       <div key={index} className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-purple-50 rounded-lg">
-                        <div className="w-10 md:w-12 h-10 md:h-12 bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Users className="h-5 md:h-6 w-5 md:w-6 text-purple-600" />
+                        <div className=" bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Avatar className="w-10 md:w-12 h-10 md:h-12 text-purple-600"> 
+                              <AvatarImage src={founder.FounderPictureURL || ''} />
+                              <AvatarFallback>
+                                <FaRegUser />
+                              </AvatarFallback>
+                          </Avatar>
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-base md:text-lg font-medium text-purple-900 truncate">{founder.FounderName}</p>
-                          <p className="text-xs md:text-sm text-purple-600">Founder #{founder.FounderID}</p>
                         </div>
                       </div>
                     ))}

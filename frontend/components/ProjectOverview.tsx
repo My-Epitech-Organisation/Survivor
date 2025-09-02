@@ -53,8 +53,8 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
         ProjectLegalStatus: "SAS",
         ProjectCreatedAt: "2024-01-15",
         ProjectFounders: [
-            { FounderID: 1, FounderName: "John Doe", FounderStartupID: 1, FounderPictureURL: "blob:https://api.jeb-incubator.com/d4809f40-e0e5-4759-a3a4-0a50725d2afe" },
-            { FounderID: 2, FounderName: "Jane Smith", FounderStartupID: 1, FounderPictureURL: "" }
+            { FounderID: 1, FounderName: "John Doe", FounderStartupID: 1, FounderPictureURL: "https://i.postimg.cc/zGVvvb7z/d4809f40-e0e5-4759-a3a4-0a50725d2afe.png" },
+            { FounderID: 2, FounderName: "Jane Smith", FounderStartupID: 1, FounderPictureURL: "https://i.postimg.cc/25NYYVXX/7269655e-a9aa-4edc-9e30-654b1d9406dd.png" }
         ],
         ProjectEmail: "contact@example.com",
         ProjectPhone: "+33 1 23 45 67 89",
