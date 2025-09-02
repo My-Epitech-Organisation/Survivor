@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Navigation() {
   const pathname = usePathname();
+  const { isAuthenticated, logout } = useAuth();
 
   const navItems = [
     { href: '/', label: 'Home' },
@@ -14,6 +16,14 @@ export default function Navigation() {
     { href: '/search', label: 'Advanced Search' },
     { href: '/about', label: 'About' },
   ];
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const handleSwitchToStartup = () => {
+    window.location.href = '/startup/dashboard';
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -30,8 +40,8 @@ export default function Navigation() {
                 key={item.href}
                 href={item.href}
                 className={`transition-colors ${pathname === item.href
-                    ? 'text-blue-600 font-medium'
-                    : 'text-gray-600 hover:text-blue-600'
+                  ? 'text-blue-600 font-medium'
+                  : 'text-gray-600 hover:text-blue-600'
                   }`}
               >
                 {item.label}
@@ -39,10 +49,27 @@ export default function Navigation() {
             ))}
           </div>
         </div>
-        <div className="flex w-fit pl-8 items-center">
-          <Link href="/login" className="font-bold text-gray-600 hover:text-blue-600">
-            Login
-          </Link>
+        <div className="flex w-fit pl-8 items-center space-x-4">
+          {isAuthenticated ? (
+            <>
+              <button
+                onClick={handleSwitchToStartup}
+                className="font-bold text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                Startup Area
+              </button>
+              <button
+                onClick={handleLogout}
+                className="font-bold text-gray-600 hover:text-red-600 transition-colors"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link href="/login" className="font-bold text-gray-600 hover:text-blue-600">
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </nav>

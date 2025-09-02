@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { API_CONFIG } from "@/lib/config"
+import { useAuth } from "@/contexts/AuthContext"
 
 export function LoginForm({
   className,
@@ -24,6 +25,7 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
+  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,14 +52,18 @@ export function LoginForm({
       const data = await response.json()
       console.log('Login successful:', data)
 
-      if (data.token) {
-        localStorage.setItem('authToken', data.token)
+      const userData = {
+        id: data.user?.id || '1',
+        email: data.user?.email || email,
+        name: data.user?.name || 'Startup Owner'
       }
+
+      login(data.token || 'mock-token', userData)
 
       setEmail("")
       setPassword("")
 
-      router.push('/')
+      router.push('/startup/dashboard')
 
     } catch (err) {
       console.error('Login error:', err)
