@@ -144,9 +144,17 @@ JEB_API_BASE_URL = "https://api.jeb-incubator.com"
 JEB_API_NEWS_URL = f"{JEB_API_BASE_URL}/news"
 JEB_API_NEWS_DETAIL_URL = f"{JEB_API_BASE_URL}/news/{'{news_id}'}"
 JEB_API_NEWS_IMAGE_URL = f"{JEB_API_BASE_URL}/news/{'{news_id}'}/image"
+JEB_API_EVENTS_URL = f"{JEB_API_BASE_URL}/events"
+JEB_API_EVENT_IMAGE_URL = f"{JEB_API_BASE_URL}/events/{'{event_id}'}/image"
+JEB_API_STARTUPS_URL = f"{JEB_API_BASE_URL}/startups"
+JEB_API_STARTUP_DETAIL_URL = f"{JEB_API_BASE_URL}/startups/{'{startup_id}'}"
+JEB_API_FOUNDER_IMAGE_URL = f"{JEB_API_BASE_URL}/startups/{'{startup_id}'}/founders/{'{founder_id}'}/image"
+JEB_API_USERS_URL = f"{JEB_API_BASE_URL}/users"
+JEB_API_USER_IMAGE_URL = f"{JEB_API_BASE_URL}/users/{'{user_id}'}/image"
+JEB_API_INVESTORS_URL = f"{JEB_API_BASE_URL}/investors"
+JEB_API_PARTNERS_URL = f"{JEB_API_BASE_URL}/partners"
 JEB_API_DEFAULT_PARAMS = {
-    "skip": 0,
-    "limit": 100
+    "skip": 0
 }
 JEB_API_HEADERS = {
     "accept": "application/json"

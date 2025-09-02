@@ -12,4 +12,5 @@ app_name = 'admin_panel'
 
 urlpatterns = [
     path('', views.admin_panel_home, name='admin_panel_home'),
+    path('fetch-news-temp/', views.fetch_news_temp, name='fetch_news_temp'),
 ]
