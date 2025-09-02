@@ -11,7 +11,7 @@ let projects: ProjectProps[] = [
     ProjectDescription: "This is jebincubartor1",
     ProjectFounders: ["Noa", "Alban"],
     ProjectContacts: ["Noa"],
-    ProjectLink: "https://nduboi.fr",
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
     ProjectNeeds: ["Informatique", "testing"],
     ProjectProgess: ["Socket.io", "NextJS"]
   },
@@ -21,7 +21,7 @@ let projects: ProjectProps[] = [
     ProjectDescription: "This is jebincubartor2",
     ProjectFounders: ["Eliott"],
     ProjectContacts: ["Eliott"],
-    ProjectLink: "https://nduboi.fr",
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
     ProjectNeeds: ["Informatique", "testing"],
     ProjectProgess: ["Socket.io", "NextJS"]
   },
@@ -31,7 +31,7 @@ let projects: ProjectProps[] = [
     ProjectDescription: "This is jebincubartor3",
     ProjectFounders: ["PA"],
     ProjectContacts: ["PA"],
-    ProjectLink: "https://nduboi.fr",
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
     ProjectNeeds: ["Informatique", "testing"],
     ProjectProgess: ["Socket.io", "NextJS"]
   },
@@ -40,8 +40,8 @@ let projects: ProjectProps[] = [
     ProjectName: "JEBINCUBATORRR4",
     ProjectDescription: "This is jebincubartor4",
     ProjectFounders: ["Alban"],
-    ProjectContacts: ["Alban"],
-    ProjectLink: "https://nduboi.fr",
+    ProjectContacts: ["Alban", "Eliott"],
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
     ProjectNeeds: ["Informatique", "testing"],
     ProjectProgess: ["Socket.io", "NextJS"]
   },
@@ -51,7 +51,7 @@ let projects: ProjectProps[] = [
     ProjectDescription: "This is jebincubartor4",
     ProjectFounders: ["Alban"],
     ProjectContacts: ["Alban"],
-    ProjectLink: "https://nduboi.fr",
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
     ProjectNeeds: ["Informatique", "testing"],
     ProjectProgess: ["Socket.io", "NextJS"]
   },
@@ -61,7 +61,7 @@ let projects: ProjectProps[] = [
     ProjectDescription: "This is jebincubartor4",
     ProjectFounders: ["Alban"],
     ProjectContacts: ["Alban"],
-    ProjectLink: "https://nduboi.fr",
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
     ProjectNeeds: ["Informatique", "testing"],
     ProjectProgess: ["Socket.io", "NextJS"]
   },
