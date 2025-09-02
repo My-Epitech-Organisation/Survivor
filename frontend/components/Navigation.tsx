@@ -28,11 +28,10 @@ export default function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`transition-colors ${
-                  pathname === item.href
+                className={`transition-colors ${pathname === item.href
                     ? 'text-blue-600 font-medium'
                     : 'text-gray-600 hover:text-blue-600'
-                }`}
+                  }`}
               >
                 {item.label}
               </Link>
@@ -40,9 +39,9 @@ export default function Navigation() {
           </div>
         </div>
         <div className="flex w-fit pl-8 items-center">
-            <Link href="/login" className="text-gray-600 hover:text-blue-600 font-bold">
-              Login
-            </Link>
+          <Link href="/login" className="font-bold text-gray-600 hover:text-blue-600">
+            Login
+          </Link>
         </div>
       </div>
     </nav>
