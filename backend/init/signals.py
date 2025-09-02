@@ -10,12 +10,26 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 import os
 from django.core.exceptions import ImproperlyConfigured
+from django.apps import apps
+from .utils import fetch_and_create_news
+
+# Flag to track if handlers have already run
+_handlers_executed = {
+    'create_superuser': False,
+    'clear_and_fetch_news': False
+}
 
 @receiver(post_migrate)
 def create_superuser(sender, **kwargs):
     """
     Create a default admin user after migrations are applied if no admin user exists
+    Only runs once during server startup
     """
+
+    if _handlers_executed['create_superuser']:
+        return
+    _handlers_executed['create_superuser'] = True
+
     User = get_user_model()
 
     username = os.environ.get('DJANGO_ADMIN_USERNAME')
@@ -33,3 +47,28 @@ def create_superuser(sender, **kwargs):
             password=password,
         )
         print("Default admin user created successfully")
+
+@receiver(post_migrate)
+def clear_and_fetch_news(sender, **kwargs):
+    """
+    Delete all News and NewsDetails records and then fetch and create new ones from JEB API
+    Only runs once during server startup
+    """
+
+    if _handlers_executed['clear_and_fetch_news']:
+        return
+    if sender.name != 'admin_panel':
+        return
+    _handlers_executed['clear_and_fetch_news'] = True
+
+    try:
+        News = apps.get_model('admin_panel', 'News')
+        NewsDetail = apps.get_model('admin_panel', 'NewsDetail')
+
+        News.objects.all().delete()
+        NewsDetail.objects.all().delete()
+
+        fetch_and_create_news()
+
+    except Exception as e:
+        print(f"Error during news data management: {e}")

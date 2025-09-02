@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'poc',
     'init.apps.InitConfig',
+    'admin_panel',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +138,16 @@ CORS_ALLOW_HEADERS = [
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend', '*']
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# JEB API Configuration
+JEB_API_BASE_URL = "https://api.jeb-incubator.com"
+JEB_API_NEWS_URL = f"{JEB_API_BASE_URL}/news"
+JEB_API_NEWS_DETAIL_URL = f"{JEB_API_BASE_URL}/news/{'{news_id}'}"
+JEB_API_NEWS_IMAGE_URL = f"{JEB_API_BASE_URL}/news/{'{news_id}'}/image"
+JEB_API_DEFAULT_PARAMS = {
+    "skip": 0,
+    "limit": 100
+}
+JEB_API_HEADERS = {
+    "accept": "application/json"
+}
