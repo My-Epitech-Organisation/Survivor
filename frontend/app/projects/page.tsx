@@ -73,7 +73,7 @@ export default function Projects() {
     <div className="min-h-screen bg-gray-50">
       <Navigation />
 
-      <main className="max-w-[90rem] mx-auto py-6 sm:px-6 lg:px-">
+      <main className="max-w-[90rem] mx-auto py-6 sm:px-6">
         <div className="px-4 py-6 sm:px-0">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Projects</h1>
             <div className='grid grid-cols-4 gap-6 p-2'>
