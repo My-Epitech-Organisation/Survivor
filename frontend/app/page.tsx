@@ -1,182 +1,109 @@
-"use client";
-import Image from "next/image";
-import axios from "axios"
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { API_CONFIG } from "../lib/config";
-import { getSocketUrl, getAPIUrl } from "../lib/socket-config";
-
-export const dynamic = 'force-dynamic';
-let socket: Socket | null = null;
-
-type Todo = {
-  id: number;
-  title: string;
-  description: string;
-  completed: boolean;
-};
+import Link from 'next/link';
+import Navigation from './components/Navigation';
+import Footer from './components/Footer';
 
 export default function Home() {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [messages, setMessages] = useState<string[]>([]);
-  const [input, setInput] = useState("");
-
-  useEffect(() => {
-    const fetchTodos = async () => {
-      try {
-        const APIUrl = getAPIUrl();
-        console.log(APIUrl);
-        console.log("Fetching from:", `${APIUrl}/todos/`);
-        const response = await axios.get<Todo[]>(`${APIUrl}/todos/`);
-        setTodos(response.data);
-        console.log("Todos loaded:", response.data);
-      } catch (error) {
-        console.error('Erreur API:', error);
-      }
-    };
-
-    fetchTodos();
-  }, []);
-
-  useEffect(() => {
-    const socketUrl = getSocketUrl();
-
-    socket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
-      timeout: 20000,
-      forceNew: true
-    });
-
-    socket.on("connect", () => {
-    });
-
-    socket.on("connect_error", (error) => {
-      console.error("Connection error:", error);
-    });
-
-    socket.on("disconnect", (reason) => {
-    });
-
-    socket.on("message", (msg: string) => {
-      setMessages((prev) => [...prev, msg]);
-    });
-
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-  }, []);
-
-  const sendMessage = () => {
-    if (input.trim() && socket) {
-      socket.emit("message", input);
-      setInput("");
-    }
-  };
-
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          {todos.map((todo: Todo) => (
-            <li key={todo.id}>
-              {todo.title} = {todo.description} : {todo.completed ? "✔" : "❌"}
-            </li>
-          ))}
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <Navigation />
+
+      {/* Hero Section */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+            Welcome to <span className="text-blue-600">JEB</span>
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Your comprehensive platform for managing projects, staying updated with news, 
+            discovering events, and finding exactly what you need with our advanced search.
+          </p>
+        </div>
+
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <Link href="/projects" className="group">
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Projects</h3>
+              <p className="text-gray-600">Explore and manage your projects with powerful tools and collaboration features.</p>
+            </div>
+          </Link>
+
+          <Link href="/news" className="group">
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">News</h3>
+              <p className="text-gray-600">Stay informed with the latest updates, announcements, and industry insights.</p>
+            </div>
+          </Link>
+
+          <Link href="/events" className="group">
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Events</h3>
+              <p className="text-gray-600">Discover upcoming events, workshops, and networking opportunities.</p>
+            </div>
+          </Link>
+
+          <Link href="/search" className="group">
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Advanced Search</h3>
+              <p className="text-gray-600">Find exactly what you're looking for with our powerful search capabilities.</p>
+            </div>
+          </Link>
+
+          <Link href="/about" className="group">
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">About</h3>
+              <p className="text-gray-600">Learn more about JEB, our mission, and the team behind the platform.</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Ready to get started?
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Choose any section above to begin exploring what JEB has to offer.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/projects" className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                View Projects
+              </Link>
+              <Link href="/search" className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                Try Search
+              </Link>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        </a>
-      </footer>
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Type a message..."
-      />
-      <button onClick={sendMessage}>Send</button>
-      <ul>
-        {messages.map((msg, idx) => (
-          <li key={idx}>{msg}</li>
-        ))}
-      </ul>
+
+      <Footer />
     </div>
   );
 }
