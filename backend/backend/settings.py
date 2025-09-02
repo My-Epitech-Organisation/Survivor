@@ -152,6 +152,7 @@ JEB_API_FOUNDER_IMAGE_URL = f"{JEB_API_BASE_URL}/startups/{'{startup_id}'}/found
 JEB_API_USERS_URL = f"{JEB_API_BASE_URL}/users"
 JEB_API_USER_IMAGE_URL = f"{JEB_API_BASE_URL}/users/{'{user_id}'}/image"
 JEB_API_INVESTORS_URL = f"{JEB_API_BASE_URL}/investors"
+JEB_API_PARTNERS_URL = f"{JEB_API_BASE_URL}/partners"
 JEB_API_DEFAULT_PARAMS = {
     "skip": 0
 }

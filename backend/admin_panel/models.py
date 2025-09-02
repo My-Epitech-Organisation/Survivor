@@ -76,7 +76,7 @@ class StartupDetail(models.Model):
     needs = models.TextField(null=True, blank=True)
     sector = models.CharField(max_length=255, null=True)
     maturity = models.CharField(max_length=255, null=True)
-    founders = models.ManyToManyField('Founder', related_name='startups', null=True, blank=True)
+    founders = models.ManyToManyField('Founder', related_name='startups')
     founders_images = models.JSONField(null=True, blank=True)
 
 # User models
@@ -116,4 +116,19 @@ class Investor(models.Model):
     description = models.TextField(null=True, blank=True)
     investor_type = models.CharField(max_length=255, null=True)
     investment_focus = models.CharField(max_length=255, null=True)
+    id = models.IntegerField(null=False, primary_key=True)
+
+class Partner(models.Model):
+    """
+    Represents a partner.
+    """
+
+    name = models.CharField(max_length=255, null=False)
+    legal_status = models.CharField(max_length=255, null=True)
+    address = models.CharField(max_length=255, null=True)
+    email = models.CharField(max_length=255, null=False)
+    phone = models.CharField(max_length=255, null=True)
+    created_at = models.CharField(max_length=255, null=True)
+    description = models.TextField(null=True, blank=True)
+    partnership_type = models.CharField(max_length=255, null=True)
     id = models.IntegerField(null=False, primary_key=True)

@@ -12,6 +12,7 @@ import os
 from django.core.exceptions import ImproperlyConfigured
 from django.apps import apps
 from .utils import *
+
 # Flag to track if handlers have already run
 _handlers_executed = {
     'create_superuser': False,
@@ -19,7 +20,8 @@ _handlers_executed = {
     'clear_and_fetch_events': False,
     'clear_and_fetch_startups': False,
     'clear_and_fetch_users': False,
-    'clear_and_fetch_investors': False
+    'clear_and_fetch_investors': False,
+    'clear_and_fetch_partners': False
 }
 
 @receiver(post_migrate)
@@ -169,3 +171,26 @@ def clear_and_fetch_investors(sender, **kwargs):
 
     except Exception as e:
         print(f"Error during investor data management: {e}")
+
+@receiver(post_migrate)
+def clear_and_fetch_partners(sender, **kwargs):
+    """
+    Delete all Partner records and then fetch and create new ones from JEB API
+    Only runs once during server startup
+    """
+
+    if _handlers_executed['clear_and_fetch_partners']:
+        return
+    if sender.name != 'admin_panel':
+        return
+    _handlers_executed['clear_and_fetch_partners'] = True
+
+    try:
+        Partner = apps.get_model('admin_panel', 'Partner')
+
+        Partner.objects.all().delete()
+
+        fetch_and_create_partners()
+
+    except Exception as e:
+        print(f"Error during partner data management: {e}")

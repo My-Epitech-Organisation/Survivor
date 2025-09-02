@@ -367,3 +367,48 @@ def fetch_and_create_investors():
         print(f"API request error: {e}")
     except Exception as e:
         print(f"Error creating investors data: {e}")
+
+def fetch_and_create_partners():
+    """
+    Fetch partners from JEB API and create them in database
+    """
+    try:
+        jeb_token = os.environ.get('JEB_API_TOKEN')
+        if not jeb_token:
+            raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
+
+        print("Fetching partners data from JEB API...")
+
+        url = settings.JEB_API_PARTNERS_URL
+        params = settings.JEB_API_DEFAULT_PARAMS
+        headers = {
+            **settings.JEB_API_HEADERS,
+            "X-Group-Authorization": jeb_token
+        }
+
+        response = requests.get(url, params=params, headers=headers)
+        response.raise_for_status()
+        partners_data = response.json()
+
+        Partner = apps.get_model('admin_panel', 'Partner')
+
+        for item in partners_data:
+            partner = Partner(
+                id=item.get('id'),
+                name=item.get('name'),
+                legal_status=item.get('legal_status'),
+                address=item.get('address'),
+                email=item.get('email'),
+                phone=item.get('phone'),
+                created_at=item.get('created_at'),
+                description=item.get('description'),
+                partnership_type=item.get('partnership_type')
+            )
+            partner.save()
+
+    except ImproperlyConfigured as e:
+        print(f"Configuration error: {e}")
+    except requests.RequestException as e:
+        print(f"API request error: {e}")
+    except Exception as e:
+        print(f"Error creating partners data: {e}")

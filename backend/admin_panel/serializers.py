@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder
+from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, Partner
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,4 +38,9 @@ class StartupDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StartupDetail
+        fields = '__all__'
+
+class PartnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Partner
         fields = '__all__'
