@@ -4,12 +4,9 @@ export const getSocketUrl = () => {
   
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
-    console.log('🌐 [SOCKET-CONFIG] Hostname:', hostname);
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      console.log('� [SOCKET-CONFIG] Using localhost:8000 for local development');
       return 'http://localhost:8000';
     } else {
-      console.log('🌍 [SOCKET-CONFIG] Using external IP with port 8000');
       return `http://${hostname}:8000`;
     }
   }
@@ -23,12 +20,9 @@ export const getAPIUrl = () => {
   
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
-    console.log('🌐 [API-CONFIG] Hostname:', hostname);
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      console.log('🏠 [API-CONFIG] Using localhost:8000 for local development');
       return 'http://localhost:8000/api';
     } else {
-      console.log('🌍 [API-CONFIG] Using external IP with port 8000');
       return `http://${hostname}:8000/api`;
     }
   }
