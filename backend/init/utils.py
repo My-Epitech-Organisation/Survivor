@@ -191,36 +191,31 @@ def fetch_startup_detail(startup_id, headers):
                 founder_name = founder_data.get('name')
 
                 if founder_id and founder_name:
-                    try:
-                        founder, created = Founder.objects.get_or_create(
-                            id=founder_id,
-                            defaults={
-                                'name': founder_name,
-                                'startup_id': startup_id
-                            }
-                        )
+                    founder = Founder(
+                        id=founder_id,
+                        name=founder_name,
+                        startup_id=startup_id
+                    )
+                    founder.save()
 
-                        startup_detail.founders.add(founder)
+                startup_detail.founders.add(founder)
 
-                        try:
-                            image_url = settings.JEB_API_FOUNDER_IMAGE_URL.format(
-                                startup_id=startup_id,
-                                founder_id=founder_id
-                            )
-                            image_response = requests.get(image_url, headers=headers)
+                try:
+                    image_url = settings.JEB_API_FOUNDER_IMAGE_URL.format(
+                        startup_id=startup_id,
+                        founder_id=founder_id
+                    )
+                    image_response = requests.get(image_url, headers=headers)
 
-                            if image_response.status_code == 200:
-                                image_base64 = base64.b64encode(image_response.content).decode('utf-8')
-                                founders_images[str(founder_id)] = image_base64
-                        except Exception as e:
-                            pass
-                    except Exception as e:
-                        pass
+                    if image_response.status_code == 200:
+                        image_base64 = base64.b64encode(image_response.content).decode('utf-8')
+                        founders_images[str(founder_id)] = image_base64
+                except Exception as e:
+                    print(f"Error fetching image for founder {founder_id}: {e}")
 
             if founders_images:
                 startup_detail.founders_images = founders_images
                 startup_detail.save()
-                print(f"Updated startup detail with {len(founders_images)} founder images")
 
         return startup_detail
     except Exception as e:

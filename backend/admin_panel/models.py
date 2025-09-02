@@ -85,6 +85,6 @@ class Founder(models.Model):
     Represent a founder.
     """
 
-    name = models.CharField(max_length=255, unique=True, null=False)
+    name = models.CharField(max_length=255, null=False)
     id = models.IntegerField(null=False, primary_key=True)
     startup_id = models.IntegerField(null=False)
