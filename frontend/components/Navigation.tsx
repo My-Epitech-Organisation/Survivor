@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
 export default function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
 
@@ -25,7 +26,7 @@ export default function Navigation() {
   };
 
   const handleSwitchToStartup = () => {
-    window.location.href = '/startup/dashboard';
+    router.push('/startup/dashboard');
   };
 
   return (

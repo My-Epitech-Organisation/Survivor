@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
 export default function StartupNavigation() {
     const pathname = usePathname();
+    const router = useRouter();
     const { logout } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -20,11 +21,11 @@ export default function StartupNavigation() {
 
     const handleLogout = () => {
         logout();
-        window.location.href = '/';
+        router.push('/');
     };
 
     const handleSwitchToPublic = () => {
-        window.location.href = '/';
+        router.push('/');
     };
 
     return (
