@@ -197,8 +197,7 @@ def fetch_startup_detail(startup_id, headers):
                         startup_id=startup_id
                     )
                     founder.save()
-
-                startup_detail.founders.add(founder)
+                    startup_detail.founders.add(founder)
 
                 try:
                     image_url = settings.JEB_API_FOUNDER_IMAGE_URL.format(
