@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ProjectProps } from "@/app/types/project"
+import { ProjectProps } from "@/types/project"
 import {
   Card,
   CardContent,

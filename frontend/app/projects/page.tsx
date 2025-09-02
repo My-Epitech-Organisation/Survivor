@@ -2,7 +2,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import ProjectCard from '@/components/ProjectCard';
 import { Card } from '@/components/ui/card';
-import { ProjectProps } from '../types/project';
+import { ProjectProps } from '@/types/project';
 
 let projects: ProjectProps[] = [
   {
