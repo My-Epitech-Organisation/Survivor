@@ -91,30 +91,30 @@ class Founder(models.Model):
     id = models.IntegerField(null=False, primary_key=True)
     startup_id = models.IntegerField(null=False)
 
-class News(models.Model):
-    """
-    Represents a news item.
-    """
+# class News(models.Model):
+#     """
+#     Represents a news item.
+#     """
 
-    news_date = models.CharField(max_length=255, null=True)
-    location = models.CharField(max_length=255, null=True)
-    title = models.CharField(max_length=255, null=False)
-    category = models.CharField(max_length=255, null=True)
-    startup_id = models.IntegerField(null=True)
-    id = models.IntegerField(null=False, primary_key=True)
+#     news_date = models.CharField(max_length=255, null=True)
+#     location = models.CharField(max_length=255, null=True)
+#     title = models.CharField(max_length=255, null=False)
+#     category = models.CharField(max_length=255, null=True)
+#     startup_id = models.IntegerField(null=True)
+#     id = models.IntegerField(null=False, primary_key=True)
 
-class NewsDetail(models.Model):
-    """
-    Represents a news detail item.
-    """
+# class NewsDetail(models.Model):
+#     """
+#     Represents a news detail item.
+#     """
 
-    news_date = models.CharField(max_length=255, null=True)
-    location = models.CharField(max_length=255, null=True)
-    title = models.CharField(max_length=255, null=False)
-    category = models.CharField(max_length=255, null=True)
-    startup_id = models.IntegerField(null=True)
-    id = models.IntegerField(null=False, primary_key=True)
-    description = models.TextField(null=True, blank=True)
+#     news_date = models.CharField(max_length=255, null=True)
+#     location = models.CharField(max_length=255, null=True)
+#     title = models.CharField(max_length=255, null=False)
+#     category = models.CharField(max_length=255, null=True)
+#     startup_id = models.IntegerField(null=True)
+#     id = models.IntegerField(null=False, primary_key=True)
+#     description = models.TextField(null=True, blank=True)
 
 class StartupList(models.Model):
     """

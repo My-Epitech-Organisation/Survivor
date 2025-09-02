@@ -17,12 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from poc import views
 
 router = routers.DefaultRouter()
-router.register(r'todos', views.TodoView, 'poc')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),  # Django admin
     path('api/', include(router.urls)),
+    path('api/admin/', include('admin_panel.urls')),  # Custom admin
 ]
