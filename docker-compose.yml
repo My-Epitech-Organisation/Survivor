@@ -4,6 +4,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: backend
+    env_file:
+      - ./backend/.env
     environment:
       - DEBUG=1
       - DJANGO_ENV=development
