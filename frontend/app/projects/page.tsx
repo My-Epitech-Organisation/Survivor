@@ -1,20 +1,89 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import ProjectCard from '@/components/ProjectCard';
+import { Card } from '@/components/ui/card';
+import { ProjectProps } from '@/types/project';
+
+let projects: ProjectProps[] = [
+  {
+    ProjectId: 0,
+    ProjectName: "JEBINCUBATORRR1",
+    ProjectDescription: "This is jebincubartor1",
+    ProjectFounders: ["Noa", "Alban"],
+    ProjectContacts: ["Noa"],
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
+    ProjectNeeds: ["Informatique", "testing"],
+    ProjectProgess: ["Socket.io", "NextJS"]
+  },
+  {
+    ProjectId: 1,
+    ProjectName: "JEBINCUBATORRR2",
+    ProjectDescription: "This is jebincubartor2",
+    ProjectFounders: ["Eliott"],
+    ProjectContacts: ["Eliott"],
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
+    ProjectNeeds: ["Informatique", "testing"],
+    ProjectProgess: ["Socket.io", "NextJS"]
+  },
+  {
+    ProjectId: 3,
+    ProjectName: "JEBINCUBATORRR3",
+    ProjectDescription: "This is jebincubartor3",
+    ProjectFounders: ["PA"],
+    ProjectContacts: ["PA"],
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
+    ProjectNeeds: ["Informatique", "testing"],
+    ProjectProgess: ["Socket.io", "NextJS"]
+  },
+    {
+    ProjectId: 4,
+    ProjectName: "JEBINCUBATORRR4",
+    ProjectDescription: "This is jebincubartor4",
+    ProjectFounders: ["Alban"],
+    ProjectContacts: ["Alban", "Eliott"],
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
+    ProjectNeeds: ["Informatique", "testing"],
+    ProjectProgess: ["Socket.io", "NextJS"]
+  },
+      {
+    ProjectId: 4,
+    ProjectName: "JEBINCUBATORRR4",
+    ProjectDescription: "This is jebincubartor4",
+    ProjectFounders: ["Alban"],
+    ProjectContacts: ["Alban"],
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
+    ProjectNeeds: ["Informatique", "testing"],
+    ProjectProgess: ["Socket.io", "NextJS"]
+  },
+      {
+    ProjectId: 4,
+    ProjectName: "JEBINCUBATORRR4",
+    ProjectDescription: "This is jebincubartor4",
+    ProjectFounders: ["Alban"],
+    ProjectContacts: ["Alban"],
+    ProjectLink: "https://api.jeb-incubator.com/docs#/",
+    ProjectNeeds: ["Informatique", "testing"],
+    ProjectProgess: ["Socket.io", "NextJS"]
+  },
+  
+];
 
 export default function Projects() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
-      
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+
+      <main className="max-w-[90rem] mx-auto py-6 sm:px-6">
         <div className="px-4 py-6 sm:px-0">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Projects</h1>
-          <div className="bg-white rounded-lg shadow p-6">
-            <p className="text-gray-600">Projects page content will be implemented here.</p>
-          </div>
+            <div className='grid grid-cols-4 gap-6 p-2'>
+              {projects.map(project => (
+                <ProjectCard key={project.ProjectId} ProjectName={project.ProjectName} ProjectDescription={project.ProjectDescription} ProjectContacts={project.ProjectContacts} ProjectFounders={project.ProjectFounders} ProjectNeeds={project.ProjectNeeds} ProjectProgess={project.ProjectProgess} ProjectLink={project.ProjectLink}/>
+              ))}
+            </div>
+
         </div>
       </main>
-      
       <Footer />
     </div>
   );

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "lint": "eslint",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "npm run dev:frontend",
     "dev:frontend": "next dev --turbopack -H 0.0.0.0",
     "dev:backend": "cd ../backend && docker build -t survivor-backend . && docker run --rm -p 8000:8000 -v $(pwd):/app survivor-backend",
     "build": "next build --turbopack",
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
@@ -22,6 +23,7 @@
     "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-icons": "^5.5.0",
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.3.1"
   },
