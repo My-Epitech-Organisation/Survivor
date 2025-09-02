@@ -17,6 +17,7 @@ RUN pip install --upgrade pip \
     && pip install -r requirement.txt \
     && pip install uvicorn
 COPY . .
+RUN python manage.py collectstatic --noinput
 RUN adduser --disabled-password --gecos '' appuser \
     && chown -R appuser:appuser /app \
     && chown -R appuser:appuser $VIRTUAL_ENV
