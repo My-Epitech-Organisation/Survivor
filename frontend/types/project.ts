@@ -2,14 +2,26 @@
 
 import {Founder} from "@/types/founders"
 
+
+export interface ProjectFiltersProps {
+  ProjectSector: string[];
+  ProjectMaturity: string[];
+  ProjectLocation: string[];
+  onFiltersChange?: (filters: {
+    locations: string[];
+    maturities: string[];
+    sectors: string[];
+  }) => void;
+}
+
 export interface ProjectOverviewProps
 {
   ProjectId?: number;
   ProjectName: string;
   ProjectDescription?: string;
-  ProjectSector?: string;
-  ProjectMaturity?: string;
-  ProjectLocation?: string;
+  ProjectSector: string;
+  ProjectMaturity: string;
+  ProjectLocation: string;
   ProjectNeeds?: string;
   ProjectStatus?: string;
 }

@@ -19,29 +19,50 @@ import {
 } from "@/components/ui/dialog"
 import { MapPin, Building, TrendingUp, Target, CheckCircle, Info } from "lucide-react"
 import ProjectDetails from "./ProjectDetails"
+import { useState, useEffect } from "react"
+import { getAPIUrl } from "@/lib/socket-config"
+import axios from "axios"
 
 export default function ProjectOverview(props : ProjectOverviewProps) {
-    // Mock data for ProjectDetails - in a real app, you'd fetch this based on ProjectId
-    const mockProjectDetails: ProjectDetailsProps = {
+    // const [projectDetails, setprojectDetails] = useState<ProjectDetailsProps>([]);
+
+    // useEffect(() => {
+    // const fetchProject = async () => {
+    //     try {
+    //         const APIUrl = getAPIUrl();
+    //         console.log(APIUrl);
+    //         console.log("Fetching from:", `${APIUrl}/projects/${props.ProjectId}`);
+    //         const response = await axios.get<ProjectDetailsProps>(`${APIUrl}/projects/${props.ProjectId}`);
+    //         setprojectDetails(response.data);
+    //         console.log("Projet loaded:", projectDetails);
+    //     } catch (error) {
+    //         console.error('Erreur API:', error);
+    //     }
+    // };
+    // fetchProject();
+    // }, []);
+
+
+    const projectDetails: ProjectDetailsProps = {
         ProjectId: props.ProjectId,
         ProjectName: props.ProjectName,
         ProjectDescription: props.ProjectDescription,
         ProjectSector: props.ProjectSector,
         ProjectMaturity: props.ProjectMaturity,
-        ProjectAdress: props.ProjectLocation, // Using Location as Address for now
-        ProjectLegalStatus: "SAS", // Mock data
-        ProjectCreatedAt: "2024-01-15", // Mock data
+        ProjectAdress: props.ProjectLocation,
+        ProjectLegalStatus: "SAS",
+        ProjectCreatedAt: "2024-01-15",
         ProjectFounders: [
-            { FounderID: 1, FounderName: "John Doe", FounderStartupID: 1, FounderPictureURL: "" },
+            { FounderID: 1, FounderName: "John Doe", FounderStartupID: 1, FounderPictureURL: "blob:https://api.jeb-incubator.com/d4809f40-e0e5-4759-a3a4-0a50725d2afe" },
             { FounderID: 2, FounderName: "Jane Smith", FounderStartupID: 1, FounderPictureURL: "" }
-        ], // Mock founders
-        ProjectEmail: "contact@example.com", // Mock data
-        ProjectPhone: "+33 1 23 45 67 89", // Mock data
+        ],
+        ProjectEmail: "contact@example.com",
+        ProjectPhone: "+33 1 23 45 67 89",
         ProjectNeeds: props.ProjectNeeds,
-        ProjectProgess: "Initial development phase completed. Working on MVP development and first client acquisition.", // Mock data
+        ProjectProgess: "Initial development phase completed. Working on MVP development and first client acquisition.",
         ProjectStatus: props.ProjectStatus,
-        ProjectSocial: "@example_startup", // Mock data
-        ProjectWebsite: "https://example.com", // Mock data
+        ProjectSocial: "@example_startup",
+        ProjectWebsite: "https://example.com",
     };
 
     return (
@@ -163,7 +184,7 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
                                 <DialogTitle className="text-lg sm:text-3xl font-light">Project Details - {props.ProjectName}</DialogTitle>
                             </DialogHeader>
                             <div className="px-3 sm:px-8 pb-3 sm:pb-8">
-                                <ProjectDetails {...mockProjectDetails} />
+                                <ProjectDetails {...projectDetails} />
                             </div>
                         </DialogContent>
                     </Dialog>
