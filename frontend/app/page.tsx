@@ -65,7 +65,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Advanced Search</h3>
-              <p className="text-gray-600">Find exactly what you're looking for with our powerful search capabilities.</p>
+              <p className="text-gray-600">Find exactly what you&apos;re looking for with our powerful search capabilities.</p>
             </div>
           </Link>
 
