@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Route API Next.js qui fait le proxy vers Django
 export async function GET(request: NextRequest) {
   try {
-    // Construire l'URL vers Django
     const djangoUrl = 'http://backend:8000/api/todos/';
     
     console.log('🚀 [API] Proxying request to:', djangoUrl);
     console.log('📍 [API] Request headers:', Object.fromEntries(request.headers.entries()));
     
-    // Faire la requête vers Django
     const response = await fetch(djangoUrl);
     
     console.log('📡 [API] Django response status:', response.status);
