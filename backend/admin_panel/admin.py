@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import News, NewsDetail
-from .models import Event
+from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder
 
 
 class NewsDetailAdmin(admin.ModelAdmin):
@@ -16,6 +15,32 @@ class EventAdmin(admin.ModelAdmin):
     fields = ['id', 'name', 'dates', 'location', 'description', 'event_type', 'target_audience', 'image']
     readonly_fields = ['image']
 
+class StartupListAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'legal_status', 'sector', 'maturity']
+    fields = ['id', 'name', 'legal_status', 'address', 'email', 'phone', 'sector', 'maturity']
+
+class FounderInline(admin.TabularInline):
+    model = Founder
+    extra = 1
+    fields = ['id', 'name', 'startup_id']
+    readonly_fields = ['id', 'startup_id']
+    can_delete = False
+
+class StartupDetailAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'legal_status', 'sector', 'maturity']
+    fields = ['id', 'name', 'legal_status', 'address', 'email', 'phone', 'created_at',
+              'description', 'website_url', 'social_media_url', 'project_status',
+              'needs', 'sector', 'maturity', 'founders_images']
+    readonly_fields = ['founders_images']
+    filter_horizontal = ['founders']
+
+class FounderAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'startup_id']
+    fields = ['id', 'name', 'startup_id']
+
 admin.site.register(News, NewsAdmin)
 admin.site.register(NewsDetail, NewsDetailAdmin)
 admin.site.register(Event, EventAdmin)
+admin.site.register(StartupList, StartupListAdmin)
+admin.site.register(StartupDetail, StartupDetailAdmin)
+admin.site.register(Founder, FounderAdmin)
