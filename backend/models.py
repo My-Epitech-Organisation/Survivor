@@ -1,17 +1,17 @@
 from django.db import models
 
-class Event(models.Model):
-    """
-    Represents an event.
-    """
+# class Event(models.Model):
+#     """
+#     Represents an event.
+#     """
 
-    name = models.CharField(max_length=255, blank=False, null=False)
-    date = models.CharField(max_length=255, null=True)
-    location = models.CharField(max_length=255, null=True)
-    description = models.TextField(null=True, blank=True)
-    event_type = models.CharField(max_length=255, null=True)
-    target_audience = models.CharField(max_length=255, null=True)
-    id = models.IntegerField(null=False, primary_key=True)
+#     name = models.CharField(max_length=255, blank=False, null=False)
+#     date = models.CharField(max_length=255, null=True)
+#     location = models.CharField(max_length=255, null=True)
+#     description = models.TextField(null=True, blank=True)
+#     event_type = models.CharField(max_length=255, null=True)
+#     target_audience = models.CharField(max_length=255, null=True)
+#     id = models.IntegerField(null=False, primary_key=True)
 
 
 class Investor(models.Model):

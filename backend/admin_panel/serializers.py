@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import News, NewsDetail
+from .models import News, NewsDetail, Event
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,4 +16,9 @@ class NewsSerializer(serializers.ModelSerializer):
 class NewsDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsDetail
+        fields = '__all__'
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
         fields = '__all__'

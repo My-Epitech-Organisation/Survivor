@@ -94,3 +94,56 @@ def fetch_and_create_news():
         print(f"API request error: {e}")
     except Exception as e:
         print(f"Error creating news data: {e}")
+
+def fetch_and_create_events():
+    """
+    Fetch events from JEB API and create them in database
+    """
+    try:
+        jeb_token = os.environ.get('JEB_API_TOKEN')
+        if not jeb_token:
+            raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
+
+        print("Fetching events data from JEB API...")
+
+        url = settings.JEB_API_EVENTS_URL
+        params = settings.JEB_API_DEFAULT_PARAMS
+        headers = {
+            **settings.JEB_API_HEADERS,
+            "X-Group-Authorization": jeb_token
+        }
+
+        response = requests.get(url, params=params, headers=headers)
+        response.raise_for_status()
+        events_data = response.json()
+
+        Event = apps.get_model('admin_panel', 'Event')
+
+        for item in events_data:
+            event = Event(
+                id=item.get('id'),
+                name=item.get('name'),
+                dates=item.get('dates'),
+                location=item.get('location'),
+                description=item.get('description'),
+                event_type=item.get('event_type'),
+                target_audience=item.get('target_audience')
+            )
+
+            try:
+                event_id = item.get('id')
+                image_url = settings.JEB_API_EVENT_IMAGE_URL.format(event_id=event_id)
+                image_response = requests.get(image_url, headers=headers)
+                if image_response.status_code == 200:
+                    event.image = image_response.content
+            except Exception as e:
+                print(f"Error fetching image for event {item.get('id')}: {e}")
+
+            event.save()
+
+    except ImproperlyConfigured as e:
+        print(f"Configuration error: {e}")
+    except requests.RequestException as e:
+        print(f"API request error: {e}")
+    except Exception as e:
+        print(f"Error creating events data: {e}")
