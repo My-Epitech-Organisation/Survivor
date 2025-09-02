@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { API_CONFIG } from "@/lib/config"
 
 export function SignUpForm({
@@ -23,6 +24,7 @@ export function SignUpForm({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,7 +56,7 @@ export function SignUpForm({
       setEmail("")
       setPassword("")
 
-      window.location.href = '/login'
+      router.push('/login')
 
     } catch (err) {
       console.error('Signup error:', err)
