@@ -5,10 +5,8 @@ class Command(BaseCommand):
     help = 'Créer des todos de test'
 
     def handle(self, *args, **options):
-        # Supprimer les todos existants
         Todo.objects.all().delete()
         
-        # Créer des todos de test
         todos = [
             {"title": "Apprendre Django", "description": "Créer une API REST avec Django", "completed": False},
             {"title": "Setup Docker", "description": "Configurer Docker pour le projet", "completed": True},

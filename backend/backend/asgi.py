@@ -13,14 +13,12 @@ from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
-# Créer l'application Django ASGI
 django_asgi_app = get_asgi_application()
 
 print("🚀 [DJANGO] Starting Socket.IO server...")
 
-# Créer l'instance Socket.IO
 sio = socketio.AsyncServer(
-    cors_allowed_origins="*",  # Pour le développement
+    cors_allowed_origins="*",
     async_mode='asgi'
 )
 
@@ -34,11 +32,9 @@ async def disconnect(sid):
 
 @sio.event
 async def message(sid, data):
-    # Diffuser le message à tous les clients connectés
     await sio.emit('message', data)
     print(f"📤 [DJANGO] Message broadcasted to all clients")
 
-# Combiner Django et Socket.IO
 application = socketio.ASGIApp(sio, django_asgi_app)
 
 print("✅ [DJANGO] Socket.IO server configured successfully")
