@@ -25,6 +25,7 @@ export default function Home() {
     const fetchTodos = async () => {
       try {
         const APIUrl = getAPIUrl();
+        console.log(APIUrl);
         console.log("Fetching from:", `${APIUrl}/todos`);
         const response = await axios.get<Todo[]>(`${APIUrl}/todos`);
         setTodos(response.data);
