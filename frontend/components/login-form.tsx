@@ -102,7 +102,7 @@ export function LoginForm({
                     <Label htmlFor="password">Password</Label>
                     <a
                       href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
+                      className="ml-auto text-sm underline-offset-2 hover:underline hover:text-blue-500"
                     >
                       Forgot your password?
                     </a>
@@ -117,14 +117,13 @@ export function LoginForm({
                     disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-blue-400 hover:bg-blue-500" disabled={isLoading}>
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </div>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="/signup" className="underline underline-offset-4">
-                  Sign up
+                <a href="/signup" className="hover:underline underline-offset-2 hover:text-blue-500">
+                  Don&apos;t have an account?{" "}
                 </a>
               </div>
             </div>
