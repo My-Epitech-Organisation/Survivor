@@ -151,9 +151,9 @@ JEB_API_STARTUP_DETAIL_URL = f"{JEB_API_BASE_URL}/startups/{'{startup_id}'}"
 JEB_API_FOUNDER_IMAGE_URL = f"{JEB_API_BASE_URL}/startups/{'{startup_id}'}/founders/{'{founder_id}'}/image"
 JEB_API_USERS_URL = f"{JEB_API_BASE_URL}/users"
 JEB_API_USER_IMAGE_URL = f"{JEB_API_BASE_URL}/users/{'{user_id}'}/image"
+JEB_API_INVESTORS_URL = f"{JEB_API_BASE_URL}/investors"
 JEB_API_DEFAULT_PARAMS = {
-    "skip": 0,
-    "limit": 100
+    "skip": 0
 }
 JEB_API_HEADERS = {
     "accept": "application/json"

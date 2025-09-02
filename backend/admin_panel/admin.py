@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, User
+from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, User, Investor
 
 
 class NewsDetailAdmin(admin.ModelAdmin):
@@ -45,6 +45,13 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ['name', 'email', 'role']
     list_filter = ['role']
 
+class InvestorAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'legal_status', 'investor_type', 'investment_focus']
+    fields = ['id', 'name', 'legal_status', 'address', 'email', 'phone', 'created_at',
+              'description', 'investor_type', 'investment_focus']
+    search_fields = ['name', 'email', 'investor_type', 'investment_focus']
+    list_filter = ['investor_type', 'legal_status']
+
 admin.site.register(News, NewsAdmin)
 admin.site.register(NewsDetail, NewsDetailAdmin)
 admin.site.register(Event, EventAdmin)
@@ -52,3 +59,4 @@ admin.site.register(StartupList, StartupListAdmin)
 admin.site.register(StartupDetail, StartupDetailAdmin)
 admin.site.register(Founder, FounderAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(Investor, InvestorAdmin)

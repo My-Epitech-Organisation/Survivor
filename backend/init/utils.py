@@ -321,3 +321,49 @@ def fetch_and_create_users():
         print(f"API request error: {e}")
     except Exception as e:
         print(f"Error creating users data: {e}")
+
+def fetch_and_create_investors():
+    """
+    Fetch investors from JEB API and create them in database
+    """
+    try:
+        jeb_token = os.environ.get('JEB_API_TOKEN')
+        if not jeb_token:
+            raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
+
+        print("Fetching investors data from JEB API...")
+
+        url = settings.JEB_API_INVESTORS_URL
+        params = settings.JEB_API_DEFAULT_PARAMS
+        headers = {
+            **settings.JEB_API_HEADERS,
+            "X-Group-Authorization": jeb_token
+        }
+
+        response = requests.get(url, params=params, headers=headers)
+        response.raise_for_status()
+        investors_data = response.json()
+
+        Investor = apps.get_model('admin_panel', 'Investor')
+
+        for item in investors_data:
+            investor = Investor(
+                id=item.get('id'),
+                name=item.get('name'),
+                legal_status=item.get('legal_status'),
+                address=item.get('address'),
+                email=item.get('email'),
+                phone=item.get('phone'),
+                created_at=item.get('created_at'),
+                description=item.get('description'),
+                investor_type=item.get('investor_type'),
+                investment_focus=item.get('investment_focus')
+            )
+            investor.save()
+
+    except ImproperlyConfigured as e:
+        print(f"Configuration error: {e}")
+    except requests.RequestException as e:
+        print(f"API request error: {e}")
+    except Exception as e:
+        print(f"Error creating investors data: {e}")

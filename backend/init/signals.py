@@ -11,15 +11,15 @@ from django.contrib.auth import get_user_model
 import os
 from django.core.exceptions import ImproperlyConfigured
 from django.apps import apps
-from .utils import fetch_and_create_news, fetch_and_create_events, fetch_and_create_startups, fetch_and_create_users
-
+from .utils import *
 # Flag to track if handlers have already run
 _handlers_executed = {
     'create_superuser': False,
     'clear_and_fetch_news': False,
     'clear_and_fetch_events': False,
     'clear_and_fetch_startups': False,
-    'clear_and_fetch_users': False
+    'clear_and_fetch_users': False,
+    'clear_and_fetch_investors': False
 }
 
 @receiver(post_migrate)
@@ -146,3 +146,26 @@ def clear_and_fetch_users(sender, **kwargs):
 
     except Exception as e:
         print(f"Error during user data management: {e}")
+
+@receiver(post_migrate)
+def clear_and_fetch_investors(sender, **kwargs):
+    """
+    Delete all Investor records and then fetch and create new ones from JEB API
+    Only runs once during server startup
+    """
+
+    if _handlers_executed['clear_and_fetch_investors']:
+        return
+    if sender.name != 'admin_panel':
+        return
+    _handlers_executed['clear_and_fetch_investors'] = True
+
+    try:
+        Investor = apps.get_model('admin_panel', 'Investor')
+
+        Investor.objects.all().delete()
+
+        fetch_and_create_investors()
+
+    except Exception as e:
+        print(f"Error during investor data management: {e}")
