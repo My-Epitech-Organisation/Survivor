@@ -58,7 +58,10 @@ export function LoginForm({
         name: data.user?.name || 'Startup Owner'
       }
 
-      login(data.token || 'mock-token', userData)
+      if (!data.token) {
+        throw new Error('No token received from server. Login failed.');
+      }
+      login(data.token, userData)
 
       setEmail("")
       setPassword("")
