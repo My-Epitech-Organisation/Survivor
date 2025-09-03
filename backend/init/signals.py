@@ -37,18 +37,18 @@ def create_superuser(sender, **kwargs):
 
     User = get_user_model()
 
-    username = os.environ.get('DJANGO_ADMIN_USERNAME')
+    name = os.environ.get('DJANGO_ADMIN_USERNAME')
     email = os.environ.get('DJANGO_ADMIN_EMAIL')
     password = os.environ.get('DJANGO_ADMIN_PASSWORD')
 
-    if not username or not email or not password:
+    if not name or not email or not password:
         raise ImproperlyConfigured("DJANGO_ADMIN_USERNAME, DJANGO_ADMIN_EMAIL, and DJANGO_ADMIN_PASSWORD environment variables are required")
 
-    if not User.objects.filter(username=username).exists():
-        print(f"Creating default admin user '{username}'")
+    if not User.objects.filter(email=email).exists():
+        print(f"Creating default admin user '{email}'")
         User.objects.create_superuser(
-            username=username,
             email=email,
+            name=name,
             password=password,
         )
         print("Default admin user created successfully")

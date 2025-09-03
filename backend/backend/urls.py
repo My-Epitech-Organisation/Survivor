@@ -28,6 +28,7 @@ urlpatterns = [
     path('healthz/', health_check, name='health_check'),  # Health check endpoint
     path('api/', include('exposed_api.urls')),  # Exposed API endpoints
     path('api/admin/', include('admin_panel.urls')),  # Custom admin
+    path('api/auth/', include('authentication.urls')),  # Authentication endpoints
 ]
 
 if settings.DEBUG:

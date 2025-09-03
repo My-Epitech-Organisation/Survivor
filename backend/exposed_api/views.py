@@ -1,11 +1,22 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from admin_panel.models import StartupDetail, User
 from .serializers import (ProjectSerializer, ProjectDetailSerializer, UserSerializer,
                          ProjectViewsSerializer, ProjectEngagementSerializer)
+from authentication.permissions import IsAdmin, IsFounder, IsInvestor, IsNotRegularUser
+
+
+class IsAuthenticatedNotRegularUser(IsAuthenticated):
+    """
+    Custom permission to allow any authenticated user except regular users
+    """
+    def has_permission(self, request, view):
+        if not super().has_permission(request, view):
+            return False
+        return request.user.role != 'user'
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -50,12 +61,19 @@ def user_detail(request, user_id):
         )
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticatedNotRegularUser])
 def project_views(request, user_id):
     """
     Returns the views of the user's projects for the last 6 months.
     This is a placeholder implementation.
+    Restricted to authenticated users with roles other than regular users.
+    Users can only access their own data unless they are admins.
     """
+    # Check if user is accessing their own data or is an admin
+    if str(request.user.id) != str(user_id) and request.user.role != 'admin':
+        return Response({"error": "You do not have permission to access this data"},
+                        status=status.HTTP_403_FORBIDDEN)
+
     # Placeholder data
     data = [
         {"month": "January", "views": 186},
@@ -70,12 +88,19 @@ def project_views(request, user_id):
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticatedNotRegularUser])
 def project_engagement(request, user_id):
     """
     Returns the engagement rate for the user's projects.
     This is a placeholder implementation.
+    Restricted to authenticated users with roles other than regular users.
+    Users can only access their own data unless they are admins.
     """
+    # Check if user is accessing their own data or is an admin
+    if str(request.user.id) != str(user_id) and request.user.role != 'admin':
+        return Response({"error": "You do not have permission to access this data"},
+                        status=status.HTTP_403_FORBIDDEN)
+
     # Placeholder data
     data = {"rate": 75}
 
