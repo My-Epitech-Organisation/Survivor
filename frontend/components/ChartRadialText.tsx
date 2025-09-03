@@ -96,7 +96,9 @@ export function ChartRadialText({
                           y={viewBox.cy}
                           className="fill-foreground text-4xl font-bold"
                         >
-                          {data[0]?.rate?.toLocaleString() || "0"}{"%"}
+                          {typeof data[0]?.rate === "number"
+                            ? (data[0]?.rate / 100).toLocaleString(undefined, { style: 'percent', minimumFractionDigits: 0 })
+                            : "0%"}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
