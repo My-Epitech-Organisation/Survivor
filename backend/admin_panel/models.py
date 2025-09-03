@@ -26,7 +26,7 @@ class NewsDetail(models.Model):
     startup_id = models.IntegerField(null=True)
     id = models.IntegerField(null=False, primary_key=True)
     description = models.TextField(null=True, blank=True)
-    image = models.BinaryField(null=True, blank=True)
+    image = models.CharField(max_length=255, null=True, blank=True)
 
 # Event models
 class Event(models.Model):
@@ -41,7 +41,7 @@ class Event(models.Model):
     event_type = models.CharField(max_length=255, null=True)
     target_audience = models.CharField(max_length=255, null=True)
     id = models.IntegerField(null=False, primary_key=True)
-    image = models.BinaryField(null=True, blank=True)
+    image = models.CharField(max_length=255, null=True, blank=True)
 
 # Startup models
 class StartupList(models.Model):
@@ -91,7 +91,7 @@ class User(models.Model):
     founder_id = models.IntegerField(null=True, blank=True)
     investor_id = models.IntegerField(null=True, blank=True)
     id = models.IntegerField(null=False, primary_key=True)
-    image = models.BinaryField(null=True, blank=True)
+    image = models.CharField(max_length=255, null=True, blank=True)
 
 class Founder(models.Model):
     """
