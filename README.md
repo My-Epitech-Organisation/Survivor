@@ -33,9 +33,9 @@ The platform targets:
 
 ## Technologies
 
-- **Frontend:** React
+- **Frontend:** Next.js
 - **Backend:** Django Python
-- **Database:** PostgreSQL
+- **Database:** SQLite
 - **Other tools:** Docker, Github Actions CI/CD
 
 ## Commit Guidelines

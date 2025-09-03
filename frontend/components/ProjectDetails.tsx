@@ -19,7 +19,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
             {props.ProjectDescription}
           </p>
         )}
-        
+
         {/* Status Badges */}
         <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 flex-wrap mt-4 sm:mt-6 lg:mt-8">
           {props.ProjectSector && (
@@ -50,7 +50,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
               <div className="w-1 sm:w-1.5 md:w-2 h-5 sm:h-6 md:h-8 bg-blue-500 rounded-full"></div>
               Project Info
             </h2>
-            
+
             <div className="space-y-3 sm:space-y-4 md:space-y-6">
               {props.ProjectId && (
                 <div>
@@ -58,14 +58,14 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                   <dd className="text-sm sm:text-base md:text-lg text-gray-900">#{props.ProjectId}</dd>
                 </div>
               )}
-              
+
               {props.ProjectLegalStatus && (
                 <div>
                   <dt className="text-xs sm:text-xs md:text-sm font-medium text-gray-500 mb-0.5 sm:mb-1 md:mb-2">Legal Status</dt>
                   <dd className="text-sm sm:text-base md:text-lg text-gray-900">{props.ProjectLegalStatus}</dd>
                 </div>
               )}
-              
+
               <div>
                 <dt className="text-xs sm:text-xs md:text-sm font-medium text-gray-500 mb-0.5 sm:mb-1 md:mb-2">Created</dt>
                 <dd className="text-sm sm:text-base md:text-lg text-gray-900">
@@ -100,25 +100,25 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
               <div className="w-1.5 md:w-2 h-6 md:h-8 bg-emerald-500 rounded-full"></div>
               Contact
             </h2>
-            
+
             <div className="space-y-4 md:space-y-6">
               <div>
                 <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Email</dt>
                 <dd className="text-base md:text-lg">
-                  <a 
-                    href={`mailto:${props.ProjectEmail}`} 
+                  <a
+                    href={`mailto:${props.ProjectEmail}`}
                     className="text-emerald-600 hover:text-emerald-700 transition-colors break-all"
                   >
                     {props.ProjectEmail}
                   </a>
                 </dd>
               </div>
-              
+
               <div>
                 <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Phone</dt>
                 <dd className="text-base md:text-lg">
-                  <a 
-                    href={`tel:${props.ProjectPhone}`} 
+                  <a
+                    href={`tel:${props.ProjectPhone}`}
                     className="text-emerald-600 hover:text-emerald-700 transition-colors"
                   >
                     {props.ProjectPhone}
@@ -132,14 +132,14 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                   <dd className="text-base md:text-lg text-gray-900">{props.ProjectAddress}</dd>
                 </div>
               )}
-              
+
               {props.ProjectWebsite && (
                 <div>
                   <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Website</dt>
                   <dd className="text-base md:text-lg">
-                    <a 
-                      href={props.ProjectWebsite} 
-                      target="_blank" 
+                    <a
+                      href={props.ProjectWebsite}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-emerald-600 hover:text-emerald-700 transition-colors break-all"
                     >
@@ -192,7 +192,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
               <div className="w-1.5 md:w-2 h-6 md:h-8 bg-purple-500 rounded-full"></div>
               Team
             </h2>
-            
+
             <div className="space-y-4 md:space-y-6">
               {props.ProjectFounders && props.ProjectFounders.length > 0 && (
                 <div>

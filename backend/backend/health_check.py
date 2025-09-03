@@ -1,6 +1,7 @@
-from django.http import JsonResponse
 from django.db import connection
 from django.db.utils import OperationalError
+from django.http import JsonResponse
+
 
 def health_check(request):
     """
@@ -14,20 +15,12 @@ def health_check(request):
             if one != 1:
                 raise Exception("Database query returned unexpected result")
 
-        return JsonResponse({
-            "status": "healthy",
-            "message": "Database connection is working properly",
-            "database": True
-        })
+        return JsonResponse(
+            {"status": "healthy", "message": "Database connection is working properly", "database": True}
+        )
     except OperationalError:
-        return JsonResponse({
-            "status": "unhealthy",
-            "message": "Database connection failed",
-            "database": False
-        }, status=503)
+        return JsonResponse(
+            {"status": "unhealthy", "message": "Database connection failed", "database": False}, status=503
+        )
     except Exception as e:
-        return JsonResponse({
-            "status": "error",
-            "message": "Internal server error",
-            "database": False
-        }, status=500)
+        return JsonResponse({"status": "error", "message": "Internal server error", "database": False}, status=500)

@@ -2,22 +2,25 @@
 Scheduler module for running periodic tasks to fetch and update data from JEB API.
 """
 
+import atexit
 import logging
 import threading
-import atexit
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
+
 from .utils import (
-    fetch_and_create_news,
     fetch_and_create_events,
+    fetch_and_create_investors,
+    fetch_and_create_news,
+    fetch_and_create_partners,
     fetch_and_create_startups,
     fetch_and_create_users,
-    fetch_and_create_investors,
-    fetch_and_create_partners
 )
 
 logger = logging.getLogger(__name__)
 scheduler = None
+
 
 def fetch_all_data():
     """
@@ -57,6 +60,7 @@ def fetch_all_data():
 
     logger.info("=== API Data Sync Job Completed ===")
 
+
 def start_scheduler():
     """
     Start the background scheduler to fetch data periodically
@@ -68,15 +72,11 @@ def start_scheduler():
         return
 
     scheduler = BackgroundScheduler()
-    interval_minutes = getattr(settings, 'API_DATA_REFRESH_INTERVAL', 60)  # Default to 60 minutes if not set
-    fetch_on_startup = getattr(settings, 'API_DATA_FETCH_ON_STARTUP', False)  # Default to False
+    interval_minutes = getattr(settings, "API_DATA_REFRESH_INTERVAL", 60)  # Default to 60 minutes if not set
+    fetch_on_startup = getattr(settings, "API_DATA_FETCH_ON_STARTUP", False)  # Default to False
 
     scheduler.add_job(
-        fetch_all_data,
-        'interval',
-        minutes=interval_minutes,
-        id='fetch_all_data_job',
-        replace_existing=True
+        fetch_all_data, "interval", minutes=interval_minutes, id="fetch_all_data_job", replace_existing=True
     )
 
     # Start the scheduler in a daemon thread

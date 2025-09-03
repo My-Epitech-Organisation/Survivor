@@ -14,3 +14,4 @@ python-dotenv==1.0.0
 requests==2.31.0
 apscheduler==3.10.4
 PyJWT==2.8.0
+setuptools==80.9.0

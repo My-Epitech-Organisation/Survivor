@@ -14,6 +14,7 @@ class News(models.Model):
     startup_id = models.IntegerField(null=True)
     id = models.IntegerField(null=False, primary_key=True)
 
+
 class NewsDetail(models.Model):
     """
     Represents a news detail item.
@@ -27,6 +28,7 @@ class NewsDetail(models.Model):
     id = models.IntegerField(null=False, primary_key=True)
     description = models.TextField(null=True, blank=True)
     image = models.CharField(max_length=255, null=True, blank=True)
+
 
 # Event models
 class Event(models.Model):
@@ -43,6 +45,7 @@ class Event(models.Model):
     id = models.IntegerField(null=False, primary_key=True)
     image = models.CharField(max_length=255, null=True, blank=True)
 
+
 # Startup models
 class StartupList(models.Model):
     """
@@ -57,6 +60,8 @@ class StartupList(models.Model):
     phone = models.CharField(max_length=255, null=True)
     sector = models.CharField(max_length=255, null=True)
     maturity = models.CharField(max_length=255, null=True)
+
+
 class StartupDetail(models.Model):
     """
     Represents detailed information about a startup.
@@ -76,8 +81,9 @@ class StartupDetail(models.Model):
     needs = models.TextField(null=True, blank=True)
     sector = models.CharField(max_length=255, null=True)
     maturity = models.CharField(max_length=255, null=True)
-    founders = models.ManyToManyField('Founder', related_name='startups')
+    founders = models.ManyToManyField("Founder", related_name="startups")
     founders_images = models.JSONField(null=True, blank=True)
+
 
 # User models
 class User(models.Model):
@@ -93,6 +99,7 @@ class User(models.Model):
     id = models.IntegerField(null=False, primary_key=True)
     image = models.CharField(max_length=255, null=True, blank=True)
 
+
 class Founder(models.Model):
     """
     Represent a founder.
@@ -101,6 +108,7 @@ class Founder(models.Model):
     name = models.CharField(max_length=255, null=False)
     id = models.IntegerField(null=False, primary_key=True)
     startup_id = models.IntegerField(null=False)
+
 
 class Investor(models.Model):
     """
@@ -117,6 +125,7 @@ class Investor(models.Model):
     investor_type = models.CharField(max_length=255, null=True)
     investment_focus = models.CharField(max_length=255, null=True)
     id = models.IntegerField(null=False, primary_key=True)
+
 
 class Partner(models.Model):
     """
