@@ -41,6 +41,30 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Custom App Colors as Tailwind utilities */
+  --color-app-blue-primary: var(--app-blue-primary);
+  --color-app-blue-primary-hover: var(--app-blue-primary-hover);
+  --color-app-blue-light: var(--app-blue-light);
+  --color-app-blue-muted: var(--app-blue-muted);
+  --color-app-white: var(--app-white);
+  --color-app-text-primary: var(--app-text-primary);
+  --color-app-text-secondary: var(--app-text-secondary);
+  --color-app-text-muted: var(--app-text-muted);
+  --color-app-border-light: var(--app-border-light);
+  --color-app-surface: var(--app-surface);
+  --color-app-surface-hover: var(--app-surface-hover);
+  --color-app-gradient-from: var(--app-gradient-from);
+  --color-app-gradient-to: var(--app-gradient-to);
+  --color-app-green-primary: var(--app-green-primary);
+  --color-app-green-light: var(--app-green-light);
+  --color-app-purple-primary: var(--app-purple-primary);
+  --color-app-purple-light: var(--app-purple-light);
+  --color-app-orange-primary: var(--app-orange-primary);
+  --color-app-orange-light: var(--app-orange-light);
+  --color-app-indigo-primary: var(--app-indigo-primary);
+  --color-app-indigo-light: var(--app-indigo-light);
+  --color-app-red-primary: var(--app-red-primary);
 }
 
 :root {
@@ -76,6 +100,32 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Custom App Colors - easily customizable */
+  --app-blue-primary: oklch(0.515 0.188 258.44); /* blue-600 */
+  --app-blue-primary-hover: oklch(0.45 0.2 258.44); /* blue-700 */
+  --app-blue-light: oklch(0.97 0.013 258.44); /* blue-50 */
+  --app-blue-muted: oklch(0.94 0.05 258.44); /* blue-100 */
+  --app-white: oklch(1 0 0); /* white */
+  --app-text-primary: oklch(0.145 0 0); /* gray-900 */
+  --app-text-secondary: oklch(0.556 0 0); /* gray-600 */
+  --app-text-muted: oklch(0.708 0 0); /* gray-500 */
+  --app-border-light: oklch(0.922 0 0); /* gray-200 */
+  --app-surface: oklch(1 0 0); /* white background */
+  --app-surface-hover: oklch(0.98 0 0); /* gray-50 */
+  --app-gradient-from: oklch(0.97 0.013 258.44); /* blue-50 */
+  --app-gradient-to: oklch(0.94 0.05 258.44); /* indigo-100 */
+  
+  /* Feature accent colors */
+  --app-green-primary: oklch(0.515 0.15 142.5); /* green-600 */
+  --app-green-light: oklch(0.94 0.05 142.5); /* green-100 */
+  --app-purple-primary: oklch(0.515 0.15 300); /* purple-600 */
+  --app-purple-light: oklch(0.94 0.05 300); /* purple-100 */
+  --app-orange-primary: oklch(0.65 0.15 70); /* orange-600 */
+  --app-orange-light: oklch(0.94 0.05 70); /* orange-100 */
+  --app-indigo-primary: oklch(0.515 0.15 270); /* indigo-600 */
+  --app-indigo-light: oklch(0.94 0.05 270); /* indigo-100 */
+  --app-red-primary: oklch(0.577 0.245 27.325); /* red-600 */
 }
 
 .dark {
@@ -110,6 +160,32 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Custom App Colors - Dark Mode */
+  --app-blue-primary: oklch(0.6 0.18 258.44); /* lighter blue for dark mode */
+  --app-blue-primary-hover: oklch(0.55 0.2 258.44); /* blue-600 for dark mode */
+  --app-blue-light: oklch(0.2 0.05 258.44); /* dark blue background */
+  --app-blue-muted: oklch(0.25 0.08 258.44); /* dark blue accent */
+  --app-white: oklch(0.205 0 0); /* dark surface */
+  --app-text-primary: oklch(0.985 0 0); /* light text */
+  --app-text-secondary: oklch(0.708 0 0); /* medium gray text */
+  --app-text-muted: oklch(0.556 0 0); /* muted gray text */
+  --app-border-light: oklch(1 0 0 / 10%); /* subtle border */
+  --app-surface: oklch(0.205 0 0); /* dark surface */
+  --app-surface-hover: oklch(0.269 0 0); /* darker hover */
+  --app-gradient-from: oklch(0.2 0.05 258.44); /* dark gradient start */
+  --app-gradient-to: oklch(0.25 0.08 270); /* dark gradient end */
+  
+  /* Feature accent colors - Dark Mode */
+  --app-green-primary: oklch(0.6 0.15 142.5);
+  --app-green-light: oklch(0.25 0.05 142.5);
+  --app-purple-primary: oklch(0.6 0.15 300);
+  --app-purple-light: oklch(0.25 0.05 300);
+  --app-orange-primary: oklch(0.75 0.15 70);
+  --app-orange-light: oklch(0.25 0.05 70);
+  --app-indigo-primary: oklch(0.6 0.15 270);
+  --app-indigo-light: oklch(0.25 0.05 270);
+  --app-red-primary: oklch(0.704 0.191 22.216);
 }
 
 @layer base {
