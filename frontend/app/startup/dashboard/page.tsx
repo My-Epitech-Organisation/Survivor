@@ -127,11 +127,9 @@ export default function StartupDashboard() {
                             </Avatar>
                             <div>
                                 <h2 className="text-2xl font-bold">{userProfile?.name || ""}</h2>
-                                {userProfile?.nbStartups && (
-                                    <p className="text-app-text-secondary">
-                                        {userProfile?.nbStartups} {userProfile?.nbStartups === 1 ? 'Startup' : 'Startups'}
-                                    </p>
-                                )}
+                                <p className="text-app-text-secondary">
+                                    {userProfile?.nbStartups ? userProfile?.nbStartups : 0} {userProfile?.nbStartups === 1 ? 'Startup' : 'Startups'}
+                                </p>
                             </div>
                         </CardTitle>
                     </CardHeader>
