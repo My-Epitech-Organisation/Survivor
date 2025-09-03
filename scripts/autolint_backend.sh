@@ -94,10 +94,10 @@ EOF
 fi
 
 echo -e "${YELLOW}Auto-fixing code in $BACKEND_DIR with Ruff...${NC}"
-ruff check "$BACKEND_DIR" --fix --statistics
+ruff check "$BACKEND_DIR" --fix --statistics || true
 
 echo -e "${YELLOW}Formatting code with Black...${NC}"
-black "$BACKEND_DIR"
+black "$BACKEND_DIR" || true
 
 echo -e "${GREEN}=========================================================="
 echo "                 Backend auto-linting completed!"

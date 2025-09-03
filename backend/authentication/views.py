@@ -21,10 +21,11 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     """
     Custom token view that uses our custom serializer
     """
+
     serializer_class = CustomTokenObtainPairSerializer
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def register_user(request):
     """
@@ -36,21 +37,24 @@ def register_user(request):
 
         refresh = RefreshToken.for_user(user)
 
-        return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'user': {
-                'id': user.id,
-                'email': user.email,
-                'name': user.name,
-                'role': user.role,
-            }
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "name": user.name,
+                    "role": user.role,
+                },
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_user_profile(request):
     """
@@ -60,7 +64,7 @@ def get_user_profile(request):
     return Response(serializer.data)
 
 
-@api_view(['PUT'])
+@api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def update_user_profile(request):
     """
@@ -73,7 +77,7 @@ def update_user_profile(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def request_password_reset(request):
     """
@@ -81,7 +85,7 @@ def request_password_reset(request):
     """
     serializer = PasswordResetRequestSerializer(data=request.data)
     if serializer.is_valid():
-        email = serializer.validated_data['email']
+        email = serializer.validated_data["email"]
         try:
             user = User.objects.get(email=email)
             # In a production environment, you would generate a token,
@@ -95,7 +99,7 @@ def request_password_reset(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def logout_view(request):
     """

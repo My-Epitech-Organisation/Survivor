@@ -9,8 +9,8 @@ from django.apps import AppConfig
 
 
 class InitConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'init'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "init"
 
     def ready(self):
         """
@@ -22,6 +22,7 @@ class InitConfig(AppConfig):
         import init.signals
 
         # Only start scheduler in the main process (RUN_MAIN is set by Django in the child process)
-        if os.environ.get('RUN_MAIN') != 'true':
+        if os.environ.get("RUN_MAIN") != "true":
             from init.scheduler import start_scheduler
+
             start_scheduler()

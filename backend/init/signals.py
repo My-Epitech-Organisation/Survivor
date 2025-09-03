@@ -17,14 +17,15 @@ from .utils import *
 
 # Flag to track if handlers have already run
 _handlers_executed = {
-    'create_superuser': False,
-    'clear_and_fetch_news': False,
-    'clear_and_fetch_events': False,
-    'clear_and_fetch_startups': False,
-    'clear_and_fetch_users': False,
-    'clear_and_fetch_investors': False,
-    'clear_and_fetch_partners': False
+    "create_superuser": False,
+    "clear_and_fetch_news": False,
+    "clear_and_fetch_events": False,
+    "clear_and_fetch_startups": False,
+    "clear_and_fetch_users": False,
+    "clear_and_fetch_investors": False,
+    "clear_and_fetch_partners": False,
 }
+
 
 @receiver(post_migrate)
 def create_superuser(sender, **kwargs):
@@ -33,18 +34,20 @@ def create_superuser(sender, **kwargs):
     Only runs once during server startup
     """
 
-    if _handlers_executed['create_superuser']:
+    if _handlers_executed["create_superuser"]:
         return
-    _handlers_executed['create_superuser'] = True
+    _handlers_executed["create_superuser"] = True
 
     User = get_user_model()
 
-    name = os.environ.get('DJANGO_ADMIN_USERNAME')
-    email = os.environ.get('DJANGO_ADMIN_EMAIL')
-    password = os.environ.get('DJANGO_ADMIN_PASSWORD')
+    name = os.environ.get("DJANGO_ADMIN_USERNAME")
+    email = os.environ.get("DJANGO_ADMIN_EMAIL")
+    password = os.environ.get("DJANGO_ADMIN_PASSWORD")
 
     if not name or not email or not password:
-        raise ImproperlyConfigured("DJANGO_ADMIN_USERNAME, DJANGO_ADMIN_EMAIL, and DJANGO_ADMIN_PASSWORD environment variables are required")
+        raise ImproperlyConfigured(
+            "DJANGO_ADMIN_USERNAME, DJANGO_ADMIN_EMAIL, and DJANGO_ADMIN_PASSWORD environment variables are required"
+        )
 
     if not User.objects.filter(email=email).exists():
         print(f"Creating default admin user '{email}'")
@@ -55,6 +58,7 @@ def create_superuser(sender, **kwargs):
         )
         print("Default admin user created successfully")
 
+
 @receiver(post_migrate)
 def clear_and_fetch_news(sender, **kwargs):
     """
@@ -62,15 +66,15 @@ def clear_and_fetch_news(sender, **kwargs):
     Only runs once during server startup
     """
 
-    if _handlers_executed['clear_and_fetch_news']:
+    if _handlers_executed["clear_and_fetch_news"]:
         return
-    if sender.name != 'admin_panel':
+    if sender.name != "admin_panel":
         return
-    _handlers_executed['clear_and_fetch_news'] = True
+    _handlers_executed["clear_and_fetch_news"] = True
 
     try:
-        News = apps.get_model('admin_panel', 'News')
-        NewsDetail = apps.get_model('admin_panel', 'NewsDetail')
+        News = apps.get_model("admin_panel", "News")
+        NewsDetail = apps.get_model("admin_panel", "NewsDetail")
 
         News.objects.all().delete()
         NewsDetail.objects.all().delete()
@@ -80,6 +84,7 @@ def clear_and_fetch_news(sender, **kwargs):
     except Exception as e:
         print(f"Error during news data management: {e}")
 
+
 @receiver(post_migrate)
 def clear_and_fetch_events(sender, **kwargs):
     """
@@ -87,14 +92,14 @@ def clear_and_fetch_events(sender, **kwargs):
     Only runs once during server startup
     """
 
-    if _handlers_executed['clear_and_fetch_events']:
+    if _handlers_executed["clear_and_fetch_events"]:
         return
-    if sender.name != 'admin_panel':
+    if sender.name != "admin_panel":
         return
-    _handlers_executed['clear_and_fetch_events'] = True
+    _handlers_executed["clear_and_fetch_events"] = True
 
     try:
-        Event = apps.get_model('admin_panel', 'Event')
+        Event = apps.get_model("admin_panel", "Event")
 
         Event.objects.all().delete()
 
@@ -103,6 +108,7 @@ def clear_and_fetch_events(sender, **kwargs):
     except Exception as e:
         print(f"Error during event data management: {e}")
 
+
 @receiver(post_migrate)
 def clear_and_fetch_startups(sender, **kwargs):
     """
@@ -110,15 +116,15 @@ def clear_and_fetch_startups(sender, **kwargs):
     Only runs once during server startup
     """
 
-    if _handlers_executed['clear_and_fetch_startups']:
+    if _handlers_executed["clear_and_fetch_startups"]:
         return
-    if sender.name != 'admin_panel':
+    if sender.name != "admin_panel":
         return
-    _handlers_executed['clear_and_fetch_startups'] = True
+    _handlers_executed["clear_and_fetch_startups"] = True
 
     try:
-        StartupList = apps.get_model('admin_panel', 'StartupList')
-        StartupDetail = apps.get_model('admin_panel', 'StartupDetail')
+        StartupList = apps.get_model("admin_panel", "StartupList")
+        StartupDetail = apps.get_model("admin_panel", "StartupDetail")
 
         StartupList.objects.all().delete()
         StartupDetail.objects.all().delete()
@@ -128,6 +134,7 @@ def clear_and_fetch_startups(sender, **kwargs):
     except Exception as e:
         print(f"Error during startup data management: {e}")
 
+
 @receiver(post_migrate)
 def clear_and_fetch_users(sender, **kwargs):
     """
@@ -135,14 +142,14 @@ def clear_and_fetch_users(sender, **kwargs):
     Only runs once during server startup
     """
 
-    if _handlers_executed['clear_and_fetch_users']:
+    if _handlers_executed["clear_and_fetch_users"]:
         return
-    if sender.name != 'admin_panel':
+    if sender.name != "admin_panel":
         return
-    _handlers_executed['clear_and_fetch_users'] = True
+    _handlers_executed["clear_and_fetch_users"] = True
 
     try:
-        User = apps.get_model('admin_panel', 'User')
+        User = apps.get_model("admin_panel", "User")
 
         User.objects.all().delete()
 
@@ -151,6 +158,7 @@ def clear_and_fetch_users(sender, **kwargs):
     except Exception as e:
         print(f"Error during user data management: {e}")
 
+
 @receiver(post_migrate)
 def clear_and_fetch_investors(sender, **kwargs):
     """
@@ -158,14 +166,14 @@ def clear_and_fetch_investors(sender, **kwargs):
     Only runs once during server startup
     """
 
-    if _handlers_executed['clear_and_fetch_investors']:
+    if _handlers_executed["clear_and_fetch_investors"]:
         return
-    if sender.name != 'admin_panel':
+    if sender.name != "admin_panel":
         return
-    _handlers_executed['clear_and_fetch_investors'] = True
+    _handlers_executed["clear_and_fetch_investors"] = True
 
     try:
-        Investor = apps.get_model('admin_panel', 'Investor')
+        Investor = apps.get_model("admin_panel", "Investor")
 
         Investor.objects.all().delete()
 
@@ -174,6 +182,7 @@ def clear_and_fetch_investors(sender, **kwargs):
     except Exception as e:
         print(f"Error during investor data management: {e}")
 
+
 @receiver(post_migrate)
 def clear_and_fetch_partners(sender, **kwargs):
     """
@@ -181,14 +190,14 @@ def clear_and_fetch_partners(sender, **kwargs):
     Only runs once during server startup
     """
 
-    if _handlers_executed['clear_and_fetch_partners']:
+    if _handlers_executed["clear_and_fetch_partners"]:
         return
-    if sender.name != 'admin_panel':
+    if sender.name != "admin_panel":
         return
-    _handlers_executed['clear_and_fetch_partners'] = True
+    _handlers_executed["clear_and_fetch_partners"] = True
 
     try:
-        Partner = apps.get_model('admin_panel', 'Partner')
+        Partner = apps.get_model("admin_panel", "Partner")
 
         Partner.objects.all().delete()
 

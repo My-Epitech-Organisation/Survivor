@@ -9,19 +9,17 @@ from .models import Event, News, NewsDetail, StartupDetail, User
 from .serializers import EventSerializer, NewsDetailSerializer, StartupDetailSerializer, UserSerializer
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAdminUser])
 def admin_panel_home(request):
     """
     Main view of the admin panel.
     This view will only be accessible to admin users.
     """
-    return JsonResponse({
-        'message': 'Welcome to the admin panel',
-        'status': 'success'
-    })
+    return JsonResponse({"message": "Welcome to the admin panel", "status": "success"})
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def fetch_news_temp(request):
     """
@@ -29,7 +27,4 @@ def fetch_news_temp(request):
     This view will fetch and create news data in the database.
     """
     fetch_and_create_news()
-    return JsonResponse({
-        'message': 'News data fetch initiated',
-        'status': 'success'
-    })
+    return JsonResponse({"message": "News data fetch initiated", "status": "success"})

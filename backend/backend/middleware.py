@@ -5,6 +5,7 @@ class CSPMiddleware(MiddlewareMixin):
     """
     Middleware to add Content-Security-Policy headers
     """
+
     def process_response(self, request, response):
         csp_policies = [
             "default-src 'self'",
@@ -18,11 +19,11 @@ class CSPMiddleware(MiddlewareMixin):
             "base-uri 'self'",
         ]
 
-        response['Content-Security-Policy'] = "; ".join(csp_policies)
-        response['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
-        response['X-Content-Type-Options'] = 'nosniff'
-        response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-        response['X-Frame-Options'] = 'DENY'
-        response['X-XSS-Protection'] = '1; mode=block'
+        response["Content-Security-Policy"] = "; ".join(csp_policies)
+        response["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+        response["X-Content-Type-Options"] = "nosniff"
+        response["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response["X-Frame-Options"] = "DENY"
+        response["X-XSS-Protection"] = "1; mode=block"
 
         return response

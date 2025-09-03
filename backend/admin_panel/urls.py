@@ -9,9 +9,9 @@ from django.urls import path
 
 from . import views
 
-app_name = 'admin_panel'
+app_name = "admin_panel"
 
 urlpatterns = [
-    path('', views.admin_panel_home, name='admin_panel_home'),
-    path('fetch-news-temp/', views.fetch_news_temp, name='fetch_news_temp'),
+    path("", views.admin_panel_home, name="admin_panel_home"),
+    path("fetch-news-temp/", views.fetch_news_temp, name="fetch_news_temp"),
 ]

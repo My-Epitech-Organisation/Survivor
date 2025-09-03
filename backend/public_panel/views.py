@@ -15,7 +15,7 @@ from .serializers import (
 )
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def projects_list(request):
     """
@@ -25,7 +25,8 @@ def projects_list(request):
     serializer = ProjectSerializer(startups, many=True)
     return JsonResponse(serializer.data, safe=False)
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def project_detail(request, project_id):
     """
@@ -36,12 +37,10 @@ def project_detail(request, project_id):
         serializer = ProjectDetailSerializer(startup)
         return JsonResponse(serializer.data)
     except StartupDetail.DoesNotExist:
-        return JsonResponse(
-            {"error": f"Project with id {project_id} not found"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        return JsonResponse({"error": f"Project with id {project_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def user_detail(request, user_id):
     """
@@ -52,12 +51,10 @@ def user_detail(request, user_id):
         serializer = UserSerializer(user)
         return JsonResponse(serializer.data)
     except User.DoesNotExist:
-        return JsonResponse(
-            {"error": f"User with id {user_id} not found"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        return JsonResponse({"error": f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def project_views(request, user_id):
     """
@@ -77,7 +74,8 @@ def project_views(request, user_id):
     serializer = ProjectViewsSerializer(data, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def project_engagement(request, user_id):
     """

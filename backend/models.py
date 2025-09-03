@@ -1,7 +1,7 @@
 from django.db import models
 
 
-#Message
+# Message
 class Message(models.Model):
     """
     Represents a message.

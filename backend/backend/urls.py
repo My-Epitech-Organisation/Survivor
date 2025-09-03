@@ -15,6 +15,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -26,11 +27,11 @@ from .health_check import health_check
 router = routers.DefaultRouter()
 
 urlpatterns = [
-    path('admin/', admin.site.urls),  # Django admin
-    path('healthz/', health_check, name='health_check'),  # Health check endpoint
-    path('api/', include('exposed_api.urls')),  # Exposed API endpoints
-    path('api/admin/', include('admin_panel.urls')),  # Custom admin
-    path('api/auth/', include('authentication.urls')),  # Authentication endpoints
+    path("admin/", admin.site.urls),  # Django admin
+    path("healthz/", health_check, name="health_check"),  # Health check endpoint
+    path("api/", include("exposed_api.urls")),  # Exposed API endpoints
+    path("api/admin/", include("admin_panel.urls")),  # Custom admin
+    path("api/auth/", include("authentication.urls")),  # Authentication endpoints
 ]
 
 if settings.DEBUG:
