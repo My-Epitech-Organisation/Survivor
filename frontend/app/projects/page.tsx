@@ -11,7 +11,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {Download, FileText, FileSpreadsheet} from "lucide-react";
 
-let projects: ProjectOverviewProps[] = [
+const projects: ProjectOverviewProps[] = [
   {
     ProjectId: 1,
     ProjectName: "EcoLoop",
@@ -96,8 +96,6 @@ export default function Projects() {
   //   fetchProjects();
   // }, []);
 
-  let projectFilter: ProjectFiltersProps;
-
   const [locations, setLocations] = useState<string[]>([]);
   const [maturities, setMaturities] = useState<string[]>([]);
   const [sectors, setSectors] = useState<string[]>([]);
@@ -140,7 +138,7 @@ export default function Projects() {
 
   const filteredProjects = getFilteredProjects();
 
-  projectFilter = {
+  const projectFilter: ProjectFiltersProps = {
     ProjectLocation: locations,
     ProjectMaturity: maturities,
     ProjectSector: sectors,
