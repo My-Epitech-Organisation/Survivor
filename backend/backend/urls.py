@@ -26,7 +26,6 @@ router = routers.DefaultRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),  # Django admin
     path('healthz/', health_check, name='health_check'),  # Health check endpoint
-    path('api/', include(router.urls)),
     path('api/', include('exposed_api.urls')),  # Exposed API endpoints
     path('api/admin/', include('admin_panel.urls')),  # Custom admin
 ]
