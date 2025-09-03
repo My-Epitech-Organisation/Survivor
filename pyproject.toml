@@ -1,0 +1,192 @@
+[tool.ruff]
+# Line length matching Django's recommendation
+line-length = 119
+
+# Modern Python version
+target-version = "py310"
+
+# Exclude directories not relevant for linting
+exclude = [
+    ".git",
+    ".env",
+    ".venv",
+    "venv",
+    "env",
+    "migrations",
+    "__pycache__",
+    "build",
+    "dist",
+    "node_modules",
+    ".github",
+    ".pytest_cache",
+    ".coverage",
+    "media",
+    "staticfiles",
+]
+
+[tool.ruff.lint]
+# Enable a comprehensive set of rules for modern Django projects
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "W",    # pycodestyle warnings
+    "C90",  # mccabe complexity
+    "N",    # pep8-naming
+    "D",    # pydocstyle
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "A",    # flake8-builtins
+    "COM",  # flake8-commas
+    "C4",   # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "EM",   # flake8-errmsg
+    "ISC",  # flake8-implicit-str-concat
+    "ICN",  # flake8-import-conventions
+    "G",    # flake8-logging-format
+    "PIE",  # flake8-pie
+    "PT",   # flake8-pytest-style
+    "RET",  # flake8-return
+    "SIM",  # flake8-simplify
+    "ARG",  # flake8-unused-arguments
+    "PL",   # pylint
+    "RUF",  # ruff-specific rules
+    "DJ",   # flake8-django
+]
+
+# Django-specific ignores and ignores based on current errors
+ignore = [
+    # Django specific
+    "DJ001",    # Ignore null=True validation warning for Django models
+    "DJ008",    # Django model without __str__ method
+    "DJ012",    # Django model should define __str__ method
+
+    # Docstring related
+    "D100",     # Missing docstring in public module
+    "D101",     # Missing docstring in public class
+    "D102",     # Missing docstring in public method
+    "D103",     # Missing docstring in public function
+    "D106",     # Missing docstring in public nested class
+    "D200",     # One-line docstring should fit on one line
+    "D202",     # No blank lines allowed after function docstring
+    "D203",     # Conflicts with D211
+    "D205",     # 1 blank line required between summary and description
+    "D212",     # Conflicts with D213
+    "D415",     # First line should end with punctuation
+
+    # Code style
+    "E501",     # Line too long (handled by formatter)
+    "COM812",   # Missing trailing comma
+    "F401",     # Unused import
+    "G004",     # Logging with f-string
+    "ARG001",   # Unused function argument
+    "T201",     # Print found
+    "EM101",    # Raw string in exception
+    "PLC0415",  # Import outside top-level
+    "N815",     # Mixed case variable in class scope
+    "F405",     # Undefined local with import star usage
+    "N802",     # Invalid function name
+    "PLR2004",  # Magic value comparison
+    "B904",     # Raise without from inside except
+    "F403",     # Undefined local with import star
+    "F541",     # F-string missing placeholders
+    "F841",     # Unused variable
+    "N806",     # Non-lowercase variable in function
+    "PLW0603",  # Global statement
+    "RUF012",   # Mutable class attributes should be annotated with typing.ClassVar
+    "RET504",   # Return type missing
+
+    "ARG002",   # Unused function argument
+]
+
+# Allow autofix for all enabled rules (when '--fix') is provided
+fixable = ["ALL"]
+unfixable = []
+
+# Assume Django
+external = ["django"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"  # Google style docstrings
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+known-first-party = ["backend", "admin_panel", "exposed_api", "public_panel", "init"]
+known-third-party = ["rest_framework"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+
+# Remove django from multiple sections
+# [tool.ruff.lint.isort.sections]
+# django = ["django", "rest_framework"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "D104"]  # Ignore unused imports in __init__.py
+"tests/*" = ["D100", "D101", "D102", "D103"]  # Ignore docstring requirements in tests
+"backend/settings.py" = ["E501"]  # Ignore line length in settings
+
+[tool.black]
+line-length = 119
+target-version = ['py310']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+  | node_modules
+  | media
+  | staticfiles
+)/
+'''
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+
+# Django-specific settings
+plugins = ["mypy_django_plugin.main"]
+
+[[tool.mypy.overrides]]
+module = "*.migrations.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "django.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "rest_framework.*"
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "backend.settings"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "backend.settings"
+python_files = ["test_*.py", "*_test.py", "tests.py"]
+testpaths = ["backend"]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::django.utils.deprecation.RemovedInDjango60Warning",
+    "ignore:pkg_resources is deprecated as an API:UserWarning",
+]

@@ -1,25 +1,24 @@
-from django.http import JsonResponse, HttpResponse
+from django.conf import settings
+from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
+
 from init.utils import fetch_and_create_news
 from .models import News, NewsDetail, Event, StartupDetail
 from authentication.models import CustomUser
 from .serializers import NewsDetailSerializer, EventSerializer, StartupDetailSerializer
-from django.conf import settings
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAdminUser])
 def admin_panel_home(request):
     """
     Main view of the admin panel.
     This view will only be accessible to admin users.
     """
-    return JsonResponse({
-        'message': 'Welcome to the admin panel',
-        'status': 'success'
-    })
+    return JsonResponse({"message": "Welcome to the admin panel", "status": "success"})
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def fetch_news_temp(request):
     """
@@ -27,7 +26,4 @@ def fetch_news_temp(request):
     This view will fetch and create news data in the database.
     """
     fetch_and_create_news()
-    return JsonResponse({
-        'message': 'News data fetch initiated',
-        'status': 'success'
-    })
+    return JsonResponse({"message": "News data fetch initiated", "status": "success"})
