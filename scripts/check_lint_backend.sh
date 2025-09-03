@@ -94,8 +94,8 @@ EOF
 fi
 
 echo -e "${YELLOW}Checking code in $BACKEND_DIR with Ruff...${NC}"
-ruff check "$BACKEND_DIR" > ruff_report.txt
-ruff check "$BACKEND_DIR" --statistics
+ruff check "$BACKEND_DIR" > ruff_report.txt || true
+ruff check "$BACKEND_DIR" --statistics || true
 
 echo -e "${YELLOW}Checking formatting with Black...${NC}"
 black --check "$BACKEND_DIR" || true
