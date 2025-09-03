@@ -25,45 +25,23 @@ import { getAPIUrl } from "@/lib/socket-config"
 import axios from "axios"
 
 export default function ProjectOverview(props : ProjectOverviewProps) {
-    // const [projectDetails, setprojectDetails] = useState<ProjectDetailsProps>([]);
+    const [projectDetails, setprojectDetails] = useState<ProjectDetailsProps>();
 
-    // useEffect(() => {
-    // const fetchProject = async () => {
-    //     try {
-    //         const APIUrl = getAPIUrl();
-    //         console.log(APIUrl);
-    //         console.log("Fetching from:", `${APIUrl}/projects/${props.ProjectId}`);
-    //         const response = await axios.get<ProjectDetailsProps>(`${APIUrl}/projects/${props.ProjectId}`);
-    //         setprojectDetails(response.data);
-    //         console.log("Projet loaded:", projectDetails);
-    //     } catch (error) {
-    //         console.error('Erreur API:', error);
-    //     }
-    // };
-    // fetchProject();
-    // }, []);
-
-
-    const projectDetails: ProjectDetailsProps = {
-        ProjectId: props.ProjectId,
-        ProjectName: props.ProjectName,
-        ProjectDescription: props.ProjectDescription,
-        ProjectSector: props.ProjectSector,
-        ProjectMaturity: props.ProjectMaturity,
-        ProjectAddress: props.ProjectLocation,
-        ProjectLegalStatus: "SAS",
-        ProjectCreatedAt: "2024-01-15",
-        ProjectFounders: [
-            { FounderID: 1, FounderName: "John Doe", FounderStartupID: 1, FounderPictureURL: "https://i.postimg.cc/zGVvvb7z/d4809f40-e0e5-4759-a3a4-0a50725d2afe.png" },
-            { FounderID: 2, FounderName: "Jane Smith", FounderStartupID: 1, FounderPictureURL: "https://i.postimg.cc/25NYYVXX/7269655e-a9aa-4edc-9e30-654b1d9406dd.png" }
-        ],
-        ProjectEmail: "contact@example.com",
-        ProjectPhone: "+33 1 23 45 67 89",
-        ProjectNeeds: props.ProjectNeeds,
-        ProjectStatus: props.ProjectStatus,
-        ProjectSocial: "@example_startup",
-        ProjectWebsite: "https://example.com",
+    useEffect(() => {
+    const fetchProject = async () => {
+        try {
+            const APIUrl = getAPIUrl();
+            console.log(APIUrl);
+            console.log("Fetching from:", `${APIUrl}/projects/${props.ProjectId}`);
+            const response = await axios.get<ProjectDetailsProps>(`${APIUrl}/projects/${props.ProjectId}`);
+            setprojectDetails(response.data);
+            console.log("Projet loaded:", projectDetails);
+        } catch (error) {
+            console.error('Erreur API:', error);
+        }
     };
+    fetchProject();
+    }, []);
 
     return (
         <Card className="w-full hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white overflow-hidden flex flex-col h-full">
@@ -199,7 +177,7 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
                                 </div>
                             </DialogHeader>
                             <div className="px-6 sm:px-8 py-6 sm:py-8 bg-gray-50/30">
-                                <ProjectDetails {...projectDetails} />
+                                {projectDetails && <ProjectDetails {...projectDetails} />}
                             </div>
                         </DialogContent>
                     </Dialog>
