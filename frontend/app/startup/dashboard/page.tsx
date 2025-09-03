@@ -1,9 +1,13 @@
+'use client';
+
 import StartupNavigation from '@/components/StartupNavigation';
 import { ChartBarLabel } from '@/components/ChartBarLabel';
 import { ChartRadialText } from '@/components/ChartRadialText';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getAPIUrl } from '@/lib/socket-config';
+import { useAuth } from '@/contexts/AuthContext';
+import { useEffect, useState } from 'react';
 
 
 function getProjectEngagementDescription(data: number) {
@@ -20,26 +24,83 @@ function getProjectEngagementDescription(data: number) {
     }
 }
 
+interface UserProfile {
+    name: string;
+    pictureURL: string;
+    nbStartups: number;
+    email: string;
+    investorId: number;
+    founderId: number;
+    id: number;
+}
+
+interface ProjectViewsOverTime {
+    month: string;
+    views: number;
+}
+
+interface ProjectEngagement {
+    rate: number;
+}
+
+interface ProjectEngagementData {
+    browser: string;
+    rate: number;
+    fill: string;
+}
+
 export default function StartupDashboard() {
-    /* Mockup data */
-    const userProfile = {
-        name: "John Doe",
-        image: "/placeholder-avatar.jpg",
-        nbStartups: 5
-    };
+    const { user } = useAuth();
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [projectViewsOverTime, setProjectViewsOverTime] = useState<ProjectViewsOverTime[]>([]);
+    const [projectEngagement, setProjectEngagement] = useState<ProjectEngagement | null>(null);
 
-    const projectViewsOverTime = [
-        { month: "January", views: 186 },
-        { month: "February", views: 305 },
-        { month: "March", views: 237 },
-        { month: "April", views: 173 },
-        { month: "May", views: 209 },
-        { month: "June", views: 314 },
-    ];
+    useEffect(() => {
+        const apiUrl = getAPIUrl();
 
-    const projectEngagementData = [
-        { browser: "engagement", rate: 75, fill: "#2563eb" }
-    ];
+        const fetchUserData = async () => {
+            const userProfileResponse = await fetch(`${apiUrl}/user/${user?.id}`);
+            if (!userProfileResponse.ok) {
+                throw new Error("Failed to fetch user profile");
+            }
+            const userProfile: UserProfile = await userProfileResponse.json();
+            setUserProfile(userProfile);
+        }
+        fetchUserData().catch(error => {
+            console.error("Error fetching user data:", error);
+        });
+
+        const fetchProjectViewsOverTime = async () => {
+            const projectViewsOverTimeResponse = await fetch(`${apiUrl}/projectViews/${user?.id}`);
+            if (!projectViewsOverTimeResponse.ok) {
+                throw new Error("Failed to fetch project views");
+            }
+            const projectViewsOverTime: ProjectViewsOverTime[] = await projectViewsOverTimeResponse.json();
+            setProjectViewsOverTime(projectViewsOverTime);
+        }
+        fetchProjectViewsOverTime().catch(error => {
+            console.error("Error fetching project views over time:", error);
+        });
+
+        const fetchProjectEngagement = async () => {
+            const projectEngagementResponse = await fetch(`${apiUrl}/projectEngagement/${user?.id}`);
+            if (!projectEngagementResponse.ok) {
+                throw new Error("Failed to fetch project engagement data");
+            }
+            const projectEngagement: ProjectEngagement = await projectEngagementResponse.json();
+            setProjectEngagement(projectEngagement);
+        }
+        fetchProjectEngagement().catch(error => {
+            console.error("Error fetching project engagement data:", error);
+        });
+
+    }, [user?.id]);
+
+    const projectEngagementData: ProjectEngagementData[] = [{
+        browser: "engagement",
+        rate: projectEngagement?.rate || 0,
+        fill: "#2563eb"
+    }];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
@@ -61,14 +122,16 @@ export default function StartupDashboard() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-4">
                             <Avatar className="h-16 w-16">
-                                <AvatarImage src={userProfile.image} alt={userProfile.name} />
-                                <AvatarFallback>{userProfile.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                                <AvatarImage src={userProfile?.pictureURL} alt={userProfile?.name || ""} />
+                                <AvatarFallback>{userProfile?.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                             </Avatar>
                             <div>
-                                <h2 className="text-2xl font-bold">{userProfile.name}</h2>
-                                <p className="text-app-text-secondary">
-                                    {userProfile.nbStartups} {userProfile.nbStartups === 1 ? 'Startup' : 'Startups'}
-                                </p>
+                                <h2 className="text-2xl font-bold">{userProfile?.name || ""}</h2>
+                                {userProfile?.nbStartups && (
+                                    <p className="text-app-text-secondary">
+                                        {userProfile?.nbStartups} {userProfile?.nbStartups === 1 ? 'Startup' : 'Startups'}
+                                    </p>
+                                )}
                             </div>
                         </CardTitle>
                     </CardHeader>
