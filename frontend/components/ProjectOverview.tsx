@@ -21,20 +21,17 @@ import {
 import { MapPin, Building, TrendingUp, Target, CheckCircle, Info, Download } from "lucide-react"
 import ProjectDetails from "./ProjectDetails"
 import { useState, useEffect } from "react"
-import { getAPIUrl } from "@/lib/config"
-import axios from "axios"
+import { api } from "@/lib/api"
 
 export default function ProjectOverview(props : ProjectOverviewProps) {
     const [projectDetails, setprojectDetails] = useState<ProjectDetailsProps>();
 
     const fetchProject = async () => {
         try {
-            const APIUrl = getAPIUrl();
-            console.log(APIUrl);
-            console.log("Fetching from:", `${APIUrl}/projects/${props.ProjectId}`);
-            const response = await axios.get<ProjectDetailsProps>(`${APIUrl}/projects/${props.ProjectId}`);
+            console.log("Fetching project details for ID:", props.ProjectId);
+            const response = await api.get<ProjectDetailsProps>(`/projects/${props.ProjectId}`);
             setprojectDetails(response.data);
-            console.log("Reponse from api:", response);
+            console.log("Response from api:", response);
         } catch (error) {
             console.error('Erreur API:', error);
         }

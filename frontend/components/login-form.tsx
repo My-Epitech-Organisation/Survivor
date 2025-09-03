@@ -33,31 +33,8 @@ export function LoginForm({
     setError("")
 
     try {
-      // DEBUG MODE: Skip API call and automatically log in
-      // console.log('DEBUG: Bypassing authentication with provided credentials:', { email, password })
-
-      // // Create mock user data for debugging
-      // const userData = {
-      //   id: '1',
-      //   email: email || 'debug@example.com',
-      //   name: 'Debug User'
-      // }
-
-      // // Use a mock token for debugging
-      // const mockToken = 'debug-token-12345'
-
-      // console.log('DEBUG: Auto-login successful with mock data:', userData)
-      // login(mockToken, userData)
-
-      // setEmail("")
-      // setPassword("")
-
-      // router.push('/startup/dashboard')
-
-
-      // PROD MODE: Use API to log in
       const apiUrl = getAPIUrl();
-      const response = await fetch(`${apiUrl}/auth/login`, {
+      const response = await fetch(`${apiUrl}/auth/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,23 +51,23 @@ export function LoginForm({
       }
 
       const data = await response.json()
-      console.log('Login successful:', data)
 
       const userData = {
         id: data.user?.id || '1',
         email: data.user?.email || email,
-        name: data.user?.name || 'Startup Owner'
+        name: data.user?.name || 'Startup Owner',
+        role: data.user?.role || 'user',
       }
 
-      if (!data.token) {
+      if (!data.access) {
         throw new Error('No token received from server. Login failed.');
       }
-      login(data.token, userData)
+      login(data.access, userData)
 
       setEmail("")
       setPassword("")
 
-      router.push('/startup/dashboard')
+      router.push('/')
 
     } catch (err) {
       console.error('Login error:', err)
@@ -135,7 +112,7 @@ export function LoginForm({
                     <Label htmlFor="password">Password</Label>
                     <a
                       href="#"
-                      className="ml-auto text-sm underline-offset-2 hover:underline hover:text-blue-500"
+                      className="ml-auto text-sm underline-offset-2 hover:underline hover:text-app-blue-primary-hover"
                     >
                       Forgot your password?
                     </a>
@@ -150,12 +127,12 @@ export function LoginForm({
                     disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-blue-400 hover:bg-blue-500" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </div>
               <div className="text-center text-sm">
-                <a href="/signup" className="hover:underline underline-offset-2 hover:text-blue-500">
+                <a href="/signup" className="hover:underline underline-offset-2 hover:text-app-blue-primary-hover">
                   Don&apos;t have an account?{" "}
                 </a>
               </div>

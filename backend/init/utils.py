@@ -289,7 +289,9 @@ def fetch_and_create_users():
         response.raise_for_status()
         users_data = response.json()
 
-        User = apps.get_model("admin_panel", "User")
+        User = apps.get_model("authentication", "CustomUser")
+
+        from django.utils import timezone
 
         for item in users_data:
             user = User(
@@ -299,6 +301,7 @@ def fetch_and_create_users():
                 role=item.get("role"),
                 founder_id=item.get("founder_id"),
                 investor_id=item.get("investor_id"),
+                date_joined=timezone.now(),
             )
 
             try:
@@ -306,13 +309,10 @@ def fetch_and_create_users():
                 image_url = settings.JEB_API_USER_IMAGE_URL.format(user_id=user_id)
                 image_response = requests.get(image_url, headers=headers)
                 if image_response.status_code == 200:
-
                     image_path = f"media/users/{user_id}.jpg"
                     os.makedirs(os.path.dirname(image_path), exist_ok=True)
-
                     with open(image_path, "wb") as f:
                         f.write(image_response.content)
-
                     user.image = f"users/{user_id}.jpg"
             except Exception as e:
                 logging.error(f"Error fetching image for user {item.get('id')}: {e}")
