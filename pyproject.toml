@@ -188,4 +188,5 @@ testpaths = ["backend"]
 filterwarnings = [
     "ignore::DeprecationWarning",
     "ignore::django.utils.deprecation.RemovedInDjango60Warning",
+    "ignore:pkg_resources is deprecated as an API:UserWarning",
 ]
