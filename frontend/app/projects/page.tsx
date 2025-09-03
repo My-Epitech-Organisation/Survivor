@@ -1,94 +1,174 @@
+"use client"
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import ProjectCard from '@/components/ProjectCard';
-import { ProjectProps } from '@/types/project';
+import ProjectOverview from '@/components/ProjectOverview';
+import ProjectFilters from '@/components/ProjectFilters';
+import { ProjectFiltersProps, ProjectOverviewProps } from '@/types/project';
+import { useEffect, useState, useCallback } from 'react';
+import { getAPIUrl } from "@/lib/socket-config";
+import axios from 'axios';
 
-const projects: ProjectProps[] = [
-  {
-    ProjectId: 0,
-    ProjectName: "JEBINCUBATORRR1",
-    ProjectDescription: "This is jebincubartor1",
-    ProjectFounders: ["Noa", "Alban"],
-    ProjectContacts: ["Noa"],
-    ProjectLink: "https://api.jeb-incubator.com/docs#/",
-    ProjectNeeds: ["Informatique", "testing"],
-    ProjectProgess: ["Socket.io", "NextJS"]
-  },
+let projects: ProjectOverviewProps[] = [
   {
     ProjectId: 1,
-    ProjectName: "JEBINCUBATORRR2",
-    ProjectDescription: "This is jebincubartor2",
-    ProjectFounders: ["Eliott"],
-    ProjectContacts: ["Eliott"],
-    ProjectLink: "https://api.jeb-incubator.com/docs#/",
-    ProjectNeeds: ["Informatique", "testing"],
-    ProjectProgess: ["Socket.io", "NextJS"]
+    ProjectName: "EcoLoop",
+    ProjectDescription: "Marketplace for sustainable home goods.",
+    ProjectLocation: "Ireland",
+    ProjectMaturity: "Idea",
+    ProjectStatus: "Growth",
+    ProjectNeeds: "Talent Acquisition",
+    ProjectSector: "DeepTech"
+  },
+    {
+    ProjectId: 2,
+    ProjectName: "HealthBridge",
+    ProjectDescription: "Virtual learning environment with AI tutors.",
+    ProjectLocation: "Netherlands",
+    ProjectMaturity: "Early Stage",
+    ProjectStatus: "Growth",
+    ProjectNeeds: "Strategic Partnerships",
+    ProjectSector: "DeepTech"
   },
   {
     ProjectId: 3,
-    ProjectName: "JEBINCUBATORRR3",
-    ProjectDescription: "This is jebincubartor3",
-    ProjectFounders: ["PA"],
-    ProjectContacts: ["PA"],
-    ProjectLink: "https://api.jeb-incubator.com/docs#/",
-    ProjectNeeds: ["Informatique", "testing"],
-    ProjectProgess: ["Socket.io", "NextJS"]
+    ProjectName: "UrbanNest",
+    ProjectDescription: "MAutomated greenhouse system for urban farming.",
+    ProjectLocation: "Finland",
+    ProjectMaturity: "Prototype",
+    ProjectStatus: "Seed",
+    ProjectNeeds: "Strategic Partnerships",
+    ProjectSector: "FinTech"
   },
   {
     ProjectId: 4,
-    ProjectName: "JEBINCUBATORRR4",
-    ProjectDescription: "This is jebincubartor4",
-    ProjectFounders: ["Alban"],
-    ProjectContacts: ["Alban", "Eliott"],
-    ProjectLink: "https://api.jeb-incubator.com/docs#/",
-    ProjectNeeds: ["Informatique", "testing"],
-    ProjectProgess: ["Socket.io", "NextJS"]
+    ProjectName: "BrightPath",
+    ProjectDescription: "Gamified e-learning platform for remote students.",
+    ProjectLocation: "Finland",
+    ProjectMaturity: "Idea",
+    ProjectStatus: "Early Stage",
+    ProjectNeeds: "Mentorship",
+    ProjectSector: "SaaS"
   },
   {
-    ProjectId: 4,
-    ProjectName: "JEBINCUBATORRR4",
-    ProjectDescription: "This is jebincubartor4",
-    ProjectFounders: ["Alban"],
-    ProjectContacts: ["Alban"],
-    ProjectLink: "https://api.jeb-incubator.com/docs#/",
-    ProjectNeeds: ["Informatique", "testing"],
-    ProjectProgess: ["Socket.io", "NextJS"]
+    ProjectId: 5,
+    ProjectName: "AgroNova",
+    ProjectDescription: "App to connect caregivers with families in need.",
+    ProjectLocation: "Spain",
+    ProjectMaturity: "MVP",
+    ProjectStatus: "Scale-up",
+    ProjectNeeds: "Talent Acquisition",
+    ProjectSector: "Logistics"
   },
   {
-    ProjectId: 4,
-    ProjectName: "JEBINCUBATORRR4",
-    ProjectDescription: "This is jebincubartor4",
-    ProjectFounders: ["Alban"],
-    ProjectContacts: ["Alban"],
-    ProjectLink: "https://api.jeb-incubator.com/docs#/",
-    ProjectNeeds: ["Informatique", "testing"],
-    ProjectProgess: ["Socket.io", "NextJS"]
+    ProjectId: 6,
+    ProjectName: "SkillSpark",
+    ProjectDescription: "Electric vehicle fleet management platform.",
+    ProjectLocation: "Portugal",
+    ProjectMaturity: "MVP",
+    ProjectStatus: "Scale-up",
+    ProjectNeeds: "Talent Acquisition",
+    ProjectSector: "DeepTech"
   },
-
 ];
 
+
 export default function Projects() {
+  // const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
+  // const [showActivityBar, setShowActivityBar] = useState<Checked>(false)
+
+  // useEffect(() => {
+  //   const fetchProjects = async () => {
+  //     try {
+  //       const APIUrl = getAPIUrl();
+  //       console.log(APIUrl);
+  //       console.log("Fetching from:", `${APIUrl}/projects/`);
+  //       const response = await axios.get<ProjectOverviewProps[]>(`${APIUrl}/projects/`);
+  //       setProjects(response.data);
+  //       console.log("Projects loaded:", projects);
+  //     } catch (error) {
+  //       console.error('Erreur API:', error);
+  //     }
+  //   };
+
+  //   fetchProjects();
+  // }, []);
+
+  let projectFilter: ProjectFiltersProps;
+
+  const [locations, setLocations] = useState<string[]>([]);
+  const [maturities, setMaturities] = useState<string[]>([]);
+  const [sectors, setSectors] = useState<string[]>([]);
+
+  const [activeFilters, setActiveFilters] = useState({
+    locations: [] as string[],
+    maturities: [] as string[],
+    sectors: [] as string[]
+  });
+
+  useEffect(() => {
+    const uniqueLocations = [...new Set(projects.map(project => project.ProjectLocation))];
+    const uniqueMaturities = [...new Set(projects.map(project => project.ProjectMaturity))];
+    const uniqueSectors = [...new Set(projects.map(project => project.ProjectSector))];
+
+    setLocations(uniqueLocations);
+    setMaturities(uniqueMaturities);
+    setSectors(uniqueSectors);
+  }, []);
+
+  const handleFiltersChange = useCallback((filters: {
+    locations: string[];
+    maturities: string[];
+    sectors: string[];
+  }) => {
+    setActiveFilters(filters);
+  }, []);
+
+  const getFilteredProjects = () => {
+    return projects.filter(project => {
+      const locationMatch = activeFilters.locations.length === 0 ||
+        activeFilters.locations.includes(project.ProjectLocation);
+      const maturityMatch = activeFilters.maturities.length === 0 ||
+        activeFilters.maturities.includes(project.ProjectMaturity);
+      const sectorMatch = activeFilters.sectors.length === 0 ||
+        activeFilters.sectors.includes(project.ProjectSector);
+      return locationMatch && maturityMatch && sectorMatch;
+    });
+  };
+
+  const filteredProjects = getFilteredProjects();
+
+  projectFilter = {
+    ProjectLocation: locations,
+    ProjectMaturity: maturities,
+    ProjectSector: sectors,
+    onFiltersChange: handleFiltersChange
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navigation />
 
-      <main className="max-w-[90rem] mx-auto py-6 sm:px-6">
-        <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center md:text-start">Projects</h1>
-          <div className='grid lg:grid-cols-4 md:grid-cols-2 gap-6 p-2'>
-            {projects.map(project => (
-              <ProjectCard
-                key={project.ProjectId}
-                ProjectName={project.ProjectName}
-                ProjectDescription={project.ProjectDescription}
-                ProjectContacts={project.ProjectContacts}
-                ProjectFounders={project.ProjectFounders}
-                ProjectNeeds={project.ProjectNeeds}
-                ProjectProgess={project.ProjectProgess}
-                ProjectLink={project.ProjectLink}
-              />
+      <main className="flex-1 py-6">
+        <div className="max-w-[90rem] mx-auto px-4 sm:px-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">Projects</h1>
+
+          {/* Filters */}
+          <ProjectFilters {...projectFilter}/>
+
+          {/* Projects Grid */}
+          <div className='grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6'>
+            {filteredProjects.map(project => (
+              <ProjectOverview key={project.ProjectId} ProjectId={project.ProjectId} ProjectName={project.ProjectName} ProjectDescription={project.ProjectDescription} ProjectLocation={project.ProjectLocation} ProjectMaturity={project.ProjectMaturity} ProjectNeeds={project.ProjectNeeds} ProjectSector={project.ProjectSector} ProjectStatus={project.ProjectStatus}/>
             ))}
           </div>
+
+          {/* Message si aucun projet trouvé */}
+          {filteredProjects.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">No projects found matching your filters.</p>
+              <p className="text-gray-400 text-sm mt-2">Try adjusting your filter criteria.</p>
+            </div>
+          )}
         </div>
       </main>
       <Footer />
