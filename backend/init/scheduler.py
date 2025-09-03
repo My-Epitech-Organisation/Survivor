@@ -2,18 +2,20 @@
 Scheduler module for running periodic tasks to fetch and update data from JEB API.
 """
 
+import atexit
 import logging
 import threading
-import atexit
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
+
 from .utils import (
-    fetch_and_create_news,
     fetch_and_create_events,
+    fetch_and_create_investors,
+    fetch_and_create_news,
+    fetch_and_create_partners,
     fetch_and_create_startups,
     fetch_and_create_users,
-    fetch_and_create_investors,
-    fetch_and_create_partners
 )
 
 logger = logging.getLogger(__name__)

@@ -1,6 +1,8 @@
-from rest_framework import serializers
-from admin_panel.models import StartupDetail, Founder, User
 from django.conf import settings
+from rest_framework import serializers
+
+from admin_panel.models import Founder, StartupDetail, User
+
 
 class FounderSerializer(serializers.ModelSerializer):
     """

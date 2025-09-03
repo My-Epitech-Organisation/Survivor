@@ -1,6 +1,7 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, Partner, User
+from rest_framework import serializers
+
+from .models import Event, Founder, News, NewsDetail, Partner, StartupDetail, StartupList, User
 
 DjangoUser = get_user_model()
 

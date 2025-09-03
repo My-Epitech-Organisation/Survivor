@@ -16,10 +16,10 @@ class InitConfig(AppConfig):
         """
         Import signals when Django is ready and start the scheduler
         """
-        import init.signals
-
-        import sys
         import os
+        import sys
+
+        import init.signals
 
         # Only start scheduler in the main process (RUN_MAIN is set by Django in the child process)
         if os.environ.get('RUN_MAIN') != 'true':

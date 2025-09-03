@@ -5,13 +5,14 @@
 ## utils
 ##
 
-import os
 import base64
 import logging
+import os
+
 import requests
-from django.core.exceptions import ImproperlyConfigured
 from django.apps import apps
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.core.files.base import ContentFile
 
 

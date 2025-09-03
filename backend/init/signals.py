@@ -5,12 +5,14 @@
 ## signals
 ##
 
+import os
+
+from django.apps import apps
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
-import os
-from django.core.exceptions import ImproperlyConfigured
-from django.apps import apps
+
 from .utils import *
 
 # Flag to track if handlers have already run

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, User, Investor, Partner
+
+from .models import Event, Founder, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User
 
 
 class NewsDetailAdmin(admin.ModelAdmin):
