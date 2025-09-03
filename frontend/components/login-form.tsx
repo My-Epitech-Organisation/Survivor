@@ -68,7 +68,7 @@ export function LoginForm({
       setEmail("")
       setPassword("")
 
-      router.push('/startup/dashboard')
+      router.push('/')
 
     } catch (err) {
       console.error('Login error:', err)
