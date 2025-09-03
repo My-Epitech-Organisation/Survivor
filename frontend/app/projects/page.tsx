@@ -11,70 +11,6 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {Download, FileText, FileSpreadsheet} from "lucide-react";
 
-// const projects: ProjectOverviewProps[] = [
-//   {
-//     ProjectId: 1,
-//     ProjectName: "EcoLoop",
-//     ProjectDescription: "Marketplace for sustainable home goods.",
-//     ProjectLocation: "Ireland",
-//     ProjectMaturity: "Idea",
-//     ProjectStatus: "Growth",
-//     ProjectNeeds: "Talent Acquisition",
-//     ProjectSector: "DeepTech"
-//   },
-//     {
-//     ProjectId: 2,
-//     ProjectName: "HealthBridge",
-//     ProjectDescription: "Virtual learning environment with AI tutors.",
-//     ProjectLocation: "Netherlands",
-//     ProjectMaturity: "Early Stage",
-//     ProjectStatus: "Growth",
-//     ProjectNeeds: "Strategic Partnerships",
-//     ProjectSector: "DeepTech"
-//   },
-//   {
-//     ProjectId: 3,
-//     ProjectName: "UrbanNest",
-//     ProjectDescription: "MAutomated greenhouse system for urban farming.",
-//     ProjectLocation: "Finland",
-//     ProjectMaturity: "Prototype",
-//     ProjectStatus: "Seed",
-//     ProjectNeeds: "Strategic Partnerships",
-//     ProjectSector: "FinTech"
-//   },
-//   {
-//     ProjectId: 4,
-//     ProjectName: "BrightPath",
-//     ProjectDescription: "Gamified e-learning platform for remote students.",
-//     ProjectLocation: "Finland",
-//     ProjectMaturity: "Idea",
-//     ProjectStatus: "Early Stage",
-//     ProjectNeeds: "Mentorship",
-//     ProjectSector: "SaaS"
-//   },
-//   {
-//     ProjectId: 5,
-//     ProjectName: "AgroNova",
-//     ProjectDescription: "App to connect caregivers with families in need.",
-//     ProjectLocation: "Spain",
-//     ProjectMaturity: "MVP",
-//     ProjectStatus: "Scale-up",
-//     ProjectNeeds: "Talent Acquisition",
-//     ProjectSector: "Logistics"
-//   },
-//   {
-//     ProjectId: 6,
-//     ProjectName: "SkillSpark",
-//     ProjectDescription: "Electric vehicle fleet management platform.",
-//     ProjectLocation: "Portugal",
-//     ProjectMaturity: "MVP",
-//     ProjectStatus: "Scale-up",
-//     ProjectNeeds: "Talent Acquisition",
-//     ProjectSector: "DeepTech"
-//   },
-// ];
-
-
 export default function Projects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
 
@@ -96,8 +32,7 @@ export default function Projects() {
         const response = await axios.get<ProjectOverviewProps[]>(`${APIUrl}/projects/`);
         setProjects(response.data);
         console.debug("Projects loaded:", response.data);
-        
-        // Utiliser response.data directement au lieu de projects
+
         const uniqueLocations = [...new Set(response.data.map(project => project.ProjectLocation))];
         const uniqueMaturities = [...new Set(response.data.map(project => project.ProjectMaturity))];
         const uniqueSectors = [...new Set(response.data.map(project => project.ProjectSector))];
