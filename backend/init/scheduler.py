@@ -87,6 +87,7 @@ def start_scheduler():
     def safe_shutdown():
         if scheduler:
             import contextlib
+
             with contextlib.suppress(Exception):
                 scheduler.shutdown()
 
