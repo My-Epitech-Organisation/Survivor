@@ -25,7 +25,7 @@ export default function StartupDashboard() {
         name: "John Doe",
         image: "/placeholder-avatar.jpg",
         nbStartups: 5
-    }
+    };
 
     const projectViewsOverTime = [
         { month: "January", views: 186 },
@@ -37,7 +37,7 @@ export default function StartupDashboard() {
     ];
 
     const projectEngagementData = [
-        { browser: "engagement", visitors: 75, fill: "#2563eb" }
+        { browser: "engagement", rate: 75, fill: "#2563eb" }
     ];
 
     return (
@@ -99,10 +99,10 @@ export default function StartupDashboard() {
                         description="Current engagement metrics"
                         centerLabel="Engagement"
                         footerTitle="Performance analysis"
-                        footerDescription={getProjectEngagementDescription(projectEngagementData[0].visitors)}
-                        endAngle={projectEngagementData[0].visitors * 360 / 100}
+                        footerDescription={getProjectEngagementDescription(projectEngagementData[0].rate)}
+                        endAngle={projectEngagementData[0].rate * 360 / 100}
                         config={{
-                            visitors: {
+                            rate: {
                                 label: "Engagement Rate",
                             },
                             engagement: {

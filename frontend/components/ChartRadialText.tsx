@@ -22,7 +22,7 @@ import { ChartConfig, ChartContainer } from "@/components/ui/chart"
 export const description = "A radial chart with text"
 
 interface ChartRadialTextProps {
-  data: Array<{ browser: string; visitors: number; fill: string }>
+  data: Array<{ browser: string; rate: number; fill: string }>
   title: string
   description: string
   config?: ChartConfig
@@ -39,8 +39,8 @@ export function ChartRadialText({
   title,
   description,
   config = {
-    visitors: {
-      label: "Visitors",
+    rate: {
+      label: "Rate",
     },
     safari: {
       label: "Safari",
@@ -50,7 +50,7 @@ export function ChartRadialText({
   footerTitle,
   footerDescription,
   trendingPercentage,
-  centerLabel = "Visitors",
+  centerLabel = "Rate",
   endAngle = 250,
   maxHeight = "450px",
 }: ChartRadialTextProps) {
@@ -79,7 +79,7 @@ export function ChartRadialText({
               className="first:fill-muted last:fill-background"
               polarRadius={[126, 114]}
             />
-            <RadialBar dataKey="visitors" background cornerRadius={10} />
+            <RadialBar dataKey="rate" background cornerRadius={10} />
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
               <Label
                 content={({ viewBox }) => {
@@ -96,7 +96,7 @@ export function ChartRadialText({
                           y={viewBox.cy}
                           className="fill-foreground text-4xl font-bold"
                         >
-                          {data[0]?.visitors?.toLocaleString() || "0"}{"%"}
+                          {data[0]?.rate?.toLocaleString() || "0"}{"%"}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
