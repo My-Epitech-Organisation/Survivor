@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { API_CONFIG } from "@/lib/config"
+import { getAPIUrl } from "@/lib/socket-config"
 import { useAuth } from "@/contexts/AuthContext"
 
 export function LoginForm({
@@ -56,7 +56,8 @@ export function LoginForm({
 
 
       // PROD MODE: Use API to log in
-      const response = await fetch(`${API_CONFIG.baseURL}/auth/login`, {
+      const apiUrl = getAPIUrl();
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -3,6 +3,7 @@ import { ChartBarLabel } from '@/components/ChartBarLabel';
 import { ChartRadialText } from '@/components/ChartRadialText';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getAPIUrl } from '@/lib/socket-config';
 
 
 function getProjectEngagementDescription(data: number) {
