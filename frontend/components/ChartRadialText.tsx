@@ -63,7 +63,8 @@ export function ChartRadialText({
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={config}
-          className={`mx-auto aspect-square max-h-[${maxHeight}]`}
+          className="mx-auto aspect-square"
+          style={{ maxHeight: maxHeight }}
         >
           <RadialBarChart
             data={data}
