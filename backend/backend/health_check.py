@@ -25,9 +25,6 @@ def health_check(request):
             "message": "Database connection failed",
             "database": False
         }, status=503)
-    except Exception as e:
-        return JsonResponse({
-            "status": "error",
-            "message": str(e),
+            "message": "Internal server error",
             "database": False
         }, status=500)
