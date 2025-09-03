@@ -28,7 +28,7 @@ be-format:
 	cd backend && black .
 
 be-test:
-	cd backend && pytest -q --cov=.
+	cd backend && DISABLE_SCHEDULER=True pytest -q --disable-warnings --cov=. --cov-report=xml
 
 # Docker commands
 docker-build:
