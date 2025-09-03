@@ -95,21 +95,22 @@ export default function Projects() {
         console.debug("Fetching from:", `${APIUrl}/projects/`);
         const response = await axios.get<ProjectOverviewProps[]>(`${APIUrl}/projects/`);
         setProjects(response.data);
-        console.debug("Projects loaded:", response);
+        console.debug("Projects loaded:", response.data);
+        
+        // Utiliser response.data directement au lieu de projects
+        const uniqueLocations = [...new Set(response.data.map(project => project.ProjectLocation))];
+        const uniqueMaturities = [...new Set(response.data.map(project => project.ProjectMaturity))];
+        const uniqueSectors = [...new Set(response.data.map(project => project.ProjectSector))];
+
+        setLocations(uniqueLocations);
+        setMaturities(uniqueMaturities);
+        setSectors(uniqueSectors);
       } catch (error) {
         console.error('Erreur API:', error);
       }
     };
 
-    fetchProjects().then(() => {
-      const uniqueLocations = [...new Set(projects.map(project => project.ProjectLocation))];
-      const uniqueMaturities = [...new Set(projects.map(project => project.ProjectMaturity))];
-      const uniqueSectors = [...new Set(projects.map(project => project.ProjectSector))];
-
-      setLocations(uniqueLocations);
-      setMaturities(uniqueMaturities);
-      setSectors(uniqueSectors);
-    });
+    fetchProjects();
   }, []);
 
   const handleFiltersChange = useCallback((filters: {
