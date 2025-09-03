@@ -91,7 +91,7 @@ export default function Projects() {
             <div className="lg:col-span-4">
               <ProjectFilters {...projectFilter}/>
             </div>
-            
+
             {/* Export Section */}
             {/* <div className="lg:col-span-1">
               <Card className="h-fit bg-white border border-gray-200 shadow-sm">
@@ -118,7 +118,7 @@ export default function Projects() {
               </Card>
             </div>*/}
           </div>
-          
+
 
           {/* Projects Grid */}
           <div className='grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6'>

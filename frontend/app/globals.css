@@ -41,7 +41,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
+
   /* Custom App Colors as Tailwind utilities */
   --color-app-blue-primary: var(--app-blue-primary);
   --color-app-blue-primary-hover: var(--app-blue-primary-hover);
@@ -115,7 +115,7 @@
   --app-surface-hover: oklch(0.98 0 0); /* gray-50 */
   --app-gradient-from: oklch(0.97 0.013 258.44); /* blue-50 */
   --app-gradient-to: oklch(0.94 0.05 258.44); /* indigo-100 */
-  
+
   /* Feature accent colors */
   --app-green-primary: oklch(0.515 0.15 142.5); /* green-600 */
   --app-green-light: oklch(0.94 0.05 142.5); /* green-100 */
@@ -175,7 +175,7 @@
   --app-surface-hover: oklch(0.269 0 0); /* darker hover */
   --app-gradient-from: oklch(0.2 0.05 258.44); /* dark gradient start */
   --app-gradient-to: oklch(0.25 0.08 270); /* dark gradient end */
-  
+
   /* Feature accent colors - Dark Mode */
   --app-green-primary: oklch(0.6 0.15 142.5);
   --app-green-light: oklch(0.25 0.05 142.5);
