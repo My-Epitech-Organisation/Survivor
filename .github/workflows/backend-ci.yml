@@ -35,6 +35,9 @@ jobs:
       DJANGO_SQLITE_PRAGMAS: "{'foreign_keys': 1}"
       DJANGO_TEST_DB_PATH: "/tmp/test-db.sqlite3"
       DISABLE_SCHEDULER: "True"
+      DJANGO_ADMIN_USERNAME: "admin"
+      DJANGO_ADMIN_EMAIL: "admin@example.com"
+      DJANGO_ADMIN_PASSWORD: "admin-ci-test-password"
 
     steps:
       - name: Checkout repository
