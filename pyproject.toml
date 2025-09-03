@@ -1,4 +1,4 @@
-﻿[tool.ruff]
+[tool.ruff]
 # Enable Pyflakes ('F'), pycodestyle ('E'), isort ('I')
 select = ["E", "F", "I", "W", "D"]
 ignore = []
