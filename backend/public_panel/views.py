@@ -2,8 +2,8 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework import status
-from admin_panel.models import StartupDetail
-from .serializers import ProjectSerializer, ProjectDetailSerializer
+from admin_panel.models import StartupDetail, User
+from .serializers import ProjectSerializer, ProjectDetailSerializer, UserSerializer
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -28,5 +28,21 @@ def project_detail(request, project_id):
     except StartupDetail.DoesNotExist:
         return JsonResponse(
             {"error": f"Project with id {project_id} not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def user_detail(request, user_id):
+    """
+    API endpoint that returns information about a specific user.
+    """
+    try:
+        user = User.objects.get(id=user_id)
+        serializer = UserSerializer(user)
+        return JsonResponse(serializer.data)
+    except User.DoesNotExist:
+        return JsonResponse(
+            {"error": f"User with id {user_id} not found"},
             status=status.HTTP_404_NOT_FOUND
         )

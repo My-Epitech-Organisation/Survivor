@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from admin_panel.models import StartupDetail, Founder
+from admin_panel.models import StartupDetail, Founder, User
 from django.conf import settings
 
 class FounderSerializer(serializers.ModelSerializer):
@@ -93,3 +93,33 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             'ProjectSocial',
             'ProjectWebsite'
         ]
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the user endpoint.
+    """
+    name = serializers.CharField()
+    pictureURL = serializers.SerializerMethodField()
+    nbStartups = serializers.SerializerMethodField()
+    email = serializers.CharField()
+    investorId = serializers.IntegerField(source='investor_id', allow_null=True)
+    founderId = serializers.IntegerField(source='founder_id', allow_null=True)
+    id = serializers.IntegerField()
+
+    class Meta:
+        model = User
+        fields = ['name', 'pictureURL', 'nbStartups', 'email', 'investorId', 'founderId', 'id']
+
+    def get_pictureURL(self, obj):
+        if obj.image:
+            return f"{settings.MEDIA_URL}{obj.image}"
+        return None
+
+    def get_nbStartups(self, obj):
+        if obj.founder_id:
+            try:
+                founder = Founder.objects.get(id=obj.founder_id)
+                return founder.startups.count()
+            except Founder.DoesNotExist:
+                pass
+        return 0
