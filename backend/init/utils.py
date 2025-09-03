@@ -19,7 +19,6 @@ def fetch_news_detail(news_id, headers):
     Fetch details for a specific news item and create a NewsDetail object
     """
     NewsDetail = apps.get_model('admin_panel', 'NewsDetail')
-
     detail_url = settings.JEB_API_NEWS_DETAIL_URL.format(news_id=news_id)
     image_url = settings.JEB_API_NEWS_IMAGE_URL.format(news_id=news_id)
 
@@ -41,7 +40,14 @@ def fetch_news_detail(news_id, headers):
         try:
             image_response = requests.get(image_url, headers=headers)
             if image_response.status_code == 200:
-                news_detail.image = image_response.content
+
+                image_path = f"media/news/{news_id}.jpg"
+                os.makedirs(os.path.dirname(image_path), exist_ok=True)
+
+                with open(image_path, 'wb') as f:
+                    f.write(image_response.content)
+
+                news_detail.image = f"news/{news_id}.jpg"
         except Exception as e:
             print(f"Error fetching image for news {news_id}: {e}")
 
@@ -136,7 +142,14 @@ def fetch_and_create_events():
                 image_url = settings.JEB_API_EVENT_IMAGE_URL.format(event_id=event_id)
                 image_response = requests.get(image_url, headers=headers)
                 if image_response.status_code == 200:
-                    event.image = image_response.content
+
+                    image_path = f"media/events/{event_id}.jpg"
+                    os.makedirs(os.path.dirname(image_path), exist_ok=True)
+
+                    with open(image_path, 'wb') as f:
+                        f.write(image_response.content)
+
+                    event.image = f"events/{event_id}.jpg"
             except Exception as e:
                 print(f"Error fetching image for event {item.get('id')}: {e}")
 
@@ -207,8 +220,14 @@ def fetch_startup_detail(startup_id, headers):
                     image_response = requests.get(image_url, headers=headers)
 
                     if image_response.status_code == 200:
-                        image_base64 = base64.b64encode(image_response.content).decode('utf-8')
-                        founders_images[str(founder_id)] = image_base64
+
+                        image_path = f"media/founders/{startup_id}_{founder_id}.jpg"
+                        os.makedirs(os.path.dirname(image_path), exist_ok=True)
+
+                        with open(image_path, 'wb') as f:
+                            f.write(image_response.content)
+
+                        founders_images[str(founder_id)] = f"founders/{startup_id}_{founder_id}.jpg"
                 except Exception as e:
                     print(f"Error fetching image for founder {founder_id}: {e}")
 
@@ -308,7 +327,14 @@ def fetch_and_create_users():
                 image_url = settings.JEB_API_USER_IMAGE_URL.format(user_id=user_id)
                 image_response = requests.get(image_url, headers=headers)
                 if image_response.status_code == 200:
-                    user.image = image_response.content
+
+                    image_path = f"media/users/{user_id}.jpg"
+                    os.makedirs(os.path.dirname(image_path), exist_ok=True)
+
+                    with open(image_path, 'wb') as f:
+                        f.write(image_response.content)
+
+                    user.image = f"users/{user_id}.jpg"
             except Exception as e:
                 print(f"Error fetching image for user {item.get('id')}: {e}")
 

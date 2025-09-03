@@ -210,3 +210,4 @@ node_modules/
 staticfiles/
 *.env
 .env
+backend/media/

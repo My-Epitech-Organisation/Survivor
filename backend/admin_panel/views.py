@@ -1,7 +1,10 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser, AllowAny
 from init.utils import fetch_and_create_news
+from .models import News, NewsDetail, Event, User, StartupDetail
+from .serializers import NewsDetailSerializer, EventSerializer, StartupDetailSerializer, UserSerializer
+from django.conf import settings
 
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
