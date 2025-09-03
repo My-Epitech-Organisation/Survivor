@@ -16,32 +16,31 @@ export interface ProjectFiltersProps {
 
 export interface ProjectOverviewProps
 {
-  ProjectId?: number;
+  ProjectId: number;
   ProjectName: string;
   ProjectDescription?: string;
   ProjectSector: string;
   ProjectMaturity: string;
   ProjectLocation: string;
-  ProjectNeeds?: string;
-  ProjectStatus?: string;
+  ProjectNeeds: string;
+  ProjectStatus: string;
 }
 
 export interface ProjectDetailsProps
 {
-  ProjectId?: number;
+  ProjectId: number;
   ProjectName: string;
-  ProjectDescription?: string;
-  ProjectSector?: string;
-  ProjectMaturity?: string;
-  ProjectAdress?: string;
-  ProjectLegalStatus?: string;
+  ProjectDescription: string;
+  ProjectSector: string;
+  ProjectMaturity: string;
+  ProjectAddress: string;
+  ProjectLegalStatus: string;
   ProjectCreatedAt: string;
-  ProjectFounders?: Founder[];
+  ProjectFounders: Founder[];
   ProjectEmail: string;
   ProjectPhone: string;
-  ProjectNeeds?: string;
-  ProjectProgess?: string;
-  ProjectStatus?: string;
-  ProjectSocial?: string;
-  ProjectWebsite?: string;
+  ProjectNeeds: string;
+  ProjectStatus: string;
+  ProjectSocial: string;
+  ProjectWebsite: string;
 }

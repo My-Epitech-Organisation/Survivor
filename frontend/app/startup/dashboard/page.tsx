@@ -5,7 +5,7 @@ import { ChartBarLabel } from '@/components/ChartBarLabel';
 import { ChartRadialText } from '@/components/ChartRadialText';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getAPIUrl } from '@/lib/socket-config';
+import { getAPIUrl } from '@/lib/config';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 

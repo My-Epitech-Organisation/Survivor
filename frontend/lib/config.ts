@@ -1,10 +1,36 @@
-// lib/config.ts
-export const API_CONFIG = {
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
-  socketURL: process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost',
+// lib/com-config.ts
+export const getSocketUrl = () => {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:8000';
+    } else {
+      return `http://${hostname}:8000`;
+    }
+  }
+  return 'http://backend:8000';
 };
 
-export const SERVER_API_CONFIG = {
-  baseURL: 'http://backend:8000/api',
-  socketURL: 'http://backend:8000',
+export const getAPIUrl = () => {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:8000/api';
+    } else {
+      return `http://${hostname}:8000/api`;
+    }
+  }
+  return 'http://backend:8000/api';
+};
+
+export const getBackendUrl = () => {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:8000';
+    } else {
+      return `http://${hostname}:8000`;
+    }
+  }
+  return 'http://backend:8000';
 };
