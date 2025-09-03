@@ -172,7 +172,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                         if (domain.includes('github')) return <FaGithub/>;
 
                         return <FaLink/>;
-                      } catch (e) {
+                      } catch {
                         return props.ProjectSocial;
                       }
                     })()

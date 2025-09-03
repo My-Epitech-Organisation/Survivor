@@ -7,9 +7,6 @@ import { ProjectFiltersProps, ProjectOverviewProps } from '@/types/project';
 import { useEffect, useState, useCallback } from 'react';
 import { getAPIUrl } from "@/lib/config";
 import axios from 'axios';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import {Download, FileText, FileSpreadsheet} from "lucide-react";
 
 export default function Projects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
