@@ -63,7 +63,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
     ProjectDescription = serializers.CharField(source='description', allow_null=True)
     ProjectSector = serializers.CharField(source='sector', allow_null=True)
     ProjectMaturity = serializers.CharField(source='maturity', allow_null=True)
-    ProjectAdress = serializers.CharField(source='address', allow_null=True)
+    ProjectAddress = serializers.CharField(source='address', allow_null=True)
     ProjectLegalStatus = serializers.CharField(source='legal_status', allow_null=True)
     ProjectCreatedAt = serializers.CharField(source='created_at')
     ProjectFounders = FounderSerializer(source='founders', many=True, read_only=True)
@@ -82,7 +82,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             'ProjectDescription',
             'ProjectSector',
             'ProjectMaturity',
-            'ProjectAdress',
+            'ProjectAddress',
             'ProjectLegalStatus',
             'ProjectCreatedAt',
             'ProjectFounders',
