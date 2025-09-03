@@ -102,14 +102,15 @@ export default function Projects() {
       }
     };
 
-    fetchProjects();
-    const uniqueLocations = [...new Set(projects.map(project => project.ProjectLocation))];
-    const uniqueMaturities = [...new Set(projects.map(project => project.ProjectMaturity))];
-    const uniqueSectors = [...new Set(projects.map(project => project.ProjectSector))];
+    fetchProjects().then(() => {
+      const uniqueLocations = [...new Set(projects.map(project => project.ProjectLocation))];
+      const uniqueMaturities = [...new Set(projects.map(project => project.ProjectMaturity))];
+      const uniqueSectors = [...new Set(projects.map(project => project.ProjectSector))];
 
-    setLocations(uniqueLocations);
-    setMaturities(uniqueMaturities);
-    setSectors(uniqueSectors);
+      setLocations(uniqueLocations);
+      setMaturities(uniqueMaturities);
+      setSectors(uniqueSectors);
+    });
   }, []);
 
   const handleFiltersChange = useCallback((filters: {
