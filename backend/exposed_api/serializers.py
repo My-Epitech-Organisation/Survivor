@@ -1,7 +1,9 @@
+from authentication.models import CustomUser
 from django.conf import settings
 from rest_framework import serializers
-from admin_panel.models import StartupDetail, Founder
-from authentication.models import CustomUser
+
+from admin_panel.models import Founder, StartupDetail
+
 
 class FounderSerializer(serializers.ModelSerializer):
     """
@@ -124,7 +126,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['name', 'pictureURL', 'nbStartups', 'email', 'investorId', 'founderId', 'id']
+        fields = ["name", "pictureURL", "nbStartups", "email", "investorId", "founderId", "id"]
 
     def get_pictureURL(self, obj):
         if obj.image:

@@ -289,18 +289,19 @@ def fetch_and_create_users():
         response.raise_for_status()
         users_data = response.json()
 
-        User = apps.get_model('authentication', 'CustomUser')
+        User = apps.get_model("authentication", "CustomUser")
 
         from django.utils import timezone
+
         for item in users_data:
             user = User(
-                id=item.get('id'),
-                email=item.get('email'),
-                name=item.get('name'),
-                role=item.get('role'),
-                founder_id=item.get('founder_id'),
-                investor_id=item.get('investor_id'),
-                date_joined=timezone.now()
+                id=item.get("id"),
+                email=item.get("email"),
+                name=item.get("name"),
+                role=item.get("role"),
+                founder_id=item.get("founder_id"),
+                investor_id=item.get("investor_id"),
+                date_joined=timezone.now(),
             )
 
             try:
@@ -310,7 +311,7 @@ def fetch_and_create_users():
                 if image_response.status_code == 200:
                     image_path = f"media/users/{user_id}.jpg"
                     os.makedirs(os.path.dirname(image_path), exist_ok=True)
-                    with open(image_path, 'wb') as f:
+                    with open(image_path, "wb") as f:
                         f.write(image_response.content)
                     user.image = f"users/{user_id}.jpg"
             except Exception as e:

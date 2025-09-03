@@ -7,12 +7,13 @@
 
 import os
 
+from authentication.models import CustomUser
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
-from authentication.models import CustomUser
+
 from .utils import *
 
 # Flag to track if handlers have already run
@@ -55,7 +56,7 @@ def create_admin_user_with_id_zero():
         is_staff=True,
         is_superuser=True,
         is_active=True,
-        role='admin',
+        role="admin",
     )
     user.set_password(password)
     user.save(force_insert=True)
@@ -170,7 +171,7 @@ def clear_and_fetch_users(sender, **kwargs):
     _handlers_executed["clear_and_fetch_users"] = True
 
     try:
-        User = apps.get_model('authentication', 'CustomUser')
+        User = apps.get_model("authentication", "CustomUser")
 
         # Delete all users (superuser will be recreated later with ID=0)
         User.objects.all().delete()

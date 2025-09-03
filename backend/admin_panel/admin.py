@@ -1,6 +1,7 @@
-from django.contrib import admin
-from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, Investor, Partner
 from authentication.models import CustomUser
+from django.contrib import admin
+
+from .models import Event, Founder, Investor, News, NewsDetail, Partner, StartupDetail, StartupList
 
 
 class NewsDetailAdmin(admin.ModelAdmin):
@@ -61,11 +62,12 @@ class FounderAdmin(admin.ModelAdmin):
 
 
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'email', 'role', 'is_staff', 'is_active']
-    fields = ['name', 'email', 'role', 'founder_id', 'investor_id', 'image', 'is_staff', 'is_active', 'date_joined']
-    readonly_fields = ['image', 'date_joined']
-    search_fields = ['name', 'email', 'role']
-    list_filter = ['role', 'is_staff', 'is_active']
+    list_display = ["id", "name", "email", "role", "is_staff", "is_active"]
+    fields = ["name", "email", "role", "founder_id", "investor_id", "image", "is_staff", "is_active", "date_joined"]
+    readonly_fields = ["image", "date_joined"]
+    search_fields = ["name", "email", "role"]
+    list_filter = ["role", "is_staff", "is_active"]
+
 
 class InvestorAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "legal_status", "investor_type", "investment_focus"]

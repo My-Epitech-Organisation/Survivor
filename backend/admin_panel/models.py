@@ -84,6 +84,7 @@ class StartupDetail(models.Model):
     founders = models.ManyToManyField("Founder", related_name="startups")
     founders_images = models.JSONField(null=True, blank=True)
 
+
 class Founder(models.Model):
     """
     Represent a founder.
