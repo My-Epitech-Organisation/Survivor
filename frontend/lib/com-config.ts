@@ -1,4 +1,4 @@
-// lib/socket-config.ts
+// lib/com-config.ts
 export const getSocketUrl = () => {
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
