@@ -33,14 +33,13 @@ export interface ProjectDetailsProps
   ProjectDescription?: string;
   ProjectSector?: string;
   ProjectMaturity?: string;
-  ProjectAdress?: string;
+  ProjectAddress?: string;
   ProjectLegalStatus?: string;
   ProjectCreatedAt: string;
   ProjectFounders?: Founder[];
   ProjectEmail: string;
   ProjectPhone: string;
   ProjectNeeds?: string;
-  ProjectProgess?: string;
   ProjectStatus?: string;
   ProjectSocial?: string;
   ProjectWebsite?: string;
