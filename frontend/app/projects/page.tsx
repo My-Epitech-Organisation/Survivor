@@ -78,6 +78,16 @@ import {Download, FileText, FileSpreadsheet} from "lucide-react";
 export default function Projects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
 
+  const [locations, setLocations] = useState<string[]>([]);
+  const [maturities, setMaturities] = useState<string[]>([]);
+  const [sectors, setSectors] = useState<string[]>([]);
+
+  const [activeFilters, setActiveFilters] = useState({
+    locations: [] as string[],
+    maturities: [] as string[],
+    sectors: [] as string[]
+  });
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -93,19 +103,6 @@ export default function Projects() {
     };
 
     fetchProjects();
-  }, []);
-
-  const [locations, setLocations] = useState<string[]>([]);
-  const [maturities, setMaturities] = useState<string[]>([]);
-  const [sectors, setSectors] = useState<string[]>([]);
-
-  const [activeFilters, setActiveFilters] = useState({
-    locations: [] as string[],
-    maturities: [] as string[],
-    sectors: [] as string[]
-  });
-
-  useEffect(() => {
     const uniqueLocations = [...new Set(projects.map(project => project.ProjectLocation))];
     const uniqueMaturities = [...new Set(projects.map(project => project.ProjectMaturity))];
     const uniqueSectors = [...new Set(projects.map(project => project.ProjectSector))];

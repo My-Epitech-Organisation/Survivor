@@ -35,7 +35,7 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
             console.log("Fetching from:", `${APIUrl}/projects/${props.ProjectId}`);
             const response = await axios.get<ProjectDetailsProps>(`${APIUrl}/projects/${props.ProjectId}`);
             setprojectDetails(response.data);
-            console.log("Projet loaded:", projectDetails);
+            console.log("Reponse from api:", response);
         } catch (error) {
             console.error('Erreur API:', error);
         }
