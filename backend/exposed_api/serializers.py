@@ -31,14 +31,15 @@ class ProjectSerializer(serializers.ModelSerializer):
     """
     Serializer for the projects endpoint, mapping StartupDetail to the required format.
     """
-    ProjectId = serializers.IntegerField(source='id')
-    ProjectName = serializers.CharField(source='name')
-    ProjectDescription = serializers.CharField(source='description', allow_null=True)
-    ProjectSector = serializers.CharField(source='sector')
-    ProjectMaturity = serializers.CharField(source='maturity')
+
+    ProjectId = serializers.IntegerField(source="id")
+    ProjectName = serializers.CharField(source="name")
+    ProjectDescription = serializers.CharField(source="description", allow_null=True)
+    ProjectSector = serializers.CharField(source="sector")
+    ProjectMaturity = serializers.CharField(source="maturity")
     ProjectLocation = serializers.SerializerMethodField()
-    ProjectNeeds = serializers.CharField(source='needs', allow_null=True)
-    ProjectStatus = serializers.CharField(source='project_status', allow_null=True)
+    ProjectNeeds = serializers.CharField(source="needs", allow_null=True)
+    ProjectStatus = serializers.CharField(source="project_status", allow_null=True)
 
     class Meta:
         model = StartupDetail
@@ -59,12 +60,13 @@ class ProjectSerializer(serializers.ModelSerializer):
         Expected format: '4 Startup Blvd., 49535 Finland' -> 'Finland'
         """
         if obj.address:
-            parts = obj.address.split(',')
+            parts = obj.address.split(",")
             if parts:
                 last_part = parts[-1].strip()
                 country = last_part.split()[-1] if last_part.split() else ""
                 return country
         return None
+
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
     """
