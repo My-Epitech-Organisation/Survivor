@@ -1,6 +1,45 @@
 import StartupNavigation from '@/components/StartupNavigation';
+import { ChartBarLabel } from '@/components/ChartBarLabel';
+import { ChartRadialText } from '@/components/ChartRadialText';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+
+function getProjectEngagementDescription(data: number) {
+    if (data >= 100) {
+        return "Perfect engagement, keep it up!";
+    } else if (data >= 75) {
+        return "Good engagement, maintain the momentum!";
+    } else if (data >= 50) {
+        return "Average engagement, consider boosting visibility.";
+    } else if (data >= 25) {
+        return "Poor engagement, we need to take action.";
+    } else {
+        return "Very poor engagement, immediate action required.";
+    }
+}
 
 export default function StartupDashboard() {
+    /* Mockup data */
+    const userProfile = {
+        name: "John Doe",
+        image: "/placeholder-avatar.jpg",
+        nbStartups: 5
+    }
+
+    const projectViewsOverTime = [
+        { month: "January", views: 186 },
+        { month: "February", views: 305 },
+        { month: "March", views: 237 },
+        { month: "April", views: 173 },
+        { month: "May", views: 209 },
+        { month: "June", views: 314 },
+    ];
+
+    const projectEngagementData = [
+        { browser: "engagement", visitors: 75, fill: "#2563eb" }
+    ];
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             <StartupNavigation />
@@ -16,22 +55,62 @@ export default function StartupDashboard() {
                     </p>
                 </div>
 
-                {/* Dashboard content placeholder */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Stats</h3>
-                        <p className="text-gray-600">Dashboard metrics and analytics will be displayed here.</p>
-                    </div>
+                {/* User Profile Section */}
+                <Card className="mb-8">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-4">
+                            <Avatar className="h-16 w-16">
+                                <AvatarImage src={userProfile.image} alt={userProfile.name} />
+                                <AvatarFallback>{userProfile.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <h2 className="text-2xl font-bold">{userProfile.name}</h2>
+                                <p className="text-gray-600">
+                                    {userProfile.nbStartups} {userProfile.nbStartups === 1 ? 'Startup' : 'Startups'}
+                                </p>
+                            </div>
+                        </CardTitle>
+                    </CardHeader>
+                </Card>
 
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h3>
-                        <p className="text-gray-600">Latest updates and activities will be shown here.</p>
-                    </div>
+                {/* Charts Section */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    {/* Project Views Chart */}
+                    <ChartBarLabel
+                        data={projectViewsOverTime}
+                        title="Project Views Over Time"
+                        description={projectViewsOverTime.length > 1 ?
+                            `Monthly project views for the last ${projectViewsOverTime.length} months`
+                            : "Project views for the last month"}
+                        footerTitle="Growth analysis"
+                        footerDescription="Showing total project views per month"
+                        config={{
+                            views: {
+                                label: "Views",
+                                color: "#2563eb",
+                            },
+                        }}
+                    />
 
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-4">Upcoming Tasks</h3>
-                        <p className="text-gray-600">Important tasks and deadlines will be listed here.</p>
-                    </div>
+                    {/* Project Engagement Rate Chart */}
+                    <ChartRadialText
+                        data={projectEngagementData}
+                        title="Project Engagement Rate"
+                        description="Current engagement metrics"
+                        centerLabel="Engagement"
+                        footerTitle="Performance analysis"
+                        footerDescription={getProjectEngagementDescription(projectEngagementData[0].visitors)}
+                        endAngle={projectEngagementData[0].visitors * 360 / 100}
+                        config={{
+                            visitors: {
+                                label: "Engagement Rate",
+                            },
+                            engagement: {
+                                label: "Engagement",
+                                color: "var(--chart-3)",
+                            },
+                        }}
+                    />
                 </div>
             </main>
         </div>

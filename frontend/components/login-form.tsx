@@ -33,6 +33,29 @@ export function LoginForm({
     setError("")
 
     try {
+      // DEBUG MODE: Skip API call and automatically log in
+      console.log('DEBUG: Bypassing authentication with provided credentials:', { email, password })
+
+      // Create mock user data for debugging
+      const userData = {
+        id: '1',
+        email: email || 'debug@example.com',
+        name: 'Debug User'
+      }
+
+      // Use a mock token for debugging
+      const mockToken = 'debug-token-12345'
+
+      console.log('DEBUG: Auto-login successful with mock data:', userData)
+      login(mockToken, userData)
+
+      setEmail("")
+      setPassword("")
+
+      router.push('/startup/dashboard')
+
+      /* ORIGINAL API AUTHENTICATION CODE (commented out for debugging):
+      
       const response = await fetch(`${API_CONFIG.baseURL}/auth/login`, {
         method: 'POST',
         headers: {
@@ -67,6 +90,8 @@ export function LoginForm({
       setPassword("")
 
       router.push('/startup/dashboard')
+      
+      */
 
     } catch (err) {
       console.error('Login error:', err)
