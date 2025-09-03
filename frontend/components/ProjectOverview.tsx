@@ -77,11 +77,11 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
                     </CardDescription>
                 )}
             </CardHeader>
-            
+
             <CardContent className="p-4 space-y-6 flex-1 flex flex-col">
                 {/* Project Info Grid */}
                 <div className="grid grid-cols-1 gap-6 flex-1">
-                    
+
                     {/* Sector & Location */}
                     <div className="flex items-start gap-4">
                         {props.ProjectSector && (
@@ -97,11 +97,11 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
                                 </div>
                             </div>
                         )}
-                        
+
                         {props.ProjectSector && props.ProjectLocation && (
                             <div className="w-px h-12 bg-gray-300"></div>
                         )}
-                        
+
                         {props.ProjectLocation && (
                             <div className="flex-1 space-y-2">
                                 <div className="flex items-center justify-center gap-2">
@@ -132,11 +132,11 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
                                 </div>
                             </div>
                         )}
-                        
+
                         {props.ProjectMaturity && props.ProjectStatus && (
                             <div className="w-px h-12 bg-app-border-light"></div>
                         )}
-                        
+
                         {props.ProjectStatus && (
                             <div className="flex-1 space-y-2">
                                 <div className="flex items-center justify-center gap-2">

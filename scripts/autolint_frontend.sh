@@ -37,7 +37,7 @@ else
         if ! grep -q "\"eslint\"" package.json; then
             npm install --save-dev eslint
         fi
-        
+
         # Run eslint with fix option
         echo -e "${YELLOW}Running ESLint fix...${NC}"
         npx eslint . --ext .js,.jsx,.ts,.tsx --fix

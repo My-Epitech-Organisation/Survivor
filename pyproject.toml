@@ -60,7 +60,7 @@ ignore = [
     "DJ001",    # Ignore null=True validation warning for Django models
     "DJ008",    # Django model without __str__ method
     "DJ012",    # Django model should define __str__ method
-    
+
     # Docstring related
     "D100",     # Missing docstring in public module
     "D101",     # Missing docstring in public class
@@ -73,7 +73,7 @@ ignore = [
     "D205",     # 1 blank line required between summary and description
     "D212",     # Conflicts with D213
     "D415",     # First line should end with punctuation
-    
+
     # Code style
     "E501",     # Line too long (handled by formatter)
     "COM812",   # Missing trailing comma
@@ -95,7 +95,7 @@ ignore = [
     "PLW0603",  # Global statement
     "RUF012",   # Mutable class attributes should be annotated with typing.ClassVar
     "RET504",   # Return type missing
-    
+
     "ARG002",   # Unused function argument
 ]
 
