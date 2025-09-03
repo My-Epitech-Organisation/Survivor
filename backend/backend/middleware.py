@@ -6,7 +6,7 @@ class CSPMiddleware(MiddlewareMixin):
     Middleware to add Content-Security-Policy headers
     """
 
-    def process_response(self, request, response):  # noqa: ARG002
+    def process_response(self, request, response):
         csp_policies = [
             "default-src 'self'",
             "img-src 'self' data: https:",
