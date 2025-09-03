@@ -37,7 +37,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     ProjectDescription = serializers.CharField(source='description', allow_null=True)
     ProjectSector = serializers.CharField(source='sector')
     ProjectMaturity = serializers.CharField(source='maturity')
-    ProjectLocation = serializers.CharField(source='address')
+    ProjectLocation = serializers.SerializerMethodField()
     ProjectNeeds = serializers.CharField(source='needs', allow_null=True)
     ProjectStatus = serializers.CharField(source='project_status', allow_null=True)
 
@@ -53,6 +53,19 @@ class ProjectSerializer(serializers.ModelSerializer):
             'ProjectNeeds',
             'ProjectStatus'
         ]
+
+    def get_ProjectLocation(self, obj):
+        """
+        Extract only the country name from the address field.
+        Expected format: '4 Startup Blvd., 49535 Finland' -> 'Finland'
+        """
+        if obj.address:
+            parts = obj.address.split(',')
+            if parts:
+                last_part = parts[-1].strip()
+                country = last_part.split()[-1] if last_part.split() else ""
+                return country
+        return None
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
     """
