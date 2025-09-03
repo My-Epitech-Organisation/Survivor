@@ -5,11 +5,10 @@ import ProjectOverview from '@/components/ProjectOverview';
 import ProjectFilters from '@/components/ProjectFilters';
 import { ProjectFiltersProps, ProjectOverviewProps } from '@/types/project';
 import { useEffect, useState, useCallback } from 'react';
-import { getAPIUrl } from "@/lib/config";
-import axios from 'axios';
+import { api } from "@/lib/api";
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {Download, FileText, FileSpreadsheet} from "lucide-react";
+import { Download, FileText, FileSpreadsheet } from "lucide-react";
 
 export default function Projects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
@@ -27,19 +26,18 @@ export default function Projects() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const APIUrl = getAPIUrl();
-        console.debug("Fetching from:", `${APIUrl}/projects/`);
-        const response = await axios.get<ProjectOverviewProps[]>(`${APIUrl}/projects/`);
+        console.debug("Fetching projects from API");
+        const response = await api.get<ProjectOverviewProps[]>('/projects/');
         setProjects(response.data);
         console.debug("Projects loaded:", response.data);
 
-        const uniqueLocations = [...new Set(response.data.map(project => project.ProjectLocation))];
-        const uniqueMaturities = [...new Set(response.data.map(project => project.ProjectMaturity))];
-        const uniqueSectors = [...new Set(response.data.map(project => project.ProjectSector))];
+        const uniqueLocations = [...new Set(response.data.map((project: ProjectOverviewProps) => project.ProjectLocation))];
+        const uniqueMaturities = [...new Set(response.data.map((project: ProjectOverviewProps) => project.ProjectMaturity))];
+        const uniqueSectors = [...new Set(response.data.map((project: ProjectOverviewProps) => project.ProjectSector))];
 
-        setLocations(uniqueLocations);
-        setMaturities(uniqueMaturities);
-        setSectors(uniqueSectors);
+        setLocations(uniqueLocations as string[]);
+        setMaturities(uniqueMaturities as string[]);
+        setSectors(uniqueSectors as string[]);
       } catch (error) {
         console.error('Erreur API:', error);
       }
@@ -89,9 +87,9 @@ export default function Projects() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
             {/* Filters Section */}
             <div className="lg:col-span-4">
-              <ProjectFilters {...projectFilter}/>
+              <ProjectFilters {...projectFilter} />
             </div>
-            
+
             {/* Export Section */}
             {/* <div className="lg:col-span-1">
               <Card className="h-fit bg-white border border-gray-200 shadow-sm">
@@ -118,12 +116,12 @@ export default function Projects() {
               </Card>
             </div>*/}
           </div>
-          
+
 
           {/* Projects Grid */}
           <div className='grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6'>
             {filteredProjects.map(project => (
-              <ProjectOverview key={project.ProjectId} ProjectId={project.ProjectId} ProjectName={project.ProjectName} ProjectDescription={project.ProjectDescription} ProjectLocation={project.ProjectLocation} ProjectMaturity={project.ProjectMaturity} ProjectNeeds={project.ProjectNeeds} ProjectSector={project.ProjectSector} ProjectStatus={project.ProjectStatus}/>
+              <ProjectOverview key={project.ProjectId} ProjectId={project.ProjectId} ProjectName={project.ProjectName} ProjectDescription={project.ProjectDescription} ProjectLocation={project.ProjectLocation} ProjectMaturity={project.ProjectMaturity} ProjectNeeds={project.ProjectNeeds} ProjectSector={project.ProjectSector} ProjectStatus={project.ProjectStatus} />
             ))}
           </div>
 

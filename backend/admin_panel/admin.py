@@ -1,6 +1,7 @@
+from authentication.models import CustomUser
 from django.contrib import admin
 
-from .models import Event, Founder, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User
+from .models import Event, Founder, Investor, News, NewsDetail, Partner, StartupDetail, StartupList
 
 
 class NewsDetailAdmin(admin.ModelAdmin):
@@ -60,12 +61,12 @@ class FounderAdmin(admin.ModelAdmin):
     fields = ["id", "name", "startup_id"]
 
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "email", "role"]
-    fields = ["id", "name", "email", "role", "founder_id", "investor_id", "image"]
-    readonly_fields = ["image"]
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "email", "role", "is_staff", "is_active"]
+    fields = ["name", "email", "role", "founder_id", "investor_id", "image", "is_staff", "is_active", "date_joined"]
+    readonly_fields = ["image", "date_joined"]
     search_fields = ["name", "email", "role"]
-    list_filter = ["role"]
+    list_filter = ["role", "is_staff", "is_active"]
 
 
 class InvestorAdmin(admin.ModelAdmin):
@@ -109,6 +110,6 @@ admin.site.register(Event, EventAdmin)
 admin.site.register(StartupList, StartupListAdmin)
 admin.site.register(StartupDetail, StartupDetailAdmin)
 admin.site.register(Founder, FounderAdmin)
-admin.site.register(User, UserAdmin)
+admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Investor, InvestorAdmin)
 admin.site.register(Partner, PartnerAdmin)
