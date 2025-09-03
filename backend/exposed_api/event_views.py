@@ -9,7 +9,4 @@ class EventListView(APIView):
         events = Event.objects.all()
         serializer = EventSerializer(events, many=True)
 
-        data = serializer.data
-        for event, event_obj in zip(data, events):
-            event['pictureURL'] = getattr(event_obj, 'pictureURL', '')
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
