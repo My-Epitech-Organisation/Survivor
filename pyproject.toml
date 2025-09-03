@@ -94,6 +94,9 @@ ignore = [
     "N806",     # Non-lowercase variable in function
     "PLW0603",  # Global statement
     "RUF012",   # Mutable class attributes should be annotated with typing.ClassVar
+    "RET504",   # Return type missing
+    
+    "ARG002",   # Unused function argument
 ]
 
 # Allow autofix for all enabled rules (when '--fix') is provided
