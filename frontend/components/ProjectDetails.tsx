@@ -4,6 +4,7 @@ import { ProjectDetailsProps } from "@/types/project";
 import { FaRegUser } from "react-icons/fa6";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Founder } from "@/types/founders";
 
 export default function ProjectDetails(props: ProjectDetailsProps) {
   return (
@@ -158,7 +159,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                     Founders ({props.ProjectFounders.length})
                   </dt>
                   <dd className="space-y-3 md:space-y-4">
-                    {props.ProjectFounders.map((founder: any, index: number) => (
+                    {props.ProjectFounders.map((founder: Founder, index: number) => (
                       <div key={index} className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-purple-50 rounded-lg">
                         <div className=" bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
                           <Avatar className="w-10 md:w-12 h-10 md:h-12 text-purple-600"> 
