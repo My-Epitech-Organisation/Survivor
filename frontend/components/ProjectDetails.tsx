@@ -1,12 +1,14 @@
 "use client"
 import { ProjectDetailsProps } from "@/types/project";
-
 import { FaRegUser } from "react-icons/fa6";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Founder } from "@/types/founders";
+import { getBackendUrl } from "@/lib/com-config";
+
 
 export default function ProjectDetails(props: ProjectDetailsProps) {
+  const backendUrl = getBackendUrl();
+
   return (
     <div className="max-w-none mx-auto space-y-6 sm:space-y-12 py-2 sm:py-4">
       {/* Hero Section */}
@@ -178,7 +180,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                         <div key={index} className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-purple-50 rounded-lg">
                           <div className=" bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
                             <Avatar className="w-10 md:w-12 h-10 md:h-12 text-purple-600"> 
-                                <AvatarImage src={founder.FounderPictureURL} />
+                                <AvatarImage src={backendUrl + founder.FounderPictureURL} />
                                 <AvatarFallback>
                                   <FaRegUser />
                                 </AvatarFallback>

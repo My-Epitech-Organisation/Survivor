@@ -5,7 +5,7 @@ import ProjectOverview from '@/components/ProjectOverview';
 import ProjectFilters from '@/components/ProjectFilters';
 import { ProjectFiltersProps, ProjectOverviewProps } from '@/types/project';
 import { useEffect, useState, useCallback } from 'react';
-import { getAPIUrl } from "@/lib/socket-config";
+import { getAPIUrl } from "@/lib/com-config";
 import axios from 'axios';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -92,11 +92,10 @@ export default function Projects() {
     const fetchProjects = async () => {
       try {
         const APIUrl = getAPIUrl();
-        console.log(APIUrl);
-        console.log("Fetching from:", `${APIUrl}/projects/`);
+        console.debug("Fetching from:", `${APIUrl}/projects/`);
         const response = await axios.get<ProjectOverviewProps[]>(`${APIUrl}/projects/`);
         setProjects(response.data);
-        console.log("Projects loaded:", projects);
+        console.debug("Projects loaded:", response);
       } catch (error) {
         console.error('Erreur API:', error);
       }

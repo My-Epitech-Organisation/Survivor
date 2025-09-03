@@ -21,13 +21,12 @@ import {
 import { MapPin, Building, TrendingUp, Target, CheckCircle, Info, Download } from "lucide-react"
 import ProjectDetails from "./ProjectDetails"
 import { useState, useEffect } from "react"
-import { getAPIUrl } from "@/lib/socket-config"
+import { getAPIUrl } from "@/lib/com-config"
 import axios from "axios"
 
 export default function ProjectOverview(props : ProjectOverviewProps) {
     const [projectDetails, setprojectDetails] = useState<ProjectDetailsProps>();
 
-    useEffect(() => {
     const fetchProject = async () => {
         try {
             const APIUrl = getAPIUrl();
@@ -40,8 +39,6 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
             console.error('Erreur API:', error);
         }
     };
-    fetchProject();
-    }, []);
 
     return (
         <Card className="w-full hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white overflow-hidden flex flex-col h-full">
@@ -152,7 +149,10 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
                 <div className="pt-6 border-t border-gray-100 mt-auto">
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button variant="outline" className="w-full text-white hover:text-white bg-blue-400 hover:bg-blue-500">
+                            <Button
+                            onClick={() => fetchProject()}
+                            className="w-full text-white hover:text-white bg-blue-400 hover:bg-blue-500"
+                            >
                                 <Info className="h-4 w-4 mr-2" />
                                 More Information
                             </Button>
