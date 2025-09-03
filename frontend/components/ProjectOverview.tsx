@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/card"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { MapPin, Building, TrendingUp, Target, CheckCircle, Info } from "lucide-react"
+import { MapPin, Building, TrendingUp, Target, CheckCircle, Info, Download } from "lucide-react"
 import ProjectDetails from "./ProjectDetails"
 import { useState, useEffect } from "react"
 import { getAPIUrl } from "@/lib/socket-config"
@@ -49,7 +50,7 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
         ProjectDescription: props.ProjectDescription,
         ProjectSector: props.ProjectSector,
         ProjectMaturity: props.ProjectMaturity,
-        ProjectAdress: props.ProjectLocation,
+        ProjectAddress: props.ProjectLocation,
         ProjectLegalStatus: "SAS",
         ProjectCreatedAt: "2024-01-15",
         ProjectFounders: [
@@ -59,7 +60,6 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
         ProjectEmail: "contact@example.com",
         ProjectPhone: "+33 1 23 45 67 89",
         ProjectNeeds: props.ProjectNeeds,
-        ProjectProgess: "Initial development phase completed. Working on MVP development and first client acquisition.",
         ProjectStatus: props.ProjectStatus,
         ProjectSocial: "@example_startup",
         ProjectWebsite: "https://example.com",
@@ -179,11 +179,26 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
                                 More Information
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-[100vw] sm:max-w-[98vw] w-[100vw] sm:w-[98vw] min-h-[100vh] sm:min-h-[80dvh] max-h-[100vh] sm:max-h-[98vh] overflow-y-auto p-0 rounded-none sm:rounded-lg [&>button]:!w-12 [&>button]:!h-12 [&>button]:!flex [&>button]:!items-center [&>button]:!justify-center [&>button>svg]:!w-6 [&>button>svg]:!h-6">
-                            <DialogHeader className="border-b pb-3 sm:pb-6 px-3 sm:px-8 pt-8 sm:pt-8">
-                                <DialogTitle className="text-lg sm:text-3xl font-light">Project Details - {props.ProjectName}</DialogTitle>
+                        <DialogContent className="max-w-[100vw] sm:max-w-[98vw] w-[100vw] sm:w-[98vw] min-h-[100vh] sm:min-h-[80dvh] max-h-[100vh] sm:max-h-[98vh] overflow-y-auto p-0 rounded-none sm:rounded-lg">
+                            <DialogHeader className="border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100/50 px-6 sm:px-8 py-6 sm:py-8 pr-16 sm:pr-20">
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <DialogTitle className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 truncate">
+                                            {props.ProjectName}
+                                        </DialogTitle>
+                                        <p className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">
+                                            Project Details & Information
+                                        </p>
+                                    </div>
+                                    <div className="flex-shrink-0">
+                                        <Button className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-6 py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-3 font-medium">
+                                            <Download className="h-5 w-5" />
+                                            <span className="hidden sm:inline">Export Project</span>
+                                        </Button>
+                                    </div>
+                                </div>
                             </DialogHeader>
-                            <div className="px-3 sm:px-8 pb-3 sm:pb-8">
+                            <div className="px-6 sm:px-8 py-6 sm:py-8 bg-gray-50/30">
                                 <ProjectDetails {...projectDetails} />
                             </div>
                         </DialogContent>
