@@ -30,12 +30,12 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b">
+    <nav className="bg-app-surface shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-blue-600">
+            <Link href="/" className="text-2xl font-bold text-app-blue-primary">
               JEB
             </Link>
           </div>
@@ -47,8 +47,8 @@ export default function Navigation() {
                 key={item.href}
                 href={item.href}
                 className={`transition-colors ${pathname === item.href
-                  ? 'text-blue-600 font-medium'
-                  : 'text-gray-600 hover:text-blue-600'
+                  ? 'text-app-blue-primary font-medium'
+                  : 'text-app-text-secondary hover:text-app-blue-primary'
                   }`}
               >
                 {item.label}
@@ -62,19 +62,19 @@ export default function Navigation() {
               <>
                 <button
                   onClick={handleSwitchToStartup}
-                  className="font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                  className="font-bold text-app-blue-primary hover:text-app-blue-primary-hover transition-colors"
                 >
                   Startup Area
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="font-bold text-gray-600 hover:text-red-600 transition-colors"
+                  className="font-bold text-app-text-secondary hover:text-app-red-primary transition-colors"
                 >
                   Logout
                 </button>
               </>
             ) : (
-              <Link href="/login" className="font-bold text-gray-600 hover:text-blue-600">
+              <Link href="/login" className="font-bold text-app-text-secondary hover:text-app-blue-primary">
                 Login
               </Link>
             )}
@@ -84,7 +84,7 @@ export default function Navigation() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-blue-600 focus:outline-none focus:text-blue-600 transition-colors"
+              className="text-app-text-secondary hover:text-app-blue-primary focus:outline-none focus:text-app-blue-primary transition-colors"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -97,7 +97,7 @@ export default function Navigation() {
 
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
+          <div className="md:hidden border-t border-app-border-light bg-app-surface">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link
@@ -106,14 +106,14 @@ export default function Navigation() {
                   onClick={() => setIsMenuOpen(false)}
                   className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     pathname === item.href
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+                      ? 'text-app-blue-primary bg-app-blue-light'
+                      : 'text-app-text-secondary hover:text-app-blue-primary hover:bg-app-surface-hover'
                   }`}
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="border-t border-gray-200 pt-2 space-y-1">
+              <div className="border-t border-app-border-light pt-2 space-y-1">
                 {isAuthenticated ? (
                   <>
                     <button
@@ -121,7 +121,7 @@ export default function Navigation() {
                         handleSwitchToStartup();
                         setIsMenuOpen(false);
                       }}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors"
+                      className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
                     >
                       Startup Area
                     </button>
@@ -130,7 +130,7 @@ export default function Navigation() {
                         handleLogout();
                         setIsMenuOpen(false);
                       }}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-red-600 hover:bg-gray-50 transition-colors"
+                      className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-red-primary hover:bg-app-surface-hover transition-colors"
                     >
                       Logout
                     </button>
@@ -139,7 +139,7 @@ export default function Navigation() {
                   <Link
                     href="/login"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                    className="block px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-blue-primary hover:bg-app-surface-hover transition-colors"
                   >
                     Login
                   </Link>

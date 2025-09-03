@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { API_CONFIG } from "@/lib/config"
+import { getAPIUrl } from "@/lib/socket-config"
 
 export function SignUpForm({
   className,
@@ -33,7 +33,8 @@ export function SignUpForm({
     setSuccess(false)
 
     try {
-      const response = await fetch(`${API_CONFIG.baseURL}/auth/signup`, {
+      const apiUrl = getAPIUrl();
+      const response = await fetch(`${apiUrl}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

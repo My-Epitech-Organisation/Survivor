@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Geist, Geist_Mono, Bowlby_One } from 'next/font/google';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,22 +26,23 @@ export default function Custom404() {
   return (
     <div className="h-screen flex flex-col w-full">
       <Navigation/>
-      <div className={`flex-1 bg-gradient-to-br from-blue-50 to-indigo-100 text-white flex items-center justify-center px-4 ${geistSans.variable} ${geistMono.variable} ${bowlbyOne.variable}`}>
+      <div className={`flex-1 bg-gradient-to-br from-app-gradient-from to-app-gradient-to text-app-white flex items-center justify-center px-4 ${geistSans.variable} ${geistMono.variable} ${bowlbyOne.variable}`}>
         <div className="text-center">
-          <h1 className={`text-[120px] md:text-[180px] font-bold text-blue-600 mb-1 ${bowlbyOne.className}`}>
+          <h1 className={`text-[120px] md:text-[180px] font-bold text-app-blue-primary mb-1 ${bowlbyOne.className}`}>
             404
           </h1>
-          <p className={`text-xl ${geistMono.className} text-blue-600`}>Page not found</p>
-          <div className="mt-12">
+          <p className={`text-xl ${geistMono.className} text-app-blue-primary`}>Page not found</p>
+          <div className="mt-8">
             <Link 
-              href="/" 
-              className={`bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-full transition duration-300 ${geistSans.className}`}
+              href="/"
+              className={`bg-app-blue-primary hover:bg-app-blue-primary-hover text-app-white font-medium py-3 px-6 rounded-full transition duration-300 ${geistSans.className}`}
             >
-              Back to menu
+              Go back home
             </Link>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

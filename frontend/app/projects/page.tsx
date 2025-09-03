@@ -141,12 +141,12 @@ export default function Projects() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-app-surface-hover flex flex-col">
       <Navigation />
 
       <main className="flex-1 py-6">
         <div className="max-w-[90rem] mx-auto px-4 sm:px-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Projects</h1>
+          <h1 className="text-3xl font-bold text-app-text-primary mb-6">Projects</h1>
 
           {/* Filters */}
           <ProjectFilters {...projectFilter}/>
@@ -161,8 +161,8 @@ export default function Projects() {
           {/* Message si aucun projet trouvé */}
           {filteredProjects.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No projects found matching your filters.</p>
-              <p className="text-gray-400 text-sm mt-2">Try adjusting your filter criteria.</p>
+              <p className="text-app-text-secondary text-lg">No projects found matching your filters.</p>
+              <p className="text-app-text-muted text-sm mt-2">Try adjusting your filter criteria.</p>
             </div>
           )}
         </div>
