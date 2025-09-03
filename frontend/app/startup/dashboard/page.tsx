@@ -41,15 +41,15 @@ export default function StartupDashboard() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
             <StartupNavigation />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
                         Startup Dashboard
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+                    <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
                         Welcome to your startup management hub. Monitor your progress, manage opportunities,
                         and connect with potential investors and partners.
                     </p>
@@ -65,7 +65,7 @@ export default function StartupDashboard() {
                             </Avatar>
                             <div>
                                 <h2 className="text-2xl font-bold">{userProfile.name}</h2>
-                                <p className="text-gray-600">
+                                <p className="text-app-text-secondary">
                                     {userProfile.nbStartups} {userProfile.nbStartups === 1 ? 'Startup' : 'Startups'}
                                 </p>
                             </div>
