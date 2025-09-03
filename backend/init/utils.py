@@ -19,8 +19,6 @@ def fetch_news_detail(news_id, headers):
     Fetch details for a specific news item and create a NewsDetail object
     """
     NewsDetail = apps.get_model('admin_panel', 'NewsDetail')
-    import os
-
     detail_url = settings.JEB_API_NEWS_DETAIL_URL.format(news_id=news_id)
     image_url = settings.JEB_API_NEWS_IMAGE_URL.format(news_id=news_id)
 
