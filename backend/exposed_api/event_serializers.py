@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from admin_panel.models import Event
+
 
 class EventSerializer(serializers.ModelSerializer):
     pictureURL = serializers.SerializerMethodField()

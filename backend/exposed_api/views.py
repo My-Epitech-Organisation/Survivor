@@ -26,6 +26,7 @@ class IsAuthenticatedNotRegularUser(IsAuthenticated):
             return False
         return request.user.role != "user"
 
+
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def user_detail(request, user_id):
