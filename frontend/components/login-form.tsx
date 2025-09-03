@@ -51,7 +51,6 @@ export function LoginForm({
       }
 
       const data = await response.json()
-      console.log('Login successful:', data)
 
       const userData = {
         id: data.user?.id || '1',
