@@ -168,12 +168,13 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
                                             Project Details & Information
                                         </p>
                                     </div>
-                                    <div className="flex-shrink-0">
+                                    {/* Export project */}
+                                    {/* <div className="flex-shrink-0">
                                         <Button className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-6 py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-3 font-medium">
                                             <Download className="h-5 w-5" />
                                             <span className="hidden sm:inline">Export Project</span>
                                         </Button>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </DialogHeader>
                             <div className="px-6 sm:px-8 py-6 sm:py-8 bg-gray-50/30">

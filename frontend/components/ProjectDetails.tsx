@@ -6,9 +6,6 @@ import { Founder } from "@/types/founders";
 import { getBackendUrl } from "@/lib/com-config";
 import { FaLinkedinIn, FaInstagram, FaFacebook, FaXTwitter, FaLink } from "react-icons/fa6";
 
-
-
-
 export default function ProjectDetails(props: ProjectDetailsProps) {
   const backendUrl = getBackendUrl();
 
