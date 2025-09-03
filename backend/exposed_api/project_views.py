@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 
 from admin_panel.models import StartupDetail
-from admin_panel.serializers import ProjectSerializer, ProjectDetailSerializer
+from .serializers import ProjectSerializer, ProjectDetailSerializer
 
 class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
