@@ -61,12 +61,12 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
     };
 
     return (
-        <Card className="h-fit bg-white border border-gray-200 shadow-sm">
+        <Card className="h-fit bg-app-surface border border-app-border-light shadow-sm">
             {/* Header */}
             <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                    <Filter className="h-5 w-5 text-gray-600" />
-                    <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                    <Filter className="h-5 w-5 text-app-text-secondary" />
+                    <h3 className="text-lg font-semibold text-app-text-primary">Filters</h3>
                 </div>
             </CardHeader>
 
@@ -75,8 +75,8 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
                 {/* Location Filter */}
                 <div className="flex-1 min-w-[200px] space-y-2">
                     <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-emerald-600" />
-                        <span className="text-sm font-medium text-gray-700">Location</span>
+                        <MapPin className="h-4 w-4 text-app-green-primary" />
+                        <span className="text-sm font-medium text-app-text-primary">Location</span>
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -104,8 +104,8 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
                 {/* Maturity Filter */}
                 <div className="flex-1 min-w-[200px] space-y-2">
                     <div className="flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-purple-600" />
-                        <span className="text-sm font-medium text-gray-700">Maturity</span>
+                        <TrendingUp className="h-4 w-4 text-app-purple-primary" />
+                        <span className="text-sm font-medium text-app-text-primary">Maturity</span>
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -133,8 +133,8 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
                 {/* Sector Filter */}
                 <div className="flex-1 min-w-[200px] space-y-2">
                     <div className="flex items-center gap-2">
-                        <Building className="h-4 w-4 text-blue-600" />
-                        <span className="text-sm font-medium text-gray-700">Sector</span>
+                        <Building className="h-4 w-4 text-app-blue-primary" />
+                        <span className="text-sm font-medium text-app-text-primary">Sector</span>
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -163,7 +163,7 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
                 <div className="flex-shrink-0">
                     <Button
                         variant="ghost"
-                        className="text-gray-600 hover:text-gray-800 whitespace-nowrap"
+                        className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap"
                         onClick={() => {
                             setSelectedLocations([]);
                             setSelectedMaturities([]);

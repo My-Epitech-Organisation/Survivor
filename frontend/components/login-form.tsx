@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { API_CONFIG } from "@/lib/config"
+import { getAPIUrl } from "@/lib/config"
 import { useAuth } from "@/contexts/AuthContext"
 
 export function LoginForm({
@@ -33,7 +33,31 @@ export function LoginForm({
     setError("")
 
     try {
-      const response = await fetch(`${API_CONFIG.baseURL}/auth/login`, {
+      // DEBUG MODE: Skip API call and automatically log in
+      // console.log('DEBUG: Bypassing authentication with provided credentials:', { email, password })
+
+      // // Create mock user data for debugging
+      // const userData = {
+      //   id: '1',
+      //   email: email || 'debug@example.com',
+      //   name: 'Debug User'
+      // }
+
+      // // Use a mock token for debugging
+      // const mockToken = 'debug-token-12345'
+
+      // console.log('DEBUG: Auto-login successful with mock data:', userData)
+      // login(mockToken, userData)
+
+      // setEmail("")
+      // setPassword("")
+
+      // router.push('/startup/dashboard')
+
+
+      // PROD MODE: Use API to log in
+      const apiUrl = getAPIUrl();
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

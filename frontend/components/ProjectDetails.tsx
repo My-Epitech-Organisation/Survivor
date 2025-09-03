@@ -3,7 +3,7 @@ import { ProjectDetailsProps } from "@/types/project";
 import { FaGithub, FaRegUser } from "react-icons/fa6";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Founder } from "@/types/founders";
-import { getBackendUrl } from "@/lib/com-config";
+import { getBackendUrl } from "@/lib/config";
 import { FaLinkedinIn, FaInstagram, FaFacebook, FaXTwitter, FaLink } from "react-icons/fa6";
 
 export default function ProjectDetails(props: ProjectDetailsProps) {

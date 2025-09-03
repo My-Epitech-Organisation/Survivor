@@ -5,7 +5,7 @@ import ProjectOverview from '@/components/ProjectOverview';
 import ProjectFilters from '@/components/ProjectFilters';
 import { ProjectFiltersProps, ProjectOverviewProps } from '@/types/project';
 import { useEffect, useState, useCallback } from 'react';
-import { getAPIUrl } from "@/lib/com-config";
+import { getAPIUrl } from "@/lib/config";
 import axios from 'axios';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -143,12 +143,12 @@ export default function Projects() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-app-surface-hover flex flex-col">
       <Navigation />
 
       <main className="flex-1 py-6">
         <div className="max-w-[90rem] mx-auto px-4 sm:px-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Projects</h1>
+          <h1 className="text-3xl font-bold text-app-text-primary mb-6">Projects</h1>
 
           {/* Filters and Export Section */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
@@ -195,8 +195,8 @@ export default function Projects() {
           {/* Message si aucun projet trouvé */}
           {filteredProjects.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No projects found matching your filters.</p>
-              <p className="text-gray-400 text-sm mt-2">Try adjusting your filter criteria.</p>
+              <p className="text-app-text-secondary text-lg">No projects found matching your filters.</p>
+              <p className="text-app-text-muted text-sm mt-2">Try adjusting your filter criteria.</p>
             </div>
           )}
         </div>

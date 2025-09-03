@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'init.apps.InitConfig',
     'admin_panel',
-    'public_panel',
+    'exposed_api.apps.ExposedApiConfig',
 ]
 
 MIDDLEWARE = [
