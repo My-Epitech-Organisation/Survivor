@@ -163,7 +163,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                     (() => {
                       try {
                         const url = new URL(props.ProjectSocial);
-                        let domain = url.hostname.replace('www.', '');
+                        const domain = url.hostname.replace('www.', '');
 
                         if (domain.includes('facebook')) return <FaFacebook/>;
                         if (domain.includes('twitter') || domain.includes('x.com')) return <FaXTwitter/>;
