@@ -305,6 +305,7 @@ def fetch_and_create_users():
 
         User = apps.get_model('authentication', 'CustomUser')
 
+        from django.utils import timezone
         for item in users_data:
             user = User(
                 id=item.get('id'),
@@ -312,7 +313,8 @@ def fetch_and_create_users():
                 name=item.get('name'),
                 role=item.get('role'),
                 founder_id=item.get('founder_id'),
-                investor_id=item.get('investor_id')
+                investor_id=item.get('investor_id'),
+                date_joined=timezone.now()
             )
 
             try:
