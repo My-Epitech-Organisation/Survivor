@@ -7,9 +7,11 @@ from .event_views import EventListView
 
 app_name = "exposed_api"
 
+
 urlpatterns = [
     # Project CRUD (admin only)
-    path("projects/<int:id>", project_views.ProjectDetailView.as_view(), name="project_crud"),
+    path("projects/", project_views.ProjectDetailView.as_view(), name="project_create"),  # POST (create)
+    path("projects/<int:id>", project_views.ProjectDetailView.as_view(), name="project_crud"),  # PUT, DELETE
 
     # Project GETs (public)
     path("projects/", project_views.projects_list, name="projects_list"),
