@@ -21,8 +21,7 @@ class InitConfig(AppConfig):
 
         import init.signals
 
-        # Only start scheduler in the main process (RUN_MAIN is set by Django in the child process)
-        # Also check if scheduler is disabled (for tests)
+        # Only start scheduler in the main process and if not disabled by environment variables (for tests)
         if os.environ.get("RUN_MAIN") != "true" and os.environ.get("DISABLE_SCHEDULER") != "True":
             from init.scheduler import start_scheduler
 
