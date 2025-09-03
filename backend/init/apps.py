@@ -22,6 +22,6 @@ class InitConfig(AppConfig):
         import os
 
         # Only start scheduler in the main process (RUN_MAIN is set by Django in the child process)
-        if ('runserver' in sys.argv or 'uvicorn' in sys.argv) and os.environ.get('RUN_MAIN') == 'true':
+        if os.environ.get('RUN_MAIN') != 'true':
             from init.scheduler import start_scheduler
             start_scheduler()
