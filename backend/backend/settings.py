@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'init.apps.InitConfig',
     'admin_panel',
+    'public_panel',
 ]
 
 MIDDLEWARE = [
@@ -162,4 +163,38 @@ JEB_API_DEFAULT_PARAMS = {
 }
 JEB_API_HEADERS = {
     "accept": "application/json"
+}
+
+# API Data Refresh Interval in minutes
+API_DATA_REFRESH_INTERVAL = 60
+# Whether to fetch data immediately on startup or wait for first scheduled interval
+API_DATA_FETCH_ON_STARTUP = False
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '[{levelname}] {asctime} - {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'init': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
 }

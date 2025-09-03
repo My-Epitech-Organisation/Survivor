@@ -5,10 +5,8 @@ import ProjectOverview from '@/components/ProjectOverview';
 import ProjectFilters from '@/components/ProjectFilters';
 import { ProjectFiltersProps, ProjectOverviewProps } from '@/types/project';
 import { useEffect, useState, useCallback } from 'react';
-import { getAPIUrl } from "@/lib/socket-config";
-import axios from 'axios';
 
-let projects: ProjectOverviewProps[] = [
+const projects: ProjectOverviewProps[] = [
   {
     ProjectId: 1,
     ProjectName: "EcoLoop",
@@ -93,8 +91,6 @@ export default function Projects() {
   //   fetchProjects();
   // }, []);
 
-  let projectFilter: ProjectFiltersProps;
-
   const [locations, setLocations] = useState<string[]>([]);
   const [maturities, setMaturities] = useState<string[]>([]);
   const [sectors, setSectors] = useState<string[]>([]);
@@ -137,7 +133,7 @@ export default function Projects() {
 
   const filteredProjects = getFilteredProjects();
 
-  projectFilter = {
+  const projectFilter: ProjectFiltersProps = {
     ProjectLocation: locations,
     ProjectMaturity: maturities,
     ProjectSector: sectors,

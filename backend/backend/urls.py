@@ -19,12 +19,15 @@ from django.urls import path, include
 from rest_framework import routers
 from django.conf import settings
 from django.conf.urls.static import static
+from .health_check import health_check
 
 router = routers.DefaultRouter()
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Django admin
+    path('healthz/', health_check, name='health_check'),  # Health check endpoint
     path('api/', include(router.urls)),
+    path('api/', include('public_panel.urls')),  # Public API
     path('api/admin/', include('admin_panel.urls')),  # Custom admin
 ]
 
