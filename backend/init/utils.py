@@ -42,14 +42,13 @@ def fetch_news_detail(news_id, headers):
         try:
             image_response = requests.get(image_url, headers=headers)
             if image_response.status_code == 200:
-                # Save image to disk
+
                 image_path = f"media/news/{news_id}.jpg"
                 os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
                 with open(image_path, 'wb') as f:
                     f.write(image_response.content)
 
-                # Store the relative path in the database
                 news_detail.image = f"news/{news_id}.jpg"
         except Exception as e:
             print(f"Error fetching image for news {news_id}: {e}")
@@ -145,14 +144,13 @@ def fetch_and_create_events():
                 image_url = settings.JEB_API_EVENT_IMAGE_URL.format(event_id=event_id)
                 image_response = requests.get(image_url, headers=headers)
                 if image_response.status_code == 200:
-                    # Save image to disk
+
                     image_path = f"media/events/{event_id}.jpg"
                     os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
                     with open(image_path, 'wb') as f:
                         f.write(image_response.content)
 
-                    # Store the relative path in the database
                     event.image = f"events/{event_id}.jpg"
             except Exception as e:
                 print(f"Error fetching image for event {item.get('id')}: {e}")
@@ -224,14 +222,13 @@ def fetch_startup_detail(startup_id, headers):
                     image_response = requests.get(image_url, headers=headers)
 
                     if image_response.status_code == 200:
-                        # Save image to disk
+
                         image_path = f"media/founders/{startup_id}_{founder_id}.jpg"
                         os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
                         with open(image_path, 'wb') as f:
                             f.write(image_response.content)
 
-                        # Store the relative path in the founders_images dictionary
                         founders_images[str(founder_id)] = f"founders/{startup_id}_{founder_id}.jpg"
                 except Exception as e:
                     print(f"Error fetching image for founder {founder_id}: {e}")
@@ -332,14 +329,13 @@ def fetch_and_create_users():
                 image_url = settings.JEB_API_USER_IMAGE_URL.format(user_id=user_id)
                 image_response = requests.get(image_url, headers=headers)
                 if image_response.status_code == 200:
-                    # Save image to disk
+
                     image_path = f"media/users/{user_id}.jpg"
                     os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
                     with open(image_path, 'wb') as f:
                         f.write(image_response.content)
 
-                    # Store the relative path in the database
                     user.image = f"users/{user_id}.jpg"
             except Exception as e:
                 print(f"Error fetching image for user {item.get('id')}: {e}")
