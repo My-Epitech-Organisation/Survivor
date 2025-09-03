@@ -8,6 +8,7 @@ export interface Event {
     description: string;
     event_type: string;
     target_audience: string;
+    pictureURL: string;
 }
 
 export interface CalendarEvent extends Event {
