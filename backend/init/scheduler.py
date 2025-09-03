@@ -68,7 +68,7 @@ def start_scheduler():
         return
 
     scheduler = BackgroundScheduler()
-    interval_minutes = getattr(settings, 'API_DATA_REFRESH_INTERVAL', 60)  # Default to 1h if not set
+    interval_minutes = getattr(settings, 'API_DATA_REFRESH_INTERVAL', 60)  # Default to 60 minutes if not set
     fetch_on_startup = getattr(settings, 'API_DATA_FETCH_ON_STARTUP', False)  # Default to False
 
     scheduler.add_job(
