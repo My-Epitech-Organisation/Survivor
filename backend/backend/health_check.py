@@ -1,7 +1,9 @@
 from django.http import JsonResponse
 from django.db import connection
 from django.db.utils import OperationalError
+from django.views.decorators.http import require_http_methods
 
+@require_http_methods(['GET', 'HEAD'])
 def health_check(request):
     """
     Endpoint for checking the health of the application and its connection to the database
