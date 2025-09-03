@@ -7,6 +7,9 @@ import { ProjectFiltersProps, ProjectOverviewProps } from '@/types/project';
 import { useEffect, useState, useCallback } from 'react';
 import { getAPIUrl } from "@/lib/socket-config";
 import axios from 'axios';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {Download, FileText, FileSpreadsheet} from "lucide-react";
 
 let projects: ProjectOverviewProps[] = [
   {
@@ -152,8 +155,40 @@ export default function Projects() {
         <div className="max-w-[90rem] mx-auto px-4 sm:px-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Projects</h1>
 
-          {/* Filters */}
-          <ProjectFilters {...projectFilter}/>
+          {/* Filters and Export Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+            {/* Filters Section */}
+            <div className="lg:col-span-4">
+              <ProjectFilters {...projectFilter}/>
+            </div>
+            
+            {/* Export Section */}
+            {/* <div className="lg:col-span-1">
+              <Card className="h-fit bg-white border border-gray-200 shadow-sm">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-2">
+                    <Download className="h-5 w-5 text-gray-600" />
+                    <h3 className="text-lg font-semibold text-gray-900">Export</h3>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-3">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 hover:bg-blue-50 hover:border-blue-200"
+                  >
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    Export as PDF
+                  </Button>
+                  <div className="pt-2 border-t border-gray-100">
+                    <p className="text-xs text-gray-400 text-center">
+                      {filteredProjects.length} projects to export
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>*/}
+          </div>
+          
 
           {/* Projects Grid */}
           <div className='grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6'>

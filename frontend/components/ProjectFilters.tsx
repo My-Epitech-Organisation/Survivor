@@ -61,15 +61,17 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
     };
 
     return (
-        <div className="w-full bg-white border border-gray-200 rounded-lg p-4 mb-6">
+        <Card className="h-fit bg-white border border-gray-200 shadow-sm">
             {/* Header */}
-            <div className="flex items-center gap-2 mb-4">
-                <Filter className="h-5 w-5 text-gray-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
-            </div>
+            <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                    <Filter className="h-5 w-5 text-gray-600" />
+                    <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                </div>
+            </CardHeader>
 
             {/* Filters Row */}
-            <div className="flex flex-wrap gap-4 items-end">
+            <CardContent className="pt-0 pb-3 flex flex-wrap gap-4 items-end">
                 {/* Location Filter */}
                 <div className="flex-1 min-w-[200px] space-y-2">
                     <div className="flex items-center gap-2">
@@ -171,7 +173,7 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
                         Clear All Filters
                     </Button>
                 </div>
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }
