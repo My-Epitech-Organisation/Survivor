@@ -82,7 +82,15 @@ def start_scheduler():
     # Start the scheduler in a daemon thread
     scheduler.start()
     logger.info(f"API Data Sync Scheduler initialized (interval: {interval_minutes}m)")
-    atexit.register(lambda: scheduler.shutdown() if scheduler else None)
+
+    # Register a safer shutdown function that handles errors
+    def safe_shutdown():
+        if scheduler:
+            import contextlib
+            with contextlib.suppress(Exception):
+                scheduler.shutdown()
+
+    atexit.register(safe_shutdown)
 
     if fetch_on_startup:
         thread = threading.Thread(target=fetch_all_data)
