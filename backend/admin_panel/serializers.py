@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, Partner, User
+from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, Partner
+from authentication.models import CustomUser
 
 DjangoUser = get_user_model()
 
@@ -10,11 +11,12 @@ class DjangoUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'name', 'is_staff', 'is_active', 'date_joined']
         read_only_fields = ['date_joined']
 
-class UserSerializer(serializers.ModelSerializer):
+
+class CustomUserSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['id', 'email', 'name', 'role', 'founder_id', 'investor_id', 'image_url']
 
     def get_image_url(self, obj):

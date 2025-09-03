@@ -7,7 +7,7 @@
 
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
+from authentication.models import CustomUser
 import os
 from django.core.exceptions import ImproperlyConfigured
 from django.apps import apps
@@ -35,7 +35,7 @@ def create_superuser(sender, **kwargs):
         return
     _handlers_executed['create_superuser'] = True
 
-    User = get_user_model()
+    User = CustomUser
 
     name = os.environ.get('DJANGO_ADMIN_USERNAME')
     email = os.environ.get('DJANGO_ADMIN_EMAIL')
@@ -50,6 +50,10 @@ def create_superuser(sender, **kwargs):
             email=email,
             name=name,
             password=password,
+            is_staff=True,
+            is_superuser=True,
+            is_active=True,
+            role='admin',
         )
         print("Default admin user created successfully")
 
@@ -140,9 +144,13 @@ def clear_and_fetch_users(sender, **kwargs):
     _handlers_executed['clear_and_fetch_users'] = True
 
     try:
-        User = apps.get_model('admin_panel', 'User')
+        User = apps.get_model('authentication', 'CustomUser')
 
-        User.objects.all().delete()
+        admin_email = os.environ.get('DJANGO_ADMIN_EMAIL')
+        if admin_email:
+            User.objects.exclude(email=admin_email).delete()
+        else:
+            User.objects.all().delete()
 
         fetch_and_create_users()
 

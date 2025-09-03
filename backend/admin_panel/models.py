@@ -79,20 +79,6 @@ class StartupDetail(models.Model):
     founders = models.ManyToManyField('Founder', related_name='startups')
     founders_images = models.JSONField(null=True, blank=True)
 
-# User models
-class User(models.Model):
-    """
-    Represents a user.
-    """
-
-    email = models.CharField(max_length=255, unique=True, null=False)
-    name = models.CharField(max_length=255, null=False)
-    role = models.CharField(max_length=255, null=False)
-    founder_id = models.IntegerField(null=True, blank=True)
-    investor_id = models.IntegerField(null=True, blank=True)
-    id = models.IntegerField(null=False, primary_key=True)
-    image = models.CharField(max_length=255, null=True, blank=True)
-
 class Founder(models.Model):
     """
     Represent a founder.

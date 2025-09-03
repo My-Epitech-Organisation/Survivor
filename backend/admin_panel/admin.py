@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, User, Investor, Partner
+from .models import News, NewsDetail, Event, StartupList, StartupDetail, Founder, Investor, Partner
+from authentication.models import CustomUser
 
 
 class NewsDetailAdmin(admin.ModelAdmin):
@@ -38,12 +39,12 @@ class FounderAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'startup_id']
     fields = ['id', 'name', 'startup_id']
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'email', 'role']
-    fields = ['id', 'name', 'email', 'role', 'founder_id', 'investor_id', 'image']
-    readonly_fields = ['image']
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'email', 'role', 'is_staff', 'is_active']
+    fields = ['name', 'email', 'role', 'founder_id', 'investor_id', 'image', 'is_staff', 'is_active', 'date_joined']
+    readonly_fields = ['image', 'date_joined']
     search_fields = ['name', 'email', 'role']
-    list_filter = ['role']
+    list_filter = ['role', 'is_staff', 'is_active']
 
 class InvestorAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'legal_status', 'investor_type', 'investment_focus']
@@ -65,6 +66,6 @@ admin.site.register(Event, EventAdmin)
 admin.site.register(StartupList, StartupListAdmin)
 admin.site.register(StartupDetail, StartupDetailAdmin)
 admin.site.register(Founder, FounderAdmin)
-admin.site.register(User, UserAdmin)
+admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Investor, InvestorAdmin)
 admin.site.register(Partner, PartnerAdmin)
