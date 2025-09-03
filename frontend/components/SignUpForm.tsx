@@ -19,43 +19,69 @@ export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
-  const router = useRouter()
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
-    setSuccess(false)
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    setSuccess(false);
 
     try {
       const apiUrl = getAPIUrl();
-      const response = await fetch(`${apiUrl}/auth/signup`, {
+      const link = `${apiUrl}/auth/register/`;
+      const response = await fetch(link, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email,
+          name,
           password,
+          password_confirm: confirmPassword,
+          role: "user"
         }),
-      })
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Signup failed')
+        const errorData = await response.json();
+
+        if (errorData.password && Array.isArray(errorData.password)) {
+          throw new Error(errorData.password.join(' '));
+        }
+
+        const errorMessages = [];
+        for (const [field, messages] of Object.entries(errorData)) {
+          if (Array.isArray(messages)) {
+            errorMessages.push(...messages);
+          } else if (typeof messages === 'string') {
+            errorMessages.push(messages);
+          }
+        }
+
+        if (errorMessages.length > 0) {
+          throw new Error(errorMessages.join(' '));
+        }
+
+        throw new Error(errorData.message || 'Signup failed');
       }
 
-      const data = await response.json()
-      console.log('Signup successful:', data)
-      setSuccess(true)
+      const data = await response.json();
+      console.log('Signup successful:', data);
+      setSuccess(true);
 
-      setEmail("")
-      setPassword("")
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
 
       router.push('/login')
 
@@ -91,6 +117,18 @@ export function SignUpForm({
                   </div>
                 )}
                 <div className="grid gap-3">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
@@ -114,7 +152,19 @@ export function SignUpForm({
                     disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <div className="grid gap-3">
+                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+                <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Sign Up"}
                 </Button>
               </div>

@@ -57,7 +57,7 @@ export function LoginForm({
 
       // PROD MODE: Use API to log in
       const apiUrl = getAPIUrl();
-      const response = await fetch(`${apiUrl}/auth/login`, {
+      const response = await fetch(`${apiUrl}/auth/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,10 +82,10 @@ export function LoginForm({
         name: data.user?.name || 'Startup Owner'
       }
 
-      if (!data.token) {
+      if (!data.access) {
         throw new Error('No token received from server. Login failed.');
       }
-      login(data.token, userData)
+      login(data.access, userData)
 
       setEmail("")
       setPassword("")
@@ -135,7 +135,7 @@ export function LoginForm({
                     <Label htmlFor="password">Password</Label>
                     <a
                       href="#"
-                      className="ml-auto text-sm underline-offset-2 hover:underline hover:text-blue-500"
+                      className="ml-auto text-sm underline-offset-2 hover:underline hover:bg-app-blue-primary-hover"
                     >
                       Forgot your password?
                     </a>
@@ -150,12 +150,12 @@ export function LoginForm({
                     disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-blue-400 hover:bg-blue-500" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </div>
               <div className="text-center text-sm">
-                <a href="/signup" className="hover:underline underline-offset-2 hover:text-blue-500">
+                <a href="/signup" className="hover:underline underline-offset-2 hover:bg-app-blue-primary-hover">
                   Don&apos;t have an account?{" "}
                 </a>
               </div>
