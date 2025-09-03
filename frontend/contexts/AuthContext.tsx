@@ -5,7 +5,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface User {
     id: string;
     email: string;
-    name?: string;
+    name: string;
+    role: string;
 }
 
 interface AuthContextType {
@@ -28,7 +29,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser({
                 id: '1',
                 email: 'user@example.com',
-                name: 'John Doe'
+                name: 'John Doe',
+                role: 'user'
             });
         }
         setIsLoading(false);

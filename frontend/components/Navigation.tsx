@@ -10,7 +10,7 @@ export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const navItems = [
     { href: '/', label: 'Home' },
@@ -60,12 +60,14 @@ export default function Navigation() {
           <div className="hidden md:flex w-fit pl-8 items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <button
-                  onClick={handleSwitchToStartup}
-                  className="font-bold text-app-blue-primary hover:text-app-blue-primary-hover transition-colors"
-                >
-                  Startup Area
-                </button>
+                {user?.role === 'founder' && (
+                  <button
+                    onClick={handleSwitchToStartup}
+                    className="font-bold text-app-blue-primary hover:text-app-blue-primary-hover transition-colors"
+                    >
+                    Startup Area
+                  </button>
+                )}
                 <button
                   onClick={handleLogout}
                   className="font-bold text-app-text-secondary hover:text-app-red-primary transition-colors"
