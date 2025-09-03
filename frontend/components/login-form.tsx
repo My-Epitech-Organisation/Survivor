@@ -135,7 +135,7 @@ export function LoginForm({
                     <Label htmlFor="password">Password</Label>
                     <a
                       href="#"
-                      className="ml-auto text-sm underline-offset-2 hover:underline hover:bg-app-blue-primary-hover"
+                      className="ml-auto text-sm underline-offset-2 hover:underline hover:text-app-blue-primary-hover"
                     >
                       Forgot your password?
                     </a>
@@ -155,7 +155,7 @@ export function LoginForm({
                 </Button>
               </div>
               <div className="text-center text-sm">
-                <a href="/signup" className="hover:underline underline-offset-2 hover:bg-app-blue-primary-hover">
+                <a href="/signup" className="hover:underline underline-offset-2 hover:text-app-blue-primary-hover">
                   Don&apos;t have an account?{" "}
                 </a>
               </div>
