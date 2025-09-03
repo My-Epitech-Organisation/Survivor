@@ -7,6 +7,7 @@
 
 import os
 import base64
+import logging
 import requests
 from django.core.exceptions import ImproperlyConfigured
 from django.apps import apps
@@ -49,12 +50,12 @@ def fetch_news_detail(news_id, headers):
 
                 news_detail.image = f"news/{news_id}.jpg"
         except Exception as e:
-            print(f"Error fetching image for news {news_id}: {e}")
+            logging.error(f"Error fetching news image for ID {news_id}: {e}")
 
         news_detail.save()
         return True
     except Exception as e:
-        print(f"Error fetching news details for ID {news_id}: {e}")
+        logging.error(f"Error fetching news details for ID {news_id}: {e}")
         return False
 
 def fetch_and_create_news():
@@ -65,8 +66,6 @@ def fetch_and_create_news():
         jeb_token = os.environ.get('JEB_API_TOKEN')
         if not jeb_token:
             raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
-
-        print("Fetching news data from JEB API...")
 
         url = settings.JEB_API_NEWS_URL
         params = settings.JEB_API_DEFAULT_PARAMS
@@ -96,11 +95,11 @@ def fetch_and_create_news():
             fetch_news_detail(news_id, headers)
 
     except ImproperlyConfigured as e:
-        print(f"Configuration error: {e}")
+        logging.error(f"Configuration error: {e}")
     except requests.RequestException as e:
-        print(f"API request error: {e}")
+        logging.error(f"API request error: {e}")
     except Exception as e:
-        print(f"Error creating news data: {e}")
+        logging.error(f"Error creating news data: {e}")
 
 def fetch_and_create_events():
     """
@@ -110,8 +109,6 @@ def fetch_and_create_events():
         jeb_token = os.environ.get('JEB_API_TOKEN')
         if not jeb_token:
             raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
-
-        print("Fetching events data from JEB API...")
 
         url = settings.JEB_API_EVENTS_URL
         params = settings.JEB_API_DEFAULT_PARAMS
@@ -151,16 +148,16 @@ def fetch_and_create_events():
 
                     event.image = f"events/{event_id}.jpg"
             except Exception as e:
-                print(f"Error fetching image for event {item.get('id')}: {e}")
+                logging.error(f"Error fetching event image for {event_id}: {e}")
 
             event.save()
 
     except ImproperlyConfigured as e:
-        print(f"Configuration error: {e}")
+        logging.error(f"Configuration error: {e}")
     except requests.RequestException as e:
-        print(f"API request error: {e}")
+        logging.error(f"API request error: {e}")
     except Exception as e:
-        print(f"Error creating events data: {e}")
+        logging.error(f"Error creating events data: {e}")
 
 def fetch_startup_detail(startup_id, headers):
     """
@@ -229,7 +226,7 @@ def fetch_startup_detail(startup_id, headers):
 
                         founders_images[str(founder_id)] = f"founders/{startup_id}_{founder_id}.jpg"
                 except Exception as e:
-                    print(f"Error fetching image for founder {founder_id}: {e}")
+                    logging.error(f"Error fetching founder image for {founder_id}: {e}")
 
             if founders_images:
                 startup_detail.founders_images = founders_images
@@ -237,7 +234,7 @@ def fetch_startup_detail(startup_id, headers):
 
         return startup_detail
     except Exception as e:
-        print(f"Error fetching startup details for ID {startup_id}: {e}")
+        logging.error(f"Error fetching startup details for ID {startup_id}: {e}")
         return None
 
 
@@ -249,8 +246,6 @@ def fetch_and_create_startups():
         jeb_token = os.environ.get('JEB_API_TOKEN')
         if not jeb_token:
             raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
-
-        print("Fetching startups data from JEB API...")
 
         url = settings.JEB_API_STARTUPS_URL
         params = settings.JEB_API_DEFAULT_PARAMS
@@ -282,11 +277,11 @@ def fetch_and_create_startups():
             fetch_startup_detail(startup_id, headers)
 
     except ImproperlyConfigured as e:
-        print(f"Configuration error: {e}")
+        logging.error(f"Configuration error: {e}")
     except requests.RequestException as e:
-        print(f"API request error: {e}")
+        logging.error(f"API request error: {e}")
     except Exception as e:
-        print(f"Error creating startups data: {e}")
+        logging.error(f"Error creating startups data: {e}")
 
 def fetch_and_create_users():
     """
@@ -296,8 +291,6 @@ def fetch_and_create_users():
         jeb_token = os.environ.get('JEB_API_TOKEN')
         if not jeb_token:
             raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
-
-        print("Fetching users data from JEB API...")
 
         url = settings.JEB_API_USERS_URL
         params = settings.JEB_API_DEFAULT_PARAMS
@@ -336,16 +329,16 @@ def fetch_and_create_users():
 
                     user.image = f"users/{user_id}.jpg"
             except Exception as e:
-                print(f"Error fetching image for user {item.get('id')}: {e}")
+                logging.error(f"Error fetching image for user {item.get('id')}: {e}")
 
             user.save()
 
     except ImproperlyConfigured as e:
-        print(f"Configuration error: {e}")
+        logging.error(f"Configuration error: {e}")
     except requests.RequestException as e:
-        print(f"API request error: {e}")
+        logging.error(f"API request error: {e}")
     except Exception as e:
-        print(f"Error creating users data: {e}")
+        logging.error(f"Error creating users data: {e}")
 
 def fetch_and_create_investors():
     """
@@ -355,8 +348,6 @@ def fetch_and_create_investors():
         jeb_token = os.environ.get('JEB_API_TOKEN')
         if not jeb_token:
             raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
-
-        print("Fetching investors data from JEB API...")
 
         url = settings.JEB_API_INVESTORS_URL
         params = settings.JEB_API_DEFAULT_PARAMS
@@ -387,11 +378,11 @@ def fetch_and_create_investors():
             investor.save()
 
     except ImproperlyConfigured as e:
-        print(f"Configuration error: {e}")
+        logging.error(f"Configuration error: {e}")
     except requests.RequestException as e:
-        print(f"API request error: {e}")
+        logging.error(f"API request error: {e}")
     except Exception as e:
-        print(f"Error creating investors data: {e}")
+        logging.error(f"Error creating investors data: {e}")
 
 def fetch_and_create_partners():
     """
@@ -401,8 +392,6 @@ def fetch_and_create_partners():
         jeb_token = os.environ.get('JEB_API_TOKEN')
         if not jeb_token:
             raise ImproperlyConfigured("JEB_API_TOKEN environment variable is required")
-
-        print("Fetching partners data from JEB API...")
 
         url = settings.JEB_API_PARTNERS_URL
         params = settings.JEB_API_DEFAULT_PARAMS
@@ -432,8 +421,8 @@ def fetch_and_create_partners():
             partner.save()
 
     except ImproperlyConfigured as e:
-        print(f"Configuration error: {e}")
+        logging.error(f"Configuration error: {e}")
     except requests.RequestException as e:
-        print(f"API request error: {e}")
+        logging.error(f"API request error: {e}")
     except Exception as e:
-        print(f"Error creating partners data: {e}")
+        logging.error(f"Error creating partners data: {e}")
