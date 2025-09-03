@@ -1,9 +1,12 @@
 "use client"
 import { ProjectDetailsProps } from "@/types/project";
-import { FaRegUser } from "react-icons/fa6";
+import { FaGithub, FaRegUser } from "react-icons/fa6";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Founder } from "@/types/founders";
 import { getBackendUrl } from "@/lib/com-config";
+import { FaLinkedinIn, FaInstagram, FaFacebook, FaXTwitter, FaLink } from "react-icons/fa6";
+
+
 
 
 export default function ProjectDetails(props: ProjectDetailsProps) {
@@ -149,12 +152,38 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                 </div>
               )}
               
-              {props.ProjectSocial && (
+                {props.ProjectSocial && (
                 <div>
                   <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Social</dt>
-                  <dd className="text-base md:text-lg text-gray-900">{props.ProjectSocial}</dd>
+                  <dd className="text-base md:text-lg">
+                  <a
+                    href={props.ProjectSocial}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-emerald-600 hover:text-emerald-700 transition-colors break-all"
+                  >
+                    {
+                    (() => {
+                      try {
+                        const url = new URL(props.ProjectSocial);
+                        let domain = url.hostname.replace('www.', '');
+
+                        if (domain.includes('facebook')) return <FaFacebook/>;
+                        if (domain.includes('twitter') || domain.includes('x.com')) return <FaXTwitter/>;
+                        if (domain.includes('instagram')) return <FaInstagram/>;
+                        if (domain.includes('linkedin')) return <FaLinkedinIn/>;
+                        if (domain.includes('github')) return <FaGithub/>;
+
+                        return <FaLink/>;
+                      } catch (e) {
+                        return props.ProjectSocial;
+                      }
+                    })()
+                    }
+                  </a>
+                  </dd>
                 </div>
-              )}
+                )}
             </div>
           </div>
         </div>
