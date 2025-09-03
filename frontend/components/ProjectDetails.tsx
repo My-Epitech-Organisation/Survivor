@@ -172,21 +172,24 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                     Founders ({props.ProjectFounders.length})
                   </dt>
                   <dd className="space-y-3 md:space-y-4">
-                    {props.ProjectFounders.map((founder: Founder, index: number) => (
-                      <div key={index} className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-purple-50 rounded-lg">
-                        <div className=" bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Avatar className="w-10 md:w-12 h-10 md:h-12 text-purple-600"> 
-                              <AvatarImage src={founder.FounderPictureURL || ''} />
-                              <AvatarFallback>
-                                <FaRegUser />
-                              </AvatarFallback>
-                          </Avatar>
+                    {props.ProjectFounders.map((founder: Founder, index: number) => {
+                      console.log("Founder picture URL:", founder.FounderPictureURL);
+                      return (
+                        <div key={index} className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-purple-50 rounded-lg">
+                          <div className=" bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Avatar className="w-10 md:w-12 h-10 md:h-12 text-purple-600"> 
+                                <AvatarImage src={founder.FounderPictureURL} />
+                                <AvatarFallback>
+                                  <FaRegUser />
+                                </AvatarFallback>
+                            </Avatar>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-base md:text-lg font-medium text-purple-900 truncate">{founder.FounderName}</p>
+                          </div>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-base md:text-lg font-medium text-purple-900 truncate">{founder.FounderName}</p>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </dd>
                 </div>
               )}
