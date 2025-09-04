@@ -3,12 +3,13 @@ import puppeteer from 'puppeteer';
 import { getFrontendUrl } from '@/lib/config';
 
 export async function GET(
-  request: NextRequest,
-  context: { params: { token: string } }
+  request: NextRequest
 ) {
   try {
-    const params = await context.params;
-    const token = params.token;
+    // Extract the token from the URL path instead of context.params
+    const url = new URL(request.url);
+    const pathParts = url.pathname.split('/');
+    const token = pathParts[pathParts.length - 1];
 
     if (!token) {
       return NextResponse.json({ error: 'Authentication token is required' }, { status: 400 });
