@@ -167,7 +167,8 @@ export default function AdminDashboard() {
                 {mockData.totalUsers.value.toLocaleString()}
               </div>
               <p className="text-xs text-muted-foreground">
-                +{mockData.totalUsers.changePercentage}% from last month
+                {mockData.totalUsers.changePercentage >= 0 ? "+" : "-"}
+                {mockData.totalUsers.changePercentage}% from last month
               </p>
             </CardContent>
           </Card>
@@ -184,7 +185,8 @@ export default function AdminDashboard() {
                 {mockData.totalStartups.value}
               </div>
               <p className="text-xs text-muted-foreground">
-                +{mockData.totalStartups.changePercentage}% from last month
+                {mockData.totalStartups.changePercentage >= 0 ? "+" : "-"}
+                {mockData.totalStartups.changePercentage}% from last month
               </p>
             </CardContent>
           </Card>
@@ -201,7 +203,8 @@ export default function AdminDashboard() {
                 {mockData.totalEvents.value}
               </div>
               <p className="text-xs text-muted-foreground">
-                +{mockData.totalEvents.changePercentage}% from last month
+                {mockData.totalEvents.changePercentage >= 0 ? "+" : "-"}
+                {mockData.totalEvents.changePercentage}% from last month
               </p>
             </CardContent>
           </Card>
@@ -216,7 +219,8 @@ export default function AdminDashboard() {
                 {mockData.newSignups.value}
               </div>
               <p className="text-xs text-muted-foreground">
-                +{mockData.newSignups.changePercentage}% from last month
+                {mockData.newSignups.changePercentage >= 0 ? "+" : "-"}
+                {mockData.newSignups.changePercentage}% from last month
               </p>
             </CardContent>
           </Card>
