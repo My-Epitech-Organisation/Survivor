@@ -26,8 +26,6 @@ try:
     SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 except KeyError:
     # Use a default key for build-time operations like collectstatic
-    # This is safe because it's only used during the Docker build process
-    # and not in production environments
     import sys
 
     if "collectstatic" in sys.argv:
