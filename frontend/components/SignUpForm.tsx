@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { getAPIUrl } from "@/lib/config"
+import { LuEye, LuEyeClosed } from "react-icons/lu"
 
 export function SignUpForm({
   className,
@@ -26,6 +27,8 @@ export function SignUpForm({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -141,27 +144,77 @@ export function SignUpForm({
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={isLoading}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      disabled={isLoading}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-opacity duration-200"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      <div className="relative w-5 h-5">
+                        <LuEye 
+                          className={`absolute transition-all duration-300 ${
+                            showPassword 
+                              ? "opacity-100 transform scale-100" 
+                              : "opacity-0 transform scale-75"
+                          }`} 
+                        />
+                        <LuEyeClosed 
+                          className={`absolute transition-all duration-300 ${
+                            showPassword 
+                              ? "opacity-0 transform scale-75" 
+                              : "opacity-100 transform scale-100"
+                          }`} 
+                        />
+                      </div>
+                    </button>
+                  </div>
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="confirm-password">Confirm Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    disabled={isLoading}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      disabled={isLoading}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-opacity duration-200"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                      <div className="relative w-5 h-5">
+                        <LuEye 
+                          className={`absolute transition-all duration-300 ${
+                            showConfirmPassword 
+                              ? "opacity-100 transform scale-100" 
+                              : "opacity-0 transform scale-75"
+                          }`} 
+                        />
+                        <LuEyeClosed 
+                          className={`absolute transition-all duration-300 ${
+                            showConfirmPassword 
+                              ? "opacity-0 transform scale-75" 
+                              : "opacity-100 transform scale-100"
+                          }`} 
+                        />
+                      </div>
+                    </button>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Sign Up"}
