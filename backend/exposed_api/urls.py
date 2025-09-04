@@ -5,6 +5,7 @@ from .event_views import EventDetailView, EventListView
 from .founder_views import FounderDetailView
 from .investor_views import InvestorDetailView
 from .news_views import NewsDetailView, NewsListView
+from .partner_views import PartnerDetailView
 
 app_name = "exposed_api"
 
@@ -26,6 +27,9 @@ urlpatterns = [
     # Investors endpoints
     path("investors/", InvestorDetailView.as_view(), name="investor_create_or_list"),
     path("investors/<int:_id>/", InvestorDetailView.as_view(), name="investor_detail_or_crud"),
+    # Partners endpoints
+    path("partners/", PartnerDetailView.as_view(), name="partner_create_or_list"),
+    path("partners/<int:_id>/", PartnerDetailView.as_view(), name="partner_detail_or_crud"),
     # User endpoints
     path("user/", user_views.get_current_user, name="current_user"),
     path("user/<int:user_id>/", user_views.user_detail, name="user_detail"),
