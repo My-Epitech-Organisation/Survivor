@@ -111,7 +111,7 @@ export function LoginForm({
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
                     <a
-                      href="#"
+                      href="/reset-password"
                       className="ml-auto text-sm underline-offset-2 hover:underline hover:text-app-blue-primary-hover"
                     >
                       Forgot your password?
