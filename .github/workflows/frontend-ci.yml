@@ -54,11 +54,24 @@ jobs:
       - name: Test
         run: npm test --if-present
         continue-on-error: false
+        
+      - name: Debug - List build outputs
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Directory listing:"
+          ls -la
+          echo "Find .next directory:"
+          find . -name ".next" -type d || echo ".next directory not found"
+          echo "Find out directory:"
+          find . -name "out" -type d || echo "out directory not found"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: .next/**/*
+          path: |
+            frontend/.next
+            frontend/dist
+            frontend/out
           retention-days: 7
           if-no-files-found: warn
