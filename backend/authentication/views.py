@@ -104,7 +104,7 @@ def request_password_reset(request):
 
             # Use port 3000 for frontend instead of backend port
             frontend_host = request.get_host().replace("8000", "3000")
-            reset_url = f"{request.scheme}://{frontend_host}/reset-password?token={token.token}"
+            reset_url = f"{request.scheme}://{frontend_host}/reset-password/confirm?token={token.token}"
 
             # Subject
             subject = "JEB Incubator Password Reset"
