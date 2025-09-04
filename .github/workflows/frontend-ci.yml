@@ -54,24 +54,36 @@ jobs:
       - name: Test
         run: npm test --if-present
         continue-on-error: false
-        
+
       - name: Debug - List build outputs
         run: |
           echo "Current directory: $(pwd)"
-          echo "Directory listing:"
-          ls -la
-          echo "Find .next directory:"
-          find . -name ".next" -type d || echo ".next directory not found"
-          echo "Find out directory:"
-          find . -name "out" -type d || echo "out directory not found"
+          echo "Directory structure after build:"
+          find . -type d -maxdepth 3 | sort
+          echo "Contents of .next directory (if exists):"
+          [ -d ".next" ] && ls -la .next || echo ".next directory not found"
+          echo "Next.js build configuration:"
+          cat next.config.ts || echo "next.config.ts not found"
 
       - name: Upload build artifact
+        id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: |
-            frontend/.next
-            frontend/dist
-            frontend/out
+          path: frontend/.next/standalone
           retention-days: 7
           if-no-files-found: warn
+
+      - name: Create empty artifact if build is missing
+        if: ${{ failure() }}
+        run: |
+          mkdir -p ./empty-build
+          echo "Build directory was empty or not found. Check build configuration." > ./empty-build/README.txt
+
+      - name: Upload empty artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: empty-build-info
+          path: ./empty-build
+          retention-days: 7
