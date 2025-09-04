@@ -29,6 +29,10 @@ export default function Navigation() {
     router.push('/startup/dashboard');
   };
 
+  const handleSwitchToAdmin = () => {
+    router.push('/admin/dashboard');
+  }
+
   return (
     <nav className="bg-app-surface shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,14 +67,22 @@ export default function Navigation() {
                 {user?.role === 'founder' && (
                   <button
                     onClick={handleSwitchToStartup}
-                    className="font-bold text-app-blue-primary hover:text-app-blue-primary-hover transition-colors"
+                    className="font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
                     >
                     Startup Area
                   </button>
                 )}
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={handleSwitchToAdmin}
+                    className="font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
+                    >
+                    Admin Area
+                  </button>
+                )}
                 <button
                   onClick={handleLogout}
-                  className="font-bold text-app-text-secondary hover:text-app-red-primary transition-colors"
+                  className="font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
                 >
                   Logout
                 </button>
@@ -118,15 +130,28 @@ export default function Navigation() {
               <div className="border-t border-app-border-light pt-2 space-y-1">
                 {isAuthenticated ? (
                   <>
-                    <button
-                      onClick={() => {
-                        handleSwitchToStartup();
-                        setIsMenuOpen(false);
-                      }}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
-                    >
-                      Startup Area
-                    </button>
+                    {user?.role === 'founder' && (
+                      <button
+                        onClick={() => {
+                          handleSwitchToStartup();
+                          setIsMenuOpen(false);
+                        }}
+                        className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
+                      >
+                        Startup Area
+                      </button>
+                    )}
+                    {user?.role === 'admin' && (
+                      <button
+                        onClick={() => {
+                          handleSwitchToAdmin();
+                          setIsMenuOpen(false);
+                        }}
+                        className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
+                      >
+                        Admin Area
+                      </button>
+                    )}
                     <button
                       onClick={() => {
                         handleLogout();
