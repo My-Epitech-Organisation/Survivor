@@ -8,7 +8,9 @@ export const getSocketUrl = () => {
       return `http://${hostname}:8000`;
     }
   }
-  return 'http://backend:8000';
+  if (process.env.NODE_ENV !== "development")
+    return 'http://backend:8000';
+  return 'http://localhost:8000';
 };
 
 export const getAPIUrl = () => {
@@ -20,7 +22,9 @@ export const getAPIUrl = () => {
       return `http://${hostname}:8000/api`;
     }
   }
-  return 'http://backend:8000/api';
+  if (process.env.NODE_ENV !== "development")
+    return 'http://backend:8000/api';
+  return 'http://localhost:8000/api';
 };
 
 export const getBackendUrl = () => {
@@ -32,5 +36,7 @@ export const getBackendUrl = () => {
       return `http://${hostname}:8000`;
     }
   }
-  return 'http://backend:8000';
+  if (process.env.NODE_ENV !== "development")
+    return 'http://backend:8000';
+  return 'http://localhost:8000';
 };
