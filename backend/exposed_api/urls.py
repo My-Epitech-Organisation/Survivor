@@ -2,7 +2,7 @@ from django.urls import path
 
 from . import project_views, user_views, views
 from .event_views import EventListView
-from .news_views import NewsListView, NewsDetailView
+from .news_views import NewsDetailView, NewsListView
 
 app_name = "exposed_api"
 

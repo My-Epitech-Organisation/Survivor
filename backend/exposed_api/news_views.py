@@ -1,12 +1,12 @@
+from authentication.permissions import IsAdmin
 from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes
 
 from admin_panel.models import News, NewsDetail
-from admin_panel.serializers import NewsSerializer, NewsDetailSerializer
-from authentication.permissions import IsAdmin
+from admin_panel.serializers import NewsDetailSerializer, NewsSerializer
 
 
 class NewsListView(APIView):
@@ -34,8 +34,8 @@ class NewsListView(APIView):
         serializer = NewsDetailSerializer(data=request.data)
         if serializer.is_valid():
 
-            if 'image' in request.FILES:
-                serializer.validated_data['image'] = request.FILES['image']
+            if "image" in request.FILES:
+                serializer.validated_data["image"] = request.FILES["image"]
 
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -67,9 +67,7 @@ class NewsDetailView(APIView):
         """
         news = self.get_object(news_id)
         if not news:
-            return Response(
-                {"error": "News not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "News not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = NewsDetailSerializer(news)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -80,15 +78,13 @@ class NewsDetailView(APIView):
         """
         news = self.get_object(news_id)
         if not news:
-            return Response(
-                {"error": "News not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "News not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = NewsDetailSerializer(news, data=request.data, partial=True)
         if serializer.is_valid():
 
-            if 'image' in request.FILES:
-                serializer.validated_data['image'] = request.FILES['image']
+            if "image" in request.FILES:
+                serializer.validated_data["image"] = request.FILES["image"]
 
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -100,9 +96,7 @@ class NewsDetailView(APIView):
         """
         news = self.get_object(news_id)
         if not news:
-            return Response(
-                {"error": "News not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "News not found"}, status=status.HTTP_404_NOT_FOUND)
 
         news.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
