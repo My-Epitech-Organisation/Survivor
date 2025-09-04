@@ -7,6 +7,7 @@ app_name = "authentication"
 
 urlpatterns = [
     # Authentication endpoints
+    path("/", views.verify_token, name="verify_token"),
     path("login/", views.CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("register/", views.register_user, name="register"),
