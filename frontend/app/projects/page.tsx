@@ -9,6 +9,7 @@ import { api } from "@/lib/api";
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, FileText, FileSpreadsheet } from "lucide-react";
+import { TbLoader3 } from "react-icons/tb";
 
 export default function Projects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
@@ -16,6 +17,7 @@ export default function Projects() {
   const [locations, setLocations] = useState<string[]>([]);
   const [maturities, setMaturities] = useState<string[]>([]);
   const [sectors, setSectors] = useState<string[]>([]);
+  const [isExporting, setIsExporting] = useState(false);
 
   const [activeFilters, setActiveFilters] = useState({
     locations: [] as string[],

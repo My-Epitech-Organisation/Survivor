@@ -30,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setUser(resp.data);
                 } catch (error) {
                     console.error('Authentication error:', error);
+                    logout()
                 }
             }
             setIsLoading(false);

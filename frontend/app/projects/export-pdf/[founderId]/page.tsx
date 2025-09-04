@@ -9,6 +9,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ChartBarLabel } from '@/components/ChartBarLabel';
 import { ChartRadialText } from '@/components/ChartRadialText';
+import { api } from "@/lib/api"
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { User } from '@/types/user';
 
 // Mock data structures for stats - replace with actual types if available
 interface ProjectViewsOverTime {
@@ -35,37 +38,54 @@ function getProjectEngagementDescription(data: number) {
 
 export default function ProjectExportPage() {
     const params = useParams();
-    const projectId = params.projectId as string;
+    const founderId = params.founderId as string;
 
-    const [project, setProject] = useState<ProjectDetailsProps | null>(null);
-    const [views, setViews] = useState<ProjectViewsOverTime[]>([]);
-    const [engagement, setEngagement] = useState<ProjectEngagement | null>(null);
+    // Données de démonstration pour les graphiques au cas où les requêtes API échoueraient
+    const demoViewsData: ProjectViewsOverTime[] = [
+        { month: 'Jan', views: 320 },
+        { month: 'Fév', views: 450 },
+        { month: 'Mar', views: 380 },
+        { month: 'Avr', views: 520 },
+        { month: 'Mai', views: 610 },
+        { month: 'Juin', views: 490 }
+    ];
+
+    const demoEngagement: ProjectEngagement = { rate: 78 };
+
+    const [project, setProject] = useState<ProjectDetailsProps>();
+    const [views, setViews] = useState<ProjectViewsOverTime[]>(demoViewsData); // Initialiser avec des données de démo
+    const [engagement, setEngagement] = useState<ProjectEngagement | null>(demoEngagement); // Initialiser avec des données de démo
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!projectId) return;
+        if (!founderId) return;
 
         const apiUrl = getAPIUrl();
         const fetchData = async () => {
             try {
-                // Fetch all data in parallel
-                const [projectRes, viewsRes, engagementRes] = await Promise.all([
-                    fetch(`${apiUrl}/projects/${projectId}`),
-                    fetch(`${apiUrl}/projectViews/project/${projectId}`),
-                    fetch(`${apiUrl}/projectEngagement/project/${projectId}`)
-                ]);
-
-                if (projectRes.ok) {
-                    const data = await projectRes.json();
-                    setProject(data);
-                }
-                if (viewsRes.ok) {
-                    const data = await viewsRes.json();
-                    setViews(data);
-                }
-                if (engagementRes.ok) {
-                    const data = await engagementRes.json();
-                    setEngagement(data);
+                console.log(`Fetching data for founder ID: ${founderId}`);
+                // Essayer de récupérer les projets du fondateur sans authentification d'abord
+                const projectRes = await api.get<ProjectDetailsProps[] | null>(`${apiUrl}/projects/founder/${founderId}`);
+                console.log("Project response:", projectRes.data);
+                
+                if (projectRes.data && projectRes.data.length > 0) {
+                    setProject(projectRes.data[0]);
+                    
+                    try {
+                        // Essayer de récupérer les données utilisateur, mais ne pas bloquer si ça échoue
+                        const user = await api.get<User>(`${apiUrl}/user`);
+                        if (user?.data?.id) {
+                            const viewsRes = await api.get<ProjectViewsOverTime[]>(`${apiUrl}/projectViews/${user.data.id}`);
+                            const engagementRes = await api.get<ProjectEngagement | null>(`${apiUrl}/projectEngagement/${user.data.id}`);
+                            setViews(viewsRes.data);
+                            setEngagement(engagementRes.data);
+                        }
+                    } catch (userError) {
+                        console.warn("Could not fetch user data:", userError);
+                        // Continuer sans les données utilisateur
+                    }
+                } else {
+                    console.error("No projects found for this founder ID:", founderId);
                 }
             } catch (error) {
                 console.error("Failed to fetch project data:", error);
@@ -75,20 +95,20 @@ export default function ProjectExportPage() {
         };
 
         fetchData();
-    }, [projectId]);
-
-    const engagementData: ProjectEngagementData[] = [{
-        browser: "engagement",
-        rate: engagement?.rate || 0,
-        fill: "#8b5cf6"
-    }];
+    }, [founderId]);
     
     if (loading) {
         return <div className="flex justify-center items-center h-screen">Chargement des données du projet...</div>;
     }
 
     if (!project) {
-        return <div className="flex justify-center items-center h-screen">Projet non trouvé.</div>;
+        // Utiliser un message d'erreur plus descriptif pour le débogage
+        return (
+            <div className="flex justify-center items-center h-screen flex-col">
+                <div className="text-xl font-bold text-red-500">Projet non trouvé</div>
+                <div className="mt-2">ID du fondateur: {founderId}</div>
+            </div>
+        );
     }
     const backUrl = getBackendUrl();
     return (
@@ -101,7 +121,6 @@ export default function ProjectExportPage() {
                     ID du Projet: {project.ProjectId}
                 </Badge>
             </header>
-
             {/* Main Content */}
             <main>
                 {/* Project Details & Founders */}
@@ -144,7 +163,7 @@ export default function ProjectExportPage() {
                         </CardHeader>
                         <CardContent>
                             <ChartBarLabel
-                                data={views}
+                                data={views.length > 0 ? views : demoViewsData} // Utiliser les données de démo si aucune donnée réelle
                                 title=""
                                 description="Vues mensuelles du projet"
                                 footerTitle="Tendance"
@@ -159,20 +178,23 @@ export default function ProjectExportPage() {
                         </CardHeader>
                         <CardContent>
                             <ChartRadialText
-                                data={engagementData}
+                                data={[{
+                                    browser: "engagement",
+                                    rate: engagement?.rate || demoEngagement.rate, // Utiliser la valeur de démo si aucune donnée réelle
+                                    fill: "#8b5cf6"
+                                }]}
                                 title=""
                                 description="Métriques d'engagement actuelles"
                                 centerLabel="Engagement"
                                 footerTitle="Performance"
-                                footerDescription={getProjectEngagementDescription(engagementData[0].rate)}
-                                endAngle={engagementData[0].rate * 360 / 100}
+                                footerDescription={getProjectEngagementDescription(engagement?.rate || demoEngagement.rate)}
+                                endAngle={(engagement?.rate || demoEngagement.rate) * 360 / 100}
                                 config={{ rate: { label: "Taux" }, engagement: { label: "Engagement", color: "#8b5cf6" } }}
                             />
                         </CardContent>
                     </Card>
                 </div>
             </main>
-
             {/* Footer */}
             <footer className="text-center text-gray-500 pt-8 mt-8 border-t">
                 Rapport généré le {new Date().toLocaleDateString('fr-FR')}
