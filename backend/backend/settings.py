@@ -29,8 +29,9 @@ except KeyError:
     # This is safe because it's only used during the Docker build process
     # and not in production environments
     import sys
-    if 'collectstatic' in sys.argv:
-        SECRET_KEY = 'django-insecure-build-key-for-collectstatic-only'
+
+    if "collectstatic" in sys.argv:
+        SECRET_KEY = "django-insecure-build-key-for-collectstatic-only"
         print("WARNING: Using insecure build key for collectstatic")
     else:
         raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is required")
