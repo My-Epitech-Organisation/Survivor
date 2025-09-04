@@ -21,5 +21,5 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_pictureURL(self, obj):
         if obj.image:
-            return f"/media/events/{obj.image}"
+            return f"/media/{obj.image}"
         return None
