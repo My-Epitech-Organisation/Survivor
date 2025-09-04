@@ -7,6 +7,7 @@ app_name = "authentication"
 
 urlpatterns = [
     # Authentication endpoints
+    path("/", views.verify_token, name="verify_token"),
     path("login/", views.CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("register/", views.register_user, name="register"),
@@ -16,4 +17,5 @@ urlpatterns = [
     path("profile/update/", views.update_user_profile, name="update_profile"),
     # Password reset endpoints
     path("password-reset/", views.request_password_reset, name="password_reset"),
+    path("password-reset/confirm/", views.reset_password_confirm, name="password_reset_confirm"),
 ]

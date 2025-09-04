@@ -1,22 +1,26 @@
 from django.urls import path
 
-from . import project_views, views
-from .event_views import EventListView
+from . import project_views, user_views, views
+from .event_views import EventDetailView, EventListView
+from .news_views import NewsDetailView, NewsListView
 
 app_name = "exposed_api"
 
 
 urlpatterns = [
-    # Project CRUD (admin only)
-    path("projects/", project_views.ProjectDetailView.as_view(), name="project_create"),  # POST (create)
-    path("projects/<int:id>", project_views.ProjectDetailView.as_view(), name="project_crud"),  # PUT, DELETE
-    # Project GETs (public)
-    path("projects/", project_views.projects_list, name="projects_list"),
-    path("projects/<int:project_id>/", project_views.project_detail, name="project_detail"),
+    # Project endpoints
+    path("projects/", project_views.ProjectDetailView.as_view(), name="project_create_or_list"),
+    path("projects/<int:_id>/", project_views.ProjectDetailView.as_view(), name="project_detail_or_crud"),
+    # Events endpoints
+    path("events/", EventListView.as_view(), name="events_list"),
+    path("events/<int:event_id>/", EventDetailView.as_view(), name="event_detail"),
+    # News endpoints
+    path("news/", NewsListView.as_view(), name="news_list"),
+    path("news/<int:news_id>/", NewsDetailView.as_view(), name="news_detail"),
+    # User endpoints
+    path("user/", user_views.get_current_user, name="current_user"),
+    path("user/<int:user_id>/", user_views.user_detail, name="user_detail"),
     # Other endpoints
-    path("user/<int:user_id>/", views.user_detail, name="user_detail"),
     path("projectViews/<int:user_id>/", views.project_views, name="project_views"),
     path("projectEngagement/<int:user_id>/", views.project_engagement, name="project_engagement"),
-    # Events endpoint
-    path("events/", EventListView.as_view(), name="events_list"),
 ]

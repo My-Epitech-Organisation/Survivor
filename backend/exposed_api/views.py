@@ -1,18 +1,16 @@
 from authentication.permissions import IsAdmin, IsFounder, IsInvestor, IsNotRegularUser
-from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from admin_panel.models import StartupDetail, User
+from admin_panel.models import StartupDetail
 
 from .serializers import (
     ProjectDetailSerializer,
     ProjectEngagementSerializer,
     ProjectSerializer,
     ProjectViewsSerializer,
-    UserSerializer,
 )
 
 
@@ -25,20 +23,6 @@ class IsAuthenticatedNotRegularUser(IsAuthenticated):
         if not super().has_permission(request, view):
             return False
         return request.user.role != "user"
-
-
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def user_detail(request, user_id):
-    """
-    API endpoint that returns information about a specific user.
-    """
-    try:
-        user = User.objects.get(id=user_id)
-        serializer = UserSerializer(user)
-        return JsonResponse(serializer.data)
-    except User.DoesNotExist:
-        return JsonResponse({"error": f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(["GET"])

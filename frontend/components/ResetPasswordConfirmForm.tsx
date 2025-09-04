@@ -1,6 +1,5 @@
 "use client"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -15,39 +14,37 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { getAPIUrl } from "@/lib/config"
 
-export function SignUpForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+
+interface ResetPasswordConfirmFormProps {
+  token: string;
+}
+
+export function ResetPasswordConfirmForm({token} : ResetPasswordConfirmFormProps) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    setSuccess(false);
+    setSuccess("");
 
     try {
       const apiUrl = getAPIUrl();
-      const link = `${apiUrl}/auth/register/`;
+      const link = `${apiUrl}/auth/password-reset/confirm/`;
       const response = await fetch(link, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
-          name,
+          token,
           password,
           password_confirm: confirmPassword,
-          role: "user"
         }),
       });
 
@@ -75,11 +72,8 @@ export function SignUpForm({
       }
 
       const data = await response.json();
-      console.log('Signup successful:', data);
-      setSuccess(true);
+      setSuccess(data.detail);
 
-      setName("");
-      setEmail("");
       setPassword("");
       setConfirmPassword("");
 
@@ -94,12 +88,12 @@ export function SignUpForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome</CardTitle>
           <CardDescription>
-            Create a new account
+            Reset your password to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -113,33 +107,9 @@ export function SignUpForm({
                 )}
                 {success && (
                   <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
-                    Account created successfully!
+                    {success}
                   </div>
                 )}
-                <div className="grid gap-3">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
                 <div className="grid gap-3">
                   <Label htmlFor="password">Password</Label>
                   <Input
@@ -165,7 +135,7 @@ export function SignUpForm({
                   />
                 </div>
                 <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
-                  {isLoading ? "Creating account..." : "Sign Up"}
+                  {isLoading ? "Resetting password..." : "Reset Password"}
                 </Button>
               </div>
             </div>

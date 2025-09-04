@@ -1,3 +1,4 @@
+from authentication.models import CustomUser
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view, permission_classes
@@ -5,8 +6,8 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 
 from init.utils import fetch_and_create_news
 
-from .models import Event, News, NewsDetail, StartupDetail, User
-from .serializers import EventSerializer, NewsDetailSerializer, StartupDetailSerializer, UserSerializer
+from .models import Event, News, NewsDetail, StartupDetail
+from .serializers import EventSerializer, NewsDetailSerializer, StartupDetailSerializer
 
 
 @api_view(["GET"])

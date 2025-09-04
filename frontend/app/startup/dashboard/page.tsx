@@ -5,7 +5,7 @@ import { ChartBarLabel } from '@/components/ChartBarLabel';
 import { ChartRadialText } from '@/components/ChartRadialText';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getAPIUrl } from '@/lib/config';
+import { authenticatedFetch } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 
@@ -56,10 +56,8 @@ export default function StartupDashboard() {
     const [projectEngagement, setProjectEngagement] = useState<ProjectEngagement | null>(null);
 
     useEffect(() => {
-        const apiUrl = getAPIUrl();
-
         const fetchUserData = async () => {
-            const userProfileResponse = await fetch(`${apiUrl}/user/${user?.id}`);
+            const userProfileResponse = await authenticatedFetch(`/user/${user?.id}`);
             if (!userProfileResponse.ok) {
                 throw new Error("Failed to fetch user profile");
             }
@@ -71,7 +69,7 @@ export default function StartupDashboard() {
         });
 
         const fetchProjectViewsOverTime = async () => {
-            const projectViewsOverTimeResponse = await fetch(`${apiUrl}/projectViews/${user?.id}`);
+            const projectViewsOverTimeResponse = await authenticatedFetch(`/projectViews/${user?.id}`);
             if (!projectViewsOverTimeResponse.ok) {
                 throw new Error("Failed to fetch project views");
             }
@@ -83,7 +81,7 @@ export default function StartupDashboard() {
         });
 
         const fetchProjectEngagement = async () => {
-            const projectEngagementResponse = await fetch(`${apiUrl}/projectEngagement/${user?.id}`);
+            const projectEngagementResponse = await authenticatedFetch(`/projectEngagement/${user?.id}`);
             if (!projectEngagementResponse.ok) {
                 throw new Error("Failed to fetch project engagement data");
             }
