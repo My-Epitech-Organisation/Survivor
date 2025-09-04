@@ -215,7 +215,7 @@ export default function AdminDashboard() {
             data={mockData.userEngagement.data}
             title="User Engagement"
             description="Online users vs total registered users"
-            centerLabel="75%"
+            centerLabel="Users online"
           />
 
           {/* Project Visibility Chart */}
