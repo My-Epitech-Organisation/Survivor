@@ -4,6 +4,16 @@ from . import project_views, user_views, views
 from .event_views import EventDetailView, EventListView
 from .founder_views import FounderDetailView
 from .investor_views import InvestorDetailView
+from .kpi_views import (
+    monthly_stats,
+    new_signups,
+    projects_visibility,
+    recent_actions,
+    total_events,
+    total_startups,
+    total_users,
+    users_connected_ratio,
+)
 from .news_views import NewsDetailView, NewsListView
 from .partner_views import PartnerDetailView
 
@@ -36,4 +46,13 @@ urlpatterns = [
     # Other endpoints
     path("projectViews/<int:user_id>/", views.project_views, name="project_views"),
     path("projectEngagement/<int:user_id>/", views.project_engagement, name="project_engagement"),
+    # KPI endpoints
+    path("kpi/total-users/", total_users, name="kpi_total_users"),
+    path("kpi/total-startups/", total_startups, name="kpi_total_startups"),
+    path("kpi/total-events/", total_events, name="kpi_total_events"),
+    path("kpi/new-signups/", new_signups, name="kpi_new_signups"),
+    path("kpi/projects-visibility/", projects_visibility, name="kpi_projects_visibility"),
+    path("kpi/users-connected/", users_connected_ratio, name="kpi_users_connected"),
+    path("kpi/recent-actions/", recent_actions, name="kpi_recent_actions"),
+    path("kpi/monthly-stats/", monthly_stats, name="kpi_monthly_stats"),
 ]

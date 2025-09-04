@@ -3,12 +3,15 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+
+from exposed_api.models import SiteStatistics
 
 from .models import PasswordResetToken
 from .serializers import (
@@ -39,6 +42,11 @@ def register_user(request):
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
+
+        today = timezone.now().date()
+        stats, created = SiteStatistics.objects.get_or_create(date=today)
+        stats.new_signups += 1
+        stats.save()
 
         refresh = RefreshToken.for_user(user)
 
