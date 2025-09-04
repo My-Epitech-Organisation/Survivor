@@ -13,6 +13,9 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
+from django.utils import timezone
+
+from exposed_api.models import SiteStatistics
 
 from .utils import *
 
@@ -172,17 +175,15 @@ def clear_and_fetch_users(sender, **kwargs):
 
     try:
         User = apps.get_model("authentication", "CustomUser")
+        User.objects.exclude(is_superuser=True).delete()
 
-        # Delete all users (superuser will be recreated later with ID=0)
-        User.objects.all().delete()
+        today = timezone.now().date()
+        stats, created = SiteStatistics.objects.get_or_create(date=today)
+        stats.new_signups = 0
+        stats.save()
 
-        # Fetch normal users first
         fetch_and_create_users()
-
-        # Then create superuser with ID=0
         create_admin_user_with_id_zero()
-
-        # Mark superuser as executed since we're doing it here
         _handlers_executed["create_superuser"] = True
 
     except Exception as e:
