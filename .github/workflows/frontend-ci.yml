@@ -60,7 +60,8 @@ jobs:
         with:
           name: frontend-build
           path: |
-            frontend/.next
-            frontend/out
+            ./.next
+            ./out
+            ./.next/standalone
           retention-days: 7
           if-no-files-found: warn
