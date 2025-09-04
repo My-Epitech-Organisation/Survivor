@@ -19,15 +19,17 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
     const [selectedMaturities, setSelectedMaturities] = useState<string[]>([]);
     const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
 
+    const { onFiltersChange } = data;
+
     useEffect(() => {
-        if (data.onFiltersChange) {
-            data.onFiltersChange({
+        if (onFiltersChange) {
+            onFiltersChange({
                 locations: selectedLocations,
                 maturities: selectedMaturities,
                 sectors: selectedSectors
             });
         }
-    }, [selectedLocations, selectedMaturities, selectedSectors, data]);
+    }, [selectedLocations, selectedMaturities, selectedSectors, onFiltersChange]);
 
     const handleLocationChange = (location: string, checked: boolean) => {
         if (checked) {
