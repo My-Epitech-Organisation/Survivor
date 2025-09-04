@@ -7,7 +7,7 @@ import { Event } from '@/types/event';
 import { authenticatedFetch } from '@/lib/api';
 import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-
+import { getAPIUrl } from '@/lib/config';
 
 export default function Events() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -44,19 +44,47 @@ export default function Events() {
         </div>
       </main>
       <Dialog open={selectedEvent !== null} onOpenChange={() => setSelectedEvent(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-[60vw] w-full sm:max-w-[50vw] md:max-w-[40vw] lg:max-w-[40vw] xl:max-w-[40vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-app-text-primary mb-2">
+            <DialogTitle className="text-lg sm:text-xl font-bold text-app-text-primary mb-2 pr-8">
               {selectedEvent?.name}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-app-text-secondary"><strong>Date:</strong> {selectedEvent?.dates}</p>
-            <p className="text-sm text-app-text-secondary"><strong>Location:</strong> {selectedEvent?.location}</p>
-            <p className="text-sm text-app-text-secondary"><strong>Type:</strong> {selectedEvent?.event_type}</p>
-            <p className="text-sm text-app-text-secondary"><strong>Audience:</strong> {selectedEvent?.target_audience}</p>
-            <div className="mt-2">
-              <p className="text-sm text-app-text-secondary">{selectedEvent?.description}</p>
+          <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 lg:gap-6">
+            {selectedEvent?.pictureURL && (
+              <div className="lg:col-span-2 order-2 lg:order-1">
+                <img
+                  src={getAPIUrl() + selectedEvent.pictureURL}
+                  alt={selectedEvent.name}
+                  className="w-full h-auto rounded-lg object-cover "
+                />
+              </div>
+            )}
+            <div className="order-1 lg:order-2 space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-2 sm:gap-3">
+                <div className="space-y-1">
+                  <p className="text-xs sm:text-sm font-medium text-app-text-primary">Date</p>
+                  <p className="text-xs sm:text-sm text-app-text-secondary">{selectedEvent?.dates}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs sm:text-sm font-medium text-app-text-primary">Location</p>
+                  <p className="text-xs sm:text-sm text-app-text-secondary">{selectedEvent?.location}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs sm:text-sm font-medium text-app-text-primary">Type</p>
+                  <p className="text-xs sm:text-sm text-app-text-secondary">{selectedEvent?.event_type}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs sm:text-sm font-medium text-app-text-primary">Audience</p>
+                  <p className="text-xs sm:text-sm text-app-text-secondary">{selectedEvent?.target_audience}</p>
+                </div>
+              </div>
+              <div className="space-y-2 pt-2 border-t border-gray-200">
+                <p className="text-xs sm:text-sm font-medium text-app-text-primary">Description</p>
+                <p className="text-xs sm:text-sm text-app-text-secondary leading-relaxed">
+                  {selectedEvent?.description}
+                </p>
+              </div>
             </div>
           </div>
         </DialogContent>

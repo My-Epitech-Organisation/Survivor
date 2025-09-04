@@ -86,7 +86,7 @@ const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
         const colors: Record<string, string> = {
             'conference': 'bg-app-blue-primary text-white',
             'workshop': 'bg-app-green-primary text-white',
-            'pitch session': 'bg-app-yellow-primary text-white',
+            'pitch session': 'bg-app-orange-primary text-white',
             'default': 'bg-app-text-muted text-white'
         };
         return colors[eventType.toLowerCase()] || colors.default;
@@ -162,7 +162,7 @@ const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
                                         {dayEvents.slice(0, isMobile ? 1 : 2).map(event => (
                                             <div
                                                 key={event.id}
-                                                className={`text-xs p-1 rounded truncate ${getEventTypeColor(event.event_type)}`}
+                                                className={`text-xs p-1 rounded truncate ${getEventTypeColor(event.event_type)} hover:brightness-90 cursor-pointer transition-all`}
                                                 title={`${event.name} - ${event.event_type}`}
                                                 onClick={() => onEventClick(event)}
                                             >
@@ -201,7 +201,7 @@ const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
                             .map(event => (
                                 <Card
                                     key={event.id}
-                                    className="p-3 sm:p-4 hover:shadow-md transition-shadow"
+                                    className="p-3 sm:p-4 hover:shadow-md transition-shadow cursor-pointer"
                                     onClick={() => onEventClick(event)}
                                 >
                                     <div className="flex items-start justify-between">
