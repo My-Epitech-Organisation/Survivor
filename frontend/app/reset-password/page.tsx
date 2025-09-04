@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import { ResetPasswordForm } from '@/components/ResetPasswordForm';
 
 
-export default function SignUpPage() {
+export default function ResetPassword() {
   return (
     <>
       <div className="bg-muted h-screen flex flex-col w-full">
