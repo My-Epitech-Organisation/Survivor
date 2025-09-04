@@ -73,6 +73,7 @@ def fetch_and_create_news():
         params = settings.JEB_API_DEFAULT_PARAMS
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
+        print("\tFetching news from JEB API...")
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
         news_data = response.json()
@@ -114,6 +115,7 @@ def fetch_and_create_events():
         params = settings.JEB_API_DEFAULT_PARAMS
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
+        print("\tFetching events from JEB API...")
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
         events_data = response.json()
@@ -242,6 +244,7 @@ def fetch_and_create_startups():
         params = settings.JEB_API_DEFAULT_PARAMS
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
+        print("\tFetching startups from JEB API...")
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
         startups_data = response.json()
@@ -285,6 +288,7 @@ def fetch_and_create_users():
         params = settings.JEB_API_DEFAULT_PARAMS
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
+        print("\tFetching users from JEB API...")
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
         users_data = response.json()
@@ -340,6 +344,7 @@ def fetch_and_create_investors():
         params = settings.JEB_API_DEFAULT_PARAMS
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
+        print("\tFetching investors from JEB API...")
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
         investors_data = response.json()
@@ -382,6 +387,7 @@ def fetch_and_create_partners():
         params = settings.JEB_API_DEFAULT_PARAMS
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
+        print("\tFetching partners from JEB API...")
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
         partners_data = response.json()
