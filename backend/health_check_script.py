@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import sys
 import time
+
 import requests
-from requests.exceptions import ConnectionError, Timeout
+from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests.exceptions import Timeout
 
 MAX_RETRIES = 5
 RETRY_DELAY = 1
@@ -17,9 +19,9 @@ for i in range(MAX_RETRIES):
             sys.exit(0)
         else:
             print(f"Health check failed with status code: {response.status_code}")
-    except (ConnectionError, Timeout) as e:
-        print(f"Health check attempt {i+1}/{MAX_RETRIES} failed: {str(e)}")
-    
+    except (RequestsConnectionError, Timeout) as e:
+        print(f"Health check attempt {i+1}/{MAX_RETRIES} failed: {e!s}")
+
     if i < MAX_RETRIES - 1:
         time.sleep(RETRY_DELAY)
 
