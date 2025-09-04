@@ -15,7 +15,7 @@ const findChromiumPath = () => {
         execSync(`test -f ${chromiumPath}`);
         return chromiumPath;
       } catch (e) {
-        console.warn(`Chromium non trouvé à l'emplacement par défaut: ${e}`);
+        console.warn(`Chromium not found a the default location: ${e}`);
       }
       
       try {
@@ -23,13 +23,13 @@ const findChromiumPath = () => {
         execSync(`test -f ${chromePath}`);
         return chromePath;
       } catch (e) {
-        console.warn(`Chrome non trouvé à l'emplacement secondaire: ${e}`);
+        console.warn(`Chromium not found a the second default location: ${e}`);
       }
     }
 
     return '/bin/google-chrome';
   } catch (error) {
-    console.error('Erreur lors de la recherche de Chromium:', error);
+    console.error('Error while Chromium search:', error);
     return undefined;
   }
 };
@@ -137,7 +137,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Configuration du cookie selon l'environnement
     const cookieConfig = getCookieConfig(token);
     await page.setCookie(cookieConfig);
 
@@ -226,7 +225,6 @@ export async function GET(request: NextRequest) {
         console.error('Error capturing screenshot:', screenshotError);
       }
 
-      // S'assurer que le browser est fermé en cas d'erreur
       try {
         await browser.close();
       } catch (closeError) {
