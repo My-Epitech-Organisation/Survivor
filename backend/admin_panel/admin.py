@@ -70,9 +70,9 @@ class StartupDetailAdmin(admin.ModelAdmin):
                 html += f'<img src="/media/{image_path}" width="150" height="150" style="margin: 10px;" />'
                 try:
                     founder = Founder.objects.get(id=int(founder_id))
-                    html += f'<p>{founder.name}</p>'
+                    html += f"<p>{founder.name}</p>"
                 except (Founder.DoesNotExist, ValueError):
-                    html += f'<p>Founder ID: {founder_id}</p>'
+                    html += f"<p>Founder ID: {founder_id}</p>"
 
         return mark_safe(html) if html else "No images available"
 

@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from admin_panel.models import StartupDetail, Founder
+from admin_panel.models import Founder, StartupDetail
 
 from .serializers import ProjectDetailSerializer, ProjectSerializer
 
