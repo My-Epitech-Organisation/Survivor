@@ -12,7 +12,8 @@
     "dev": "npm run dev:frontend",
     "dev:frontend": "next dev --turbopack -H 0.0.0.0",
     "dev:backend": "cd ../backend && docker build -t survivor-backend . && docker run --rm -p 8000:8000 -v $(pwd):/app survivor-backend",
-    "build": "next build --turbopack",
+    "build": "next build",
+    "build:turbo": "next build --turbopack",
     "serve": "npx serve@latest out",
     "preview": "npm run build && npm run serve",
     "start": "node app/"
