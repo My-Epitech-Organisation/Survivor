@@ -37,7 +37,18 @@ export default function ProjectExportPage() {
             return;
         }
 
-        const apiUrl = getAPIUrl();
+        const getApiUrlForExport = () => {
+            // @ts-expect-error - allow override for testing
+            if (typeof window !== 'undefined' && window.getAPIUrlOverride) {
+                // @ts-expect-error - allow override for testing
+                return window.getAPIUrlOverride();
+            }
+            return getAPIUrl();
+        };
+
+        const apiUrl = getApiUrlForExport();
+        console.log('Using API URL:', apiUrl);
+        
         const fetchData = async () => {
             try {
                 const userResponse = await authenticatedFetch(

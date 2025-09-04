@@ -1,5 +1,9 @@
 // lib/com-config.ts
 export const getSocketUrl = () => {
+  if (process.env.DOCKER_ENV === 'true') {
+    return 'http://backend:8000';
+  }
+  
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     if (hostname === "localhost" || hostname === "127.0.0.1") {
@@ -13,6 +17,10 @@ export const getSocketUrl = () => {
 };
 
 export const getAPIUrl = () => {
+  if (process.env.DOCKER_ENV === 'true') {
+    return 'http://backend:8000/api';
+  }
+  
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     if (hostname === "localhost" || hostname === "127.0.0.1") {
