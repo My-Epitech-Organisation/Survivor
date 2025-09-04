@@ -6,7 +6,6 @@ export async function GET(
   request: NextRequest
 ) {
   try {
-    // Extract the token from the URL path instead of context.params
     const url = new URL(request.url);
     const pathParts = url.pathname.split('/');
     const token = pathParts[pathParts.length - 1];
