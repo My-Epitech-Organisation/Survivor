@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "drf_spectacular",
     "init.apps.InitConfig",
     "admin_panel",
     "exposed_api.apps.ExposedApiConfig",
@@ -60,6 +61,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Custom middleware for security headers
     "backend.middleware.CSPMiddleware",
+    # Middleware pour désactiver CSP pour la documentation API
+    "backend.disable_csp_middleware.DisableCSPForDocsMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -69,6 +72,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             BASE_DIR / "authentication" / "templates",
+            BASE_DIR / "templates",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -162,6 +166,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # JWT settings
@@ -270,4 +275,18 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+# DRF-Spectacular configuration for OpenAPI
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Survivor API',
+    'DESCRIPTION': 'API for the Survivor platform of Jeb Incubator',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+    },
+    'COMPONENT_SPLIT_REQUEST': True,
 }
