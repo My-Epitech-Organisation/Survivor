@@ -25,11 +25,11 @@ class DisableCSPForDocsMiddleware:
                 'X-WebKit-CSP',
                 'X-WebKit-CSP-Report-Only',
             ]
-            
+
             for header in headers_to_remove:
                 if header in response:
                     del response[header]
-            
+
             # Add a very permissive CSP that allows everything needed for ReDoc
             response['Content-Security-Policy'] = (
                 "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; "
