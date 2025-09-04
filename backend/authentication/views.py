@@ -1,4 +1,8 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.urls import reverse
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -6,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from .models import PasswordResetToken
 from .serializers import (
     CustomTokenObtainPairSerializer,
     PasswordResetConfirmSerializer,
@@ -82,19 +87,98 @@ def update_user_profile(request):
 def request_password_reset(request):
     """
     Request password reset email
+
+    This view handles password reset requests:
+    1. Validates the email
+    2. Creates a unique token for the user
+    3. Sends an email with a reset link
+    4. Returns a success message (even if the email doesn't exist for security reasons)
     """
+    print("\t\tPassword reset requested")
     serializer = PasswordResetRequestSerializer(data=request.data)
     if serializer.is_valid():
         email = serializer.validated_data["email"]
         try:
             user = User.objects.get(email=email)
-            # In a production environment, you would generate a token,
-            # and send an email with reset instructions
-            # For now, we'll just return a success message
-            return Response({"detail": "Password reset email has been sent."}, status=status.HTTP_200_OK)
+            token = PasswordResetToken.objects.create(user=user)
+
+            # Use port 3000 for frontend instead of backend port
+            frontend_host = request.get_host().replace("8000", "3000")
+            reset_url = f"{request.scheme}://{frontend_host}/reset-password/confirm?token={token.token}"
+
+            # Subject
+            subject = "JEB Incubator Password Reset"
+
+            # Context for email template
+            context = {"user": user, "reset_url": reset_url, "timeout_hours": settings.PASSWORD_RESET_TIMEOUT}
+
+            html_message = render_to_string("authentication/password_reset_email.html", context)
+
+            # Fallback
+            plain_message = f"""
+            Hello {user.name},
+
+            You have requested a password reset for your account.
+            Please click the link below to set a new password:
+
+            {reset_url}
+
+            This link expires in {settings.PASSWORD_RESET_TIMEOUT} hours.
+
+            If you did not request this password reset, you can safely ignore this email.
+
+            The JEB Incubator Team
+            """
+
+            try:
+                send_mail(
+                    subject,
+                    plain_message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user.email],
+                    fail_silently=False,
+                    html_message=html_message,
+                )
+            except Exception as e:
+                print(f"Error sending password reset email: {e}")
+
+            return Response(
+                {"detail": "Password reset instructions have been sent to your email address."},
+                status=status.HTTP_200_OK,
+            )
         except User.DoesNotExist:
-            # We don't want to reveal that the email doesn't exist for security reasons
-            return Response({"detail": "Password reset email has been sent."}, status=status.HTTP_200_OK)
+            return Response(
+                {"detail": "Password reset instructions have been sent to your email address."},
+                status=status.HTTP_200_OK,
+            )
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def reset_password_confirm(request):
+    """
+    Confirm password reset with token and set new password
+
+    This view handles password reset confirmation:
+    1. Validates the token and new password
+    2. Updates the user's password
+    3. Marks the token as used to prevent reuse
+    4. Returns a success message
+
+    The token is expected to be in request.data or in query parameters if coming from the email link
+    """
+
+    if request.query_params.get("token") and not request.data.get("token"):
+        request.data._mutable = True
+        request.data["token"] = request.query_params.get("token")
+        request.data._mutable = False
+
+    serializer = PasswordResetConfirmSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"detail": "Your password has been successfully reset."}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

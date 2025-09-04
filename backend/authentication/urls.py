@@ -17,4 +17,5 @@ urlpatterns = [
     path("profile/update/", views.update_user_profile, name="update_profile"),
     # Password reset endpoints
     path("password-reset/", views.request_password_reset, name="password_reset"),
+    path("password-reset/confirm/", views.reset_password_confirm, name="password_reset_confirm"),
 ]

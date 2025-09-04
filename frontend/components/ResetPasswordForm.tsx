@@ -12,62 +12,45 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { getAPIUrl } from "@/lib/config"
-import { useAuth } from "@/contexts/AuthContext"
 
-export function LoginForm({
+export function ResetPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const router = useRouter()
-  const { login } = useAuth()
+  const [success, setSuccess] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
 
     try {
       const apiUrl = getAPIUrl();
-      const response = await fetch(`${apiUrl}/auth/login/`, {
+      const response = await fetch(`${apiUrl}/auth/password-reset/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email,
-          password,
         }),
-      })
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
+        const errorData = await response.json();
         throw new Error(errorData.message || 'Login failed')
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
-      const userData = {
-        id: data.user?.id || '1',
-        email: data.user?.email || email,
-        name: data.user?.name || 'Startup Owner',
-        role: data.user?.role || 'user',
-      }
+      setSuccess(data?.detail || 'Password reset link sent to your email');
 
-      if (!data.access) {
-        throw new Error('No token received from server. Login failed.');
-      }
-      login(data.access, userData)
-
-      setEmail("")
-      setPassword("")
-
-      router.push('/')
+      setEmail("");
 
     } catch (err) {
       console.error('Login error:', err)
@@ -81,9 +64,9 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardTitle className="text-xl">Reset your password</CardTitle>
           <CardDescription>
-            Login to your account
+            Enter your email to receive a password reset link
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -93,6 +76,11 @@ export function LoginForm({
                 {error && (
                   <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
                     {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
+                    {success}
                   </div>
                 )}
                 <div className="grid gap-3">
@@ -107,34 +95,9 @@ export function LoginForm({
                     disabled={isLoading}
                   />
                 </div>
-                <div className="grid gap-3">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <a
-                      href="/reset-password"
-                      className="ml-auto text-sm underline-offset-2 hover:underline hover:text-app-blue-primary-hover"
-                    >
-                      Forgot your password?
-                    </a>
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
                 <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
-                  {isLoading ? "Logging in..." : "Login"}
+                  {isLoading ? "Sending..." : "Send Reset Link"}
                 </Button>
-              </div>
-              <div className="text-center text-sm">
-                <a href="/signup" className="hover:underline underline-offset-2 hover:text-app-blue-primary-hover">
-                  Don&apos;t have an account?{" "}
-                </a>
               </div>
             </div>
           </form>

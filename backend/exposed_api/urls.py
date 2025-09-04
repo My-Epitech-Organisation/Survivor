@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import project_views, user_views, views
-from .event_views import EventListView
+from .event_views import EventDetailView, EventListView
 from .news_views import NewsDetailView, NewsListView
 
 app_name = "exposed_api"
@@ -11,8 +11,9 @@ urlpatterns = [
     # Project endpoints
     path("projects/", project_views.ProjectDetailView.as_view(), name="project_create_or_list"),
     path("projects/<int:_id>/", project_views.ProjectDetailView.as_view(), name="project_detail_or_crud"),
-    # Events endpoint
+    # Events endpoints
     path("events/", EventListView.as_view(), name="events_list"),
+    path("events/<int:event_id>/", EventDetailView.as_view(), name="event_detail"),
     # News endpoints
     path("news/", NewsListView.as_view(), name="news_list"),
     path("news/<int:news_id>/", NewsDetailView.as_view(), name="news_detail"),
