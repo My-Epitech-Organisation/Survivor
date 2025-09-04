@@ -1,15 +1,12 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { Event, CalendarEvent } from '@/types/event';
+import { CalendarEvent, CalendarProps } from '@/types/event';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 
-interface CalendarProps {
-    events: Event[];
-}
 
-const Calendar: React.FC<CalendarProps> = ({ events }) => {
+const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [isMobile, setIsMobile] = useState(false);
 
@@ -167,6 +164,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
                                                 key={event.id}
                                                 className={`text-xs p-1 rounded truncate ${getEventTypeColor(event.event_type)}`}
                                                 title={`${event.name} - ${event.event_type}`}
+                                                onClick={() => onEventClick(event)}
                                             >
                                                 <span className="hidden sm:inline">
                                                     {event.name.length > 10 ? event.name.substring(0, 10) + '...' : event.name}
@@ -201,7 +199,11 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
                             )
                             .sort((a, b) => a.parsedDate.getTime() - b.parsedDate.getTime())
                             .map(event => (
-                                <Card key={event.id} className="p-3 sm:p-4 hover:shadow-md transition-shadow">
+                                <Card
+                                    key={event.id}
+                                    className="p-3 sm:p-4 hover:shadow-md transition-shadow"
+                                    onClick={() => onEventClick(event)}
+                                >
                                     <div className="flex items-start justify-between">
                                         <div className="flex-1">
                                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">

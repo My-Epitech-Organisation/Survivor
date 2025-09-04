@@ -14,3 +14,8 @@ export interface Event {
 export interface CalendarEvent extends Event {
     parsedDate: Date;
 }
+
+export interface CalendarProps {
+    events: Event[];
+    onEventClick: (event: Event) => void;
+}
