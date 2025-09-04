@@ -27,6 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         if (token) {
+            
             setUser({
                 id: '1',
                 email: 'user@example.com',
