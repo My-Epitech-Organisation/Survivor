@@ -220,7 +220,7 @@ export async function GET(request: NextRequest) {
       try {
         const page = (await browser.pages())[0];
         if (page) {
-          const screenshotBuffer = await page.screenshot({ fullPage: true });
+          await page.screenshot({ fullPage: true });
         }
       } catch (screenshotError) {
         console.error('Error capturing screenshot:', screenshotError);
