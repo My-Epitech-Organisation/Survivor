@@ -115,6 +115,7 @@ def logout_view(request):
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def verify_token(request):
