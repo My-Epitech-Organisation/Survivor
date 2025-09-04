@@ -99,3 +99,75 @@ def users_connected_ratio(request):
     connected_users_count = active_tokens.values("user").distinct().count()
     ratio = (connected_users_count / total_users_count) * 100
     return JsonResponse({"rate": int(ratio)})
+
+
+@api_view(["GET"])
+@permission_classes([IsAdmin])
+def recent_actions(request):
+    """
+    API endpoint that returns recent actions in the system.
+    This is a placeholder implementation.
+    This endpoint requires admin privileges.
+    """
+    # Placeholder data for recent actions
+    # TODO: Replace with actual data retrieval logic
+    data = [
+        {
+            "id": 1,
+            "action": "Created new project",
+            "user": "john.doe@example.com",
+            "time": "2025-09-04T10:23:15Z",
+            "type": "project",
+        },
+        {
+            "id": 2,
+            "action": "Updated profile",
+            "user": "jane.smith@example.com",
+            "time": "2025-09-04T09:45:30Z",
+            "type": "user",
+        },
+        {
+            "id": 3,
+            "action": "Added investor",
+            "user": "admin@jeb-incubator.com",
+            "time": "2025-09-03T16:12:45Z",
+            "type": "investor",
+        },
+        {
+            "id": 4,
+            "action": "Created event",
+            "user": "events@jeb-incubator.com",
+            "time": "2025-09-03T14:05:22Z",
+            "type": "event",
+        },
+        {
+            "id": 5,
+            "action": "Published news",
+            "user": "media@jeb-incubator.com",
+            "time": "2025-09-02T11:30:00Z",
+            "type": "news",
+        },
+    ]
+
+    return JsonResponse(data, safe=False)
+
+
+@api_view(["GET"])
+@permission_classes([IsAdmin])
+def monthly_stats(request):
+    """
+    API endpoint that returns monthly statistics for the dashboard.
+    This is a placeholder implementation.
+    This endpoint requires admin privileges.
+    """
+    # Placeholder data for monthly statistics
+    # TODO: Replace with actual data retrieval logic
+    data = {
+        "projectsLaunched": 8,
+        "eventsCreated": 12,
+        "activeSessions": 145,
+        "supportTickets": 23,
+        "avgSessionDuration": "24m 30s",
+    }
+
+    return JsonResponse(data)
