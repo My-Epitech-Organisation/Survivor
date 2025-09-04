@@ -7,78 +7,73 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    padding: 30, // Réduit de 40 à 30
+    padding: 30,
     fontFamily: 'Helvetica'
   },
-  
-  // Header Section
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20, // Réduit de 30 à 20
-    paddingBottom: 15, // Réduit de 20 à 15
+    marginBottom: 20,
+    paddingBottom: 15,
     borderBottom: '3px solid #3b82f6'
   },
   title: {
-    fontSize: 24, // Réduit de 28 à 24
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#1e293b',
     textTransform: 'uppercase',
     letterSpacing: 1
   },
   subtitle: {
-    fontSize: 12, // Réduit de 14 à 12
+    fontSize: 12,
     color: '#64748b',
-    marginTop: 3 // Réduit de 5 à 3
+    marginTop: 3
   },
-  
-  // Status Badge
+
   statusBadge: {
     backgroundColor: '#10b981',
     color: '#ffffff',
-    padding: 6, // Réduit de 8 à 6
+    padding: 6,
     borderRadius: 20,
-    fontSize: 10, // Réduit de 12 à 10
+    fontSize: 10,
     fontWeight: 'bold',
     textAlign: 'center',
-    minWidth: 70 // Réduit de 80 à 70
+    minWidth: 70
   },
-  
-  // Main Content Grid
+
   contentGrid: {
     flexDirection: 'row',
-    gap: 20, // Réduit de 30 à 20
-    marginBottom: 20 // Réduit de 30 à 20
+    gap: 20,
+    marginBottom: 20
   },
   leftColumn: {
     flex: 2,
-    gap: 15 // Réduit de 25 à 15
+    gap: 15
   },
   rightColumn: {
     flex: 1,
-    gap: 15 // Réduit de 20 à 15
+    gap: 15
   },
-  
-  // Section Styles
+
   section: {
-    marginBottom: 15 // Réduit de 25 à 15
+    marginBottom: 15
   },
   sectionTitle: {
-    fontSize: 14, // Réduit de 16 à 14
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#1e40af',
-    marginBottom: 8, // Réduit de 10 à 8
+    marginBottom: 8,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     borderBottom: '1px solid #e2e8f0',
-    paddingBottom: 3 // Réduit de 5 à 3
+    paddingBottom: 3
   },
-  
-  // Card Styles
+
   card: {
     backgroundColor: '#f8fafc',
-    padding: 15, // Réduit de 20 à 15
+    padding: 15,
     borderRadius: 8,
     border: '1px solid #e2e8f0',
     shadowColor: '#000',
@@ -86,8 +81,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4
   },
-  
-  // Text Styles
+
   description: {
     fontSize: 11,
     lineHeight: 1.6,
@@ -111,24 +105,23 @@ const styles = StyleSheet.create({
     color: '#111827',
     flex: 1
   },
-  
-  // Founders Section
+
   foundersGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10 // Réduit de 15 à 10
+    gap: 10
   },
   founderCard: {
     backgroundColor: '#ffffff',
-    padding: 10, // Réduit de 15 à 10
+    padding: 10,
     borderRadius: 8,
     border: '1px solid #d1d5db',
-    minWidth: 120, // Réduit de 140 à 120
+    minWidth: 120,
     alignItems: 'center'
   },
   founderAvatar: {
-    width: 40, // Réduit de 50 à 40
-    height: 40, // Réduit de 50 à 40
+    width: 40,
+    height: 40,
     borderRadius: 25,
     marginBottom: 8,
     backgroundColor: '#3b82f6'
@@ -144,8 +137,7 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     textAlign: 'center'
   },
-  
-  // Tags and Badges
+
   tagContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -162,13 +154,12 @@ const styles = StyleSheet.create({
     border: '1px solid #bfdbfe'
   },
   
-  // Contact Section
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6, // Réduit de 10 à 6
+    marginBottom: 6, 
     backgroundColor: '#f9fafb',
-    padding: 8, // Réduit de 10 à 8
+    padding: 8,
     borderRadius: 6
   },
   contactIcon: {
@@ -182,11 +173,10 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#374151'
   },
-  
-  // Footer
+
   footer: {
-    marginTop: 15, // Réduit de 30 à 15
-    paddingTop: 10, // Réduit de 20 à 10
+    marginTop: 15,
+    paddingTop: 10,
     borderTop: '2px solid #e5e7eb',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -196,14 +186,12 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: '#9ca3af'
   },
-  
-  // Highlight Box
   highlightBox: {
     backgroundColor: '#fef3c7',
     border: '2px solid #f59e0b',
     borderRadius: 8,
-    padding: 10, // Réduit de 15 à 10
-    marginBottom: 15 // Réduit de 20 à 15
+    padding: 10,
+    marginBottom: 15
   },
   highlightText: {
     fontSize: 12,
