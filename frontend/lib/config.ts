@@ -27,8 +27,15 @@ export const getAPIUrl = () => {
   return 'http://localhost:8000/api';
 };
 
+export const getFrontendUrl = () => {
+  return process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000';
+};
+
 export const getBackendUrl = () => {
-  if (typeof window !== 'undefined') {
+  const isServer = typeof window === 'undefined';
+  if (isServer) {
+    return 'http://backend:8000';
+  } else {
     const hostname = window.location.hostname;
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return 'http://localhost:8000';

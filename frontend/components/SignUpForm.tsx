@@ -75,7 +75,6 @@ export function SignUpForm({
       }
 
       const data = await response.json();
-      console.log('Signup successful:', data);
       setSuccess(true);
 
       setName("");

@@ -3,10 +3,8 @@
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { useAuth } from "@/contexts/AuthContext";
 
 export default function Home() {
-  const { isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
