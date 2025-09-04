@@ -6,8 +6,9 @@ import Calendar from '@/components/Calendar';
 import { Event } from '@/types/event';
 import { authenticatedFetch } from '@/lib/api';
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { getAPIUrl } from '@/lib/config';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { getBackendUrl } from '@/lib/config';
+
 
 export default function Events() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -54,7 +55,7 @@ export default function Events() {
             {selectedEvent?.pictureURL && (
               <div className="lg:col-span-2 order-2 lg:order-1">
                 <img
-                  src={getAPIUrl() + selectedEvent.pictureURL}
+                  src={getBackendUrl() + selectedEvent.pictureURL}
                   alt={selectedEvent.name}
                   className="w-full h-auto rounded-lg object-cover "
                 />
