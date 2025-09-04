@@ -21,20 +21,16 @@ import {
 // Mock data for KPIs
 const mockData = {
   totalUsers: {
-    value: 1247,
-    changePercentage: 12,
+    value: 1247
   },
   totalStartups: {
-    value: 89,
-    changePercentage: 8,
+    value: 89
   },
   totalEvents: {
-    value: 47,
-    changePercentage: 22,
+    value: 47
   },
   newSignups: {
-    value: 156,
-    changePercentage: 20,
+    value: 156
   },
   projectVisibility: {
     data: [
@@ -165,11 +161,8 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {mockData.totalUsers.value.toLocaleString()}
+                <span className="text-xs text-muted-foreground pl-1">Users</span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {mockData.totalUsers.changePercentage >= 0 ? "+" : "-"}
-                {mockData.totalUsers.changePercentage}% from last month
-              </p>
             </CardContent>
           </Card>
 
@@ -183,11 +176,8 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {mockData.totalStartups.value}
+                <span className="text-xs text-muted-foreground pl-1">Startups</span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {mockData.totalStartups.changePercentage >= 0 ? "+" : "-"}
-                {mockData.totalStartups.changePercentage}% from last month
-              </p>
             </CardContent>
           </Card>
 
@@ -201,11 +191,8 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {mockData.totalEvents.value}
+                <span className="text-xs text-muted-foreground pl-1">Events</span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {mockData.totalEvents.changePercentage >= 0 ? "+" : "-"}
-                {mockData.totalEvents.changePercentage}% from last month
-              </p>
             </CardContent>
           </Card>
 
@@ -217,11 +204,8 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {mockData.newSignups.value}
+                <span className="text-xs text-muted-foreground pl-1">Signups</span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {mockData.newSignups.changePercentage >= 0 ? "+" : "-"}
-                {mockData.newSignups.changePercentage}% from last month
-              </p>
             </CardContent>
           </Card>
         </div>
