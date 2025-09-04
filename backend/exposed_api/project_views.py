@@ -17,9 +17,30 @@ class IsAdminUser(permissions.BasePermission):
 
 
 class ProjectDetailView(APIView):
-    permission_classes = [IsAdminUser]
+    def get_permissions(self):
+        """
+        Override to return different permissions based on HTTP method.
+        GET requests are allowed for everyone, but POST, PUT, DELETE require admin.
+        """
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsAdminUser()]
+
+    def get(self, request, _id=None):
+        """Handle GET requests - accessible to all users"""
+        if _id is None:
+            startups = StartupDetail.objects.all()
+            serializer = ProjectSerializer(startups, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        try:
+            startup = StartupDetail.objects.get(id=_id)
+            serializer = ProjectDetailSerializer(startup)
+            return JsonResponse(serializer.data)
+        except StartupDetail.DoesNotExist:
+            return JsonResponse({"error": f"Project with id {_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """Handle POST requests - admin only"""
         serializer = ProjectSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -27,6 +48,7 @@ class ProjectDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, _id):
+        """Handle PUT requests - admin only"""
         project = get_object_or_404(StartupDetail, id=_id)
         serializer = ProjectSerializer(project, data=request.data, partial=False)
         if serializer.is_valid():
@@ -35,28 +57,7 @@ class ProjectDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, _id):
+        """Handle DELETE requests - admin only"""
         project = get_object_or_404(StartupDetail, id=_id)
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# GET views for projects (public)
-
-
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def projects_list(request):
-    startups = StartupDetail.objects.all()
-    serializer = ProjectSerializer(startups, many=True)
-    return JsonResponse(serializer.data, safe=False)
-
-
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def project_detail(request, project_id):
-    try:
-        startup = StartupDetail.objects.get(id=project_id)
-        serializer = ProjectDetailSerializer(startup)
-        return JsonResponse(serializer.data)
-    except StartupDetail.DoesNotExist:
-        return JsonResponse({"error": f"Project with id {project_id} not found"}, status=status.HTTP_404_NOT_FOUND)
