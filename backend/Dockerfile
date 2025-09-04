@@ -4,6 +4,7 @@ ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/opt/venv
 ENV DJANGO_DEBUG=True
 ENV DJANGO_ENV=development
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \

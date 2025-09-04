@@ -14,10 +14,10 @@ const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
         const checkIfMobile = () => {
             setIsMobile(window.innerWidth < 640);
         };
-        
+
         checkIfMobile();
         window.addEventListener('resize', checkIfMobile);
-        
+
         return () => window.removeEventListener('resize', checkIfMobile);
     }, []);
 

@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import api from "@/lib/api"
 import { RouteRoles } from '@/types/route';
-import { Roles } from '@/types/role';
 import { User } from './types/user';
 
 async function isValidToken(token: string | null) : Promise<User | null>{

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -25,7 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 try:
     SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 except KeyError:
-    raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is required")
+    # Use a default key for build-time operations like collectstatic
+    import sys
+
+    if "collectstatic" in sys.argv:
+        SECRET_KEY = "django-insecure-build-key-for-collectstatic-only"
+        print("WARNING: Using insecure build key for collectstatic")
+    else:
+        raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is required")
 
 DEBUG = True
 
@@ -42,6 +50,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "drf_spectacular",
     "init.apps.InitConfig",
     "admin_panel",
     "exposed_api.apps.ExposedApiConfig",
@@ -58,8 +67,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # Custom middleware for security headers
+    # Custom middleware for security headers - must be BEFORE the disable middleware
     "backend.middleware.CSPMiddleware",
+    # Middleware to disable CSP for API documentation - must be AFTER the CSP middleware
+    "backend.disable_csp_middleware.DisableCSPForDocsMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -69,6 +80,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             BASE_DIR / "authentication" / "templates",
+            BASE_DIR / "templates",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -162,6 +174,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # JWT settings
@@ -270,4 +283,18 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+# DRF-Spectacular configuration for OpenAPI
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Survivor API",
+    "DESCRIPTION": "API for the Survivor platform of Jeb Incubator",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayOperationId": True,
+    },
+    "COMPONENT_SPLIT_REQUEST": True,
 }
