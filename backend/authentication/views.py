@@ -94,6 +94,7 @@ def request_password_reset(request):
     3. Sends an email with a reset link
     4. Returns a success message (even if the email doesn't exist for security reasons)
     """
+    print("\t\tPassword reset requested")
     serializer = PasswordResetRequestSerializer(data=request.data)
     if serializer.is_valid():
         email = serializer.validated_data["email"]
@@ -101,8 +102,9 @@ def request_password_reset(request):
             user = User.objects.get(email=email)
             token = PasswordResetToken.objects.create(user=user)
 
-            reset_path = reverse("authentication:password_reset_confirm")
-            reset_url = f"{request.scheme}://{request.get_host()}{reset_path}?token={token.token}"
+            # Use port 3000 for frontend instead of backend port
+            frontend_host = request.get_host().replace("8000", "3000")
+            reset_url = f"{request.scheme}://{frontend_host}/reset-password?token={token.token}"
 
             # Subject
             subject = "JEB Incubator Password Reset"
