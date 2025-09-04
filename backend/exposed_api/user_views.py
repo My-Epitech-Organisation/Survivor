@@ -5,6 +5,7 @@ from rest_framework import serializers, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+
 from .serializers import UserSerializer
 
 
@@ -12,19 +13,21 @@ class CurrentUserSerializer(serializers.ModelSerializer):
     """
     Serializer for the current authenticated user
     """
+
     role = serializers.CharField()
     startupId = serializers.SerializerMethodField()
-    founderId = serializers.IntegerField(source='founder_id', allow_null=True)
+    founderId = serializers.IntegerField(source="founder_id", allow_null=True)
     userImage = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ['name', 'email', 'role', 'id', 'founderId', 'startupId', 'userImage']
+        fields = ["name", "email", "role", "id", "founderId", "startupId", "userImage"]
 
     def get_startupId(self, obj):
-        if obj.role == 'founder' and obj.founder_id:
+        if obj.role == "founder" and obj.founder_id:
             try:
                 from admin_panel.models import Founder
+
                 founder = Founder.objects.filter(id=obj.founder_id).first()
                 if founder:
                     return founder.startup_id
