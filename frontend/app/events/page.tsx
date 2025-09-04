@@ -54,6 +54,7 @@ export default function Events() {
           <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 lg:gap-6">
             {selectedEvent?.pictureURL && (
               <div className="lg:col-span-2 order-2 lg:order-1">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={getBackendUrl() + selectedEvent.pictureURL}
                   alt={selectedEvent.name}

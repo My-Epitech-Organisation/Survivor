@@ -59,7 +59,7 @@ export function SignUpForm({
         }
 
         const errorMessages = [];
-        for (const [field, messages] of Object.entries(errorData)) {
+        for (const messages of Object.values(errorData)) {
           if (Array.isArray(messages)) {
             errorMessages.push(...messages);
           } else if (typeof messages === 'string') {

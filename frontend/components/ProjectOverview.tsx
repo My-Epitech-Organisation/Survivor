@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog"
 import { MapPin, Building, TrendingUp, Target, CheckCircle, Info } from "lucide-react"
 import ProjectDetails from "./ProjectDetails"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { api } from "@/lib/api"
 
 export default function ProjectOverview(props : ProjectOverviewProps) {
