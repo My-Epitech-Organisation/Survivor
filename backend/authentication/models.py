@@ -1,4 +1,5 @@
 import uuid
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
@@ -72,20 +73,25 @@ class PasswordResetToken(models.Model):
     """
     Model to store password reset tokens
     """
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='password_reset_tokens')
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="password_reset_tokens")
     token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     is_used = models.BooleanField(default=False)
 
     def __str__(self):
+        """
+        String representation of the PasswordResetToken model
+        """
         return f"Password reset token for {self.user.email}"
 
     def save(self, *args, **kwargs):
         if not self.expires_at:
 
             from django.conf import settings
-            hours = getattr(settings, 'PASSWORD_RESET_TIMEOUT', 24)
+
+            hours = getattr(settings, "PASSWORD_RESET_TIMEOUT", 24)
             self.expires_at = timezone.now() + timezone.timedelta(hours=hours)
         super().save(*args, **kwargs)
 

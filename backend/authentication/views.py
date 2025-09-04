@@ -1,5 +1,5 @@
-from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from .models import PasswordResetToken
 from .serializers import (
     CustomTokenObtainPairSerializer,
     PasswordResetConfirmSerializer,
@@ -17,7 +18,6 @@ from .serializers import (
     UserRegistrationSerializer,
     UserSerializer,
 )
-from .models import PasswordResetToken
 
 User = get_user_model()
 
@@ -101,20 +101,16 @@ def request_password_reset(request):
             user = User.objects.get(email=email)
             token = PasswordResetToken.objects.create(user=user)
 
-            reset_path = reverse('authentication:password_reset_confirm')
+            reset_path = reverse("authentication:password_reset_confirm")
             reset_url = f"{request.scheme}://{request.get_host()}{reset_path}?token={token.token}"
 
             # Subject
             subject = "JEB Incubator Password Reset"
 
             # Context for email template
-            context = {
-                'user': user,
-                'reset_url': reset_url,
-                'timeout_hours': settings.PASSWORD_RESET_TIMEOUT
-            }
+            context = {"user": user, "reset_url": reset_url, "timeout_hours": settings.PASSWORD_RESET_TIMEOUT}
 
-            html_message = render_to_string('authentication/password_reset_email.html', context)
+            html_message = render_to_string("authentication/password_reset_email.html", context)
 
             # Fallback
             plain_message = f"""
@@ -139,14 +135,20 @@ def request_password_reset(request):
                     settings.DEFAULT_FROM_EMAIL,
                     [user.email],
                     fail_silently=False,
-                    html_message=html_message
+                    html_message=html_message,
                 )
             except Exception as e:
                 print(f"Error sending password reset email: {e}")
 
-            return Response({"detail": "Password reset instructions have been sent to your email address."}, status=status.HTTP_200_OK)
+            return Response(
+                {"detail": "Password reset instructions have been sent to your email address."},
+                status=status.HTTP_200_OK,
+            )
         except User.DoesNotExist:
-            return Response({"detail": "Password reset instructions have been sent to your email address."}, status=status.HTTP_200_OK)
+            return Response(
+                {"detail": "Password reset instructions have been sent to your email address."},
+                status=status.HTTP_200_OK,
+            )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -166,9 +168,9 @@ def reset_password_confirm(request):
     The token is expected to be in request.data or in query parameters if coming from the email link
     """
 
-    if request.query_params.get('token') and not request.data.get('token'):
+    if request.query_params.get("token") and not request.data.get("token"):
         request.data._mutable = True
-        request.data['token'] = request.query_params.get('token')
+        request.data["token"] = request.query_params.get("token")
         request.data._mutable = False
 
     serializer = PasswordResetConfirmSerializer(data=request.data)

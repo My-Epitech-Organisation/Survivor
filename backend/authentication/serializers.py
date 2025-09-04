@@ -88,6 +88,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError({"password": "Password fields didn't match."})
 
         from .models import PasswordResetToken
+
         try:
             token_obj = PasswordResetToken.objects.get(token=attrs["token"])
             if not token_obj.is_valid():
