@@ -161,18 +161,37 @@ export default function StartupDashboard() {
                                         onClick={async () => {
                                             setIsExporting(true);
                                             try {
-                                                const response = await fetch(`/api/pdf/project/${user?.founderId}`);
+                                                const token = document.cookie
+                                                    .split(';')
+                                                    .find(cookie => cookie.trim().startsWith('authToken='))
+                                                    ?.split('=')[1]?.trim();
+                                                
+                                                if (!token) {
+                                                    console.error('Authentication token not found');
+                                                    return;
+                                                }
+                                                
+                                                const response = await fetch(`/api/pdf/project/${token}`);
+                                                
+                                                if (!response.ok) {
+                                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                                }
+                                                
                                                 const blob = await response.blob();
                                                 const url = window.URL.createObjectURL(blob);
 
+                                                // Créer l'élément a
                                                 const a = document.createElement('a');
                                                 a.href = url;
-                                                a.download = `project-report-${user?.founderId}.pdf`;
-                                                document.body.appendChild(a);
+                                                a.download = `project-report.pdf`;
+                                                // L'élément est invisible et n'a pas besoin d'être ajouté au DOM
+                                                a.style.display = 'none';
                                                 a.click();
 
-                                                window.URL.revokeObjectURL(url);
-                                                document.body.removeChild(a);
+                                                // Libérer l'URL après un court délai
+                                                setTimeout(() => {
+                                                    window.URL.revokeObjectURL(url);
+                                                }, 100);
                                             } catch (error) {
                                                 console.error('Error downloading PDF:', error);
                                                 alert('Failed to download PDF. Please try again.');

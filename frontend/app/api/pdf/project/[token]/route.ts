@@ -1,19 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import puppeteer from 'puppeteer';
 import { getFrontendUrl } from '@/lib/config';
-import api from '@/lib/api';
-import ProjectDetails from '@/components/ProjectDetails';
 
 export async function GET(
   request: NextRequest,
-  context: { params: { founderId: string } }
+  context: { params: { token: string } }
 ) {
   try {
     const params = await context.params;
-    const founderId = params.founderId;
+    const token = params.token;
 
-    if (!founderId) {
-      return NextResponse.json({ error: 'founder ID is required' }, { status: 400 });
+    if (!token) {
+      return NextResponse.json({ error: 'Authentication token is required' }, { status: 400 });
     }
 
     const browser = await puppeteer.launch({
@@ -23,8 +21,18 @@ export async function GET(
 
     const page = await browser.newPage();
 
+    await page.setCookie({
+      name: 'authToken',
+      value: token,
+      domain: 'localhost',
+      path: '/',
+      httpOnly: false,
+      secure: false,
+    });
+
     const frontendUrl = getFrontendUrl();
-    const exportUrl = `${frontendUrl}/projects/export-pdf/${founderId}`;
+    const exportUrl = `${frontendUrl}/projects/export-pdf/${token}`;
+
     console.log(`Navigating to: ${exportUrl}`);
     await page.goto(exportUrl, { waitUntil: 'networkidle0' });
 
@@ -35,15 +43,16 @@ export async function GET(
 
     await page.waitForFunction(
       'document.querySelectorAll(".recharts-surface").length > 0',
-      { timeout: 10000 }
+      { timeout: 15000 }
     ).catch(err => console.log('Les graphiques ne sont peut-être pas chargés, mais on continue:', err));
 
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 4000));
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' }
+      margin: { top: '5px', right: '5px', bottom: '5px', left: '5px' },
+      scale: 0.7
     });
 
     await browser.close();
@@ -52,7 +61,7 @@ export async function GET(
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="project-report-${founderId}.pdf"`,
+        'Content-Disposition': `attachment; filename="project-report.pdf"`,
       },
     });
 
