@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { TrendingUp } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
+import { TrendingUp } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
 
 import {
   Card,
@@ -10,22 +10,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
 interface ChartBarLabelProps {
-  data: Array<{ month: string; views: number }>
-  title: string
-  description: string
-  config?: ChartConfig
-  footerTitle?: string
-  footerDescription?: string
-  trendingPercentage?: number
+  data: Array<{ month: string; views: number }>;
+  title: string;
+  description: string;
+  config?: ChartConfig;
+  footerTitle?: string;
+  footerDescription?: string;
+  trendingPercentage?: number;
 }
 
 export function ChartBarLabel({
@@ -80,12 +80,17 @@ export function ChartBarLabel({
           </BarChart>
         </ChartContainer>
       </CardContent>
-      {(footerTitle || footerDescription || trendingPercentage !== undefined) && (
+      {(footerTitle ||
+        footerDescription ||
+        trendingPercentage !== undefined) && (
         <CardFooter className="flex-col gap-2 text-sm pt-0 pb-6">
           {(footerTitle || trendingPercentage !== undefined) && (
             <div className="flex items-center gap-2 leading-none font-medium">
-              {footerTitle || `Trending up by ${trendingPercentage}% this month`}
-              {trendingPercentage !== undefined && <TrendingUp className="h-4 w-4" />}
+              {footerTitle ||
+                `Trending up by ${trendingPercentage}% this month`}
+              {trendingPercentage !== undefined && (
+                <TrendingUp className="h-4 w-4" />
+              )}
             </div>
           )}
           {footerDescription && (
@@ -96,5 +101,5 @@ export function ChartBarLabel({
         </CardFooter>
       )}
     </Card>
-  )
+  );
 }

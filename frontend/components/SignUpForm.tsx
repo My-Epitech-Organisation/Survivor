@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { getAPIUrl } from "@/lib/config"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { getAPIUrl } from "@/lib/config";
 
 export function SignUpForm({
   className,
@@ -38,16 +38,16 @@ export function SignUpForm({
       const apiUrl = getAPIUrl();
       const link = `${apiUrl}/auth/register/`;
       const response = await fetch(link, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email,
           name,
           password,
           password_confirm: confirmPassword,
-          role: "user"
+          role: "user",
         }),
       });
 
@@ -55,23 +55,23 @@ export function SignUpForm({
         const errorData = await response.json();
 
         if (errorData.password && Array.isArray(errorData.password)) {
-          throw new Error(errorData.password.join(' '));
+          throw new Error(errorData.password.join(" "));
         }
 
         const errorMessages = [];
         for (const messages of Object.values(errorData)) {
           if (Array.isArray(messages)) {
             errorMessages.push(...messages);
-          } else if (typeof messages === 'string') {
+          } else if (typeof messages === "string") {
             errorMessages.push(messages);
           }
         }
 
         if (errorMessages.length > 0) {
-          throw new Error(errorMessages.join(' '));
+          throw new Error(errorMessages.join(" "));
         }
 
-        throw new Error(errorData.message || 'Signup failed');
+        throw new Error(errorData.message || "Signup failed");
       }
 
       const data = await response.json();
@@ -82,24 +82,23 @@ export function SignUpForm({
       setPassword("");
       setConfirmPassword("");
 
-      router.push('/login')
-
+      router.push("/login");
     } catch (err) {
-      console.error('Signup error:', err)
-      setError(err instanceof Error ? err.message : 'An error occurred during signup')
+      console.error("Signup error:", err);
+      setError(
+        err instanceof Error ? err.message : "An error occurred during signup"
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome</CardTitle>
-          <CardDescription>
-            Create a new account
-          </CardDescription>
+          <CardDescription>Create a new account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -163,7 +162,11 @@ export function SignUpForm({
                     disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Creating account..." : "Sign Up"}
                 </Button>
               </div>
@@ -172,5 +175,5 @@ export function SignUpForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
