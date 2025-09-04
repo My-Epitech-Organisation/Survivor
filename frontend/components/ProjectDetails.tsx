@@ -1,10 +1,16 @@
-"use client"
+"use client";
 import { ProjectDetailsProps } from "@/types/project";
 import { FaGithub, FaRegUser } from "react-icons/fa6";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Founder } from "@/types/founders";
 import { getBackendUrl } from "@/lib/config";
-import { FaLinkedinIn, FaInstagram, FaFacebook, FaXTwitter, FaLink } from "react-icons/fa6";
+import {
+  FaLinkedinIn,
+  FaInstagram,
+  FaFacebook,
+  FaXTwitter,
+  FaLink,
+} from "react-icons/fa6";
 
 export default function ProjectDetails(props: ProjectDetailsProps) {
   const backendUrl = getBackendUrl();
@@ -13,7 +19,9 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
     <div className="max-w-none mx-auto space-y-6 sm:space-y-12 py-2 sm:py-4">
       {/* Hero Section */}
       <div className="text-center space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8 bg-gradient-to-r from-blue-50 to-indigo-50 py-6 sm:py-8 md:py-10 lg:py-12 px-3 sm:px-4 md:px-6 lg:px-8 rounded-lg sm:rounded-xl lg:rounded-2xl">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-900 tracking-tight">{props.ProjectName}</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-900 tracking-tight">
+          {props.ProjectName}
+        </h1>
         {props.ProjectDescription && (
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto leading-relaxed font-light">
             {props.ProjectDescription}
@@ -24,17 +32,23 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
         <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 flex-wrap mt-4 sm:mt-6 lg:mt-8">
           {props.ProjectSector && (
             <div className="bg-white rounded-full px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 lg:py-3 shadow-sm border">
-              <span className="text-blue-700 font-medium text-xs sm:text-sm md:text-base">{props.ProjectSector}</span>
+              <span className="text-blue-700 font-medium text-xs sm:text-sm md:text-base">
+                {props.ProjectSector}
+              </span>
             </div>
           )}
           {props.ProjectStatus && (
             <div className="bg-white rounded-full px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 lg:py-3 shadow-sm border">
-              <span className="text-green-700 font-medium text-xs sm:text-sm md:text-base">{props.ProjectStatus}</span>
+              <span className="text-green-700 font-medium text-xs sm:text-sm md:text-base">
+                {props.ProjectStatus}
+              </span>
             </div>
           )}
           {props.ProjectMaturity && (
             <div className="bg-white rounded-full px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 lg:py-3 shadow-sm border">
-              <span className="text-purple-700 font-medium text-xs sm:text-sm md:text-base">{props.ProjectMaturity}</span>
+              <span className="text-purple-700 font-medium text-xs sm:text-sm md:text-base">
+                {props.ProjectMaturity}
+              </span>
             </div>
           )}
         </div>
@@ -42,7 +56,6 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
-
         {/* Project Information */}
         <div className="space-y-6 sm:space-y-8">
           <div className="bg-white rounded-lg md:rounded-xl p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 shadow-sm border">
@@ -54,26 +67,39 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
             <div className="space-y-3 sm:space-y-4 md:space-y-6">
               {props.ProjectId && (
                 <div>
-                  <dt className="text-xs sm:text-xs md:text-sm font-medium text-gray-500 mb-0.5 sm:mb-1 md:mb-2">Project ID</dt>
-                  <dd className="text-sm sm:text-base md:text-lg text-gray-900">#{props.ProjectId}</dd>
+                  <dt className="text-xs sm:text-xs md:text-sm font-medium text-gray-500 mb-0.5 sm:mb-1 md:mb-2">
+                    Project ID
+                  </dt>
+                  <dd className="text-sm sm:text-base md:text-lg text-gray-900">
+                    #{props.ProjectId}
+                  </dd>
                 </div>
               )}
 
               {props.ProjectLegalStatus && (
                 <div>
-                  <dt className="text-xs sm:text-xs md:text-sm font-medium text-gray-500 mb-0.5 sm:mb-1 md:mb-2">Legal Status</dt>
-                  <dd className="text-sm sm:text-base md:text-lg text-gray-900">{props.ProjectLegalStatus}</dd>
+                  <dt className="text-xs sm:text-xs md:text-sm font-medium text-gray-500 mb-0.5 sm:mb-1 md:mb-2">
+                    Legal Status
+                  </dt>
+                  <dd className="text-sm sm:text-base md:text-lg text-gray-900">
+                    {props.ProjectLegalStatus}
+                  </dd>
                 </div>
               )}
 
               <div>
-                <dt className="text-xs sm:text-xs md:text-sm font-medium text-gray-500 mb-0.5 sm:mb-1 md:mb-2">Created</dt>
+                <dt className="text-xs sm:text-xs md:text-sm font-medium text-gray-500 mb-0.5 sm:mb-1 md:mb-2">
+                  Created
+                </dt>
                 <dd className="text-sm sm:text-base md:text-lg text-gray-900">
-                  {new Date(props.ProjectCreatedAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
+                  {new Date(props.ProjectCreatedAt).toLocaleDateString(
+                    "en-US",
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    }
+                  )}
                 </dd>
               </div>
             </div>
@@ -87,7 +113,9 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                 Current Needs
               </h2>
               <div className="bg-red-50 rounded-lg p-4 md:p-6">
-                <p className="text-base md:text-lg text-red-800 leading-relaxed">{props.ProjectNeeds}</p>
+                <p className="text-base md:text-lg text-red-800 leading-relaxed">
+                  {props.ProjectNeeds}
+                </p>
               </div>
             </div>
           )}
@@ -103,7 +131,9 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
 
             <div className="space-y-4 md:space-y-6">
               <div>
-                <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Email</dt>
+                <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">
+                  Email
+                </dt>
                 <dd className="text-base md:text-lg">
                   <a
                     href={`mailto:${props.ProjectEmail}`}
@@ -115,7 +145,9 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
               </div>
 
               <div>
-                <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Phone</dt>
+                <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">
+                  Phone
+                </dt>
                 <dd className="text-base md:text-lg">
                   <a
                     href={`tel:${props.ProjectPhone}`}
@@ -128,14 +160,20 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
 
               {props.ProjectAddress && (
                 <div>
-                  <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Address</dt>
-                  <dd className="text-base md:text-lg text-gray-900">{props.ProjectAddress}</dd>
+                  <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">
+                    Address
+                  </dt>
+                  <dd className="text-base md:text-lg text-gray-900">
+                    {props.ProjectAddress}
+                  </dd>
                 </div>
               )}
 
               {props.ProjectWebsite && (
                 <div>
-                  <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Website</dt>
+                  <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">
+                    Website
+                  </dt>
                   <dd className="text-base md:text-lg">
                     <a
                       href={props.ProjectWebsite}
@@ -149,38 +187,45 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                 </div>
               )}
 
-                {props.ProjectSocial && (
+              {props.ProjectSocial && (
                 <div>
-                  <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Social</dt>
+                  <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">
+                    Social
+                  </dt>
                   <dd className="text-base md:text-lg">
-                  <a
-                    href={props.ProjectSocial}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-emerald-600 hover:text-emerald-700 transition-colors break-all"
-                  >
-                    {
-                    (() => {
-                      try {
-                        const url = new URL(props.ProjectSocial);
-                        const domain = url.hostname.replace('www.', '');
+                    <a
+                      href={props.ProjectSocial}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-600 hover:text-emerald-700 transition-colors break-all"
+                    >
+                      {(() => {
+                        try {
+                          const url = new URL(props.ProjectSocial);
+                          const domain = url.hostname.replace("www.", "");
 
-                        if (domain.includes('facebook')) return <FaFacebook/>;
-                        if (domain.includes('twitter') || domain.includes('x.com')) return <FaXTwitter/>;
-                        if (domain.includes('instagram')) return <FaInstagram/>;
-                        if (domain.includes('linkedin')) return <FaLinkedinIn/>;
-                        if (domain.includes('github')) return <FaGithub/>;
+                          if (domain.includes("facebook"))
+                            return <FaFacebook />;
+                          if (
+                            domain.includes("twitter") ||
+                            domain.includes("x.com")
+                          )
+                            return <FaXTwitter />;
+                          if (domain.includes("instagram"))
+                            return <FaInstagram />;
+                          if (domain.includes("linkedin"))
+                            return <FaLinkedinIn />;
+                          if (domain.includes("github")) return <FaGithub />;
 
-                        return <FaLink/>;
-                      } catch {
-                        return props.ProjectSocial;
-                      }
-                    })()
-                    }
-                  </a>
+                          return <FaLink />;
+                        } catch {
+                          return props.ProjectSocial;
+                        }
+                      })()}
+                    </a>
                   </dd>
                 </div>
-                )}
+              )}
             </div>
           </div>
         </div>
@@ -200,24 +245,36 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                     Founders ({props.ProjectFounders.length})
                   </dt>
                   <dd className="space-y-3 md:space-y-4">
-                    {props.ProjectFounders.map((founder: Founder, index: number) => {
-                      console.log("Founder picture URL:", founder.FounderPictureURL);
-                      return (
-                        <div key={index} className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-purple-50 rounded-lg">
-                          <div className=" bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
-                            <Avatar className="w-10 md:w-12 h-10 md:h-12 text-purple-600">
-                                <AvatarImage src={backendUrl + founder.FounderPictureURL} />
+                    {props.ProjectFounders.map(
+                      (founder: Founder, index: number) => {
+                        console.log(
+                          "Founder picture URL:",
+                          founder.FounderPictureURL
+                        );
+                        return (
+                          <div
+                            key={index}
+                            className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-purple-50 rounded-lg"
+                          >
+                            <div className=" bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
+                              <Avatar className="w-10 md:w-12 h-10 md:h-12 text-purple-600">
+                                <AvatarImage
+                                  src={backendUrl + founder.FounderPictureURL}
+                                />
                                 <AvatarFallback>
                                   <FaRegUser />
                                 </AvatarFallback>
-                            </Avatar>
+                              </Avatar>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-base md:text-lg font-medium text-purple-900 truncate">
+                                {founder.FounderName}
+                              </p>
+                            </div>
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-base md:text-lg font-medium text-purple-900 truncate">{founder.FounderName}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      }
+                    )}
                   </dd>
                 </div>
               )}
@@ -226,5 +283,5 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

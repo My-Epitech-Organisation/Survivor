@@ -1,25 +1,26 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { getAPIUrl } from "@/lib/config"
-
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { getAPIUrl } from "@/lib/config";
 
 interface ResetPasswordConfirmFormProps {
   token: string;
 }
 
-export function ResetPasswordConfirmForm({token} : ResetPasswordConfirmFormProps) {
+export function ResetPasswordConfirmForm({
+  token,
+}: ResetPasswordConfirmFormProps) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -37,9 +38,9 @@ export function ResetPasswordConfirmForm({token} : ResetPasswordConfirmFormProps
       const apiUrl = getAPIUrl();
       const link = `${apiUrl}/auth/password-reset/confirm/`;
       const response = await fetch(link, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           token,
@@ -52,23 +53,23 @@ export function ResetPasswordConfirmForm({token} : ResetPasswordConfirmFormProps
         const errorData = await response.json();
 
         if (errorData.password && Array.isArray(errorData.password)) {
-          throw new Error(errorData.password.join(' '));
+          throw new Error(errorData.password.join(" "));
         }
 
         const errorMessages = [];
         for (const messages of Object.values(errorData)) {
           if (Array.isArray(messages)) {
             errorMessages.push(...messages);
-          } else if (typeof messages === 'string') {
+          } else if (typeof messages === "string") {
             errorMessages.push(messages);
           }
         }
 
         if (errorMessages.length > 0) {
-          throw new Error(errorMessages.join(' '));
+          throw new Error(errorMessages.join(" "));
         }
 
-        throw new Error(errorData.message || 'Signup failed');
+        throw new Error(errorData.message || "Signup failed");
       }
 
       const data = await response.json();
@@ -77,15 +78,16 @@ export function ResetPasswordConfirmForm({token} : ResetPasswordConfirmFormProps
       setPassword("");
       setConfirmPassword("");
 
-      router.push('/login')
-
+      router.push("/login");
     } catch (err) {
-      console.error('Signup error:', err)
-      setError(err instanceof Error ? err.message : 'An error occurred during signup')
+      console.error("Signup error:", err);
+      setError(
+        err instanceof Error ? err.message : "An error occurred during signup"
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -134,7 +136,11 @@ export function ResetPasswordConfirmForm({token} : ResetPasswordConfirmFormProps
                     disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Resetting password..." : "Reset Password"}
                 </Button>
               </div>
@@ -143,5 +149,5 @@ export function ResetPasswordConfirmForm({token} : ResetPasswordConfirmFormProps
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
