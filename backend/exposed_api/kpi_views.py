@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 from admin_panel.models import Event, StartupDetail
 
@@ -75,3 +76,26 @@ def projects_visibility(request):
     ]
 
     return JsonResponse(data, safe=False)
+
+
+@api_view(["GET"])
+@permission_classes([IsAdmin])
+def users_connected_ratio(request):
+    """
+    API endpoint that returns the ratio of currently connected users to total users.
+    This endpoint requires admin privileges.
+    """
+    total_users_count = CustomUser.objects.count()
+
+    if total_users_count == 0:
+        return JsonResponse({"rate": 0})
+
+    current_time = timezone.now()
+    valid_tokens = OutstandingToken.objects.filter(expires_at__gt=current_time)
+
+    blacklisted_tokens = BlacklistedToken.objects.all().values_list("token_id", flat=True)
+    active_tokens = valid_tokens.exclude(id__in=blacklisted_tokens)
+
+    connected_users_count = active_tokens.values("user").distinct().count()
+    ratio = (connected_users_count / total_users_count) * 100
+    return JsonResponse({"rate": int(ratio)})
