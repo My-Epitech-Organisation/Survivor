@@ -40,12 +40,10 @@ const mockData = {
       { month: "Apr", views: 463 },
       { month: "May", views: 339 },
       { month: "Jun", views: 354 },
-    ],
-    changePercentage: 8.2,
+    ]
   },
   userEngagement: {
-    data: [{ browser: "Active Users", rate: 75, fill: "#2563eb" }],
-    changePercentage: 12,
+    data: [{ browser: "Online Users", rate: 75, fill: "#2563eb" }]
   },
   recentActions: [
     {
@@ -217,9 +215,6 @@ export default function AdminDashboard() {
             data={mockData.projectVisibility.data}
             title="Project Visibility"
             description="Monthly project views across the platform"
-            footerTitle={`Trending up by ${mockData.projectVisibility.changePercentage}% this month`}
-            footerDescription="Showing total views for the last 6 months"
-            trendingPercentage={mockData.projectVisibility.changePercentage}
             config={{
               views: {
                 label: "Views",
@@ -232,11 +227,8 @@ export default function AdminDashboard() {
           <ChartRadialText
             data={mockData.userEngagement.data}
             title="User Engagement"
-            description="Active users vs total registered users"
+            description="Online users vs total registered users"
             centerLabel="75%"
-            footerTitle={`Active users increased by ${mockData.userEngagement.changePercentage}%`}
-            footerDescription="Compared to last month"
-            trendingPercentage={mockData.userEngagement.changePercentage}
           />
         </div>
 
