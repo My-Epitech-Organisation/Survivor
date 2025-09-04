@@ -26,10 +26,8 @@ export default function ProjectOverview(props : ProjectOverviewProps) {
 
     const fetchProject = async () => {
         try {
-            console.log("Fetching project details for ID:", props.ProjectId);
             const response = await api.get<ProjectDetailsProps>(`/projects/${props.ProjectId}`);
             setprojectDetails(response.data);
-            console.log("Response from api:", response);
         } catch (error) {
             console.error('Erreur API:', error);
         }

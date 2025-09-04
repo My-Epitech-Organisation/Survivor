@@ -68,7 +68,6 @@ export default function StartupDashboard() {
   useEffect(() => {
     setIsDataLoading(true);
     if (isLoading || !user || !user.id) {
-      console.log("Waiting for user authentication data");
       if (!isLoading && !user) {
         setIsDataLoading(false);
       }
@@ -77,7 +76,6 @@ export default function StartupDashboard() {
 
     const fetchDataSequentially = async () => {
       try {
-        console.log("Fetching user profile for ID:", user.id);
         const userProfileResponse = await authenticatedFetch(
           `/user/${user.id}`
         );
@@ -86,19 +84,13 @@ export default function StartupDashboard() {
         }
 
         const userProfileData: UserProfile = await userProfileResponse.json();
-        console.log("User profile loaded:", userProfileData);
         setUserProfile(userProfileData);
 
         if (userProfileData.founderId) {
-          console.log(
-            "Fetching projects for founder ID:",
-            userProfileData.founderId
-          );
           try {
             const projectData = await api.get<ProjectDetailsProps[] | null>(
               `/projects/founder/${userProfileData.founderId}`
             );
-            console.log("Projects loaded:", projectData.data);
             setProject(projectData.data);
           } catch (error) {
             console.error("Error fetching projects:", error);
@@ -107,14 +99,12 @@ export default function StartupDashboard() {
           console.warn("User has no founderId, skipping project fetch");
         }
 
-        console.log("Fetching project views for user ID:", user.id);
         try {
           const projectViewsResponse = await authenticatedFetch(
             `/projectViews/${user.id}`
           );
           if (projectViewsResponse.ok) {
             const projectViewsData = await projectViewsResponse.json();
-            console.log("Project views loaded:", projectViewsData);
             setProjectViewsOverTime(projectViewsData);
           } else {
             console.warn("Failed to fetch project views");
@@ -123,7 +113,6 @@ export default function StartupDashboard() {
           console.error("Error fetching project views:", error);
         }
 
-        console.log("Fetching project engagement for user ID:", user.id);
         try {
           const projectEngagementResponse = await authenticatedFetch(
             `/projectEngagement/${user.id}`
@@ -131,7 +120,6 @@ export default function StartupDashboard() {
           if (projectEngagementResponse.ok) {
             const projectEngagementData =
               await projectEngagementResponse.json();
-            console.log("Project engagement loaded:", projectEngagementData);
             setProjectEngagement(projectEngagementData);
           } else {
             console.warn("Failed to fetch project engagement");
@@ -142,7 +130,6 @@ export default function StartupDashboard() {
       } catch (error) {
         console.error("Error in data fetch sequence:", error);
       } finally {
-        console.log("Data loading complete");
         setIsDataLoading(false);
       }
     };

@@ -33,7 +33,6 @@ export async function GET(
     const frontendUrl = getFrontendUrl();
     const exportUrl = `${frontendUrl}/projects/export-pdf/${token}`;
 
-    console.log(`Navigating to: ${exportUrl}`);
     await page.goto(exportUrl, { waitUntil: 'networkidle0' });
 
     await page.waitForFunction(
@@ -44,7 +43,7 @@ export async function GET(
     await page.waitForFunction(
       'document.querySelectorAll(".recharts-surface").length > 0',
       { timeout: 15000 }
-    ).catch(err => console.log('Les graphiques ne sont peut-être pas chargés, mais on continue:', err));
+    ).catch(err => console.warn('Les graphiques ne sont peut-être pas chargés, mais on continue:', err));
 
     await new Promise(resolve => setTimeout(resolve, 4000));
 
