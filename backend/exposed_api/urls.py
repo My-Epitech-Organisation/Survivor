@@ -4,7 +4,7 @@ from . import project_views, user_views, views
 from .event_views import EventDetailView, EventListView
 from .founder_views import FounderDetailView
 from .investor_views import InvestorDetailView
-from .kpi_views import new_signups, total_events, total_startups, total_users
+from .kpi_views import new_signups, projects_visibility, total_events, total_startups, total_users
 from .news_views import NewsDetailView, NewsListView
 from .partner_views import PartnerDetailView
 
@@ -42,4 +42,5 @@ urlpatterns = [
     path("kpi/total-startups/", total_startups, name="kpi_total_startups"),
     path("kpi/total-events/", total_events, name="kpi_total_events"),
     path("kpi/new-signups/", new_signups, name="kpi_new_signups"),
+    path("kpi/projects-visibility/", projects_visibility, name="kpi_projects_visibility"),
 ]
