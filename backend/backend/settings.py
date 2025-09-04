@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -25,7 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 try:
     SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 except KeyError:
-    raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is required")
+    # Use a default key for build-time operations like collectstatic
+    import sys
+
+    if "collectstatic" in sys.argv:
+        SECRET_KEY = "django-insecure-build-key-for-collectstatic-only"
+        print("WARNING: Using insecure build key for collectstatic")
+    else:
+        raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is required")
 
 DEBUG = True
 
