@@ -10,20 +10,26 @@ class DisableCSPForDocsMiddleware:
     """
 
     def __init__(self, get_response):
+        """
+        Initialize the middleware with the get_response callable.
+
+        Args:
+            get_response: The callable that processes the next middleware or view
+        """
         self.get_response = get_response
 
     def __call__(self, request):
         response = self.get_response(request)
 
         # If the path corresponds to an API documentation page
-        if request.path in ['/api/docs/', '/api/redoc/', '/api/schema/']:
+        if request.path in ["/api/docs/", "/api/redoc/", "/api/schema/"]:
             # Remove all CSP-related headers
             headers_to_remove = [
-                'Content-Security-Policy',
-                'X-Content-Security-Policy',
-                'Content-Security-Policy-Report-Only',
-                'X-WebKit-CSP',
-                'X-WebKit-CSP-Report-Only',
+                "Content-Security-Policy",
+                "X-Content-Security-Policy",
+                "Content-Security-Policy-Report-Only",
+                "X-WebKit-CSP",
+                "X-WebKit-CSP-Report-Only",
             ]
 
             for header in headers_to_remove:
@@ -31,7 +37,7 @@ class DisableCSPForDocsMiddleware:
                     del response[header]
 
             # Add a very permissive CSP that allows everything needed for ReDoc
-            response['Content-Security-Policy'] = (
+            response["Content-Security-Policy"] = (
                 "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; "
                 "worker-src * 'unsafe-inline' 'unsafe-eval' data: blob:; "
                 "connect-src * 'unsafe-inline'; "

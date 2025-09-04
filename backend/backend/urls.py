@@ -33,7 +33,6 @@ urlpatterns = [
     path("api/", include("exposed_api.urls")),  # Exposed API endpoints
     path("api/admin/", include("admin_panel.urls")),  # Custom admin
     path("api/auth/", include("authentication.urls")),  # Authentication endpoints
-
     # OpenAPI schema endpoints
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
@@ -42,7 +41,7 @@ urlpatterns = [
             url_name="schema",
             template_name="swagger-ui.html",
         ),
-        name="swagger-ui"
+        name="swagger-ui",
     ),
     path(
         "api/redoc/",
@@ -50,7 +49,7 @@ urlpatterns = [
             url_name="schema",
             template_name="redoc.html",
         ),
-        name="redoc"
+        name="redoc",
     ),
 ]
 

@@ -8,7 +8,7 @@ class CSPMiddleware(MiddlewareMixin):
 
     def process_response(self, request, response):
         # Relax the CSP for the Swagger UI and Redoc pages
-        if request.path in ['/api/docs/', '/api/redoc/', '/api/schema/']:
+        if request.path in ["/api/docs/", "/api/redoc/", "/api/schema/"]:
             # CSP more permissive for API documentation pages
             response["Content-Security-Policy"] = (
                 "default-src 'self'; "

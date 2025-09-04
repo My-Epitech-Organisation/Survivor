@@ -279,14 +279,14 @@ LOGGING = {
 
 # DRF-Spectacular configuration for OpenAPI
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Survivor API',
-    'DESCRIPTION': 'API for the Survivor platform of Jeb Incubator',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    'SWAGGER_UI_SETTINGS': {
-        'deepLinking': True,
-        'persistAuthorization': True,
-        'displayOperationId': True,
+    "TITLE": "Survivor API",
+    "DESCRIPTION": "API for the Survivor platform of Jeb Incubator",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayOperationId": True,
     },
-    'COMPONENT_SPLIT_REQUEST': True,
+    "COMPONENT_SPLIT_REQUEST": True,
 }
