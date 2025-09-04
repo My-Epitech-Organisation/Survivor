@@ -1,7 +1,6 @@
 "use client";
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Geist, Geist_Mono, Bowlby_One } from 'next/font/google';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -33,7 +32,7 @@ export default function Custom404() {
           </h1>
           <p className={`text-xl ${geistMono.className} text-app-blue-primary`}>Page not found</p>
           <div className="mt-8">
-            <Link 
+            <Link
               href="/"
               className={`bg-app-blue-primary hover:bg-app-blue-primary-hover text-app-white font-medium py-3 px-6 rounded-full transition duration-300 ${geistSans.className}`}
             >

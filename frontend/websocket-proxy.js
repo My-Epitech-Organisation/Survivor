@@ -1,6 +1,5 @@
-const WebSocket = require('ws');
-const http = require('http');
-const httpProxy = require('http-proxy');
+import http from 'http';
+import httpProxy from 'http-proxy';
 
 const proxy = httpProxy.createProxyServer({
   target: 'http://backend:8000',

@@ -1,6 +1,4 @@
-import { NextRequest } from 'next/server';
-
-export async function GET(request: NextRequest) {
+export async function GET() {
   return new Response(JSON.stringify({
     socketUrl: 'ws://localhost:8000/socket.io/',
     message: 'WebSocket endpoint info'

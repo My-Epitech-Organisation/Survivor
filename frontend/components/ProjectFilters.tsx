@@ -2,11 +2,10 @@
 
 import { ProjectFiltersProps } from "@/types/project";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuCheckboxItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -20,15 +19,17 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
     const [selectedMaturities, setSelectedMaturities] = useState<string[]>([]);
     const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
 
+    const { onFiltersChange } = data;
+
     useEffect(() => {
-        if (data.onFiltersChange) {
-            data.onFiltersChange({
+        if (onFiltersChange) {
+            onFiltersChange({
                 locations: selectedLocations,
                 maturities: selectedMaturities,
                 sectors: selectedSectors
             });
         }
-    }, [selectedLocations, selectedMaturities, selectedSectors, data.onFiltersChange]);
+    }, [selectedLocations, selectedMaturities, selectedSectors, onFiltersChange]);
 
     const handleLocationChange = (location: string, checked: boolean) => {
         if (checked) {

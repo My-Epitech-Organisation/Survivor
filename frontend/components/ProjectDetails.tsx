@@ -42,7 +42,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
-        
+
         {/* Project Information */}
         <div className="space-y-6 sm:space-y-8">
           <div className="bg-white rounded-lg md:rounded-xl p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 shadow-sm border">
@@ -125,7 +125,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                   </a>
                 </dd>
               </div>
-              
+
               {props.ProjectAddress && (
                 <div>
                   <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Address</dt>
@@ -148,7 +148,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                   </dd>
                 </div>
               )}
-              
+
                 {props.ProjectSocial && (
                 <div>
                   <dt className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Social</dt>
@@ -172,7 +172,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                         if (domain.includes('github')) return <FaGithub/>;
 
                         return <FaLink/>;
-                      } catch (e) {
+                      } catch {
                         return props.ProjectSocial;
                       }
                     })()
@@ -205,7 +205,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                       return (
                         <div key={index} className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-purple-50 rounded-lg">
                           <div className=" bg-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
-                            <Avatar className="w-10 md:w-12 h-10 md:h-12 text-purple-600"> 
+                            <Avatar className="w-10 md:w-12 h-10 md:h-12 text-purple-600">
                                 <AvatarImage src={backendUrl + founder.FounderPictureURL} />
                                 <AvatarFallback>
                                   <FaRegUser />

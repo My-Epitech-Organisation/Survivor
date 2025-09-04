@@ -1,6 +1,5 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ProjectOverviewProps, ProjectDetailsProps } from "@/types/project"
 import {
@@ -12,15 +11,14 @@ import {
 } from "@/components/ui/card"
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { MapPin, Building, TrendingUp, Target, CheckCircle, Info, Download } from "lucide-react"
+import { MapPin, Building, TrendingUp, Target, CheckCircle, Info } from "lucide-react"
 import ProjectDetails from "./ProjectDetails"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { api } from "@/lib/api"
 
 export default function ProjectOverview(props : ProjectOverviewProps) {

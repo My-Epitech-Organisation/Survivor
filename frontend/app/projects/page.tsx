@@ -6,9 +6,6 @@ import ProjectFilters from '@/components/ProjectFilters';
 import { ProjectFiltersProps, ProjectOverviewProps } from '@/types/project';
 import { useEffect, useState, useCallback } from 'react';
 import { api } from "@/lib/api";
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Download, FileText, FileSpreadsheet } from "lucide-react";
 
 export default function Projects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
