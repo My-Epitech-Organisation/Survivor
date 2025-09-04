@@ -22,7 +22,7 @@ class ProjectDetailView(APIView):
         Override to return different permissions based on HTTP method.
         GET requests are allowed for everyone, but POST, PUT, DELETE require admin.
         """
-        if self.request.method == 'GET':
+        if self.request.method == "GET":
             return [AllowAny()]
         return [IsAdminUser()]
 
@@ -32,13 +32,12 @@ class ProjectDetailView(APIView):
             startups = StartupDetail.objects.all()
             serializer = ProjectSerializer(startups, many=True)
             return JsonResponse(serializer.data, safe=False)
-        else:
-            try:
-                startup = StartupDetail.objects.get(id=_id)
-                serializer = ProjectDetailSerializer(startup)
-                return JsonResponse(serializer.data)
-            except StartupDetail.DoesNotExist:
-                return JsonResponse({"error": f"Project with id {_id} not found"}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            startup = StartupDetail.objects.get(id=_id)
+            serializer = ProjectDetailSerializer(startup)
+            return JsonResponse(serializer.data)
+        except StartupDetail.DoesNotExist:
+            return JsonResponse({"error": f"Project with id {_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
         """Handle POST requests - admin only"""
