@@ -1,5 +1,6 @@
+from authentication.permissions import IsAdmin
 from django.http import JsonResponse
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
@@ -29,11 +30,6 @@ def projects_by_founder(request, founder_id):
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class IsAdminUser(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user and request.user.is_staff
-
-
 class ProjectDetailView(APIView):
     def get_permissions(self):
         """
@@ -42,7 +38,7 @@ class ProjectDetailView(APIView):
         """
         if self.request.method == "GET":
             return [AllowAny()]
-        return [IsAdminUser()]
+        return [IsAdmin()]
 
     def get(self, request, _id=None):
         """Handle GET requests - accessible to all users"""
