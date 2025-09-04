@@ -13,7 +13,6 @@ export default function Projects() {
   const [locations, setLocations] = useState<string[]>([]);
   const [maturities, setMaturities] = useState<string[]>([]);
   const [sectors, setSectors] = useState<string[]>([]);
-  const [isExporting, setIsExporting] = useState(false);
 
   const [activeFilters, setActiveFilters] = useState({
     locations: [] as string[],

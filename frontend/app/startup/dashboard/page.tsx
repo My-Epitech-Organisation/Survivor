@@ -10,18 +10,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { TbLoader3 } from "react-icons/tb";
 import { Button } from "@/components/ui/button"
-import { Download, LoaderCircle } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { api } from '@/lib/api';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { ProjectDetailsProps } from '@/types/project';
-import { Founder } from '@/types/founders';
 
 function getProjectEngagementDescription(data: number) {
     if (data >= 100) {
@@ -63,61 +54,89 @@ interface ProjectEngagementData {
 }
 
 export default function StartupDashboard() {
-    const { user } = useAuth();
+    const { user, isLoading } = useAuth();
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-    const [project, setproject] = useState<ProjectDetailsProps[] | null>(null);
+    const [project, setProject] = useState<ProjectDetailsProps[] | null>(null);
     const [projectViewsOverTime, setProjectViewsOverTime] = useState<ProjectViewsOverTime[]>([]);
     const [projectEngagement, setProjectEngagement] = useState<ProjectEngagement | null>(null);
     const [isExporting, setIsExporting] = useState(false);
+    const [isDataLoading, setIsDataLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            const userProfileResponse = await authenticatedFetch(`/user/${user?.id}`);
-            if (!userProfileResponse.ok) {
-                throw new Error("Failed to fetch user profile");
+        setIsDataLoading(true);
+        if (isLoading || !user || !user.id) {
+            console.log("Waiting for user authentication data");
+            if (!isLoading && !user) {
+                setIsDataLoading(false); 
             }
-            const userProfile: UserProfile = await userProfileResponse.json();
-            console.log(userProfile);
-            setUserProfile(userProfile);
+            return;
         }
-        fetchUserData().catch(error => {
-            console.error("Error fetching user data:", error);
-        });
 
-        const fetchProject = async () => {
-            const projectData = await api.get<ProjectDetailsProps[] | null>(`/projects/founder/${user?.founderId}`);
-            console.log(projectData.data);
-            setproject(projectData.data);
-        }
-        fetchProject().catch(error => {
-            console.error("Error fetching project views over time:" + error);
-        });
+        const fetchDataSequentially = async () => {
+            try {
+                console.log("Fetching user profile for ID:", user.id);
+                const userProfileResponse = await authenticatedFetch(`/user/${user.id}`);
+                if (!userProfileResponse.ok) {
+                    throw new Error("Failed to fetch user profile");
+                }
 
-        const fetchProjectViewsOverTime = async () => {
-            const projectViewsOverTimeResponse = await authenticatedFetch(`/projectViews/${user?.id}`);
-            if (!projectViewsOverTimeResponse.ok) {
-                throw new Error("Failed to fetch project views");
+                const userProfileData: UserProfile = await userProfileResponse.json();
+                console.log("User profile loaded:", userProfileData);
+                setUserProfile(userProfileData);
+
+                if (userProfileData.founderId) {
+                    console.log("Fetching projects for founder ID:", userProfileData.founderId);
+                    try {
+                        const projectData = await api.get<ProjectDetailsProps[] | null>(
+                            `/projects/founder/${userProfileData.founderId}`
+                        );
+                        console.log("Projects loaded:", projectData.data);
+                        setProject(projectData.data);
+                    } catch (error) {
+                        console.error("Error fetching projects:", error);
+                    }
+                } else {
+                    console.warn("User has no founderId, skipping project fetch");
+                }
+
+                console.log("Fetching project views for user ID:", user.id);
+                try {
+                    const projectViewsResponse = await authenticatedFetch(`/projectViews/${user.id}`);
+                    if (projectViewsResponse.ok) {
+                        const projectViewsData = await projectViewsResponse.json();
+                        console.log("Project views loaded:", projectViewsData);
+                        setProjectViewsOverTime(projectViewsData);
+                    } else {
+                        console.warn("Failed to fetch project views");
+                    }
+                } catch (error) {
+                    console.error("Error fetching project views:", error);
+                }
+
+                console.log("Fetching project engagement for user ID:", user.id);
+                try {
+                    const projectEngagementResponse = await authenticatedFetch(`/projectEngagement/${user.id}`);
+                    if (projectEngagementResponse.ok) {
+                        const projectEngagementData = await projectEngagementResponse.json();
+                        console.log("Project engagement loaded:", projectEngagementData);
+                        setProjectEngagement(projectEngagementData);
+                    } else {
+                        console.warn("Failed to fetch project engagement");
+                    }
+                } catch (error) {
+                    console.error("Error fetching project engagement:", error);
+                }
+
+            } catch (error) {
+                console.error("Error in data fetch sequence:", error);
+            } finally {
+                console.log("Data loading complete");
+                setIsDataLoading(false);
             }
-            const projectViewsOverTime: ProjectViewsOverTime[] = await projectViewsOverTimeResponse.json();
-            setProjectViewsOverTime(projectViewsOverTime);
-        }
-        fetchProjectViewsOverTime().catch(error => {
-            console.error("Error fetching project views over time:", error);
-        });
+        };
 
-        const fetchProjectEngagement = async () => {
-            const projectEngagementResponse = await authenticatedFetch(`/projectEngagement/${user?.id}`);
-            if (!projectEngagementResponse.ok) {
-                throw new Error("Failed to fetch project engagement data");
-            }
-            const projectEngagement: ProjectEngagement = await projectEngagementResponse.json();
-            setProjectEngagement(projectEngagement);
-        }
-        fetchProjectEngagement().catch(error => {
-            console.error("Error fetching project engagement data:", error);
-        });
-
-    }, [user?.id]);
+        fetchDataSequentially();
+    }, [user, isLoading]);
 
     const projectEngagementData: ProjectEngagementData[] = [{
         browser: "engagement",
@@ -140,14 +159,23 @@ export default function StartupDashboard() {
                     </p>
                 </div>
 
-                {/* User Profile Section */}
-                <Card className="mb-8">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-4">
-                            <Avatar className="h-16 w-16">
-                                <AvatarImage src={userProfile?.pictureURL} alt={userProfile?.name || ""} />
-                                <AvatarFallback>{userProfile?.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                            </Avatar>
+                {isLoading || isDataLoading ? (
+                    <div className="flex flex-col items-center justify-center py-12">
+                        <TbLoader3 className="size-12 animate-spin text-blue-600 mb-4" />
+                        <p className="text-app-text-secondary text-lg">
+                            {isLoading ? "Vérification de l'authentification..." : "Chargement de vos données..."}
+                        </p>
+                    </div>
+                ) : (
+                    <>
+                        {/* User Profile Section */}
+                        <Card className="mb-8">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-4">
+                                    <Avatar className="h-16 w-16">
+                                        <AvatarImage src={userProfile?.pictureURL} alt={userProfile?.name || ""} />
+                                        <AvatarFallback>{userProfile?.name?.split(' ').map(n => n[0]).join('') || ''}</AvatarFallback>
+                                    </Avatar>
                             <div>
                                 <h2 className="text-2xl font-bold">{userProfile?.name || ""}</h2>
                                 <p className="text-app-text-secondary">
@@ -165,30 +193,26 @@ export default function StartupDashboard() {
                                                     .split(';')
                                                     .find(cookie => cookie.trim().startsWith('authToken='))
                                                     ?.split('=')[1]?.trim();
-                                                
+
                                                 if (!token) {
                                                     console.error('Authentication token not found');
                                                     return;
                                                 }
-                                                
+
                                                 const response = await fetch(`/api/pdf/project/${token}`);
-                                                
                                                 if (!response.ok) {
                                                     throw new Error(`HTTP error! status: ${response.status}`);
                                                 }
-                                                
+
                                                 const blob = await response.blob();
                                                 const url = window.URL.createObjectURL(blob);
 
-                                                // Créer l'élément a
                                                 const a = document.createElement('a');
                                                 a.href = url;
                                                 a.download = `project-report.pdf`;
-                                                // L'élément est invisible et n'a pas besoin d'être ajouté au DOM
                                                 a.style.display = 'none';
                                                 a.click();
 
-                                                // Libérer l'URL après un court délai
                                                 setTimeout(() => {
                                                     window.URL.revokeObjectURL(url);
                                                 }, 100);
@@ -264,7 +288,9 @@ export default function StartupDashboard() {
                             },
                         }}
                     />
-                </div>
+                        </div>
+                    </>
+                )}
             </main>
         </div>
     );

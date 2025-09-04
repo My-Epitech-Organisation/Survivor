@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { ChartBarLabel } from '@/components/ChartBarLabel';
 import { ChartRadialText } from '@/components/ChartRadialText';
 import { authenticatedFetch } from "@/lib/api";
-import { User } from '@/types/user';
 
 interface ProjectViewsOverTime {
     month: string;
@@ -190,7 +189,7 @@ export default function ProjectExportPage() {
                             </Card>
                             <Card className="shadow-md">
                                 <CardHeader>
-                                    <CardTitle>Taux d'Engagement</CardTitle>
+                                    <CardTitle>Taux d&apos;Engagement</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <ChartRadialText
