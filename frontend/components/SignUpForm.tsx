@@ -74,7 +74,7 @@ export function SignUpForm({
         throw new Error(errorData.message || 'Signup failed');
       }
 
-      const data = await response.json();
+      await response.json();
       setSuccess(true);
 
       setName("");

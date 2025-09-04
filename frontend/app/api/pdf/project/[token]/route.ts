@@ -1,55 +1,85 @@
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import { getFrontendUrl } from '@/lib/config';
+import { execSync } from 'child_process';
+
+const findChromiumPath = () => {
+  try {
+    if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+      return process.env.PUPPETEER_EXECUTABLE_PATH;
+    }
+    
+    if (process.env.NODE_ENV === 'production') {
+      try {
+        const chromiumPath = '/usr/bin/chromium-browser';
+        execSync(`test -f ${chromiumPath}`);
+        return chromiumPath;
+      } catch (e) {
+        console.warn(`Chromium non trouvé à l'emplacement par défaut: ${e}`);
+      }
+      
+      try {
+        const chromePath = '/usr/bin/chrome';
+        execSync(`test -f ${chromePath}`);
+        return chromePath;
+      } catch (e) {
+        console.warn(`Chrome non trouvé à l'emplacement secondaire: ${e}`);
+      }
+    }
+
+    return '/bin/google-chrome';
+  } catch (error) {
+    console.error('Erreur lors de la recherche de Chromium:', error);
+    return undefined;
+  }
+};
 
 const getPuppeteerConfig = () => {
   const isProduction = process.env.NODE_ENV === 'production';
-  const isDocker = process.env.PUPPETEER_EXECUTABLE_PATH || process.env.DOCKER_ENV;
+  const isDocker = process.env.DOCKER_ENV === 'true';
+  const chromiumPath = findChromiumPath();
   
-  if (isProduction && isDocker) {
-    // Configuration pour Docker/Alpine en production
+  if (isProduction || isDocker) {
     return {
-      executablePath: '/usr/bin/chromium-browser',
+      executablePath: chromiumPath,
+      ignoreHTTPSErrors: true,
+      headless: true,
+      dumpio: false,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
         '--no-first-run',
         '--no-zygote',
         '--single-process',
-        '--disable-gpu',
-        '--disable-web-security',
-        '--disable-features=VizDisplayCompositor',
         '--disable-extensions',
-        '--disable-plugins',
-        '--disable-images', // Optionnel : désactive les images pour plus de rapidité
-        '--run-all-compositor-stages-before-draw',
-        '--disable-background-timer-throttling',
-        '--disable-renderer-backgrounding',
-        '--disable-backgrounding-occluded-windows'
-      ],
-      headless: true
+        '--disable-software-rasterizer',
+        '--disable-dev-shm-usage',
+        '--disable-extensions',
+        '--disable-features=site-per-process,TranslateUI,BlinkGenPropertyTrees',
+        '--disable-hang-monitor',
+        '--in-process-gpu',
+        '--mute-audio'
+      ]
     };
   }
-  
-  // Configuration pour développement local
   return {
     headless: true,
+    ignoreHTTPSErrors: true,
     args: [
       '--no-sandbox', 
       '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage' // Utile même en dev pour éviter les problèmes de mémoire
+      '--disable-dev-shm-usage',
+      '--disable-web-security'
     ]
   };
 };
 
-// Helper pour configurer les cookies selon l'environnement
 const getCookieConfig = (token: string) => {
   const isProduction = process.env.NODE_ENV === 'production';
   const frontendUrl = getFrontendUrl();
-  
-  // Extraire le domaine de l'URL frontend
   let domain: string;
   try {
     const url = new URL(frontendUrl);
@@ -57,14 +87,14 @@ const getCookieConfig = (token: string) => {
   } catch {
     domain = 'localhost';
   }
-  
+
   return {
     name: 'authToken',
     value: token,
     domain: domain,
     path: '/',
     httpOnly: false,
-    secure: isProduction, // HTTPS en production, HTTP en dev
+    secure: isProduction,
   };
 };
 
@@ -80,15 +110,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Authentication token is required' }, { status: 400 });
     }
 
-    console.log('Launching browser with config:', getPuppeteerConfig());
-    browser = await puppeteer.launch(getPuppeteerConfig());
+    try {
+      browser = await puppeteer.launch(getPuppeteerConfig());
+    } catch (error: unknown) {
+      console.error('Error launching browser:', error);
+      return NextResponse.json({ 
+        error: 'Failed to launch browser',
+        details: error instanceof Error ? error.message : String(error),
+        config: getPuppeteerConfig()
+      }, { status: 500 });
+    }
 
     const page = await browser.newPage();
 
-    // Configuration de la page pour de meilleures performances
     await page.setViewport({ width: 1200, height: 800 });
-    
-    // Désactiver les ressources non nécessaires en production
+
     if (process.env.NODE_ENV === 'production') {
       await page.setRequestInterception(true);
       page.on('request', (req) => {
@@ -108,50 +144,69 @@ export async function GET(request: NextRequest) {
     const frontendUrl = getFrontendUrl();
     const exportUrl = `${frontendUrl}/projects/export-pdf/${token}`;
     
-    console.log('Navigating to:', exportUrl);
+    await page.evaluateOnNewDocument(`
+      const originalFetch = window.fetch;
+      window.fetch = async (...args) => {
+        try {
+          console.log('Fetch request:', args[0]);
+          const response = await originalFetch(...args);
+          
+          const clone = response.clone();
+          if (clone.headers.get('content-type')?.includes('application/json')) {
+            try {
+              const data = await clone.json();
+              console.log('Fetch response:', data);
+            } catch (e) {
+              console.error('Error parsing JSON response:', e);
+            }
+          }
+          return response;
+        } catch (error) {
+          console.error('Fetch error:', error);
+          throw error;
+        }
+      };
 
-    await page.goto(exportUrl, { 
-      waitUntil: 'networkidle0',
-      timeout: 30000 // Timeout plus long pour Docker
-    });
+      window.getAPIUrlOverride = function() {
+        return 'http://backend:8000/api';
+      };
+      
+      window.getBackendUrlOverride = function() {
+        return 'http://backend:8000';
+      };
+    `);
 
-    // Attendre que le chargement soit terminé
-    await page.waitForFunction(
-      'document.querySelector(".flex.justify-center.items-center.h-screen") === null || !document.querySelector(".flex.justify-center.items-center.h-screen").textContent.includes("Chargement")',
-      { timeout: 15000 }
-    );
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      await page.goto(exportUrl, { 
+        waitUntil: 'networkidle2',
+        timeout: 60000
+      });
+    } catch (navError) {
+      console.error('Navigation error:', navError);
+      throw new Error(`Navigation failed: ${navError instanceof Error ? navError.message : String(navError)}`);
+    }
 
-    // Attendre les graphiques avec un timeout plus long
-    await page.waitForFunction(
-      'document.querySelectorAll(".recharts-surface").length > 0',
-      { timeout: 20000 }
-    ).catch(err => {
-      console.warn('Les graphiques ne sont peut-être pas chargés, mais on continue:', err.message);
-    });
-
-    // Délai supplémentaire pour s'assurer que tout est rendu
-    const additionalDelay = process.env.NODE_ENV === 'production' ? 6000 : 4000;
-    await new Promise(resolve => setTimeout(resolve, additionalDelay));
-
-    console.log('Generating PDF...');
+    await new Promise(resolve => setTimeout(resolve, 10000));
+    
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: '5px', right: '5px', bottom: '5px', left: '5px' },
-      scale: 0.7,
-      timeout: 30000 // Timeout pour la génération PDF
+      margin: { top: '10px', right: '10px', bottom: '10px', left: '10px' },
+      scale: 0.8,
+      timeout: 60000,
+      preferCSSPageSize: false
     });
 
     await browser.close();
     browser = null;
 
-    console.log('PDF generated successfully, size:', pdfBuffer.length);
-
     return new NextResponse(Buffer.from(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="project-report.pdf"`,
+        'Content-Disposition': `attachment; filename="project-report-${new Date().toISOString().split('T')[0]}.pdf"`,
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
@@ -161,8 +216,17 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('PDF Generation Error:', error);
     
-    // S'assurer que le browser est fermé en cas d'erreur
     if (browser) {
+      try {
+        const page = (await browser.pages())[0];
+        if (page) {
+          const screenshotBuffer = await page.screenshot({ fullPage: true });
+        }
+      } catch (screenshotError) {
+        console.error('Error capturing screenshot:', screenshotError);
+      }
+
+      // S'assurer que le browser est fermé en cas d'erreur
       try {
         await browser.close();
       } catch (closeError) {
@@ -172,12 +236,17 @@ export async function GET(request: NextRequest) {
     
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const isTimeoutError = errorMessage.includes('timeout') || errorMessage.includes('Timeout');
+    const isNavigationError = errorMessage.includes('Navigation') || errorMessage.includes('net::');
     
     return NextResponse.json(
       { 
         error: 'PDF generation failed', 
         details: errorMessage,
-        suggestion: isTimeoutError ? 'The page took too long to load. Please try again.' : 'Please check the logs for more details.'
+        suggestion: isTimeoutError 
+          ? 'The page took too long to load. Please try again or check network connectivity.' 
+          : isNavigationError
+            ? 'Failed to navigate to the export page. Please check if the service is accessible.'
+            : 'Please check the logs for more details.'
       },
       { status: 500 }
     );
