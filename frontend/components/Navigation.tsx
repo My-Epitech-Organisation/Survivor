@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -13,12 +13,12 @@ export default function Navigation() {
   const { user, isAuthenticated, logout } = useAuth();
 
   const navItems = [
-    { href: '/', label: 'Home' },
-    { href: '/projects', label: 'Projects' },
-    { href: '/news', label: 'News' },
-    { href: '/events', label: 'Events' },
-    { href: '/search', label: 'Advanced Search' },
-    { href: '/about', label: 'About' },
+    { href: "/", label: "Home" },
+    { href: "/projects", label: "Projects" },
+    { href: "/news", label: "News" },
+    { href: "/events", label: "Events" },
+    { href: "/search", label: "Advanced Search" },
+    { href: "/about", label: "About" },
   ];
 
   const handleLogout = () => {
@@ -26,12 +26,12 @@ export default function Navigation() {
   };
 
   const handleSwitchToStartup = () => {
-    router.push('/startup/dashboard');
+    router.push("/startup/dashboard");
   };
 
   const handleSwitchToAdmin = () => {
-    router.push('/admin/dashboard');
-  }
+    router.push("/admin/dashboard");
+  };
 
   return (
     <nav className="bg-app-surface shadow-sm border-b">
@@ -50,10 +50,11 @@ export default function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`transition-colors ${pathname === item.href
-                  ? 'text-app-blue-primary font-medium'
-                  : 'text-app-text-secondary hover:text-app-blue-primary'
-                  }`}
+                className={`transition-colors ${
+                  pathname === item.href
+                    ? "text-app-blue-primary font-medium"
+                    : "text-app-text-secondary hover:text-app-blue-primary"
+                }`}
               >
                 {item.label}
               </Link>
@@ -64,19 +65,19 @@ export default function Navigation() {
           <div className="hidden md:flex w-fit pl-8 items-center space-x-4">
             {isAuthenticated ? (
               <>
-                {user?.role === 'founder' && (
+                {user?.role === "founder" && (
                   <button
                     onClick={handleSwitchToStartup}
                     className="font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
-                    >
+                  >
                     Startup Area
                   </button>
                 )}
-                {user?.role === 'admin' && (
+                {user?.role === "admin" && (
                   <button
                     onClick={handleSwitchToAdmin}
                     className="font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
-                    >
+                  >
                     Admin Area
                   </button>
                 )}
@@ -88,7 +89,10 @@ export default function Navigation() {
                 </button>
               </>
             ) : (
-              <Link href="/login" className="font-bold text-app-text-secondary hover:text-app-blue-primary">
+              <Link
+                href="/login"
+                className="font-bold text-app-text-secondary hover:text-app-blue-primary"
+              >
                 Login
               </Link>
             )}
@@ -120,8 +124,8 @@ export default function Navigation() {
                   onClick={() => setIsMenuOpen(false)}
                   className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     pathname === item.href
-                      ? 'text-app-blue-primary bg-app-blue-light'
-                      : 'text-app-text-secondary hover:text-app-blue-primary hover:bg-app-surface-hover'
+                      ? "text-app-blue-primary bg-app-blue-light"
+                      : "text-app-text-secondary hover:text-app-blue-primary hover:bg-app-surface-hover"
                   }`}
                 >
                   {item.label}
@@ -130,7 +134,7 @@ export default function Navigation() {
               <div className="border-t border-app-border-light pt-2 space-y-1">
                 {isAuthenticated ? (
                   <>
-                    {user?.role === 'founder' && (
+                    {user?.role === "founder" && (
                       <button
                         onClick={() => {
                           handleSwitchToStartup();
@@ -141,7 +145,7 @@ export default function Navigation() {
                         Startup Area
                       </button>
                     )}
-                    {user?.role === 'admin' && (
+                    {user?.role === "admin" && (
                       <button
                         onClick={() => {
                           handleSwitchToAdmin();

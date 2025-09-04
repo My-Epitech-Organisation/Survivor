@@ -1,27 +1,27 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { getAPIUrl } from "@/lib/config"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { getAPIUrl } from "@/lib/config";
 
 export function ResetPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [email, setEmail] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +32,9 @@ export function ResetPasswordForm({
     try {
       const apiUrl = getAPIUrl();
       const response = await fetch(`${apiUrl}/auth/password-reset/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email,
@@ -43,22 +43,23 @@ export function ResetPasswordForm({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed')
+        throw new Error(errorData.message || "Login failed");
       }
 
       const data = await response.json();
 
-      setSuccess(data?.detail || 'Password reset link sent to your email');
+      setSuccess(data?.detail || "Password reset link sent to your email");
 
       setEmail("");
-
     } catch (err) {
-      console.error('Login error:', err)
-      setError(err instanceof Error ? err.message : 'An error occurred during login')
+      console.error("Login error:", err);
+      setError(
+        err instanceof Error ? err.message : "An error occurred during login"
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -95,7 +96,11 @@ export function ResetPasswordForm({
                     disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Sending..." : "Send Reset Link"}
                 </Button>
               </div>
@@ -104,5 +109,5 @@ export function ResetPasswordForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

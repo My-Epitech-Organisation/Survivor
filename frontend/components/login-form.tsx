@@ -1,90 +1,89 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { getAPIUrl } from "@/lib/config"
-import { useAuth } from "@/contexts/AuthContext"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { getAPIUrl } from "@/lib/config";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const router = useRouter()
-  const { login } = useAuth()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     try {
       const apiUrl = getAPIUrl();
       const response = await fetch(`${apiUrl}/auth/login/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email,
           password,
         }),
-      })
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Login failed')
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
       const userData = {
-        id: data.user?.id || '1',
+        id: data.user?.id || "1",
         email: data.user?.email || email,
-        name: data.user?.name || 'Startup Owner',
-        role: data.user?.role || 'user',
-      }
+        name: data.user?.name || "Startup Owner",
+        role: data.user?.role || "user",
+      };
 
       if (!data.access) {
-        throw new Error('No token received from server. Login failed.');
+        throw new Error("No token received from server. Login failed.");
       }
-      login(data.access, userData)
+      login(data.access, userData);
 
-      setEmail("")
-      setPassword("")
+      setEmail("");
+      setPassword("");
 
-      router.push('/')
-
+      router.push("/");
     } catch (err) {
-      console.error('Login error:', err)
-      setError(err instanceof Error ? err.message : 'An error occurred during login')
+      console.error("Login error:", err);
+      setError(
+        err instanceof Error ? err.message : "An error occurred during login"
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>
-            Login to your account
-          </CardDescription>
+          <CardDescription>Login to your account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -127,12 +126,19 @@ export function LoginForm({
                     disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </div>
               <div className="text-center text-sm">
-                <a href="/signup" className="hover:underline underline-offset-2 hover:text-app-blue-primary-hover">
+                <a
+                  href="/signup"
+                  className="hover:underline underline-offset-2 hover:text-app-blue-primary-hover"
+                >
                   Don&apos;t have an account?{" "}
                 </a>
               </div>
@@ -141,5 +147,5 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,7 +1,3 @@
 export default function AdminPDF() {
-    return (
-        <>
-
-        </>
-    );
+  return <></>;
 }

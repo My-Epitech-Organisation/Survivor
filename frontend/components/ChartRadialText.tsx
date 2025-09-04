@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { TrendingUp } from "lucide-react"
+import { TrendingUp } from "lucide-react";
 import {
   Label,
   PolarGrid,
   PolarRadiusAxis,
   RadialBar,
   RadialBarChart,
-} from "recharts"
+} from "recharts";
 
 import {
   Card,
@@ -16,22 +16,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { ChartConfig, ChartContainer } from "@/components/ui/chart"
+} from "@/components/ui/card";
+import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 
-export const description = "A radial chart with text"
+export const description = "A radial chart with text";
 
 interface ChartRadialTextProps {
-  data: Array<{ browser: string; rate: number; fill: string }>
-  title: string
-  description: string
-  config?: ChartConfig
-  footerTitle?: string
-  footerDescription?: string
-  trendingPercentage?: number
-  centerLabel?: string
-  endAngle?: number
-  maxHeight?: string
+  data: Array<{ browser: string; rate: number; fill: string }>;
+  title: string;
+  description: string;
+  config?: ChartConfig;
+  footerTitle?: string;
+  footerDescription?: string;
+  trendingPercentage?: number;
+  centerLabel?: string;
+  endAngle?: number;
+  maxHeight?: string;
 }
 
 export function ChartRadialText({
@@ -98,7 +98,10 @@ export function ChartRadialText({
                           className="fill-foreground text-4xl font-bold"
                         >
                           {typeof data[0]?.rate === "number"
-                            ? (data[0]?.rate / 100).toLocaleString(undefined, { style: 'percent', minimumFractionDigits: 0 })
+                            ? (data[0]?.rate / 100).toLocaleString(undefined, {
+                                style: "percent",
+                                minimumFractionDigits: 0,
+                              })
                             : "0%"}
                         </tspan>
                         <tspan
@@ -109,7 +112,7 @@ export function ChartRadialText({
                           {centerLabel}
                         </tspan>
                       </text>
-                    )
+                    );
                   }
                 }}
               />
@@ -117,12 +120,17 @@ export function ChartRadialText({
           </RadialBarChart>
         </ChartContainer>
       </CardContent>
-      {(footerTitle || footerDescription || trendingPercentage !== undefined) && (
+      {(footerTitle ||
+        footerDescription ||
+        trendingPercentage !== undefined) && (
         <CardFooter className="flex-col gap-2 text-sm pt-0 pb-6">
           {(footerTitle || trendingPercentage !== undefined) && (
             <div className="flex items-center gap-2 leading-none font-medium">
-              {footerTitle || `Trending up by ${trendingPercentage}% this month`}
-              {trendingPercentage !== undefined && <TrendingUp className="h-4 w-4" />}
+              {footerTitle ||
+                `Trending up by ${trendingPercentage}% this month`}
+              {trendingPercentage !== undefined && (
+                <TrendingUp className="h-4 w-4" />
+              )}
             </div>
           )}
           {footerDescription && (
@@ -133,5 +141,5 @@ export function ChartRadialText({
         </CardFooter>
       )}
     </Card>
-  )
+  );
 }
