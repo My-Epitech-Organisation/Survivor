@@ -1,10 +1,11 @@
-"use client"
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import ProjectOverview from '@/components/ProjectOverview';
-import ProjectFilters from '@/components/ProjectFilters';
-import { ProjectFiltersProps, ProjectOverviewProps } from '@/types/project';
-import { useEffect, useState, useCallback } from 'react';
+"use client";
+
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import ProjectOverview from "@/components/ProjectOverview";
+import ProjectFilters from "@/components/ProjectFilters";
+import { ProjectFiltersProps, ProjectOverviewProps } from "@/types/project";
+import { useEffect, useState, useCallback } from "react";
 import { api } from "@/lib/api";
 
 export default function Projects() {
@@ -17,47 +18,71 @@ export default function Projects() {
   const [activeFilters, setActiveFilters] = useState({
     locations: [] as string[],
     maturities: [] as string[],
-    sectors: [] as string[]
+    sectors: [] as string[],
   });
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         console.debug("Fetching projects from API");
-        const response = await api.get<ProjectOverviewProps[]>('/projects/');
+        const response = await api.get<ProjectOverviewProps[]>("/projects/");
         setProjects(response.data);
         console.debug("Projects loaded:", response.data);
 
-        const uniqueLocations = [...new Set(response.data.map((project: ProjectOverviewProps) => project.ProjectLocation))];
-        const uniqueMaturities = [...new Set(response.data.map((project: ProjectOverviewProps) => project.ProjectMaturity))];
-        const uniqueSectors = [...new Set(response.data.map((project: ProjectOverviewProps) => project.ProjectSector))];
+        const uniqueLocations = [
+          ...new Set(
+            response.data.map(
+              (project: ProjectOverviewProps) => project.ProjectLocation
+            )
+          ),
+        ];
+        const uniqueMaturities = [
+          ...new Set(
+            response.data.map(
+              (project: ProjectOverviewProps) => project.ProjectMaturity
+            )
+          ),
+        ];
+        const uniqueSectors = [
+          ...new Set(
+            response.data.map(
+              (project: ProjectOverviewProps) => project.ProjectSector
+            )
+          ),
+        ];
 
         setLocations(uniqueLocations as string[]);
         setMaturities(uniqueMaturities as string[]);
         setSectors(uniqueSectors as string[]);
       } catch (error) {
-        console.error('Erreur API:', error);
+        console.error("Erreur API:", error);
       }
     };
 
     fetchProjects();
   }, []);
 
-  const handleFiltersChange = useCallback((filters: {
-    locations: string[];
-    maturities: string[];
-    sectors: string[];
-  }) => {
-    setActiveFilters(filters);
-  }, []);
+  const handleFiltersChange = useCallback(
+    (filters: {
+      locations: string[];
+      maturities: string[];
+      sectors: string[];
+    }) => {
+      setActiveFilters(filters);
+    },
+    []
+  );
 
   const getFilteredProjects = () => {
-    return projects.filter(project => {
-      const locationMatch = activeFilters.locations.length === 0 ||
+    return projects.filter((project) => {
+      const locationMatch =
+        activeFilters.locations.length === 0 ||
         activeFilters.locations.includes(project.ProjectLocation);
-      const maturityMatch = activeFilters.maturities.length === 0 ||
+      const maturityMatch =
+        activeFilters.maturities.length === 0 ||
         activeFilters.maturities.includes(project.ProjectMaturity);
-      const sectorMatch = activeFilters.sectors.length === 0 ||
+      const sectorMatch =
+        activeFilters.sectors.length === 0 ||
         activeFilters.sectors.includes(project.ProjectSector);
       return locationMatch && maturityMatch && sectorMatch;
     });
@@ -69,16 +94,18 @@ export default function Projects() {
     ProjectLocation: locations,
     ProjectMaturity: maturities,
     ProjectSector: sectors,
-    onFiltersChange: handleFiltersChange
+    onFiltersChange: handleFiltersChange,
   };
 
   return (
-    <div className="min-h-screen bg-app-surface-hover flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
       <Navigation />
 
       <main className="flex-1 py-6">
         <div className="max-w-[90rem] mx-auto px-4 sm:px-6">
-          <h1 className="text-3xl font-bold text-app-text-primary mb-6">Projects</h1>
+          <h1 className="text-3xl font-bold text-app-text-primary mb-6">
+            Projects
+          </h1>
 
           {/* Filters and Export Section */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
@@ -114,19 +141,32 @@ export default function Projects() {
             </div>*/}
           </div>
 
-
           {/* Projects Grid */}
-          <div className='grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6'>
-            {filteredProjects.map(project => (
-              <ProjectOverview key={project.ProjectId} ProjectId={project.ProjectId} ProjectName={project.ProjectName} ProjectDescription={project.ProjectDescription} ProjectLocation={project.ProjectLocation} ProjectMaturity={project.ProjectMaturity} ProjectNeeds={project.ProjectNeeds} ProjectSector={project.ProjectSector} ProjectStatus={project.ProjectStatus} />
+          <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+            {filteredProjects.map((project) => (
+              <ProjectOverview
+                key={project.ProjectId}
+                ProjectId={project.ProjectId}
+                ProjectName={project.ProjectName}
+                ProjectDescription={project.ProjectDescription}
+                ProjectLocation={project.ProjectLocation}
+                ProjectMaturity={project.ProjectMaturity}
+                ProjectNeeds={project.ProjectNeeds}
+                ProjectSector={project.ProjectSector}
+                ProjectStatus={project.ProjectStatus}
+              />
             ))}
           </div>
 
           {/* Message si aucun projet trouvé */}
           {filteredProjects.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-app-text-secondary text-lg">No projects found matching your filters.</p>
-              <p className="text-app-text-muted text-sm mt-2">Try adjusting your filter criteria.</p>
+              <p className="text-app-text-secondary text-lg">
+                No projects found matching your filters.
+              </p>
+              <p className="text-app-text-muted text-sm mt-2">
+                Try adjusting your filter criteria.
+              </p>
             </div>
           )}
         </div>
