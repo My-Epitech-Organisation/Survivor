@@ -2,17 +2,26 @@ import { getAPIUrl } from './config';
 
 const getToken = (): string | null => {
     if (typeof window !== 'undefined') {
-        return localStorage.getItem('authToken');
+        const cookies = document.cookie.split(';');
+        const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('authToken='));
+        if (tokenCookie) {
+            return tokenCookie.split('=')[1].trim();
+        }
+        return null;
     }
     return null;
 };
 
-const getAuthHeaders = (): HeadersInit => {
-    const token = getToken();
+const getAuthHeaders = (authToken?: string): HeadersInit => {
+
+    let token : string | null
+    if (authToken)
+        token = authToken;
+    else
+        token = getToken();
     const headers: HeadersInit = {
         'Content-Type': 'application/json',
     };
-
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
@@ -22,12 +31,13 @@ const getAuthHeaders = (): HeadersInit => {
 
 export const authenticatedFetch = async (
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    token?: string
 ): Promise<Response> => {
     const apiUrl = getAPIUrl();
     const url = endpoint.startsWith('http') ? endpoint : `${apiUrl}${endpoint}`;
 
-    const authHeaders = getAuthHeaders();
+    const authHeaders = getAuthHeaders(token);
 
     const config: RequestInit = {
         ...options,
@@ -36,12 +46,11 @@ export const authenticatedFetch = async (
             ...options.headers,
         },
     };
-
     return fetch(url, config);
 };
 
-export const apiGet = async (endpoint: string): Promise<Response> => {
-    return authenticatedFetch(endpoint, { method: 'GET' });
+export const apiGet = async (endpoint: string, token?: string): Promise<Response> => {
+    return authenticatedFetch(endpoint, { method: 'GET' }, token);
 };
 
 export const apiPost = async (
@@ -69,8 +78,8 @@ export const apiDelete = async (endpoint: string): Promise<Response> => {
 };
 
 export const api = {
-    get: async <T = unknown>(endpoint: string): Promise<{ data: T }> => {
-        const response = await apiGet(endpoint);
+    get: async <T = unknown>(endpoint: string, token?: string): Promise<{ data: T }> => {
+        const response = await apiGet(endpoint, token);
         if (!response.ok) {
             throw new Error(`API request failed: ${response.statusText}`);
         }
