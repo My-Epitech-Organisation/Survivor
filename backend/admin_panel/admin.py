@@ -1,5 +1,6 @@
 from authentication.models import CustomUser
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from .models import Event, Founder, Investor, News, NewsDetail, Partner, StartupDetail, StartupList
 
@@ -50,15 +51,55 @@ class StartupDetailAdmin(admin.ModelAdmin):
         "needs",
         "sector",
         "maturity",
-        "founders_images",
+        "founders",
+        "display_founders_images",
     ]
-    readonly_fields = ["founders_images"]
+    readonly_fields = ["display_founders_images"]
     filter_horizontal = ["founders"]
+
+    def display_founders_images(self, obj):
+        """
+        Display founders' images as HTML img tags
+        """
+        if not obj.founders_images:
+            return "No images available"
+
+        html = ""
+        for founder_id, image_path in obj.founders_images.items():
+            if image_path:
+                html += f'<img src="/media/{image_path}" width="150" height="150" style="margin: 10px;" />'
+                try:
+                    founder = Founder.objects.get(id=int(founder_id))
+                    html += f'<p>{founder.name}</p>'
+                except (Founder.DoesNotExist, ValueError):
+                    html += f'<p>Founder ID: {founder_id}</p>'
+
+        return mark_safe(html) if html else "No images available"
+
+    display_founders_images.short_description = "Founders Images"
 
 
 class FounderAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "startup_id"]
-    fields = ["id", "name", "startup_id"]
+    list_display = ["id", "name", "startup_id", "display_image"]
+    fields = ["id", "name", "startup_id", "display_image"]
+    readonly_fields = ["display_image"]
+
+    def display_image(self, obj):
+        """
+        Display founder's image if available
+        """
+        # Get all startups associated with this founder
+        startups = obj.startups.all()
+
+        for startup in startups:
+            if startup.founders_images and str(obj.id) in startup.founders_images:
+                image_path = startup.founders_images.get(str(obj.id))
+                if image_path:
+                    return mark_safe(f'<img src="/media/{image_path}" width="150" height="150" />')
+
+        return "No image available"
+
+    display_image.short_description = "Founder Image"
 
 
 class CustomUserAdmin(admin.ModelAdmin):
