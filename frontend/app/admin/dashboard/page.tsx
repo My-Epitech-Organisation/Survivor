@@ -210,6 +210,14 @@ export default function AdminDashboard() {
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* User Engagement Chart */}
+          <ChartRadialText
+            data={mockData.userEngagement.data}
+            title="User Engagement"
+            description="Online users vs total registered users"
+            centerLabel="75%"
+          />
+
           {/* Project Visibility Chart */}
           <ChartBarLabel
             data={mockData.projectVisibility.data}
@@ -221,14 +229,6 @@ export default function AdminDashboard() {
                 color: "#2563eb",
               },
             }}
-          />
-
-          {/* User Engagement Chart */}
-          <ChartRadialText
-            data={mockData.userEngagement.data}
-            title="User Engagement"
-            description="Online users vs total registered users"
-            centerLabel="75%"
           />
         </div>
 
