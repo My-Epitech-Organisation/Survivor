@@ -1,9 +1,9 @@
 "use client";
 
-import Link from 'next/link';
-import { Geist, Geist_Mono, Bowlby_One } from 'next/font/google';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import Link from "next/link";
+import { Geist, Geist_Mono, Bowlby_One } from "next/font/google";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,13 +24,19 @@ const bowlbyOne = Bowlby_One({
 export default function Custom404() {
   return (
     <div className="h-screen flex flex-col w-full">
-      <Navigation/>
-      <div className={`flex-1 bg-gradient-to-br from-app-gradient-from to-app-gradient-to text-app-white flex items-center justify-center px-4 ${geistSans.variable} ${geistMono.variable} ${bowlbyOne.variable}`}>
+      <Navigation />
+      <div
+        className={`flex-1 bg-gradient-to-br from-app-gradient-from to-app-gradient-to text-app-white flex items-center justify-center px-4 ${geistSans.variable} ${geistMono.variable} ${bowlbyOne.variable}`}
+      >
         <div className="text-center">
-          <h1 className={`text-[120px] md:text-[180px] font-bold text-app-blue-primary mb-1 ${bowlbyOne.className}`}>
+          <h1
+            className={`text-[120px] md:text-[180px] font-bold text-app-blue-primary mb-1 ${bowlbyOne.className}`}
+          >
             404
           </h1>
-          <p className={`text-xl ${geistMono.className} text-app-blue-primary`}>Page not found</p>
+          <p className={`text-xl ${geistMono.className} text-app-blue-primary`}>
+            Page not found
+          </p>
           <div className="mt-8">
             <Link
               href="/"
