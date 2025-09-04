@@ -21,16 +21,16 @@ import {
 // Mock data for KPIs
 const mockData = {
   totalUsers: {
-    value: 1247
+    value: 1247,
   },
   totalStartups: {
-    value: 89
+    value: 89,
   },
   totalEvents: {
-    value: 47
+    value: 47,
   },
   newSignups: {
-    value: 156
+    value: 156,
   },
   projectVisibility: {
     data: [
@@ -40,10 +40,10 @@ const mockData = {
       { month: "Apr", views: 463 },
       { month: "May", views: 339 },
       { month: "Jun", views: 354 },
-    ]
+    ],
   },
   userEngagement: {
-    data: [{ browser: "Online Users", rate: 75, fill: "#2563eb" }]
+    data: [{ browser: "Online Users", rate: 75, fill: "#2563eb" }],
   },
   recentActions: [
     {
@@ -159,7 +159,9 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {mockData.totalUsers.value.toLocaleString()}
-                <span className="text-xs text-muted-foreground pl-1">Users</span>
+                <span className="text-xs text-muted-foreground pl-1">
+                  Users
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -174,7 +176,9 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {mockData.totalStartups.value}
-                <span className="text-xs text-muted-foreground pl-1">Startups</span>
+                <span className="text-xs text-muted-foreground pl-1">
+                  Startups
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -189,7 +193,9 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {mockData.totalEvents.value}
-                <span className="text-xs text-muted-foreground pl-1">Events</span>
+                <span className="text-xs text-muted-foreground pl-1">
+                  Events
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -202,7 +208,9 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {mockData.newSignups.value}
-                <span className="text-xs text-muted-foreground pl-1">Signups</span>
+                <span className="text-xs text-muted-foreground pl-1">
+                  Signups
+                </span>
               </div>
             </CardContent>
           </Card>
