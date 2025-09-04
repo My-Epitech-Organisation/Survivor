@@ -6,9 +6,27 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from admin_panel.models import StartupDetail
+from admin_panel.models import Founder, StartupDetail
 
 from .serializers import ProjectDetailSerializer, ProjectSerializer
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def projects_by_founder(request, founder_id):
+    """
+    Get all projects associated with a specific founder
+    """
+    try:
+        founder = Founder.objects.get(id=founder_id)
+        projects = StartupDetail.objects.filter(founders=founder)
+
+        serializer = ProjectDetailSerializer(projects, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    except Founder.DoesNotExist:
+        return JsonResponse({"error": f"Founder with id {founder_id} not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class IsAdminUser(permissions.BasePermission):
