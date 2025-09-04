@@ -3,6 +3,7 @@ from django.urls import path
 from . import project_views, user_views, views
 from .event_views import EventDetailView, EventListView
 from .founder_views import FounderDetailView
+from .investor_views import InvestorDetailView
 from .news_views import NewsDetailView, NewsListView
 
 app_name = "exposed_api"
@@ -22,6 +23,9 @@ urlpatterns = [
     # Founders endpoints
     path("founders/", FounderDetailView.as_view(), name="founder_create_or_list"),
     path("founders/<int:_id>/", FounderDetailView.as_view(), name="founder_detail_or_crud"),
+    # Investors endpoints
+    path("investors/", InvestorDetailView.as_view(), name="investor_create_or_list"),
+    path("investors/<int:_id>/", InvestorDetailView.as_view(), name="investor_detail_or_crud"),
     # User endpoints
     path("user/", user_views.get_current_user, name="current_user"),
     path("user/<int:user_id>/", user_views.user_detail, name="user_detail"),
