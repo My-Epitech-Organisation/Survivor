@@ -114,3 +114,11 @@ def logout_view(request):
         return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def verify_token(request):
+    """
+    Verify the validity of the provided token
+    """
+    return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
