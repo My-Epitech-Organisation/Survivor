@@ -24,5 +24,5 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_pictureURL(self, obj):
         if obj.image:
-            return os.path.join(settings.MEDIA_URL.rstrip("/"), "events", obj.image)
+            return os.path.join(settings.MEDIA_URL.rstrip("/"), obj.image)
         return None
