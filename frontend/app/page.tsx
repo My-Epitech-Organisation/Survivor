@@ -22,16 +22,6 @@ export default function Home() {
             Your comprehensive platform for managing projects, staying updated with news,
             discovering events, and finding exactly what you need with our advanced search.
           </p>
-          {isAuthenticated && (
-            <div className="mb-8">
-              <Link
-                href="/startup/dashboard"
-                className="inline-block bg-app-blue-primary text-app-white px-8 py-3 rounded-lg font-semibold hover:bg-app-blue-primary-hover transition-colors"
-              >
-                Go to Startup Dashboard
-              </Link>
-            </div>
-          )}
         </div>
 
         {/* Feature Cards */}
