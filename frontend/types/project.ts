@@ -1,7 +1,6 @@
 // types/project.ts
 
-import {Founder} from "@/types/founders"
-
+import { Founder } from "@/types/founders";
 
 export interface ProjectFiltersProps {
   ProjectSector: string[];
@@ -14,8 +13,7 @@ export interface ProjectFiltersProps {
   }) => void;
 }
 
-export interface ProjectOverviewProps
-{
+export interface ProjectOverviewProps {
   ProjectId: number;
   ProjectName: string;
   ProjectDescription?: string;
@@ -26,8 +24,7 @@ export interface ProjectOverviewProps
   ProjectStatus: string;
 }
 
-export interface ProjectDetailsProps
-{
+export interface ProjectDetailsProps {
   ProjectId: number;
   ProjectName: string;
   ProjectDescription: string;
