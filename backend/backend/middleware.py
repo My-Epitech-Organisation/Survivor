@@ -17,6 +17,7 @@ class CSPMiddleware(MiddlewareMixin):
                 "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; "
                 "font-src 'self' https://fonts.gstatic.com; "
                 "connect-src 'self' https: ws: wss:; "
+                "worker-src 'self' blob:; "  # Added worker-src to allow blob URLs for Web Workers
                 "frame-ancestors 'none'; "
                 "form-action 'self'; "
                 "base-uri 'self'"
@@ -30,6 +31,7 @@ class CSPMiddleware(MiddlewareMixin):
                 "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
                 "font-src 'self' https://fonts.gstatic.com",
                 "connect-src 'self' https: ws: wss:",
+                "worker-src 'self'",  # Default worker-src for non-doc pages
                 "frame-ancestors 'none'",
                 "form-action 'self'",
                 "base-uri 'self'",

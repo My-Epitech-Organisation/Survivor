@@ -59,9 +59,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # Custom middleware for security headers
+    # Custom middleware for security headers - must be BEFORE the disable middleware
     "backend.middleware.CSPMiddleware",
-    # Middleware pour désactiver CSP pour la documentation API
+    # Middleware to disable CSP for API documentation - must be AFTER the CSP middleware
     "backend.disable_csp_middleware.DisableCSPForDocsMiddleware",
 ]
 
