@@ -79,11 +79,35 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     Serializer for password reset confirmation
     """
 
-    token = serializers.CharField()
+    token = serializers.UUIDField()
     password = serializers.CharField(write_only=True, validators=[validate_password])
     password_confirm = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password_confirm"]:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
+
+        from .models import PasswordResetToken
+        try:
+            token_obj = PasswordResetToken.objects.get(token=attrs["token"])
+            if not token_obj.is_valid():
+                raise serializers.ValidationError({"token": "Token is expired or has been used."})
+            attrs["token_obj"] = token_obj
+        except PasswordResetToken.DoesNotExist:
+            raise serializers.ValidationError({"token": "Invalid token."})
+
         return attrs
+
+    def save(self):
+        token_obj = self.validated_data["token_obj"]
+        user = token_obj.user
+
+        # Set new password
+        user.set_password(self.validated_data["password"])
+        user.save()
+
+        # Mark token as used
+        token_obj.is_used = True
+        token_obj.save()
+
+        return user
