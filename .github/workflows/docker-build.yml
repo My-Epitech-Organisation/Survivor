@@ -64,8 +64,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
 
       - name: Image build skipped
         if: steps.check_dockerfile.outputs.dockerfile_exists == 'false'

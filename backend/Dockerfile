@@ -5,10 +5,6 @@ ENV VIRTUAL_ENV=/opt/venv
 ENV DJANGO_DEBUG=True
 ENV DJANGO_ENV=development
 
-# Accept build argument for Django Secret Key
-ARG DJANGO_SECRET_KEY
-ENV DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
