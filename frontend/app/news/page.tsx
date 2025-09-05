@@ -3,39 +3,24 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import NewsCard from "@/components/NewsCard";
-import { useEffect, useState } from "react";
-import { NewsItem, NewsFilter } from "@/types/news";
+import NewsFilters from "@/components/NewsFilters";
+import { useEffect, useState, useCallback } from "react";
+import { NewsItem } from "@/types/news";
 import { authenticatedFetch } from "@/lib/api";
-import { Filter, Trash2 } from "lucide-react";
 
 export default function News() {
   const [error, setError] = useState<string | null>(null);
-
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
-
   const [categories, setCategories] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+
+  const [activeFilters, setActiveFilters] = useState({
+    categories: [] as string[],
+    locations: [] as string[],
+    dateRange: null as string | null,
+  });
 
   useEffect(() => {
-    const fillFilterFields = (data: NewsItem[]) => {
-      let tempCategories: string[] = [];
-      let tempLocations: string[] = [];
-
-      data.forEach((item) => {
-        if (!tempCategories.includes(item.category)) {
-          tempCategories = [...tempCategories, item.category];
-        }
-        if (!tempLocations.includes(item.location)) {
-          tempLocations = [...tempLocations, item.location];
-        }
-      });
-
-      setCategories(tempCategories);
-      setLocations(tempLocations);
-    };
-
     const fetchNews = async () => {
       const response = await authenticatedFetch("/news/");
 
@@ -47,128 +32,116 @@ export default function News() {
       const data: NewsItem[] = await response.json();
 
       setNewsList(data);
-      fillFilterFields(data);
+
+      // Extract unique categories and locations
+      const uniqueCategories = [...new Set(data.map((item) => item.category))];
+      const uniqueLocations = [...new Set(data.map((item) => item.location))];
+
+      setCategories(uniqueCategories);
+      setLocations(uniqueLocations);
     };
 
     fetchNews();
   }, []);
 
-  const resetSelects = () => {
-    setSelectedLocation(null);
-    const locationSelect = document.getElementById(
-      "locationSelect"
-    ) as HTMLSelectElement;
-    if (locationSelect) {
-      locationSelect.value = "none";
-    }
+  const handleFiltersChange = useCallback(
+    (filters: {
+      categories: string[];
+      locations: string[];
+      dateRange: string | null;
+    }) => {
+      setActiveFilters(filters);
+    },
+    []
+  );
 
-    setSelectedCategory(null);
-    const categorySelect = document.getElementById(
-      "categorySelect"
-    ) as HTMLSelectElement;
-    if (categorySelect) {
-      categorySelect.value = "none";
-    }
-  };
-
-  const filterNews = () => {
+  const getFilteredNews = () => {
     return newsList.filter((item) => {
-      if (selectedCategory && selectedCategory != item.category) return false;
-      if (selectedLocation && selectedLocation != item.location) return false;
-      return true;
+      const categoryMatch =
+        activeFilters.categories.length === 0 ||
+        activeFilters.categories.includes(item.category);
+
+      const locationMatch =
+        activeFilters.locations.length === 0 ||
+        activeFilters.locations.includes(item.location);
+
+      // Date filtering logic
+      const dateMatch =
+        !activeFilters.dateRange ||
+        checkDateRange(item.news_date, activeFilters.dateRange);
+
+      return categoryMatch && locationMatch && dateMatch;
     });
   };
 
-  const filteredNews = filterNews();
+  const checkDateRange = (newsDate: string, dateRange: string): boolean => {
+    const now = new Date();
+    const itemDate = new Date(newsDate);
+
+    switch (dateRange) {
+      case "last_week":
+        const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return itemDate >= lastWeek;
+      case "last_month":
+        const lastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return itemDate >= lastMonth;
+      case "last_3_months":
+        const last3Months = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        return itemDate >= last3Months;
+      case "last_6_months":
+        const last6Months = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000);
+        return itemDate >= last6Months;
+      case "last_year":
+        const lastYear = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        return itemDate >= lastYear;
+      default:
+        return true;
+    }
+  };
+
+  const filteredNews = getFilteredNews();
 
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
         <Navigation />
 
-        <main className="flex-1 w-full max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
+        <main className="flex-1 py-6">
+          <div className="max-w-[90rem] mx-auto px-4 sm:px-6">
             <h1 className="text-3xl font-bold text-app-text-primary mb-6">
               News
             </h1>
 
-            <div className="bg-app-surface rounded-lg shadow p-6 mb-6 flex flex-col gap-6">
-              <div className="flex gap-2 items-center">
-                <Filter />
-                <h2>Filters</h2>
-              </div>
-              <div className="flex flex-col lg:justify-start lg:flex-row md:flex-row gap-8 ">
-                <select
-                  name="Locations"
-                  id="locationSelect"
-                  className="cursor-pointer hover:bg-app-surface-hover border rounded-md p-2 w-full"
-                >
-                  <option
-                    value="none"
-                    key="none"
-                    id="locationNone"
-                    onClick={() => setSelectedLocation(null)}
-                  >
-                    None
-                  </option>
-                  {locations.map((item, index) => (
-                    <option
-                      value={item}
-                      key={index}
-                      onClick={() => setSelectedLocation(item)}
-                    >
-                      {item}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  name="Categories"
-                  id="categorySelect"
-                  className="cursor-pointer hover:bg-app-surface-hover border rounded-md p-2 w-full"
-                >
-                  <option
-                    value="none"
-                    key="none"
-                    id="categoryNone"
-                    onClick={() => setSelectedCategory(null)}
-                  >
-                    None
-                  </option>
-                  {categories.map((item, index) => (
-                    <option
-                      value={item}
-                      key={index}
-                      onClick={() => setSelectedCategory(item)}
-                    >
-                      {item}
-                    </option>
-                  ))}
-                </select>
-
-                <div
-                  className="whitespace-nowrap flex justify-center items-center font-small text-app-text-secondary gap-2 cursor-pointer p-2 px-3 border rounded-md hover:bg-app-surface-hover"
-                  onClick={resetSelects}
-                >
-                  Clear filters
-                  <Trash2 />
-                </div>
-              </div>
+            <div className="mb-8">
+              <NewsFilters
+                categories={categories}
+                locations={locations}
+                onFiltersChange={handleFiltersChange}
+              />
             </div>
 
             {error && (
-              <div className="rounded-md border border-red-200 text-red-600 text-sm bg-red-50 p-4 mx-12">
+              <div className="rounded-md border border-red-200 text-red-600 text-sm bg-red-50 p-4 mb-6">
                 {error}
               </div>
             )}
-
-            {/* Place for the filters */}
 
             <div className="grid lg:grid-cols-3 sm:grid-cols-1 md:grid-cols-2 gap-6">
               {filteredNews.map((news) => (
                 <NewsCard key={news.id} item={news} />
               ))}
             </div>
+
+            {filteredNews.length === 0 && !error && (
+              <div className="text-center py-12">
+                <p className="text-app-text-secondary text-lg">
+                  No news found matching your filters.
+                </p>
+                <p className="text-app-text-muted text-sm mt-2">
+                  Try adjusting your filter criteria.
+                </p>
+              </div>
+            )}
           </div>
         </main>
 
