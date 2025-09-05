@@ -1,14 +1,195 @@
-import { useState, useEffect } from "react";
-import { FaPlus, FaTrash, FaTrashAlt } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
+import { FaPlus, FaTrash, FaTrashAlt, FaLinkedin, FaEnvelope, FaPhone, FaUpload } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { FormProjectDetails } from "@/types/project";
+import { Founder } from "@/types/founders";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { api } from "@/lib/api";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { getBackendUrl } from "@/lib/config";
 
 interface AdminProjectFormProps {
   defaultData?: FormProjectDetails;
   onSubmit: (data: FormProjectDetails) => void;
 }
+
+function AddFoundersSection({ 
+  founders,
+  onUpdateFounders
+}: { 
+  founders?: Founder[];
+  onUpdateFounders: (founders: Founder[]) => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isAddingFounder, setIsAddingFounder] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [newFounder, setNewFounder] = useState<Partial<Founder>>({
+    FounderName: "",
+    FounderPictureURL: ""
+  });
+  const backUrl = getBackendUrl();
+
+  return (
+    <div className="pt-2 border-t border-gray-100">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-lg font-semibold text-gray-800">Founders</h3>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button
+              className="bg-app-blue-primary hover:bg-app-blue-primary-hover text-white p-2 rounded-full transition-colors"
+            >
+              <FaPlus size={14} />
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Founder</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <InputWithLabel
+                label="Name"
+                id="founder-name"
+                placeholder="Enter founder name"
+                value={newFounder.FounderName}
+                onChange={(e) => setNewFounder(prev => ({ ...prev, FounderName: e.target.value }))}
+              />
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Profile Image</label>
+                <div className="flex items-center space-x-4">
+                  <Avatar className="w-16 h-16">
+                    <AvatarImage src={newFounder.FounderPictureURL || ""} />
+                    <AvatarFallback>{newFounder.FounderName?.charAt(0) || "F"}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div>
+                      <input
+                        type="file"
+                        className="hidden"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const formData = new FormData();
+                            formData.append("file", file);
+                            try {
+                              const previewUrl = URL.createObjectURL(file);
+                              setNewFounder(prev => ({ ...prev, FounderPictureURL: previewUrl }));
+                            } catch (error) {
+                              console.error("Error uploading image:", error);
+                            }
+                          }
+                        }}
+                      />
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <FaUpload className="mr-2" />
+                        Upload Photo
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 mt-4">
+                <DialogClose asChild>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setNewFounder({
+                        FounderName: "",
+                        FounderPictureURL: ""
+                      });
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button 
+                    onClick={() => {
+                      const newFounderWithId = {
+                        ...newFounder,
+                        FounderID: Date.now(),
+                      } as Founder;
+
+                      const updatedFounders = [...(founders || []), newFounderWithId];
+                      onUpdateFounders(updatedFounders);
+
+                      setNewFounder({
+                        FounderName: "",
+                        FounderPictureURL: ""
+                      });
+                    }}
+                  >
+                    Add Founder
+                  </Button>
+                </DialogClose>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+      <div className="bg-gray-50 rounded-lg p-4">
+        {!founders || founders.length === 0 ? (
+          <div className="text-center py-6">
+            <p className="text-gray-500 text-sm">
+              No founders added yet. Click the plus icon to add founders.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {founders && founders.map((founder) => (
+              <div
+                key={founder.FounderID}
+                className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative group"
+              >
+                <button
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 bg-red-100 hover:bg-red-200 text-red-600 p-1.5 rounded-full transition-all"
+                  onClick={() => console.log("Remove founder", founder.FounderID)}
+                >
+                  <FaTrashAlt size={14} />
+                </button>
+                <div className="flex items-start space-x-4">
+                    <Avatar className="w-12 h-12">
+                      {founder.FounderPictureURL && founder.FounderPictureURL.startsWith('http') ? (
+                        <AvatarImage src={founder.FounderPictureURL} />
+                      ) : (
+                        <AvatarImage 
+                          src={backUrl + founder.FounderPictureURL}
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = founder.FounderPictureURL;
+                            // If image fails to load, we could set a state to show fallback
+                            // But Avatar already handles this with AvatarFallback
+                          }}
+                        />
+                      )}
+                      <AvatarFallback>{founder.FounderName?.charAt(0) || "F"}</AvatarFallback>
+                    </Avatar>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900">{founder.FounderName}</h4>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
 
 export default function AdminProjectForm({ defaultData, onSubmit }: AdminProjectFormProps) {
   const initialFormData: FormProjectDetails = {
@@ -183,7 +364,16 @@ export default function AdminProjectForm({ defaultData, onSubmit }: AdminProject
         </div>
 
         {/* Founders - This would need to be developed as a separate component */}
-        <div className="pt-2 border-t border-gray-100">
+        <AddFoundersSection 
+          founders={formData.ProjectFounders} 
+          onUpdateFounders={(updatedFounders) => {
+            setFormData(prev => ({
+              ...prev,
+              ProjectFounders: updatedFounders
+            }));
+          }}
+        />
+        {/* <div className="pt-2 border-t border-gray-100">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-lg font-semibold text-gray-800">Founders</h3>
             <button
@@ -198,7 +388,7 @@ export default function AdminProjectForm({ defaultData, onSubmit }: AdminProject
               No founders added yet. Click the plus icon to add founders.
             </p>
           </div>
-        </div>
+        </div> */}
 
         {/* Contact Information */}
         <div className="pt-2 border-t border-gray-100">
