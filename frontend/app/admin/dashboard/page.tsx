@@ -261,6 +261,8 @@ export default function AdminDashboard() {
             title="User Engagement"
             description="Online users vs total registered users"
             centerLabel="Users online"
+            startAngle={90 - usersConnected.rate * 3.6}
+            endAngle={90}
           />
 
           {/* Project Visibility Chart */}
