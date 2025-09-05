@@ -215,7 +215,10 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
                 founder = Founder.objects.create(id=new_founder_id, name=founder_data["name"], startup_id=instance.id)
 
                 if founder_data.get("picture"):
-                    founders_images[str(founder.id)] = founder_data["picture"]
+                    picture = founder_data.get("picture")
+                    if "/media/" in picture:
+                        picture = picture.split("/media/")[1]
+                    founders_images[str(founder.id)] = picture
 
                 instance.founders.add(founder)
 
