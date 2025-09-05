@@ -6,7 +6,11 @@ from .founder_views import FounderDetailView
 from .investor_views import InvestorDetailView
 from .kpi_views import (
     monthly_stats,
+    most_viewed_projects,
     new_signups,
+    project_view_stats,
+    project_views_count,
+    project_views_over_time,
     projects_visibility,
     recent_actions,
     total_events,
@@ -55,4 +59,11 @@ urlpatterns = [
     path("kpi/users-connected/", users_connected_ratio, name="kpi_users_connected"),
     path("kpi/recent-actions/", recent_actions, name="kpi_recent_actions"),
     path("kpi/monthly-stats/", monthly_stats, name="kpi_monthly_stats"),
+    # Project view statistics endpoints
+    path("kpi/project-views/", project_view_stats, name="kpi_project_views"),
+    path("kpi/project-views/<int:project_id>/", project_view_stats, name="kpi_project_views_detail"),
+    path("kpi/most-viewed-projects/", most_viewed_projects, name="kpi_most_viewed_projects"),
+    path("kpi/project-views-over-time/", project_views_over_time, name="kpi_project_views_over_time"),
+    path("kpi/project-views-over-time/<int:project_id>/", project_views_over_time, name="kpi_project_views_over_time_detail"),
+    path("projects/<int:project_id>/view-count/", project_views_count, name="project_views_count"),
 ]
