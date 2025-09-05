@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { FormProjectDetails } from "@/types/project";
-import { Founder } from "@/types/founders";
+import { Founder, MinimalFounder } from "@/types/founders";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { api } from "@/lib/api";
 import {
@@ -24,19 +24,17 @@ interface AdminProjectFormProps {
 function AddFoundersSection({ 
   founders,
   onUpdateFounders
-}: { 
-  founders?: Founder[];
-  onUpdateFounders: (founders: Founder[]) => void;
+}: {
+  founders?: MinimalFounder[];
+  onUpdateFounders: (founders: MinimalFounder[]) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isAddingFounder, setIsAddingFounder] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const [newFounder, setNewFounder] = useState<Partial<Founder>>({
-    FounderName: "",
-    FounderPictureURL: ""
+  const [newFounder, setNewFounder] = useState<MinimalFounder>({
+    name: "",
+    picture: ""
   });
-  const backUrl = getBackendUrl();
-
   return (
     <div className="pt-2 border-t border-gray-100">
       <div className="flex justify-between items-center mb-3">
@@ -58,15 +56,15 @@ function AddFoundersSection({
                 label="Name"
                 id="founder-name"
                 placeholder="Enter founder name"
-                value={newFounder.FounderName}
-                onChange={(e) => setNewFounder(prev => ({ ...prev, FounderName: e.target.value }))}
+                value={newFounder.name}
+                onChange={(e) => setNewFounder(prev => ({ ...prev, name: e.target.value }))}
               />
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Profile Image</label>
                 <div className="flex items-center space-x-4">
                   <Avatar className="w-16 h-16">
-                    <AvatarImage src={newFounder.FounderPictureURL || ""} />
-                    <AvatarFallback>{newFounder.FounderName?.charAt(0) || "F"}</AvatarFallback>
+                    <AvatarImage src={`${getBackendUrl()}${newFounder.picture}`} />
+                    <AvatarFallback>{newFounder.name?.charAt(0) || "UK"}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                     <div>
@@ -82,8 +80,12 @@ function AddFoundersSection({
                             formData.append("file", file);
                             try {
                               const previewUrl = URL.createObjectURL(file);
-                              setNewFounder(prev => ({ ...prev, FounderPictureURL: previewUrl }));
-                            } catch (error) {
+                              const res = await api.post<{ url: string }>("/media/image", previewUrl);
+                              if (res.data?.url)
+                                setNewFounder(prev => ({ ...prev, FounderPictureURL: res.data?.url }));
+                              else
+                                  throw Error("API didn't return an avatar url image");
+                              } catch (error) {
                               console.error("Error uploading image:", error);
                             }
                           }
@@ -107,8 +109,8 @@ function AddFoundersSection({
                     variant="outline" 
                     onClick={() => {
                       setNewFounder({
-                        FounderName: "",
-                        FounderPictureURL: ""
+                        name: "",
+                        picture: ""
                       });
                     }}
                   >
@@ -120,15 +122,14 @@ function AddFoundersSection({
                     onClick={() => {
                       const newFounderWithId = {
                         ...newFounder,
-                        FounderID: Date.now(),
-                      } as Founder;
+                      } as MinimalFounder;
 
                       const updatedFounders = [...(founders || []), newFounderWithId];
                       onUpdateFounders(updatedFounders);
 
                       setNewFounder({
-                        FounderName: "",
-                        FounderPictureURL: ""
+                        name: "",
+                        picture: ""
                       });
                     }}
                   >
@@ -149,39 +150,33 @@ function AddFoundersSection({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {founders && founders.map((founder) => (
-              <div
-                key={founder.FounderID}
-                className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative group"
-              >
-                <button
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 bg-red-100 hover:bg-red-200 text-red-600 p-1.5 rounded-full transition-all"
-                  onClick={() => console.log("Remove founder", founder.FounderID)}
+            {founders && founders.map((founder, id) => {
+              console.log("Founder: ", founder);
+              return (
+                <div
+                  key={id}
+                  className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative group"
                 >
-                  <FaTrashAlt size={14} />
-                </button>
-                <div className="flex items-start space-x-4">
-                    <Avatar className="w-12 h-12">
-                      {founder.FounderPictureURL && founder.FounderPictureURL.startsWith('http') ? (
-                        <AvatarImage src={founder.FounderPictureURL} />
-                      ) : (
-                        <AvatarImage 
-                          src={backUrl + founder.FounderPictureURL}
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = founder.FounderPictureURL;
-                            // If image fails to load, we could set a state to show fallback
-                            // But Avatar already handles this with AvatarFallback
-                          }}
-                        />
-                      )}
-                      <AvatarFallback>{founder.FounderName?.charAt(0) || "F"}</AvatarFallback>
-                    </Avatar>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900">{founder.FounderName}</h4>
+                  <button
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 bg-red-100 hover:bg-red-200 text-red-600 p-1.5 rounded-full transition-all"
+                    onClick={() => console.log("Remove founder", id)} // TODO: Remove founder
+                  >
+                    <FaTrashAlt size={14} />
+                  </button>
+                  <div className="flex items-start space-x-4">
+                      <Avatar className="w-12 h-12">
+                          <AvatarImage
+                            src={`${getBackendUrl()}${founder.picture}`}
+                          />
+                        <AvatarFallback>{founder.name?.charAt(0) || "U"}</AvatarFallback>
+                      </Avatar>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900">{founder.name}</h4>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -364,8 +359,8 @@ export default function AdminProjectForm({ defaultData, onSubmit }: AdminProject
         </div>
 
         {/* Founders - This would need to be developed as a separate component */}
-        <AddFoundersSection 
-          founders={formData.ProjectFounders} 
+        <AddFoundersSection
+          founders={formData.ProjectFounders}
           onUpdateFounders={(updatedFounders) => {
             setFormData(prev => ({
               ...prev,

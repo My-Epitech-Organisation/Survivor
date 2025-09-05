@@ -31,6 +31,7 @@ import ProjectDetails from "./ProjectDetails";
 import { useEffect, useState, useRef } from "react";
 import { api } from "@/lib/api";
 import AdminProjectForm from "./AdminProjectForm";
+import { Founder, MinimalFounder } from "@/types/founders";
 
 export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
   const [projectDetails, setprojectDetails] = useState<ProjectDetailsProps>();
@@ -43,8 +44,8 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
     const apiData = {
       ...data,
       ProjectFounders: data.ProjectFounders.map(founder => ({
-        name: founder.FounderName,
-        picture: founder.FounderPictureURL
+        name: founder.name,
+        picture: founder.picture
       }))
     };
 
@@ -55,7 +56,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
         if (closeDialogRef.current) {
           closeDialogRef.current.click();
         }
-        // window.location.reload();
+        window.location.reload();
       })
       .catch(error => {
         console.error("Error updating project:", error);
@@ -75,6 +76,13 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
         console.error("Error deleting project:", error);
       });
   }
+
+  const FounderToMinimalFounder = (data: Founder[]): MinimalFounder[] => {
+    return data.map(founder => ({
+      name: founder.FounderName,
+      picture: founder.FounderPictureURL
+    }));
+  };
 
   const fetchProject = async () => {
     try {
@@ -96,7 +104,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
         ProjectAddress: details.ProjectAddress || "",
         ProjectLegalStatus: details.ProjectLegalStatus || "",
         ProjectCreatedAt: details.ProjectCreatedAt || "",
-        ProjectFounders: details.ProjectFounders || [],
+        ProjectFounders: FounderToMinimalFounder(details.ProjectFounders) || [],
         ProjectEmail: details.ProjectEmail || "",
         ProjectPhone: details.ProjectPhone || "",
         ProjectWebsite: details.ProjectWebsite || "",

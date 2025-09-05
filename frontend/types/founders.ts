@@ -1,6 +1,6 @@
 export interface MinimalFounder {
-  FounderName: string;
-  FounderPictureURL: string;
+  name: string;
+  picture: string;
 }
 
 export interface Founder {
