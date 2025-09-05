@@ -8,12 +8,60 @@
 import base64
 import logging
 import os
+import time
 
 import requests
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.base import ContentFile
+
+
+def fetch_with_retry(url, headers=None, params=None, max_retries=3, retry_delay=0.5, allow_404=False):
+    """
+    Make a GET request with retry logic
+
+    Args:
+        url (str): URL to fetch
+        headers (dict, optional): Request headers. Defaults to None.
+        params (dict, optional): Request parameters. Defaults to None.
+        max_retries (int, optional): Maximum number of retry attempts. Defaults to 3.
+        retry_delay (float, optional): Delay between retries in seconds. Defaults to 0.5.
+        allow_404 (bool, optional): If True, return None for 404 responses instead of raising. Defaults to False.
+
+    Returns:
+        requests.Response: The response object if successful, or None if allow_404=True and a 404 is encountered
+
+    Raises:
+        requests.RequestException: If all retry attempts fail
+    """
+    retries = 0
+    last_exception = None
+
+    while retries < max_retries:
+        try:
+            response = requests.get(url, headers=headers, params=params)
+
+            if allow_404 and response.status_code == 404:
+                return None
+
+            response.raise_for_status()
+            return response
+        except requests.RequestException as e:
+            last_exception = e
+            retries += 1
+            if retries < max_retries:
+                if not (allow_404 and hasattr(e, "response") and e.response.status_code == 404):
+                    logging.warning(f"Request failed for {url}, retrying ({retries}/{max_retries})...")
+                time.sleep(retry_delay)
+
+    if not (allow_404 and hasattr(last_exception, "response") and last_exception.response.status_code == 404):
+        logging.error(f"All {max_retries} retry attempts failed for {url}")
+
+    if allow_404 and hasattr(last_exception, "response") and last_exception.response.status_code == 404:
+        return None
+
+    raise last_exception
 
 
 def fetch_news_detail(news_id, headers):
@@ -25,8 +73,7 @@ def fetch_news_detail(news_id, headers):
     image_url = settings.JEB_API_NEWS_IMAGE_URL.format(news_id=news_id)
 
     try:
-        detail_response = requests.get(detail_url, headers=headers)
-        detail_response.raise_for_status()
+        detail_response = fetch_with_retry(detail_url, headers=headers)
         news_detail_data = detail_response.json()
 
         news_detail = NewsDetail(
@@ -40,9 +87,9 @@ def fetch_news_detail(news_id, headers):
         )
 
         try:
-            image_response = requests.get(image_url, headers=headers)
-            if image_response.status_code == 200:
+            image_response = fetch_with_retry(image_url, headers=headers, allow_404=True)
 
+            if image_response:
                 image_path = f"media/news/{news_id}.jpg"
                 os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
@@ -55,8 +102,11 @@ def fetch_news_detail(news_id, headers):
 
         news_detail.save()
         return True
-    except Exception as e:
+    except requests.RequestException as e:
         logging.error(f"Error fetching news details for ID {news_id}: {e}")
+        return False
+    except Exception as e:
+        logging.error(f"Unexpected error processing news details for ID {news_id}: {e}")
         return False
 
 
@@ -74,8 +124,7 @@ def fetch_and_create_news():
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
         print("\tFetching news from JEB API...")
-        response = requests.get(url, params=params, headers=headers)
-        response.raise_for_status()
+        response = fetch_with_retry(url, params=params, headers=headers)
         news_data = response.json()
 
         News = apps.get_model("admin_panel", "News")
@@ -116,8 +165,7 @@ def fetch_and_create_events():
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
         print("\tFetching events from JEB API...")
-        response = requests.get(url, params=params, headers=headers)
-        response.raise_for_status()
+        response = fetch_with_retry(url, params=params, headers=headers)
         events_data = response.json()
 
         Event = apps.get_model("admin_panel", "Event")
@@ -136,9 +184,9 @@ def fetch_and_create_events():
             try:
                 event_id = item.get("id")
                 image_url = settings.JEB_API_EVENT_IMAGE_URL.format(event_id=event_id)
-                image_response = requests.get(image_url, headers=headers)
-                if image_response.status_code == 200:
+                image_response = fetch_with_retry(image_url, headers=headers, allow_404=True)
 
+                if image_response:
                     image_path = f"media/events/{event_id}.jpg"
                     os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
@@ -169,8 +217,7 @@ def fetch_startup_detail(startup_id, headers):
     detail_url = settings.JEB_API_STARTUP_DETAIL_URL.format(startup_id=startup_id)
 
     try:
-        detail_response = requests.get(detail_url, headers=headers)
-        detail_response.raise_for_status()
+        detail_response = fetch_with_retry(detail_url, headers=headers)
         startup_detail_data = detail_response.json()
 
         startup_detail = StartupDetail(
@@ -207,10 +254,9 @@ def fetch_startup_detail(startup_id, headers):
 
                 try:
                     image_url = settings.JEB_API_FOUNDER_IMAGE_URL.format(startup_id=startup_id, founder_id=founder_id)
-                    image_response = requests.get(image_url, headers=headers)
+                    image_response = fetch_with_retry(image_url, headers=headers, allow_404=True)
 
-                    if image_response.status_code == 200:
-
+                    if image_response:
                         image_path = f"media/founders/{startup_id}_{founder_id}.jpg"
                         os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
@@ -226,8 +272,11 @@ def fetch_startup_detail(startup_id, headers):
                 startup_detail.save()
 
         return startup_detail
-    except Exception as e:
+    except requests.RequestException as e:
         logging.error(f"Error fetching startup details for ID {startup_id}: {e}")
+        return None
+    except Exception as e:
+        logging.error(f"Unexpected error processing startup details for ID {startup_id}: {e}")
         return None
 
 
@@ -245,8 +294,7 @@ def fetch_and_create_startups():
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
         print("\tFetching startups from JEB API...")
-        response = requests.get(url, params=params, headers=headers)
-        response.raise_for_status()
+        response = fetch_with_retry(url, params=params, headers=headers)
         startups_data = response.json()
 
         for item in startups_data:
@@ -275,8 +323,7 @@ def fetch_and_create_users():
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
         print("\tFetching users from JEB API...")
-        response = requests.get(url, params=params, headers=headers)
-        response.raise_for_status()
+        response = fetch_with_retry(url, params=params, headers=headers)
         users_data = response.json()
 
         User = apps.get_model("authentication", "CustomUser")
@@ -297,8 +344,9 @@ def fetch_and_create_users():
             try:
                 user_id = item.get("id")
                 image_url = settings.JEB_API_USER_IMAGE_URL.format(user_id=user_id)
-                image_response = requests.get(image_url, headers=headers)
-                if image_response.status_code == 200:
+                image_response = fetch_with_retry(image_url, headers=headers, allow_404=True)
+
+                if image_response:
                     image_path = f"media/users/{user_id}.jpg"
                     os.makedirs(os.path.dirname(image_path), exist_ok=True)
                     with open(image_path, "wb") as f:
@@ -331,8 +379,7 @@ def fetch_and_create_investors():
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
         print("\tFetching investors from JEB API...")
-        response = requests.get(url, params=params, headers=headers)
-        response.raise_for_status()
+        response = fetch_with_retry(url, params=params, headers=headers)
         investors_data = response.json()
 
         Investor = apps.get_model("admin_panel", "Investor")
@@ -374,8 +421,7 @@ def fetch_and_create_partners():
         headers = {**settings.JEB_API_HEADERS, "X-Group-Authorization": jeb_token}
 
         print("\tFetching partners from JEB API...")
-        response = requests.get(url, params=params, headers=headers)
-        response.raise_for_status()
+        response = fetch_with_retry(url, params=params, headers=headers)
         partners_data = response.json()
 
         Partner = apps.get_model("admin_panel", "Partner")
