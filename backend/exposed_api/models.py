@@ -1,6 +1,7 @@
+from authentication.models import CustomUser
 from django.db import models
 from django.utils import timezone
-from authentication.models import CustomUser
+
 from admin_panel.models import StartupDetail
 
 # Create your models here.
@@ -26,33 +27,22 @@ class ProjectView(models.Model):
     """
 
     project = models.ForeignKey(
-        StartupDetail,
-        on_delete=models.CASCADE,
-        related_name='views',
-        help_text="The project that was viewed"
+        StartupDetail, on_delete=models.CASCADE, related_name="views", help_text="The project that was viewed"
     )
-    timestamp = models.DateTimeField(
-        auto_now_add=True,
-        help_text="When the project was viewed"
-    )
+    timestamp = models.DateTimeField(auto_now_add=True, help_text="When the project was viewed")
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='project_views',
-        help_text="The user who viewed the project (if authenticated)"
+        related_name="project_views",
+        help_text="The user who viewed the project (if authenticated)",
     )
     ip_address = models.GenericIPAddressField(
-        null=True,
-        blank=True,
-        help_text="IP address of the viewer (for tracking unique views)"
+        null=True, blank=True, help_text="IP address of the viewer (for tracking unique views)"
     )
     session_key = models.CharField(
-        max_length=40,
-        null=True,
-        blank=True,
-        help_text="Session key for anonymous users to track unique views"
+        max_length=40, null=True, blank=True, help_text="Session key for anonymous users to track unique views"
     )
 
     class Meta:
@@ -60,10 +50,10 @@ class ProjectView(models.Model):
         verbose_name_plural = "Project Views"
         ordering = ["-timestamp"]
         indexes = [
-            models.Index(fields=['project']),
-            models.Index(fields=['timestamp']),
-            models.Index(fields=['user']),
-            models.Index(fields=['ip_address']),
+            models.Index(fields=["project"]),
+            models.Index(fields=["timestamp"]),
+            models.Index(fields=["user"]),
+            models.Index(fields=["ip_address"]),
         ]
 
     def __str__(self):

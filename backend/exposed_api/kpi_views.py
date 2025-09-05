@@ -1,17 +1,18 @@
+from datetime import timedelta
+
 from authentication.models import CustomUser
 from authentication.permissions import IsAdmin
+from django.db.models import Count, F, Q
+from django.db.models.functions import TruncDay, TruncMonth
 from django.http import JsonResponse
 from django.utils import timezone
-from django.db.models import Count, F, Q
-from django.db.models.functions import TruncMonth, TruncDay
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-from datetime import timedelta
 
 from admin_panel.models import Event, StartupDetail
 
-from .models import SiteStatistics, ProjectView
+from .models import ProjectView, SiteStatistics
 from .serializers import ProjectViewStatsSerializer
 
 
@@ -74,36 +75,30 @@ def projects_visibility(request):
 
     monthly_views = (
         ProjectView.objects.filter(timestamp__gte=last_6_months)
-        .annotate(month=TruncMonth('timestamp'))
-        .values('month')
-        .annotate(views=Count('id'))
-        .order_by('month')
+        .annotate(month=TruncMonth("timestamp"))
+        .values("month")
+        .annotate(views=Count("id"))
+        .order_by("month")
     )
 
     # Format the data for the frontend
     data = []
     for item in monthly_views:
-        month_name = item['month'].strftime('%B')  # Format as month name (e.g., January)
-        data.append({
-            "month": month_name,
-            "views": item['views']
-        })
+        month_name = item["month"].strftime("%B")  # Format as month name (e.g., January)
+        data.append({"month": month_name, "views": item["views"]})
 
     # If we have less than 6 months of data, fill in the missing months with zeros
     if len(data) < 6:
         all_months = []
         for i in range(6):
-            month = (now - timedelta(days=30 * i)).strftime('%B')
+            month = (now - timedelta(days=30 * i)).strftime("%B")
             all_months.append(month)
 
         # Create a dict of existing data
-        existing_data = {item['month']: item['views'] for item in data}
+        existing_data = {item["month"]: item["views"] for item in data}
 
         # Create the complete data set
-        data = [
-            {"month": month, "views": existing_data.get(month, 0)}
-            for month in all_months
-        ]
+        data = [{"month": month, "views": existing_data.get(month, 0)} for month in all_months]
 
         # Reverse to get chronological order
         data.reverse()
@@ -198,9 +193,7 @@ def monthly_stats(request):
     first_day_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     # Calculate projects launched this month
-    projects_launched = StartupDetail.objects.filter(
-        created_at__gte=first_day_of_month.strftime('%Y-%m-%d')
-    ).count()
+    projects_launched = StartupDetail.objects.filter(created_at__gte=first_day_of_month.strftime("%Y-%m-%d")).count()
 
     # Calculate events created this month
     events_created = Event.objects.filter(
@@ -209,19 +202,17 @@ def monthly_stats(request):
     ).count()
 
     # Calculate active sessions (unique visitors) this month using ProjectView
-    active_sessions = ProjectView.objects.filter(
-        timestamp__gte=first_day_of_month
-    ).values('session_key').distinct().count()
+    active_sessions = (
+        ProjectView.objects.filter(timestamp__gte=first_day_of_month).values("session_key").distinct().count()
+    )
 
     # Calculate total views this month
-    total_views_this_month = ProjectView.objects.filter(
-        timestamp__gte=first_day_of_month
-    ).count()
+    total_views_this_month = ProjectView.objects.filter(timestamp__gte=first_day_of_month).count()
 
     # Calculate average views per project this month
-    active_projects = ProjectView.objects.filter(
-        timestamp__gte=first_day_of_month
-    ).values('project').distinct().count()
+    active_projects = (
+        ProjectView.objects.filter(timestamp__gte=first_day_of_month).values("project").distinct().count()
+    )
 
     avg_views_per_project = 0
     if active_projects > 0:
@@ -233,9 +224,7 @@ def monthly_stats(request):
     avg_session_duration = "15m 30s"
 
     # Get new signups this month
-    new_signups_this_month = CustomUser.objects.filter(
-        date_joined__gte=first_day_of_month
-    ).count()
+    new_signups_this_month = CustomUser.objects.filter(date_joined__gte=first_day_of_month).count()
 
     data = {
         "projectsLaunched": projects_launched,
@@ -260,19 +249,19 @@ def project_view_stats(request, project_id=None):
     This endpoint requires admin privileges.
     """
     # Get time period from query parameters, default to all time
-    period = request.GET.get('period', 'all')
+    period = request.GET.get("period", "all")
 
     # Set up the date filter based on the period
     now = timezone.now()
     date_filter = Q()
 
-    if period == 'day':
+    if period == "day":
         date_filter = Q(timestamp__gte=now - timedelta(days=1))
-    elif period == 'week':
+    elif period == "week":
         date_filter = Q(timestamp__gte=now - timedelta(weeks=1))
-    elif period == 'month':
+    elif period == "month":
         date_filter = Q(timestamp__gte=now - timedelta(days=30))
-    elif period == 'year':
+    elif period == "year":
         date_filter = Q(timestamp__gte=now - timedelta(days=365))
 
     # Base queryset
@@ -284,27 +273,24 @@ def project_view_stats(request, project_id=None):
 
     # Calculate statistics
     total_views = queryset.count()
-    unique_users = queryset.filter(user__isnull=False).values('user').distinct().count()
-    unique_ips = queryset.exclude(ip_address__isnull=True).values('ip_address').distinct().count()
-    unique_sessions = queryset.exclude(session_key__isnull=True).values('session_key').distinct().count()
+    unique_users = queryset.filter(user__isnull=False).values("user").distinct().count()
+    unique_ips = queryset.exclude(ip_address__isnull=True).values("ip_address").distinct().count()
+    unique_sessions = queryset.exclude(session_key__isnull=True).values("session_key").distinct().count()
 
     # Create response data
     data = {
-        'total_views': total_views,
-        'unique_users': unique_users,
-        'unique_ips': unique_ips,
-        'unique_sessions': unique_sessions,
+        "total_views": total_views,
+        "unique_users": unique_users,
+        "unique_ips": unique_ips,
+        "unique_sessions": unique_sessions,
     }
 
     # Add period info if filtering by period
-    if period != 'all':
-        data['period_start'] = (now - timedelta(
-            days=1 if period == 'day' else
-            7 if period == 'week' else
-            30 if period == 'month' else
-            365
-        )).isoformat()
-        data['period_end'] = now.isoformat()
+    if period != "all":
+        data["period_start"] = (
+            now - timedelta(days=1 if period == "day" else 7 if period == "week" else 30 if period == "month" else 365)
+        ).isoformat()
+        data["period_end"] = now.isoformat()
 
     # Serialize and return
     serializer = ProjectViewStatsSerializer(data=data)
@@ -320,44 +306,46 @@ def most_viewed_projects(request):
     This endpoint requires admin privileges.
     """
     # Get time period from query parameters, default to month
-    period = request.GET.get('period', 'month')
-    limit = int(request.GET.get('limit', 5))
+    period = request.GET.get("period", "month")
+    limit = int(request.GET.get("limit", 5))
 
     # Set up the date filter based on the period
     now = timezone.now()
     date_filter = Q()
 
-    if period == 'day':
+    if period == "day":
         date_filter = Q(timestamp__gte=now - timedelta(days=1))
-    elif period == 'week':
+    elif period == "week":
         date_filter = Q(timestamp__gte=now - timedelta(weeks=1))
-    elif period == 'month':
+    elif period == "month":
         date_filter = Q(timestamp__gte=now - timedelta(days=30))
-    elif period == 'year':
+    elif period == "year":
         date_filter = Q(timestamp__gte=now - timedelta(days=365))
-    elif period == 'all':
+    elif period == "all":
         date_filter = Q()
 
     # Get the most viewed projects
     most_viewed = (
         ProjectView.objects.filter(date_filter)
-        .values('project')
-        .annotate(total_views=Count('id'))
-        .order_by('-total_views')[:limit]
+        .values("project")
+        .annotate(total_views=Count("id"))
+        .order_by("-total_views")[:limit]
     )
 
     # Fetch project details
     result = []
     for item in most_viewed:
-        project_id = item['project']
+        project_id = item["project"]
         try:
             project = StartupDetail.objects.get(id=project_id)
-            result.append({
-                'id': project.id,
-                'name': project.name,
-                'total_views': item['total_views'],
-                # You can add more project details here as needed
-            })
+            result.append(
+                {
+                    "id": project.id,
+                    "name": project.name,
+                    "total_views": item["total_views"],
+                    # You can add more project details here as needed
+                }
+            )
         except StartupDetail.DoesNotExist:
             # Skip projects that no longer exist
             continue
@@ -375,20 +363,20 @@ def project_views_over_time(request, project_id=None):
     This endpoint requires admin privileges.
     """
     # Get grouping from query parameters, default to month
-    grouping = request.GET.get('grouping', 'month')
-    period = request.GET.get('period', 'year')
+    grouping = request.GET.get("grouping", "month")
+    period = request.GET.get("period", "year")
 
     # Set up the date filter based on the period
     now = timezone.now()
     date_filter = Q()
 
-    if period == 'month':
+    if period == "month":
         date_filter = Q(timestamp__gte=now - timedelta(days=30))
-    elif period == 'year':
+    elif period == "year":
         date_filter = Q(timestamp__gte=now - timedelta(days=365))
-    elif period == 'all':
+    elif period == "all":
         date_filter = Q()
-    elif period == 'week':
+    elif period == "week":
         date_filter = Q(timestamp__gte=now - timedelta(weeks=1))
 
     # Base queryset
@@ -399,31 +387,23 @@ def project_views_over_time(request, project_id=None):
         queryset = queryset.filter(project_id=project_id)
 
     # Group by time period
-    if grouping == 'day':
+    if grouping == "day":
         queryset = (
-            queryset
-            .annotate(period=TruncDay('timestamp'))
-            .values('period')
-            .annotate(views=Count('id'))
-            .order_by('period')
+            queryset.annotate(period=TruncDay("timestamp"))
+            .values("period")
+            .annotate(views=Count("id"))
+            .order_by("period")
         )
     else:  # Default to month
         queryset = (
-            queryset
-            .annotate(period=TruncMonth('timestamp'))
-            .values('period')
-            .annotate(views=Count('id'))
-            .order_by('period')
+            queryset.annotate(period=TruncMonth("timestamp"))
+            .values("period")
+            .annotate(views=Count("id"))
+            .order_by("period")
         )
 
     # Format the result
-    result = [
-        {
-            'period': item['period'].isoformat(),
-            'views': item['views']
-        }
-        for item in queryset
-    ]
+    result = [{"period": item["period"].isoformat(), "views": item["views"]} for item in queryset]
 
     return JsonResponse(result, safe=False)
 
@@ -445,10 +425,6 @@ def project_views_count(request, project_id):
     total_views = ProjectView.objects.filter(project_id=project_id).count()
 
     # You could also calculate unique views if needed
-    unique_views = ProjectView.objects.filter(project_id=project_id).values('ip_address').distinct().count()
+    unique_views = ProjectView.objects.filter(project_id=project_id).values("ip_address").distinct().count()
 
-    return JsonResponse({
-        "project_id": project_id,
-        "total_views": total_views,
-        "unique_views": unique_views
-    })
+    return JsonResponse({"project_id": project_id, "total_views": total_views, "unique_views": unique_views})
