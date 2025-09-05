@@ -39,7 +39,6 @@ export default function NewsCard({ item }: NewsCardProps) {
       <div className="bg-app-surface rounded-lg shadow p-6 flex flex-col gap-6 hover:scale-105 transition-all cursor-pointer justify-between">
         <div className="flex justify-between">
           <div>
-            <h3 className="text-sm mb-0.5">Category:</h3>
             <div
               className={`flex gap-1 text-${getCategoryColor(item.category)}`}
             >
