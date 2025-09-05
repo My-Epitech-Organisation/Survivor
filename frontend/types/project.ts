@@ -1,6 +1,6 @@
 // types/project.ts
 
-import { Founder } from "@/types/founders";
+import { Founder, MinimalFounder } from "@/types/founders";
 
 export interface ProjectFiltersProps {
   ProjectSector: string[];
@@ -51,7 +51,7 @@ export interface FormProjectDetails {
   ProjectAddress: string;
   ProjectLegalStatus: string;
   ProjectCreatedAt: string;
-  ProjectFounders: Founder[];
+  ProjectFounders: MinimalFounder[];
   ProjectEmail: string;
   ProjectPhone: string;
   ProjectNeeds: string;

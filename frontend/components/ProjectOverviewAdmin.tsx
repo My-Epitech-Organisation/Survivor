@@ -39,7 +39,16 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
 
   const handleEditProjectSubmit = (data: FormProjectDetails) => {
     console.log("Edited project data received in ProjectOverviewAdmin:", data);
-    api.put(`/projects/${props.ProjectId}/`, data)
+    
+    const apiData = {
+      ...data,
+      ProjectFounders: data.ProjectFounders.map(founder => ({
+        name: founder.FounderName,
+        picture: founder.FounderPictureURL
+      }))
+    };
+
+    api.put(`/projects/${props.ProjectId}/`, apiData)
       .then(response => {
         console.log("Project updated successfully:", response.data);
         if (closeDialogRef.current) {

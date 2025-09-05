@@ -11,7 +11,7 @@ class FounderSerializer(serializers.ModelSerializer):
     For POST and PUT requests.
     """
 
-    name = serializers.CharField(source="name")
+    name = serializers.CharField()
     picture = serializers.SerializerMethodField()
 
     class Meta:
