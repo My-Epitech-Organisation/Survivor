@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from exposed_api.models import SiteStatistics
+from auditlog.models import AuditLog
 
 from .models import PasswordResetToken
 from .serializers import (
@@ -47,6 +48,12 @@ def register_user(request):
         stats, created = SiteStatistics.objects.get_or_create(date=today)
         stats.new_signups += 1
         stats.save()
+
+        AuditLog.objects.create(
+            action=f"New user registered: {user.name} ({user.email})",
+            user=user.name,
+            type="user"
+        )
 
         refresh = RefreshToken.for_user(user)
 
@@ -85,7 +92,14 @@ def update_user_profile(request):
     """
     serializer = UserSerializer(request.user, data=request.data, partial=True)
     if serializer.is_valid():
-        serializer.save()
+        user = serializer.save()
+
+        AuditLog.objects.create(
+            action=f"User profile updated: {user.name} ({user.email})",
+            user=user.name,
+            type="user"
+        )
+
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -185,7 +199,14 @@ def reset_password_confirm(request):
 
     serializer = PasswordResetConfirmSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        user = serializer.save()
+
+        AuditLog.objects.create(
+            action=f"Password reset completed: {user.name} ({user.email})",
+            user=user.name,
+            type="user"
+        )
+
         return Response({"detail": "Your password has been successfully reset."}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
