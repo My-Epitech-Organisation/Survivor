@@ -14,7 +14,7 @@ export default function AdminProjects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
   const closeDialogRef = useRef<HTMLButtonElement>(null);
 
-  let handleNewProjectSubmit = (data: FormProjectDetails) => {
+  const handleNewProjectSubmit = (data: FormProjectDetails) => {
     api.post("/projects/", data)
       .then(response => {
         console.log("Project created successfully:", response.data);
