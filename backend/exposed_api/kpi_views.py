@@ -186,9 +186,7 @@ def monthly_stats(request):
 
     projects_launched = StartupDetail.objects.filter(created_at__gte=first_day_of_month).count()
 
-    events_created = Event.objects.filter(
-        id__gt=0
-    ).count()
+    events_created = Event.objects.filter(id__gt=0).count()
 
     active_sessions = (
         ProjectView.objects.filter(timestamp__gte=first_day_of_month).values("session_key").distinct().count()

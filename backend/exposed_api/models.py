@@ -5,7 +5,6 @@ from django.utils import timezone
 from admin_panel.models import StartupDetail
 
 
-
 class SiteStatistics(models.Model):
     """
     Model for tracking site statistics such as user registrations
