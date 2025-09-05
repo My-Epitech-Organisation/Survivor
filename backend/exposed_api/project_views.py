@@ -6,6 +6,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.utils import timezone
 
 from admin_panel.models import Founder, StartupDetail
 
@@ -61,10 +62,11 @@ class ProjectDetailView(APIView):
 
             request_data = request.data.copy()
 
-            serializer = ProjectSerializer(data=request_data)
+            current_date = timezone.now().strftime("%Y-%m-%d")
+            serializer = ProjectDetailSerializer(data=request_data)
             if serializer.is_valid():
-                project = serializer.save(id=new_id)
-                return Response(ProjectSerializer(project).data, status=status.HTTP_201_CREATED)
+                project = serializer.save(id=new_id, created_at=current_date)
+                return Response(ProjectDetailSerializer(project).data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -72,7 +74,7 @@ class ProjectDetailView(APIView):
     def put(self, request, _id):
         """Handle PUT requests - admin only"""
         project = get_object_or_404(StartupDetail, id=_id)
-        serializer = ProjectSerializer(project, data=request.data, partial=False)
+        serializer = ProjectDetailSerializer(project, data=request.data, partial=False)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

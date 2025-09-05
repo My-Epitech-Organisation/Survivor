@@ -31,9 +31,10 @@ class FounderSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     """
     Serializer for the projects endpoint, mapping StartupDetail to the required format.
+    Includes only essential project information for the GET /api/projects endpoint.
     """
 
-    ProjectId = serializers.IntegerField(source="id", read_only=True)  # read_only=True makes it not required for POST
+    ProjectId = serializers.IntegerField(source="id", read_only=True)
     ProjectName = serializers.CharField(source="name")
     ProjectDescription = serializers.CharField(source="description", allow_null=True)
     ProjectSector = serializers.CharField(source="sector")
@@ -74,7 +75,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
     Serializer for the project detail endpoint, providing detailed info about a specific project.
     """
 
-    ProjectId = serializers.IntegerField(source="id")
+    ProjectId = serializers.IntegerField(source="id", read_only=True)
     ProjectName = serializers.CharField(source="name")
     ProjectDescription = serializers.CharField(source="description", allow_null=True)
     ProjectSector = serializers.CharField(source="sector", allow_null=True)

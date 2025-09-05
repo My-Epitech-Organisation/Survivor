@@ -136,7 +136,7 @@ def clear_and_fetch_events(sender, **kwargs):
 @receiver(post_migrate)
 def clear_and_fetch_startups(sender, **kwargs):
     """
-    Delete all StartupList and StartupDetail records and then fetch and create new ones from JEB API
+    Delete all StartupDetail records and then fetch and create new ones from JEB API
     Only runs once during server startup
     """
 
@@ -147,10 +147,8 @@ def clear_and_fetch_startups(sender, **kwargs):
     _handlers_executed["clear_and_fetch_startups"] = True
 
     try:
-        StartupList = apps.get_model("admin_panel", "StartupList")
         StartupDetail = apps.get_model("admin_panel", "StartupDetail")
 
-        StartupList.objects.all().delete()
         StartupDetail.objects.all().delete()
 
         fetch_and_create_startups()

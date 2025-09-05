@@ -249,21 +249,7 @@ def fetch_and_create_startups():
         response.raise_for_status()
         startups_data = response.json()
 
-        StartupList = apps.get_model("admin_panel", "StartupList")
-
         for item in startups_data:
-            startup = StartupList(
-                id=item.get("id"),
-                name=item.get("name"),
-                legal_status=item.get("legal_status"),
-                address=item.get("address"),
-                email=item.get("email"),
-                phone=item.get("phone"),
-                sector=item.get("sector"),
-                maturity=item.get("maturity"),
-            )
-            startup.save()
-
             startup_id = item.get("id")
             fetch_startup_detail(startup_id, headers)
 

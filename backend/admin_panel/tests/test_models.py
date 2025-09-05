@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from admin_panel.models import Event, News, StartupList
+from admin_panel.models import Event, News, StartupDetail
 
 
 class SimpleTestCase(TestCase):
@@ -8,4 +8,4 @@ class SimpleTestCase(TestCase):
         """Simple test to verify models can be imported"""
         assert News is not None
         assert Event is not None
-        assert StartupList is not None
+        assert StartupDetail is not None
