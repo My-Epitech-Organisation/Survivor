@@ -15,3 +15,8 @@ export interface NewsDetailItem extends NewsItem {
 export interface NewsCardProps {
     item: NewsItem;
 }
+
+export interface NewsFilter {
+    category: string | null;
+    location: string | null;
+}
