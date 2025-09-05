@@ -51,14 +51,14 @@ def fetch_with_retry(url, headers=None, params=None, max_retries=3, retry_delay=
             last_exception = e
             retries += 1
             if retries < max_retries:
-                if not (allow_404 and hasattr(e, 'response') and e.response.status_code == 404):
+                if not (allow_404 and hasattr(e, "response") and e.response.status_code == 404):
                     logging.warning(f"Request failed for {url}, retrying ({retries}/{max_retries})...")
                 time.sleep(retry_delay)
 
-    if not (allow_404 and hasattr(last_exception, 'response') and last_exception.response.status_code == 404):
+    if not (allow_404 and hasattr(last_exception, "response") and last_exception.response.status_code == 404):
         logging.error(f"All {max_retries} retry attempts failed for {url}")
 
-    if allow_404 and hasattr(last_exception, 'response') and last_exception.response.status_code == 404:
+    if allow_404 and hasattr(last_exception, "response") and last_exception.response.status_code == 404:
         return None
 
     raise last_exception
