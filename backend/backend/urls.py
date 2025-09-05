@@ -33,6 +33,7 @@ urlpatterns = [
     path("api/", include("exposed_api.urls")),  # Exposed API endpoints
     path("api/admin/", include("admin_panel.urls")),  # Custom admin
     path("api/auth/", include("authentication.urls")),  # Authentication endpoints
+    path("api/threads/", include("messaging.urls")),  # Messaging endpoints
     # OpenAPI schema endpoints
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
