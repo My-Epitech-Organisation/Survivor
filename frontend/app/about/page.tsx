@@ -232,7 +232,7 @@ export default function About() {
                     <p className="text-app-text-secondary text-sm">
                       Have questions or want to schedule a meeting? Feel free to
                       reach out to us through any of the contact methods above.
-                      We're here to help!
+                      We&apos;re here to help!
                     </p>
                   </div>
                 </div>
