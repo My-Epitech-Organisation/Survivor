@@ -33,7 +33,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     Serializer for the projects endpoint, mapping StartupDetail to the required format.
     """
 
-    ProjectId = serializers.IntegerField(source="id")
+    ProjectId = serializers.IntegerField(source="id", read_only=True)  # read_only=True makes it not required for POST
     ProjectName = serializers.CharField(source="name")
     ProjectDescription = serializers.CharField(source="description", allow_null=True)
     ProjectSector = serializers.CharField(source="sector")

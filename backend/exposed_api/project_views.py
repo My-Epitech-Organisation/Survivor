@@ -55,11 +55,19 @@ class ProjectDetailView(APIView):
 
     def post(self, request):
         """Handle POST requests - admin only"""
-        serializer = ProjectSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            highest_id = StartupDetail.objects.all().order_by("-id").first()
+            new_id = 1 if highest_id is None else highest_id.id + 1
+
+            request_data = request.data.copy()
+
+            serializer = ProjectSerializer(data=request_data)
+            if serializer.is_valid():
+                project = serializer.save(id=new_id)
+                return Response(ProjectSerializer(project).data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def put(self, request, _id):
         """Handle PUT requests - admin only"""
