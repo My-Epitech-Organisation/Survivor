@@ -16,7 +16,12 @@ export interface NewsCardProps {
     item: NewsItem;
 }
 
-export interface NewsFilter {
-    category: string | null;
-    location: string | null;
+export interface NewsFiltersProps {
+    categories: string[];
+    locations: string[];
+    onFiltersChange?: (filters: {
+        categories: string[];
+        locations: string[];
+        dateRange: string | null;
+    }) => void;
 }
