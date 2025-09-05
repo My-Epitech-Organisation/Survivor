@@ -1,3 +1,4 @@
+from auditlog.models import AuditLog
 from authentication.permissions import IsAdmin
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -7,7 +8,6 @@ from rest_framework.views import APIView
 
 from admin_panel.models import News, NewsDetail
 from admin_panel.serializers import NewsDetailSerializer, NewsSerializer
-from auditlog.models import AuditLog
 
 
 class NewsListView(APIView):
@@ -40,9 +40,7 @@ class NewsListView(APIView):
 
             news = serializer.save()
             AuditLog.objects.create(
-                action=f"New news item created: {news.title}",
-                user=request.user.username,
-                type="news"
+                action=f"New news item created: {news.title}", user=request.user.username, type="news"
             )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -95,9 +93,7 @@ class NewsDetailView(APIView):
 
             updated_news = serializer.save()
             AuditLog.objects.create(
-                action=f"News item updated: {updated_news.title}",
-                user=request.user.username,
-                type="news"
+                action=f"News item updated: {updated_news.title}", user=request.user.username, type="news"
             )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -112,11 +108,7 @@ class NewsDetailView(APIView):
             return Response({"error": "News not found"}, status=status.HTTP_404_NOT_FOUND)
 
         news_title = news.title
-        AuditLog.objects.create(
-            action=f"News item deleted: {news_title}",
-            user=request.user.username,
-            type="news"
-        )
+        AuditLog.objects.create(action=f"News item deleted: {news_title}", user=request.user.username, type="news")
 
         news.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

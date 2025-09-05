@@ -1,3 +1,4 @@
+from auditlog.models import AuditLog
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
@@ -12,7 +13,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from exposed_api.models import SiteStatistics
-from auditlog.models import AuditLog
 
 from .models import PasswordResetToken
 from .serializers import (
@@ -49,11 +49,7 @@ def register_user(request):
         stats.new_signups += 1
         stats.save()
 
-        AuditLog.objects.create(
-            action=f"New user registered: {user.name} ({user.email})",
-            user=user.name,
-            type="user"
-        )
+        AuditLog.objects.create(action=f"New user registered: {user.name} ({user.email})", user=user.name, type="user")
 
         refresh = RefreshToken.for_user(user)
 
@@ -95,9 +91,7 @@ def update_user_profile(request):
         user = serializer.save()
 
         AuditLog.objects.create(
-            action=f"User profile updated: {user.name} ({user.email})",
-            user=user.name,
-            type="user"
+            action=f"User profile updated: {user.name} ({user.email})", user=user.name, type="user"
         )
 
         return Response(serializer.data)
@@ -202,9 +196,7 @@ def reset_password_confirm(request):
         user = serializer.save()
 
         AuditLog.objects.create(
-            action=f"Password reset completed: {user.name} ({user.email})",
-            user=user.name,
-            type="user"
+            action=f"Password reset completed: {user.name} ({user.email})", user=user.name, type="user"
         )
 
         return Response({"detail": "Your password has been successfully reset."}, status=status.HTTP_200_OK)

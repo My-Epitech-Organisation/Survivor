@@ -1,3 +1,4 @@
+from auditlog.models import AuditLog
 from authentication.permissions import IsAdmin
 from rest_framework import permissions, status
 from rest_framework.permissions import AllowAny
@@ -5,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from admin_panel.models import Event
-from auditlog.models import AuditLog
 
 from .event_serializers import EventSerializer
 
@@ -41,9 +41,7 @@ class EventListView(APIView):
             event = serializer.save()
 
             AuditLog.objects.create(
-                action=f"New event created: {event.name}",
-                user=request.user.username,
-                type="event"
+                action=f"New event created: {event.name}", user=request.user.username, type="event"
             )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -78,9 +76,7 @@ class EventDetailView(APIView):
             updated_event = serializer.save()
 
             AuditLog.objects.create(
-                action=f"Event updated: {updated_event.name}",
-                user=request.user.username,
-                type="event"
+                action=f"Event updated: {updated_event.name}", user=request.user.username, type="event"
             )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -95,11 +91,7 @@ class EventDetailView(APIView):
             return Response({"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
 
         event_name = event.name
-        AuditLog.objects.create(
-            action=f"Event deleted: {event_name}",
-            user=request.user.username,
-            type="event"
-        )
+        AuditLog.objects.create(action=f"Event deleted: {event_name}", user=request.user.username, type="event")
 
         event.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
