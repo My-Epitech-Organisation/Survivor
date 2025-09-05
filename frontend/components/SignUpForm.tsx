@@ -160,14 +160,14 @@ export function SignUpForm({
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       <div className="relative w-5 h-5">
-                        <LuEye 
+                        <LuEyeClosed 
                           className={`absolute transition-all duration-300 ${
                             showPassword 
                               ? "opacity-100 transform scale-100" 
                               : "opacity-0 transform scale-75"
                           }`} 
                         />
-                        <LuEyeClosed 
+                        <LuEye 
                           className={`absolute transition-all duration-300 ${
                             showPassword 
                               ? "opacity-0 transform scale-75" 
@@ -197,14 +197,14 @@ export function SignUpForm({
                       aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     >
                       <div className="relative w-5 h-5">
-                        <LuEye 
+                        <LuEyeClosed 
                           className={`absolute transition-all duration-300 ${
                             showConfirmPassword 
                               ? "opacity-100 transform scale-100" 
                               : "opacity-0 transform scale-75"
                           }`} 
                         />
-                        <LuEyeClosed 
+                        <LuEye 
                           className={`absolute transition-all duration-300 ${
                             showConfirmPassword 
                               ? "opacity-0 transform scale-75" 
