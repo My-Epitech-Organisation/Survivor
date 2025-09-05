@@ -37,7 +37,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
   const [formData, setFormData] = useState<FormProjectDetails>();
   const closeDialogRef = useRef<HTMLButtonElement>(null);
 
-  let handleEditProjectSubmit = (data: FormProjectDetails) => {
+  const handleEditProjectSubmit = (data: FormProjectDetails) => {
     console.log("Edited project data received in ProjectOverviewAdmin:", data);
     api.put(`/projects/${props.ProjectId}/`, data)
       .then(response => {
