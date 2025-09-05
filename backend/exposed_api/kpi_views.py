@@ -11,6 +11,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 from admin_panel.models import Event, StartupDetail
+from auditlog.models import AuditLog
 
 from .models import ProjectView, SiteStatistics
 from .serializers import ProjectViewStatsSerializer
@@ -126,49 +127,20 @@ def users_connected_ratio(request):
 @permission_classes([IsAdmin])
 def recent_actions(request):
     """
-    API endpoint that returns recent actions in the system.
-    This is a placeholder implementation.
+    API endpoint that returns recent actions in the system from the audit logs.
     This endpoint requires admin privileges.
     """
-    # Placeholder data for recent actions
-    # TODO: Replace with actual data retrieval logic
-    data = [
-        {
-            "id": 1,
-            "action": "Created new project",
-            "user": "john.doe@example.com",
-            "time": "2025-09-04T10:23:15Z",
-            "type": "project",
-        },
-        {
-            "id": 2,
-            "action": "Updated profile",
-            "user": "jane.smith@example.com",
-            "time": "2025-09-04T09:45:30Z",
-            "type": "user",
-        },
-        {
-            "id": 3,
-            "action": "Added investor",
-            "user": "admin@jeb-incubator.com",
-            "time": "2025-09-03T16:12:45Z",
-            "type": "investor",
-        },
-        {
-            "id": 4,
-            "action": "Created event",
-            "user": "events@jeb-incubator.com",
-            "time": "2025-09-03T14:05:22Z",
-            "type": "event",
-        },
-        {
-            "id": 5,
-            "action": "Published news",
-            "user": "media@jeb-incubator.com",
-            "time": "2025-09-02T11:30:00Z",
-            "type": "news",
-        },
-    ]
+    limit = 5
+    recent_logs = AuditLog.objects.all().order_by('-timestamp')[:limit]
+    data = []
+    for log in recent_logs:
+        data.append({
+            "id": log.id,
+            "action": log.action,
+            "user": log.user,
+            "time": log.timestamp.isoformat(),
+            "type": log.type
+        })
 
     return JsonResponse(data, safe=False)
 
