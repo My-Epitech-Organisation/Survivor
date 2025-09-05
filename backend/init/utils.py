@@ -17,7 +17,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.files.base import ContentFile
 
 
-def fetch_with_retry(url, headers=None, params=None, max_retries=3, retry_delay=0.5):
+def fetch_with_retry(url, headers=None, params=None, max_retries=3, retry_delay=0.5, allow_404=False):
     """
     Make a GET request with retry logic
 
@@ -27,9 +27,10 @@ def fetch_with_retry(url, headers=None, params=None, max_retries=3, retry_delay=
         params (dict, optional): Request parameters. Defaults to None.
         max_retries (int, optional): Maximum number of retry attempts. Defaults to 3.
         retry_delay (float, optional): Delay between retries in seconds. Defaults to 0.5.
+        allow_404 (bool, optional): If True, return None for 404 responses instead of raising. Defaults to False.
 
     Returns:
-        requests.Response: The response object if successful
+        requests.Response: The response object if successful, or None if allow_404=True and a 404 is encountered
 
     Raises:
         requests.RequestException: If all retry attempts fail
@@ -40,16 +41,26 @@ def fetch_with_retry(url, headers=None, params=None, max_retries=3, retry_delay=
     while retries < max_retries:
         try:
             response = requests.get(url, headers=headers, params=params)
+
+            if allow_404 and response.status_code == 404:
+                return None
+
             response.raise_for_status()
             return response
         except requests.RequestException as e:
             last_exception = e
             retries += 1
             if retries < max_retries:
-                logging.warning(f"Request failed for {url}, retrying ({retries}/{max_retries})...")
+                if not (allow_404 and hasattr(e, 'response') and e.response.status_code == 404):
+                    logging.warning(f"Request failed for {url}, retrying ({retries}/{max_retries})...")
                 time.sleep(retry_delay)
 
-    logging.error(f"All {max_retries} retry attempts failed for {url}")
+    if not (allow_404 and hasattr(last_exception, 'response') and last_exception.response.status_code == 404):
+        logging.error(f"All {max_retries} retry attempts failed for {url}")
+
+    if allow_404 and hasattr(last_exception, 'response') and last_exception.response.status_code == 404:
+        return None
+
     raise last_exception
 
 
@@ -76,15 +87,16 @@ def fetch_news_detail(news_id, headers):
         )
 
         try:
-            image_response = fetch_with_retry(image_url, headers=headers)
+            image_response = fetch_with_retry(image_url, headers=headers, allow_404=True)
 
-            image_path = f"media/news/{news_id}.jpg"
-            os.makedirs(os.path.dirname(image_path), exist_ok=True)
+            if image_response:
+                image_path = f"media/news/{news_id}.jpg"
+                os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
-            with open(image_path, "wb") as f:
-                f.write(image_response.content)
+                with open(image_path, "wb") as f:
+                    f.write(image_response.content)
 
-            news_detail.image = f"news/{news_id}.jpg"
+                news_detail.image = f"news/{news_id}.jpg"
         except Exception as e:
             logging.error(f"Error fetching news image for ID {news_id}: {e}")
 
@@ -172,15 +184,16 @@ def fetch_and_create_events():
             try:
                 event_id = item.get("id")
                 image_url = settings.JEB_API_EVENT_IMAGE_URL.format(event_id=event_id)
-                image_response = fetch_with_retry(image_url, headers=headers)
+                image_response = fetch_with_retry(image_url, headers=headers, allow_404=True)
 
-                image_path = f"media/events/{event_id}.jpg"
-                os.makedirs(os.path.dirname(image_path), exist_ok=True)
+                if image_response:
+                    image_path = f"media/events/{event_id}.jpg"
+                    os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
-                with open(image_path, "wb") as f:
-                    f.write(image_response.content)
+                    with open(image_path, "wb") as f:
+                        f.write(image_response.content)
 
-                event.image = f"events/{event_id}.jpg"
+                    event.image = f"events/{event_id}.jpg"
             except Exception as e:
                 logging.error(f"Error fetching event image for {event_id}: {e}")
 
@@ -241,15 +254,16 @@ def fetch_startup_detail(startup_id, headers):
 
                 try:
                     image_url = settings.JEB_API_FOUNDER_IMAGE_URL.format(startup_id=startup_id, founder_id=founder_id)
-                    image_response = fetch_with_retry(image_url, headers=headers)
+                    image_response = fetch_with_retry(image_url, headers=headers, allow_404=True)
 
-                    image_path = f"media/founders/{startup_id}_{founder_id}.jpg"
-                    os.makedirs(os.path.dirname(image_path), exist_ok=True)
+                    if image_response:
+                        image_path = f"media/founders/{startup_id}_{founder_id}.jpg"
+                        os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
-                    with open(image_path, "wb") as f:
-                        f.write(image_response.content)
+                        with open(image_path, "wb") as f:
+                            f.write(image_response.content)
 
-                    founders_images[str(founder_id)] = f"founders/{startup_id}_{founder_id}.jpg"
+                        founders_images[str(founder_id)] = f"founders/{startup_id}_{founder_id}.jpg"
                 except Exception as e:
                     logging.error(f"Error fetching founder image for {founder_id}: {e}")
 
@@ -344,13 +358,14 @@ def fetch_and_create_users():
             try:
                 user_id = item.get("id")
                 image_url = settings.JEB_API_USER_IMAGE_URL.format(user_id=user_id)
-                image_response = fetch_with_retry(image_url, headers=headers)
+                image_response = fetch_with_retry(image_url, headers=headers, allow_404=True)
 
-                image_path = f"media/users/{user_id}.jpg"
-                os.makedirs(os.path.dirname(image_path), exist_ok=True)
-                with open(image_path, "wb") as f:
-                    f.write(image_response.content)
-                user.image = f"users/{user_id}.jpg"
+                if image_response:
+                    image_path = f"media/users/{user_id}.jpg"
+                    os.makedirs(os.path.dirname(image_path), exist_ok=True)
+                    with open(image_path, "wb") as f:
+                        f.write(image_response.content)
+                    user.image = f"users/{user_id}.jpg"
             except Exception as e:
                 logging.error(f"Error fetching image for user {item.get('id')}: {e}")
 
