@@ -41,7 +41,7 @@ class ThreadListView(APIView):
     permission_classes = [IsMessagingEligibleUser]
 
     def get(self, request):
-        """Get all threads for the current user without"""
+        """Get all threads for the current user."""
         threads = Thread.objects.filter(participants=request.user)
 
         serializer = ThreadSerializer(threads, many=True, context={"request": request})
