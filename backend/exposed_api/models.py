@@ -4,7 +4,6 @@ from django.utils import timezone
 
 from admin_panel.models import StartupDetail
 
-# Create your models here.
 
 
 class SiteStatistics(models.Model):

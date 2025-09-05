@@ -25,7 +25,6 @@ def projects_by_founder(request, founder_id):
 
         serializer = ProjectDetailSerializer(projects, many=True)
 
-        # If only one project is returned, record the view
         if len(projects) == 1:
             record_project_view(request, projects[0].id)
 
@@ -55,7 +54,6 @@ class ProjectDetailView(APIView):
         try:
             startup = StartupDetail.objects.get(id=_id)
 
-            # Record the project view
             record_project_view(request, _id)
 
             serializer = ProjectDetailSerializer(startup)

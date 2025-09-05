@@ -31,28 +31,22 @@ def record_project_view(request, project_id):
     try:
         project = StartupDetail.objects.get(id=project_id)
 
-        # Get user if authenticated
         user = request.user if request.user.is_authenticated else None
 
-        # Get IP address
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         ip_address = x_forwarded_for.split(",")[0] if x_forwarded_for else request.META.get("REMOTE_ADDR")
 
-        # Get session key for anonymous users
         session_key = request.session.session_key
         if not session_key and not user:
-            # If no session exists and user is anonymous, create a session
             request.session.save()
             session_key = request.session.session_key
 
-        # Create the view record
         ProjectView.objects.create(project=project, user=user, ip_address=ip_address, session_key=session_key)
 
         return True
     except StartupDetail.DoesNotExist:
         return False
     except Exception:
-        # Log the exception but don't let it break the view
         import logging
 
         logger = logging.getLogger(__name__)

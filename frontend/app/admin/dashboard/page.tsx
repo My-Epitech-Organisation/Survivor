@@ -170,14 +170,14 @@ export default function AdminDashboard() {
             content, users, and view key metrics about platform usage and
             engagement.
           </p>
-          
+
           {/* Error message */}
           {error && (
             <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
               <p>{error}</p>
             </div>
           )}
-          
+
           {/* Loading indicator */}
           {loading && (
             <div className="flex justify-center items-center mb-6">

@@ -2,8 +2,6 @@ from django.contrib import admin
 
 from .models import ProjectView, SiteStatistics
 
-# Register your models here.
-
 
 @admin.register(SiteStatistics)
 class SiteStatisticsAdmin(admin.ModelAdmin):
@@ -21,5 +19,4 @@ class ProjectViewAdmin(admin.ModelAdmin):
     readonly_fields = ["timestamp"]
 
     def has_change_permission(self, request, obj=None):
-        # Project views should be read-only to maintain data integrity
         return False
