@@ -193,7 +193,7 @@ def monthly_stats(request):
     first_day_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     # Calculate projects launched this month
-    projects_launched = StartupDetail.objects.filter(created_at__gte=first_day_of_month.strftime("%Y-%m-%d")).count()
+    projects_launched = StartupDetail.objects.filter(created_at__gte=first_day_of_month).count()
 
     # Calculate events created this month
     events_created = Event.objects.filter(
