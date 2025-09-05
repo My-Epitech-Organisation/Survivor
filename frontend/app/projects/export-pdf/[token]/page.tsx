@@ -48,7 +48,7 @@ export default function ProjectExportPage() {
 
         const apiUrl = getApiUrlForExport();
         console.log('Using API URL:', apiUrl);
-        
+
         const fetchData = async () => {
             try {
                 const userResponse = await authenticatedFetch(
@@ -56,55 +56,55 @@ export default function ProjectExportPage() {
                     { method: 'GET' },
                     token
                 );
-                
+
                 if (!userResponse.ok) {
                     throw new Error('Authentication error');
                 }
-                
+
                 const userData = await userResponse.json();
                 const founderId = userData.founderId;
-                
+
                 if (!founderId) {
                     throw new Error('No founder ID associated with this user');
                 }
-                
+
                 const projectResponse = await authenticatedFetch(
                     `${apiUrl}/projects/founder/${founderId}`,
                     { method: 'GET' },
                     token
                 );
-                
+
                 if (!projectResponse.ok) {
                     throw new Error('Unable to retrieve projects');
                 }
-                
+
                 const projects = await projectResponse.json();
-                
+
                 if (!projects || projects.length === 0) {
                     throw new Error('No projects found for this founder');
                 }
-                
+
                 setProject(projects[0]);
-                
+
                 const viewsResponse = await authenticatedFetch(
                     `${apiUrl}/projectViews/${userData.id}`,
                     { method: 'GET' },
                     token
                 );
-                
+
                 if (viewsResponse.ok) {
                     const viewsData = await viewsResponse.json();
                     if (viewsData && viewsData.length > 0) {
                         setViews(viewsData);
                     }
                 }
-                
+
                 const engagementResponse = await authenticatedFetch(
                     `${apiUrl}/projectEngagement/${userData.id}`,
                     { method: 'GET' },
                     token
                 );
-                
+
                 if (engagementResponse.ok) {
                     const engagementData = await engagementResponse.json();
                     if (engagementData) {
@@ -121,7 +121,7 @@ export default function ProjectExportPage() {
 
         fetchData();
     }, [token]);
-    
+
     if (loading) {
         return <div className="flex justify-center items-center h-screen">Loading project data...</div>;
     }
@@ -180,7 +180,7 @@ export default function ProjectExportPage() {
                                 </div>
                             </CardContent>
                         </Card>
-        
+
                         {/* Statistics */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                             <Card className="shadow-md">

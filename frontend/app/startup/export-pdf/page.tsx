@@ -57,7 +57,7 @@ export default function StartupPDFExportPage() {
 
     useEffect(() => {
         if (!userId) return;
-        
+
         const apiUrl = getAPIUrl();
 
         const fetchUserProfile = async () => {
