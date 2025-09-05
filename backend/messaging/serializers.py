@@ -75,7 +75,7 @@ class ThreadSerializer(serializers.ModelSerializer):
 
         read_receipt = ReadReceipt.objects.filter(thread=thread, user=user).first()
 
-        if not read_receipt:
+        if not read_receipt or not read_receipt.last_read_message:
             return thread.messages.exclude(sender=user).count()
 
         return (
