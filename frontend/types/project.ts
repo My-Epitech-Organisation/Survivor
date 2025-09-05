@@ -41,3 +41,21 @@ export interface ProjectDetailsProps {
   ProjectSocial: string;
   ProjectWebsite: string;
 }
+
+export interface FormProjectDetails {
+  ProjectId?: number;
+  ProjectName: string;
+  ProjectDescription: string;
+  ProjectSector: string;
+  ProjectMaturity: string;
+  ProjectAddress: string;
+  ProjectLegalStatus: string;
+  ProjectCreatedAt: string;
+  ProjectFounders: Founder[];
+  ProjectEmail: string;
+  ProjectPhone: string;
+  ProjectNeeds: string;
+  ProjectStatus: string;
+  ProjectSocial: string;
+  ProjectWebsite: string;
+}
