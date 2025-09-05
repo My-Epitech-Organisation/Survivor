@@ -268,7 +268,7 @@ export default function AdminDashboard() {
           {/* Project Visibility Chart */}
           <ChartBarLabel
             data={projectVisibility.map(item => ({
-              month: item.month.substring(0, 3), // Take first 3 letters of month name
+              month: item.month.length > 3 ? item.month.substring(0, 3) : item.month, // Robust: use full name if shorter than 3 chars
               views: item.views
             }))}
             title="Project Visibility"
