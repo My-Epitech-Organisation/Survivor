@@ -20,23 +20,23 @@ from django.core.files.base import ContentFile
 def fetch_with_retry(url, headers=None, params=None, max_retries=3, retry_delay=0.5):
     """
     Make a GET request with retry logic
-    
+
     Args:
         url (str): URL to fetch
         headers (dict, optional): Request headers. Defaults to None.
         params (dict, optional): Request parameters. Defaults to None.
         max_retries (int, optional): Maximum number of retry attempts. Defaults to 3.
         retry_delay (float, optional): Delay between retries in seconds. Defaults to 0.5.
-        
+
     Returns:
         requests.Response: The response object if successful
-        
+
     Raises:
         requests.RequestException: If all retry attempts fail
     """
     retries = 0
     last_exception = None
-    
+
     while retries < max_retries:
         try:
             response = requests.get(url, headers=headers, params=params)
@@ -48,8 +48,7 @@ def fetch_with_retry(url, headers=None, params=None, max_retries=3, retry_delay=
             if retries < max_retries:
                 logging.warning(f"Request failed for {url}, retrying ({retries}/{max_retries})...")
                 time.sleep(retry_delay)
-    
-    # If we get here, all retries failed
+
     logging.error(f"All {max_retries} retry attempts failed for {url}")
     raise last_exception
 
@@ -63,7 +62,6 @@ def fetch_news_detail(news_id, headers):
     image_url = settings.JEB_API_NEWS_IMAGE_URL.format(news_id=news_id)
 
     try:
-        # Use fetch_with_retry instead of direct requests.get
         detail_response = fetch_with_retry(detail_url, headers=headers)
         news_detail_data = detail_response.json()
 
@@ -78,7 +76,6 @@ def fetch_news_detail(news_id, headers):
         )
 
         try:
-            # Use fetch_with_retry for images too
             image_response = fetch_with_retry(image_url, headers=headers)
 
             image_path = f"media/news/{news_id}.jpg"
@@ -207,7 +204,6 @@ def fetch_startup_detail(startup_id, headers):
     detail_url = settings.JEB_API_STARTUP_DETAIL_URL.format(startup_id=startup_id)
 
     try:
-        # Use fetch_with_retry instead of direct requests.get
         detail_response = fetch_with_retry(detail_url, headers=headers)
         startup_detail_data = detail_response.json()
 
@@ -245,7 +241,6 @@ def fetch_startup_detail(startup_id, headers):
 
                 try:
                     image_url = settings.JEB_API_FOUNDER_IMAGE_URL.format(startup_id=startup_id, founder_id=founder_id)
-                    # Use fetch_with_retry for images too
                     image_response = fetch_with_retry(image_url, headers=headers)
 
                     image_path = f"media/founders/{startup_id}_{founder_id}.jpg"
@@ -350,7 +345,7 @@ def fetch_and_create_users():
                 user_id = item.get("id")
                 image_url = settings.JEB_API_USER_IMAGE_URL.format(user_id=user_id)
                 image_response = fetch_with_retry(image_url, headers=headers)
-                
+
                 image_path = f"media/users/{user_id}.jpg"
                 os.makedirs(os.path.dirname(image_path), exist_ok=True)
                 with open(image_path, "wb") as f:
