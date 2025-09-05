@@ -10,16 +10,14 @@ class FounderSerializer(serializers.ModelSerializer):
     Serializer for Founder model in the project detail endpoint.
     """
 
-    FounderID = serializers.IntegerField(source="id")
-    FounderName = serializers.CharField(source="name")
-    FounderStartupID = serializers.IntegerField(source="startup_id")
-    FounderPictureURL = serializers.SerializerMethodField()
+    name = serializers.CharField(source="name")
+    picture = serializers.SerializerMethodField()
 
     class Meta:
         model = Founder
-        fields = ["FounderID", "FounderName", "FounderStartupID", "FounderPictureURL"]
+        fields = ["name", "picture"]
 
-    def get_FounderPictureURL(self, obj):
+    def get_picture(self, obj):
         startup_detail = obj.startups.first()
         if startup_detail and startup_detail.founders_images:
             founder_id = str(obj.id)
@@ -83,7 +81,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
     ProjectAddress = serializers.CharField(source="address", allow_null=True)
     ProjectLegalStatus = serializers.CharField(source="legal_status", allow_null=True)
     ProjectCreatedAt = serializers.CharField(source="created_at")
-    ProjectFounders = FounderSerializer(source="founders", many=True, read_only=True)
+    ProjectFounders = FounderSerializer(source="founders", many=True)
     ProjectEmail = serializers.CharField(source="email")
     ProjectPhone = serializers.CharField(source="phone")
     ProjectNeeds = serializers.CharField(source="needs", allow_null=True)
@@ -110,6 +108,64 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             "ProjectSocial",
             "ProjectWebsite",
         ]
+
+    def create(self, validated_data):
+        founders_data = validated_data.pop('founders', [])
+        project = StartupDetail.objects.create(**validated_data)
+
+        if founders_data:
+            founders_images = {}
+            for founder_data in founders_data:
+                highest_founder_id = Founder.objects.all().order_by('-id').first()
+                new_founder_id = 1 if highest_founder_id is None else highest_founder_id.id + 1
+
+                founder = Founder.objects.create(
+                    id=new_founder_id,
+                    name=founder_data['name'],
+                    startup_id=project.id
+                )
+
+                if 'picture' in founder_data and founder_data['picture']:
+                    founders_images[str(founder.id)] = founder_data['picture']
+
+                project.founders.add(founder)
+
+            if founders_images:
+                project.founders_images = founders_images
+                project.save()
+
+        return project
+
+    def update(self, instance, validated_data):
+        founders_data = validated_data.pop('founders', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if founders_data is not None:
+            instance.founders.clear()
+
+            founders_images = {}
+            for founder_data in founders_data:
+                highest_founder_id = Founder.objects.all().order_by('-id').first()
+                new_founder_id = 1 if highest_founder_id is None else highest_founder_id.id + 1
+
+                founder = Founder.objects.create(
+                    id=new_founder_id,
+                    name=founder_data['name'],
+                    startup_id=instance.id
+                )
+
+                if 'picture' in founder_data and founder_data['picture']:
+                    founders_images[str(founder.id)] = founder_data['picture']
+
+                instance.founders.add(founder)
+
+            if founders_images:
+                instance.founders_images = founders_images
+
+        instance.save()
+        return instance
 
 
 class UserSerializer(serializers.ModelSerializer):
