@@ -30,7 +30,7 @@ export interface ProjectDetailsProps {
   ProjectDescription: string;
   ProjectSector: string;
   ProjectMaturity: string;
-  ProjectAddress: string; // format adress, zipcode loc
+  ProjectAddress: string;
   ProjectLegalStatus: string;
   ProjectCreatedAt: string;
   ProjectFounders: Founder[];

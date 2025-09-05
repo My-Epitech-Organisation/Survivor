@@ -39,7 +39,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
 
   const handleEditProjectSubmit = (data: FormProjectDetails) => {
     console.log("Edited project data received in ProjectOverviewAdmin:", data);
-    
+
     const apiData = {
       ...data,
       ProjectFounders: data.ProjectFounders.map(founder => ({
@@ -48,13 +48,14 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
       }))
     };
 
+    console.log("DATA: ", apiData);
     api.put(`/projects/${props.ProjectId}/`, apiData)
       .then(response => {
         console.log("Project updated successfully:", response.data);
         if (closeDialogRef.current) {
           closeDialogRef.current.click();
         }
-        window.location.reload();
+        // window.location.reload();
       })
       .catch(error => {
         console.error("Error updating project:", error);
