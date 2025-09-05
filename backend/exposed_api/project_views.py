@@ -1,16 +1,16 @@
 from authentication.permissions import IsAdmin
 from django.http import JsonResponse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.utils import timezone
 
 from admin_panel.models import Founder, StartupDetail
 
-from .serializers import ProjectDetailSerializer, ProjectSerializer
+from .serializers import ProjectDetailGetSerializer, ProjectDetailSerializer, ProjectSerializer
 
 
 @api_view(["GET"])
@@ -23,7 +23,7 @@ def projects_by_founder(request, founder_id):
         founder = Founder.objects.get(id=founder_id)
         projects = StartupDetail.objects.filter(founders=founder)
 
-        serializer = ProjectDetailSerializer(projects, many=True)
+        serializer = ProjectDetailGetSerializer(projects, many=True)
         return JsonResponse(serializer.data, safe=False)
     except Founder.DoesNotExist:
         return JsonResponse({"error": f"Founder with id {founder_id} not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -49,7 +49,7 @@ class ProjectDetailView(APIView):
             return JsonResponse(serializer.data, safe=False)
         try:
             startup = StartupDetail.objects.get(id=_id)
-            serializer = ProjectDetailSerializer(startup)
+            serializer = ProjectDetailGetSerializer(startup)
             return JsonResponse(serializer.data)
         except StartupDetail.DoesNotExist:
             return JsonResponse({"error": f"Project with id {_id} not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -61,11 +61,14 @@ class ProjectDetailView(APIView):
             new_id = 1 if highest_id is None else highest_id.id + 1
 
             request_data = request.data.copy()
-
             current_date = timezone.now().strftime("%Y-%m-%d")
+
+            if "ProjectCreatedAt" not in request_data:
+                request_data["ProjectCreatedAt"] = current_date
+
             serializer = ProjectDetailSerializer(data=request_data)
             if serializer.is_valid():
-                project = serializer.save(id=new_id, created_at=current_date)
+                project = serializer.save(id=new_id)
                 return Response(ProjectDetailSerializer(project).data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -76,8 +79,8 @@ class ProjectDetailView(APIView):
         project = get_object_or_404(StartupDetail, id=_id)
         serializer = ProjectDetailSerializer(project, data=request.data, partial=False)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            updated_project = serializer.save()
+            return Response(ProjectDetailSerializer(updated_project).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, _id):

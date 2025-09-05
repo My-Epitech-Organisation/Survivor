@@ -8,6 +8,28 @@ from admin_panel.models import Founder, StartupDetail
 class FounderSerializer(serializers.ModelSerializer):
     """
     Serializer for Founder model in the project detail endpoint.
+    For POST and PUT requests.
+    """
+
+    name = serializers.CharField(source="name")
+    picture = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Founder
+        fields = ["name", "picture"]
+
+    def get_picture(self, obj):
+        startup_detail = obj.startups.first()
+        if startup_detail and startup_detail.founders_images:
+            founder_id = str(obj.id)
+            if founder_id in startup_detail.founders_images:
+                return f"{settings.MEDIA_URL}{startup_detail.founders_images[founder_id]}"
+        return None
+
+
+class GetFounderSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Founder model in the project detail GET endpoint.
     """
 
     FounderID = serializers.IntegerField(source="id")
@@ -70,9 +92,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         return None
 
 
-class ProjectDetailSerializer(serializers.ModelSerializer):
+class ProjectDetailGetSerializer(serializers.ModelSerializer):
     """
-    Serializer for the project detail endpoint, providing detailed info about a specific project.
+    Serializer for the project detail GET endpoint, providing detailed info about a specific project.
     """
 
     ProjectId = serializers.IntegerField(source="id", read_only=True)
@@ -83,7 +105,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
     ProjectAddress = serializers.CharField(source="address", allow_null=True)
     ProjectLegalStatus = serializers.CharField(source="legal_status", allow_null=True)
     ProjectCreatedAt = serializers.CharField(source="created_at")
-    ProjectFounders = FounderSerializer(source="founders", many=True, read_only=True)
+    ProjectFounders = GetFounderSerializer(source="founders", many=True, read_only=True)
     ProjectEmail = serializers.CharField(source="email")
     ProjectPhone = serializers.CharField(source="phone")
     ProjectNeeds = serializers.CharField(source="needs", allow_null=True)
@@ -110,6 +132,98 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             "ProjectSocial",
             "ProjectWebsite",
         ]
+
+
+class ProjectDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the project detail endpoint for POST and PUT operations.
+    """
+
+    ProjectId = serializers.IntegerField(source="id", read_only=True)
+    ProjectName = serializers.CharField(source="name")
+    ProjectDescription = serializers.CharField(source="description", allow_null=True)
+    ProjectSector = serializers.CharField(source="sector", allow_null=True)
+    ProjectMaturity = serializers.CharField(source="maturity", allow_null=True)
+    ProjectAddress = serializers.CharField(source="address", allow_null=True)
+    ProjectLegalStatus = serializers.CharField(source="legal_status", allow_null=True)
+    ProjectCreatedAt = serializers.CharField(source="created_at")
+    ProjectFounders = FounderSerializer(source="founders", many=True)
+    ProjectEmail = serializers.CharField(source="email")
+    ProjectPhone = serializers.CharField(source="phone")
+    ProjectNeeds = serializers.CharField(source="needs", allow_null=True)
+    ProjectStatus = serializers.CharField(source="project_status", allow_null=True)
+    ProjectSocial = serializers.CharField(source="social_media_url", allow_null=True)
+    ProjectWebsite = serializers.CharField(source="website_url", allow_null=True)
+
+    class Meta:
+        model = StartupDetail
+        fields = [
+            "ProjectId",
+            "ProjectName",
+            "ProjectDescription",
+            "ProjectSector",
+            "ProjectMaturity",
+            "ProjectAddress",
+            "ProjectLegalStatus",
+            "ProjectCreatedAt",
+            "ProjectFounders",
+            "ProjectEmail",
+            "ProjectPhone",
+            "ProjectNeeds",
+            "ProjectStatus",
+            "ProjectSocial",
+            "ProjectWebsite",
+        ]
+
+    def create(self, validated_data):
+        founders_data = validated_data.pop("founders", [])
+        project = StartupDetail.objects.create(**validated_data)
+
+        if founders_data:
+            founders_images = {}
+            for founder_data in founders_data:
+                highest_founder_id = Founder.objects.all().order_by("-id").first()
+                new_founder_id = 1 if highest_founder_id is None else highest_founder_id.id + 1
+
+                founder = Founder.objects.create(id=new_founder_id, name=founder_data["name"], startup_id=project.id)
+
+                if founder_data.get("picture"):
+                    founders_images[str(founder.id)] = founder_data["picture"]
+
+                project.founders.add(founder)
+
+            if founders_images:
+                project.founders_images = founders_images
+                project.save()
+
+        return project
+
+    def update(self, instance, validated_data):
+        founders_data = validated_data.pop("founders", None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if founders_data is not None:
+            instance.founders.clear()
+
+            founders_images = {}
+            for founder_data in founders_data:
+                highest_founder_id = Founder.objects.all().order_by("-id").first()
+                new_founder_id = 1 if highest_founder_id is None else highest_founder_id.id + 1
+
+                founder = Founder.objects.create(id=new_founder_id, name=founder_data["name"], startup_id=instance.id)
+
+                if founder_data.get("picture"):
+                    founders_images[str(founder.id)] = founder_data["picture"]
+
+                instance.founders.add(founder)
+
+            if founders_images:
+                instance.founders_images = founders_images
+
+        instance.save()
+        return instance
 
 
 class UserSerializer(serializers.ModelSerializer):
