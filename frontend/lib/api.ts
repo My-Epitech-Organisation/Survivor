@@ -83,46 +83,62 @@ export const api = {
   get: async <T = unknown>(
     endpoint: string,
     token?: string
-  ): Promise<{ data: T }> => {
+  ): Promise<{ data: T | null }> => {
     const response = await apiGet(endpoint, token);
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    const data = await response.json();
-    return { data };
+    try {
+      const data = await response.json();
+      return { data };
+    } catch (error) {
+      return { data: null as T | null };
+    }
   },
 
   post: async <T = unknown>(
     endpoint: string,
     data?: unknown
-  ): Promise<{ data: T }> => {
+  ): Promise<{ data: T | null }> => {
     const response = await apiPost(endpoint, data);
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    const responseData = await response.json();
-    return { data: responseData };
+    try {
+      const responseData = await response.json();
+      return { data: responseData };
+    } catch (error) {
+      return { data: null as T | null };
+    }
   },
 
   put: async <T = unknown>(
     endpoint: string,
     data?: unknown
-  ): Promise<{ data: T }> => {
+  ): Promise<{ data: T | null }> => {
     const response = await apiPut(endpoint, data);
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    const responseData = await response.json();
-    return { data: responseData };
+    try {
+      const responseData = await response.json();
+      return { data: responseData };
+    } catch (error) {
+      return { data: null as T | null };
+    }
   },
 
-  delete: async <T = unknown>(endpoint: string): Promise<{ data: T }> => {
+  delete: async <T = unknown>(endpoint: string): Promise<{ data: T | null }> => {
     const response = await apiDelete(endpoint);
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    const responseData = await response.json();
-    return { data: responseData };
+    try {
+      const responseData = await response.json();
+      return { data: responseData };
+    } catch (error) {
+      return { data: null as T | null };
+    }
   },
 };
 

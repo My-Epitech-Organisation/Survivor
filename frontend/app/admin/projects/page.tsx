@@ -31,6 +31,10 @@ export default function AdminProjects() {
     try {
       console.debug("Fetching projects from API");
       const response = await api.get<ProjectOverviewProps[]>("/projects/");
+      if (!response.data) {
+        console.error("No project data found");
+        return;
+      }
       setProjects(response.data);
       console.debug("Projects loaded:", response.data);
     } catch (error) {
@@ -51,7 +55,7 @@ export default function AdminProjects() {
             Projects Management
           </h1>
           <Dialog>
-            <DialogTrigger 
+            <DialogTrigger
               className="inline-flex items-center justify-center gap-2 bg-app-blue-primary hover:bg-app-blue-primary-hover rounded-lg px-6 py-3 text-white font-medium shadow-md hover:shadow-lg transition-all duration-300 group"
               onClick={(e) => {
                 const button = e.currentTarget;

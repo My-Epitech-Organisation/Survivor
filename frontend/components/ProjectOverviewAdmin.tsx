@@ -51,11 +51,30 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
         console.error("Error updating project:", error);
       });
   }
+
+  const handleDeleteProject = () => {
+    api.delete(`/projects/${props.ProjectId}/`)
+      .then(response => {
+        console.log("Project deleted successfully:", response.data);
+        if (closeDialogRef.current) {
+          closeDialogRef.current.click();
+        }
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error("Error deleting project:", error);
+      });
+  }
+
   const fetchProject = async () => {
     try {
       const response = await api.get<ProjectDetailsProps>(
         `/projects/${props.ProjectId}`
       );
+      if (!response.data) {
+        console.error("No project data found");
+        return;
+      }
       setprojectDetails(response.data);
       
       const details = response.data;
@@ -195,7 +214,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
         </div>
 
         {/* More Information Button */}
-        <div className="pt-7 border-t grid grid-cols-2 gap-4 border-app-border-light mt-auto space-y-0">
+        <div className="pt-7 h-[8vh] border-t grid grid-cols-2 gap-4 border-app-border-light mt-auto space-y-0">
           <Dialog>
             <DialogTrigger
               className="rounded-md w-full text-app-white hover:text-app-white bg-app-blue-primary hover:bg-app-blue-primary-hover cursor-pointer transition-all duration-300 group"
@@ -224,24 +243,46 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
               </div>
             </DialogContent>
           </Dialog>
-          <Button
-            className="w-full text-app-white hover:text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 group"
-            onClick={(e) => {
-                e.preventDefault();
-                const button = e.currentTarget;
-                button.classList.add('scale-95');
-                setTimeout(() => button.classList.remove('scale-95'), 150);
-                console.log('Delete project:', props.ProjectId);
-            }}
+
+          <Dialog>
+            <DialogTrigger
+              className="rounded-md w-full text-app-white hover:text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 group"
+              onClick={() => fetchProject()}
             >
-            <div className="flex items-center justify-center gap-2">
-              <div className="relative h-4 w-4 flex items-center justify-center">
-                <FaTrashAlt className="h-4 w-4 absolute transition-opacity duration-200 opacity-100 group-hover:opacity-0" />
-                <FaTrash className="h-4 w-4 absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
+              <div className="flex items-center justify-center gap-2">
+                <div className="relative h-4 w-4 flex items-center justify-center">
+                  <FaTrashAlt className="h-4 w-4 absolute transition-opacity duration-200 opacity-100 group-hover:opacity-0" />
+                  <FaTrash className="h-4 w-4 absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
+                </div>
+                <span>Delete</span>
               </div>
-              <span>Delete</span>
-            </div>
-          </Button>
+            </DialogTrigger>
+            <DialogOverlay className="fixed inset-0 bg-black/50 z-40" />
+            <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-0 min-w-[15%] max-h-[85vh] shadow-lg z-50 flex flex-col">
+              <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-lg">
+                <DialogTitle className="text-xl font-bold">
+                  Delete Project
+                </DialogTitle>
+                <DialogClose className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center" ref={closeDialogRef}>
+                  <span className="sr-only">Close</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+                  </svg>
+                </DialogClose>
+              </div>
+              <div className="p-4 md:p-6 overflow-y-auto">
+                Are you sure you want to delete this project ? This action cannot be undone.
+                <div className="mt-4">
+                  <Button
+                    className="w-full text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300"
+                    onClick={handleDeleteProject}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </CardContent>
     </Card>
