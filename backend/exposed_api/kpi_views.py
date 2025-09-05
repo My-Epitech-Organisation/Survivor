@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from auditlog.models import AuditLog
 from authentication.models import CustomUser
 from authentication.permissions import IsAdmin
 from django.db.models import Count, F, Q
@@ -11,7 +12,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 from admin_panel.models import Event, StartupDetail
-from auditlog.models import AuditLog
 
 from .models import ProjectView, SiteStatistics
 from .serializers import ProjectViewStatsSerializer
@@ -131,16 +131,12 @@ def recent_actions(request):
     This endpoint requires admin privileges.
     """
     limit = 5
-    recent_logs = AuditLog.objects.all().order_by('-timestamp')[:limit]
+    recent_logs = AuditLog.objects.all().order_by("-timestamp")[:limit]
     data = []
     for log in recent_logs:
-        data.append({
-            "id": log.id,
-            "action": log.action,
-            "user": log.user,
-            "time": log.timestamp.isoformat(),
-            "type": log.type
-        })
+        data.append(
+            {"id": log.id, "action": log.action, "user": log.user, "time": log.timestamp.isoformat(), "type": log.type}
+        )
 
     return JsonResponse(data, safe=False)
 
