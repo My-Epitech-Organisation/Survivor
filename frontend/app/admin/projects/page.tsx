@@ -1,7 +1,7 @@
 "use client";
 import AdminNavigation from "@/components/AdminNavigation";
 import ProjectOverviewAdmin from "@/components/ProjectOverviewAdmin";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useRef } from "react";
 import { FormProjectDetails, ProjectDetailsProps, ProjectOverviewProps } from "@/types/project";
 import { api } from "@/lib/api";
 import { FaPlus } from "react-icons/fa";
@@ -12,12 +12,15 @@ import AdminProjectForm from "@/components/AdminProjectForm";
 
 export default function AdminProjects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
-
+  const closeDialogRef = useRef<HTMLButtonElement>(null);
 
   let handleNewProjectSubmit = (data: FormProjectDetails) => {
     api.post("/projects/", data)
       .then(response => {
         console.log("Project created successfully:", response.data);
+        if (closeDialogRef.current) {
+          closeDialogRef.current.click();
+        }
         fetchProjects();
       }).catch(error => {
         console.error("Error creating project:", error);
@@ -70,7 +73,7 @@ export default function AdminProjects() {
                 <DialogTitle className="text-xl font-bold">
                   Add New Project
                 </DialogTitle>
-                <DialogClose asChild>
+                <DialogClose asChild ref={closeDialogRef}>
                   <button
                     className="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors focus:outline-none"
                     aria-label="Close"

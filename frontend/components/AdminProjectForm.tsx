@@ -36,9 +36,23 @@ export default function AdminProjectForm({ defaultData, onSubmit }: AdminProject
     }
   }, [defaultData]);
 
-  const [location, setLocation] = useState<string>(defaultData?.ProjectAddress?.split(", ")?.[1]?.split(" ")?.[1] || "");
-  const [address, setAddress] = useState<string>(defaultData?.ProjectAddress?.split(", ")?.[0] || "");
-  const [zipcode, setZipcode] = useState<string>(defaultData?.ProjectAddress?.split(", ")?.[1]?.split(" ")?.[0] || "");
+  const [location, setLocation] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [zipcode, setZipcode] = useState<string>("");
+
+  useEffect(() => {
+    if (defaultData?.ProjectAddress) {
+      const addressParts = defaultData.ProjectAddress.split(", ");
+      if (addressParts.length === 2) {
+        setAddress(addressParts[0]);
+        const locationParts = addressParts[1].split(" ");
+        if (locationParts.length >= 2) {
+          setZipcode(locationParts[0]);
+          setLocation(locationParts.slice(1).join(" "));
+        }
+      }
+    }
+  }, [defaultData?.ProjectAddress]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;

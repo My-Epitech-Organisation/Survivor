@@ -28,52 +28,57 @@ import {
   Info,
 } from "lucide-react";
 import ProjectDetails from "./ProjectDetails";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { api } from "@/lib/api";
 import AdminProjectForm from "./AdminProjectForm";
 
 export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
   const [projectDetails, setprojectDetails] = useState<ProjectDetailsProps>();
   const [formData, setFormData] = useState<FormProjectDetails>();
+  const closeDialogRef = useRef<HTMLButtonElement>(null);
 
   let handleEditProjectSubmit = (data: FormProjectDetails) => {
     console.log("Edited project data received in ProjectOverviewAdmin:", data);
-    // Here you would typically send the data to your API to update the project
-    // For demonstration, we'll just log it and close the dialog
-    // You can also optimistically update the UI if desired
+    api.put(`/projects/${props.ProjectId}/`, data)
+      .then(response => {
+        console.log("Project updated successfully:", response.data);
+        if (closeDialogRef.current) {
+          closeDialogRef.current.click();
+        }
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error("Error updating project:", error);
+      });
   }
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const response = await api.get<ProjectDetailsProps>(
-          `/projects/${props.ProjectId}`
-        );
-        setprojectDetails(response.data);
-        
-        const details = response.data;
-        setFormData({
-          ProjectName: details.ProjectName || "",
-          ProjectDescription: details.ProjectDescription || "",
-          ProjectSector: details.ProjectSector || "",
-          ProjectMaturity: details.ProjectMaturity || "",
-          ProjectAddress: details.ProjectAddress || "",
-          ProjectLegalStatus: details.ProjectLegalStatus || "",
-          ProjectCreatedAt: details.ProjectCreatedAt || "",
-          ProjectFounders: details.ProjectFounders || [],
-          ProjectEmail: details.ProjectEmail || "",
-          ProjectPhone: details.ProjectPhone || "",
-          ProjectWebsite: details.ProjectWebsite || "",
-          ProjectSocial: details.ProjectSocial || "",
-          ProjectNeeds: details.ProjectNeeds || "",
-          ProjectStatus: details.ProjectStatus || "",
-        });
-      } catch (error) {
-        console.error("Erreur API:", error);
-      }
-    };
-    
-    fetchProject();
-  }, [props.ProjectId]);
+  const fetchProject = async () => {
+    try {
+      const response = await api.get<ProjectDetailsProps>(
+        `/projects/${props.ProjectId}`
+      );
+      setprojectDetails(response.data);
+      
+      const details = response.data;
+      setFormData({
+        ProjectName: details.ProjectName || "",
+        ProjectDescription: details.ProjectDescription || "",
+        ProjectSector: details.ProjectSector || "",
+        ProjectMaturity: details.ProjectMaturity || "",
+        ProjectAddress: details.ProjectAddress || "",
+        ProjectLegalStatus: details.ProjectLegalStatus || "",
+        ProjectCreatedAt: details.ProjectCreatedAt || "",
+        ProjectFounders: details.ProjectFounders || [],
+        ProjectEmail: details.ProjectEmail || "",
+        ProjectPhone: details.ProjectPhone || "",
+        ProjectWebsite: details.ProjectWebsite || "",
+        ProjectSocial: details.ProjectSocial || "",
+        ProjectNeeds: details.ProjectNeeds || "",
+        ProjectStatus: details.ProjectStatus || "",
+      });
+    } catch (error) {
+      console.error("Erreur API:", error);
+    }
+  };
 
   return (
     <Card className="w-full hover:shadow-xl transition-all duration-300 border border-app-border-light bg-app-surface overflow-hidden flex flex-col h-full">
@@ -194,6 +199,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
           <Dialog>
             <DialogTrigger
               className="rounded-md w-full text-app-white hover:text-app-white bg-app-blue-primary hover:bg-app-blue-primary-hover cursor-pointer transition-all duration-300 group"
+              onClick={() => fetchProject()}
             >
               <div className="flex items-center justify-center gap-2">
                 <FaPencilAlt className="h-3.5 w-3.5" />
@@ -206,7 +212,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
                 <DialogTitle className="text-xl font-bold">
                   Edit Project
                 </DialogTitle>
-                <DialogClose className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center">
+                <DialogClose className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center" ref={closeDialogRef}>
                   <span className="sr-only">Close</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 6 6 18" /><path d="m6 6 12 12" />
