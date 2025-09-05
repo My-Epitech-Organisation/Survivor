@@ -31,6 +31,7 @@ interface ChartRadialTextProps {
   trendingPercentage?: number;
   centerLabel?: string;
   endAngle?: number;
+  startAngle?: number;
   maxHeight?: string;
 }
 
@@ -52,6 +53,7 @@ export function ChartRadialText({
   trendingPercentage,
   centerLabel = "Rate",
   endAngle = 250,
+  startAngle = 0,
   maxHeight = "450px",
 }: ChartRadialTextProps) {
   return (
@@ -68,7 +70,7 @@ export function ChartRadialText({
         >
           <RadialBarChart
             data={data}
-            startAngle={0}
+            startAngle={startAngle}
             endAngle={endAngle}
             innerRadius={120}
             outerRadius={170}
