@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "admin_panel",
     "exposed_api.apps.ExposedApiConfig",
     "authentication.apps.AuthenticationConfig",
+    "messaging.apps.MessagingConfig",
 ]
 
 MIDDLEWARE = [

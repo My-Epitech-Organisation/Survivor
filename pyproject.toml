@@ -97,6 +97,8 @@ ignore = [
     "RET504",   # Return type missing
 
     "ARG002",   # Unused function argument
+    "C901",   # Function is too complex
+    "PLR0915",  # Too many statements
 ]
 
 # Allow autofix for all enabled rules (when '--fix') is provided
