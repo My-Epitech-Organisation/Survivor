@@ -57,5 +57,14 @@ class ProjectView(models.Model):
         ]
 
     def __str__(self):
+        """Return a human-readable representation of this view event.
+
+        The returned string is formatted as "<project name> viewed by <user_info> at <timestamp>".
+        If the view has an associated user, <user_info> is the user's email; otherwise it is
+        "Anonymous (<ip_address>)".
+
+        Returns:
+            str: A descriptive string for this view event.
+        """
         user_info = self.user.email if self.user else f"Anonymous ({self.ip_address})"
         return f"{self.project.name} viewed by {user_info} at {self.timestamp}"

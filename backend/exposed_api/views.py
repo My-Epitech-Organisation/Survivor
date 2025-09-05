@@ -36,10 +36,7 @@ def record_project_view(request, project_id):
 
         # Get IP address
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-        if x_forwarded_for:
-            ip_address = x_forwarded_for.split(",")[0]
-        else:
-            ip_address = request.META.get("REMOTE_ADDR")
+        ip_address = x_forwarded_for.split(",")[0] if x_forwarded_for else request.META.get("REMOTE_ADDR")
 
         # Get session key for anonymous users
         session_key = request.session.session_key
