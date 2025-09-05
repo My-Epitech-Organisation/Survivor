@@ -8,7 +8,7 @@ const findChromiumPath = () => {
     if (process.env.PUPPETEER_EXECUTABLE_PATH) {
       return process.env.PUPPETEER_EXECUTABLE_PATH;
     }
-    
+
     if (process.env.NODE_ENV === 'production') {
       try {
         const chromiumPath = '/usr/bin/chromium-browser';
@@ -17,7 +17,7 @@ const findChromiumPath = () => {
       } catch (e) {
         console.warn(`Chromium not found a the default location: ${e}`);
       }
-      
+
       try {
         const chromePath = '/usr/bin/chrome';
         execSync(`test -f ${chromePath}`);
@@ -38,7 +38,7 @@ const getPuppeteerConfig = () => {
   const isProduction = process.env.NODE_ENV === 'production';
   const isDocker = process.env.DOCKER_ENV === 'true';
   const chromiumPath = findChromiumPath();
-  
+
   if (isProduction || isDocker) {
     return {
       executablePath: chromiumPath,
@@ -69,7 +69,7 @@ const getPuppeteerConfig = () => {
     headless: true,
     ignoreHTTPSErrors: true,
     args: [
-      '--no-sandbox', 
+      '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
       '--disable-web-security'
@@ -100,7 +100,7 @@ const getCookieConfig = (token: string) => {
 
 export async function GET(request: NextRequest) {
   let browser = null;
-  
+
   try {
     const url = new URL(request.url);
     const pathParts = url.pathname.split('/');
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
       browser = await puppeteer.launch(getPuppeteerConfig());
     } catch (error: unknown) {
       console.error('Error launching browser:', error);
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to launch browser',
         details: error instanceof Error ? error.message : String(error),
         config: getPuppeteerConfig()
@@ -142,14 +142,14 @@ export async function GET(request: NextRequest) {
 
     const frontendUrl = getFrontendUrl();
     const exportUrl = `${frontendUrl}/projects/export-pdf/${token}`;
-    
+
     await page.evaluateOnNewDocument(`
       const originalFetch = window.fetch;
       window.fetch = async (...args) => {
         try {
           console.log('Fetch request:', args[0]);
           const response = await originalFetch(...args);
-          
+
           const clone = response.clone();
           if (clone.headers.get('content-type')?.includes('application/json')) {
             try {
@@ -169,7 +169,7 @@ export async function GET(request: NextRequest) {
       window.getAPIUrlOverride = function() {
         return 'http://backend:8000/api';
       };
-      
+
       window.getBackendUrlOverride = function() {
         return 'http://backend:8000';
       };
@@ -177,8 +177,8 @@ export async function GET(request: NextRequest) {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      await page.goto(exportUrl, { 
+
+      await page.goto(exportUrl, {
         waitUntil: 'networkidle2',
         timeout: 60000
       });
@@ -188,7 +188,7 @@ export async function GET(request: NextRequest) {
     }
 
     await new Promise(resolve => setTimeout(resolve, 10000));
-    
+
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -214,7 +214,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('PDF Generation Error:', error);
-    
+
     if (browser) {
       try {
         const page = (await browser.pages())[0];
@@ -231,17 +231,17 @@ export async function GET(request: NextRequest) {
         console.error('Error closing browser:', closeError);
       }
     }
-    
+
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const isTimeoutError = errorMessage.includes('timeout') || errorMessage.includes('Timeout');
     const isNavigationError = errorMessage.includes('Navigation') || errorMessage.includes('net::');
-    
+
     return NextResponse.json(
-      { 
-        error: 'PDF generation failed', 
+      {
+        error: 'PDF generation failed',
         details: errorMessage,
-        suggestion: isTimeoutError 
-          ? 'The page took too long to load. Please try again or check network connectivity.' 
+        suggestion: isTimeoutError
+          ? 'The page took too long to load. Please try again or check network connectivity.'
           : isNavigationError
             ? 'Failed to navigate to the export page. Please check if the service is accessible.'
             : 'Please check the logs for more details.'
