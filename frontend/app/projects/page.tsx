@@ -26,6 +26,10 @@ export default function Projects() {
       try {
         console.debug("Fetching projects from API");
         const response = await api.get<ProjectOverviewProps[]>("/projects/");
+        if (!response.data) {
+          console.error("No project data found");
+          return;
+        }
         setProjects(response.data);
         console.debug("Projects loaded:", response.data);
 

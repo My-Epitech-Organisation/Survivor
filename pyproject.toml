@@ -100,6 +100,7 @@ ignore = [
     "C901",   # Function is too complex
     "PLR0915",  # Too many statements
     "PLR0913",  # Too many arguments
+    "SIM108",  # Use ternary operator
 ]
 
 # Allow autofix for all enabled rules (when '--fix') is provided

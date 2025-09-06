@@ -15,6 +15,7 @@ services:
       - ./backend:/app:cached
     networks:
       - survivor_network
+    stop_grace_period: 10s
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthz/"]
       interval: 60s
@@ -22,6 +23,8 @@ services:
       retries: 4
       start_period: 120s
       start_interval: 10s
+    tty: false
+    stdin_open: false
 
   frontend:
     build:
@@ -35,6 +38,9 @@ services:
         condition: service_healthy
     networks:
       - survivor_network
+    stop_grace_period: 10s
+    tty: false
+    stdin_open: false
 
 networks:
   survivor_network:

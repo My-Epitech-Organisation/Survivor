@@ -220,24 +220,43 @@ def fetch_startup_detail(startup_id, headers):
         detail_response = fetch_with_retry(detail_url, headers=headers)
         startup_detail_data = detail_response.json()
 
-        startup_detail = StartupDetail(
-            id=startup_detail_data.get("id"),
-            name=startup_detail_data.get("name"),
-            legal_status=startup_detail_data.get("legal_status"),
-            address=startup_detail_data.get("address"),
-            email=startup_detail_data.get("email"),
-            phone=startup_detail_data.get("phone"),
-            created_at=startup_detail_data.get("created_at"),
-            description=startup_detail_data.get("description"),
-            website_url=startup_detail_data.get("website_url"),
-            social_media_url=startup_detail_data.get("social_media_url"),
-            project_status=startup_detail_data.get("project_status"),
-            needs=startup_detail_data.get("needs"),
-            sector=startup_detail_data.get("sector"),
-            maturity=startup_detail_data.get("maturity"),
-            founders_images={},
-        )
+        try:
+            startup_detail = StartupDetail.objects.get(id=startup_detail_data.get("id"))
+            startup_detail.name = startup_detail_data.get("name")
+            startup_detail.legal_status = startup_detail_data.get("legal_status")
+            startup_detail.address = startup_detail_data.get("address")
+            startup_detail.email = startup_detail_data.get("email")
+            startup_detail.phone = startup_detail_data.get("phone")
+            startup_detail.created_at = startup_detail_data.get("created_at")
+            startup_detail.description = startup_detail_data.get("description")
+            startup_detail.website_url = startup_detail_data.get("website_url")
+            startup_detail.social_media_url = startup_detail_data.get("social_media_url")
+            startup_detail.project_status = startup_detail_data.get("project_status")
+            startup_detail.needs = startup_detail_data.get("needs")
+            startup_detail.sector = startup_detail_data.get("sector")
+            startup_detail.maturity = startup_detail_data.get("maturity")
+            startup_detail.founders_images = {}
+        except StartupDetail.DoesNotExist:
+            startup_detail = StartupDetail(
+                id=startup_detail_data.get("id"),
+                name=startup_detail_data.get("name"),
+                legal_status=startup_detail_data.get("legal_status"),
+                address=startup_detail_data.get("address"),
+                email=startup_detail_data.get("email"),
+                phone=startup_detail_data.get("phone"),
+                created_at=startup_detail_data.get("created_at"),
+                description=startup_detail_data.get("description"),
+                website_url=startup_detail_data.get("website_url"),
+                social_media_url=startup_detail_data.get("social_media_url"),
+                project_status=startup_detail_data.get("project_status"),
+                needs=startup_detail_data.get("needs"),
+                sector=startup_detail_data.get("sector"),
+                maturity=startup_detail_data.get("maturity"),
+                founders_images={},
+            )
+
         startup_detail.save()
+        startup_detail.founders.clear()
 
         founders_data = startup_detail_data.get("founders", [])
         founders_images = {}
@@ -248,8 +267,14 @@ def fetch_startup_detail(startup_id, headers):
                 founder_name = founder_data.get("name")
 
                 if founder_id and founder_name:
-                    founder = Founder(id=founder_id, name=founder_name, startup_id=startup_id)
+                    founder, created = Founder.objects.get_or_create(
+                        id=founder_id, defaults={"name": founder_name, "startup_id": startup_id}
+                    )
+
+                    founder.name = founder_name
+                    founder.startup_id = startup_id
                     founder.save()
+
                     startup_detail.founders.add(founder)
 
                 try:
@@ -297,21 +322,7 @@ def fetch_and_create_startups():
         response = fetch_with_retry(url, params=params, headers=headers)
         startups_data = response.json()
 
-        StartupList = apps.get_model("admin_panel", "StartupList")
-
         for item in startups_data:
-            startup = StartupList(
-                id=item.get("id"),
-                name=item.get("name"),
-                legal_status=item.get("legal_status"),
-                address=item.get("address"),
-                email=item.get("email"),
-                phone=item.get("phone"),
-                sector=item.get("sector"),
-                maturity=item.get("maturity"),
-            )
-            startup.save()
-
             startup_id = item.get("id")
             fetch_startup_detail(startup_id, headers)
 

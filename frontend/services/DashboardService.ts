@@ -45,7 +45,7 @@ export const DashboardService = {
   getTotalUsers: async (): Promise<TotalCountResponse> => {
     try {
       const { data } = await api.get<TotalCountResponse>(API_ENDPOINTS.TOTAL_USERS);
-      return data;
+      return data || { value: 0 };
     } catch (error) {
       console.error('Error fetching total users:', error);
       return { value: 0 };
@@ -56,7 +56,7 @@ export const DashboardService = {
   getTotalStartups: async (): Promise<TotalCountResponse> => {
     try {
       const { data } = await api.get<TotalCountResponse>(API_ENDPOINTS.TOTAL_STARTUPS);
-      return data;
+      return data || { value: 0 };
     } catch (error) {
       console.error('Error fetching total startups:', error);
       return { value: 0 };
@@ -67,7 +67,7 @@ export const DashboardService = {
   getTotalEvents: async (): Promise<TotalCountResponse> => {
     try {
       const { data } = await api.get<TotalCountResponse>(API_ENDPOINTS.TOTAL_EVENTS);
-      return data;
+      return data || { value: 0 };
     } catch (error) {
       console.error('Error fetching total events:', error);
       return { value: 0 };
@@ -78,7 +78,7 @@ export const DashboardService = {
   getNewSignups: async (): Promise<TotalCountResponse> => {
     try {
       const { data } = await api.get<TotalCountResponse>(API_ENDPOINTS.NEW_SIGNUPS);
-      return data;
+      return data || { value: 0 };
     } catch (error) {
       console.error('Error fetching new signups:', error);
       return { value: 0 };
@@ -89,7 +89,7 @@ export const DashboardService = {
   getProjectVisibility: async (): Promise<ProjectVisibilityItem[]> => {
     try {
       const { data } = await api.get<ProjectVisibilityItem[]>(API_ENDPOINTS.PROJECTS_VISIBILITY);
-      return data;
+      return data || [];
     } catch (error) {
       console.error('Error fetching project visibility:', error);
       return [];
@@ -100,7 +100,7 @@ export const DashboardService = {
   getUsersConnected: async (): Promise<UsersConnectedResponse> => {
     try {
       const { data } = await api.get<UsersConnectedResponse>(API_ENDPOINTS.USERS_CONNECTED);
-      return data;
+      return data || { rate: 0 };
     } catch (error) {
       console.error('Error fetching users connected ratio:', error);
       return { rate: 0 };
@@ -111,7 +111,15 @@ export const DashboardService = {
   getMonthlyStats: async (): Promise<MonthlyStatsResponse> => {
     try {
       const { data } = await api.get<MonthlyStatsResponse>(API_ENDPOINTS.MONTHLY_STATS);
-      return data;
+      return data || {
+        projectsLaunched: 0,
+        eventsCreated: 0,
+        activeSessions: 0,
+        newSignups: 0,
+        totalViews: 0,
+        avgViewsPerProject: 0,
+        avgSessionDuration: '0m 0s',
+      };
     } catch (error) {
       console.error('Error fetching monthly stats:', error);
       return {
@@ -130,7 +138,7 @@ export const DashboardService = {
   getMostViewedProjects: async (limit: number = 5): Promise<MostViewedProject[]> => {
     try {
       const { data } = await api.get<MostViewedProject[]>(`${API_ENDPOINTS.MOST_VIEWED_PROJECTS}?limit=${limit}`);
-      return data;
+      return data || [];
     } catch (error) {
       console.error('Error fetching most viewed projects:', error);
       return [];
@@ -141,7 +149,7 @@ export const DashboardService = {
   getRecentActions: async (): Promise<RecentAction[]> => {
     try {
       const { data } = await api.get<RecentAction[]>(API_ENDPOINTS.RECENT_ACTIONS);
-      return data;
+      return data || [];
     } catch (error) {
       console.error('Error fetching recent actions:', error);
       return [];
