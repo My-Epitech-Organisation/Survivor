@@ -1,55 +1,72 @@
+"use client";
+
+import ChatComponent from "@/components/ChatComponent";
+import ChatSideBar from "@/components/ChatSideBar";
+import Footer from "@/components/Footer";
 import StartupNavigation from "@/components/StartupNavigation";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { TbLoader3 } from "react-icons/tb";
 
 export default function StartupMessaging() {
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  useEffect(() => {
+    
+  })
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-app-gradient-from to-app-gradient-to overflow-hidden">
       <StartupNavigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
-            Messaging Center
-          </h1>
-          <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
-            Connect with investors, partners, and other startups through our
-            messaging platform.
-          </p>
-        </div>
-
-        {/* Messaging content placeholder */}
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-app-surface rounded-lg shadow-md p-8">
-            <h3 className="text-2xl font-semibold text-app-text-primary mb-6">
-              Messages
-            </h3>
-            <p className="text-app-text-secondary mb-8">
-              Messaging functionality will be implemented here, including direct
-              messages, group conversations, and communication with potential
-              investors and partners.
+      <main className="flex-1 flex flex-col items-center px-2 sm:px-4 lg:px-6 py-2 min-h-[100dvh] lg:justify-center lg:items-stretch">
+        {isDataLoading ? (
+          <div className="flex flex-col items-center justify-center h-full">
+            <TbLoader3 className="size-12 animate-spin text-blue-600 mb-4" />
+            <p className="text-app-text-secondary text-lg">
+              Loading messages...
             </p>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div>
-                <h4 className="text-lg font-medium text-app-text-primary mb-4">
-                  Conversations
-                </h4>
-                <p className="text-app-text-secondary">
-                  List of active conversations and contacts.
-                </p>
-              </div>
-
-              <div className="lg:col-span-2">
-                <h4 className="text-lg font-medium text-app-text-primary mb-4">
-                  Chat Area
-                </h4>
-                <p className="text-app-text-secondary">
-                  Real-time messaging interface will be displayed here.
-                </p>
-              </div>
-            </div>
           </div>
-        </div>
+        ) : (
+          <div className="w-full max-w-[95vw] flex items-center justify-center h-full lg:items-start lg:justify-center">
+            <Card className="h-full shadow-lg lg:h-[700px] lg:my-8">
+              <CardContent className="p-4 lg:p-8 h-full">
+                <div className="flex gap-4 lg:gap-8 h-full">
+                  {/* Sidebar - Only visible on desktop */}
+                  <div className="hidden lg:block w-80 flex-shrink-0">
+                    <ChatSideBar />
+                  </div>
+                  {/* Separator - visible only on desktop */}
+                  <div className="hidden lg:block">
+                    <Separator orientation="vertical" className="h-full" />
+                  </div>
+                  {/* Main chat area */}
+                  <div className="flex-1 min-w-0 relative">
+                    <ChatComponent onOpenConversations={() => setIsSidebarOpen(true)} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            {/* Conversations Dialog for mobile */}
+            <Dialog open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+              <DialogContent className="max-w-sm mx-auto max-h-[70vh]">
+                <DialogHeader>
+                  <DialogTitle>Conversations</DialogTitle>
+                </DialogHeader>
+                <div className="overflow-y-auto max-h-[50vh]">
+                  <ChatSideBar />
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
       </main>
+      <Footer/>
     </div>
   );
 }
