@@ -40,7 +40,7 @@ class NewsListView(APIView):
 
             news = serializer.save()
             AuditLog.objects.create(
-                action=f"New news item created: {news.title}", user=request.user.username, type="news"
+                action=f"New news item created: {news.title}", user=request.user.name, type="news"
             )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -93,7 +93,7 @@ class NewsDetailView(APIView):
 
             updated_news = serializer.save()
             AuditLog.objects.create(
-                action=f"News item updated: {updated_news.title}", user=request.user.username, type="news"
+                action=f"News item updated: {updated_news.title}", user=request.user.name, type="news"
             )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -108,7 +108,7 @@ class NewsDetailView(APIView):
             return Response({"error": "News not found"}, status=status.HTTP_404_NOT_FOUND)
 
         news_title = news.title
-        AuditLog.objects.create(action=f"News item deleted: {news_title}", user=request.user.username, type="news")
+        AuditLog.objects.create(action=f"News item deleted: {news_title}", user=request.user.name, type="news")
 
         news.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

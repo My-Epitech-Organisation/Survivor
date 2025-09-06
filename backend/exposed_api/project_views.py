@@ -70,7 +70,7 @@ class ProjectDetailView(APIView):
 
             AuditLog.objects.create(
                 action=f"New project created: {serializer.validated_data.get('name')}",
-                user=request.user.username,
+                user=request.user.name,
                 type="project",
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -85,7 +85,7 @@ class ProjectDetailView(APIView):
 
             AuditLog.objects.create(
                 action=f"Project updated: {serializer.validated_data.get('name')}",
-                user=request.user.username,
+                user=request.user.name,
                 type="project",
             )
             return Response(serializer.data)
@@ -98,7 +98,7 @@ class ProjectDetailView(APIView):
         project.delete()
         AuditLog.objects.create(
             action=f"Project deleted: {project_name}",
-            user=request.user.username,
+            user=request.user.name,
             type="project",
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
