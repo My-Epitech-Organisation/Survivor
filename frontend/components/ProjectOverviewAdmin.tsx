@@ -33,13 +33,13 @@ import { useState, useRef } from "react";
 import { api } from "@/lib/api";
 import AdminProjectForm from "./AdminProjectForm";
 import { Founder, MinimalFounder } from "@/types/founders";
+import { toast } from "sonner"
 
 export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
   const [formData, setFormData] = useState<FormProjectDetails>();
   const closeDialogRef = useRef<HTMLButtonElement>(null);
 
   const handleEditProjectSubmit = (data: FormProjectDetails) => {
-    console.log("Edited project data received in ProjectOverviewAdmin:", data);
 
     const apiData = {
       ...data,
@@ -49,7 +49,6 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
       })),
     };
 
-    console.log("DATA: ", apiData);
     api
       .put(`/projects/${props.ProjectId}/`, apiData)
       .then((response) => {
@@ -57,7 +56,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
         if (closeDialogRef.current) {
           closeDialogRef.current.click();
         }
-        window.location.reload();
+        // window.location.reload();
       })
       .catch((error) => {
         console.error("Error updating project:", error);

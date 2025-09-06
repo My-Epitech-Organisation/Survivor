@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { getBackendUrl } from "@/lib/config";
+import { toast } from "sonner"
 
 interface AdminProjectFormProps {
   defaultData?: FormProjectDetails;
@@ -281,15 +282,62 @@ export default function AdminProjectForm({
   };
   const handleSubmitProject = async () => {
     try {
-      console.log("Form data to be submitted:", formData);
+      const requiredFields = [
+        "ProjectName",
+        "ProjectDescription",
+        "ProjectSector",
+        "ProjectMaturity",
+        "ProjectLegalStatus",
+        "ProjectCreatedAt",
+        "ProjectEmail",
+        "ProjectPhone",
+        "ProjectWebsite",
+        "ProjectSocial",
+        "ProjectNeeds",
+        "ProjectStatus",
+      ];
+
+      const missingFields = requiredFields.filter(
+        (field) =>
+          !formData[field as keyof FormProjectDetails] ||
+          (typeof formData[field as keyof FormProjectDetails] === "string" &&
+        (formData[field as keyof FormProjectDetails] as string).trim() === "")
+      );
+
+      const missingLocationFields: string[] = [];
+      if (address.trim() === "") missingLocationFields.push("Address");
+      if (zipcode.trim() === "") missingLocationFields.push("Zip Code");
+      if (location.trim() === "") missingLocationFields.push("Location");
+
+      if (missingFields.length > 0 || missingLocationFields.length > 0) {
+        toast("Save error", {
+          className: "!text-red-500",
+          description: (
+        <span className="text-red-500">
+          Please fill all required fields: {[
+            ...missingFields,
+            ...missingLocationFields,
+          ].join(", ")}
+        </span>
+          ),
+        });
+        return;
+      }
 
       const formattedAddress = address + ", " + zipcode + " " + location;
       const updatedFormData = {
         ...formData,
         ProjectAddress: formattedAddress,
       };
+      if (updatedFormData.ProjectFounders.length == 0) {
+        toast("Save error", {
+          className: "!text-red-500",
+          description: <span className="text-red-500">You need to add founder(s)</span>,
+        });
+        return
+      }
 
-      console.log("Submitting project:", updatedFormData);
+      console.debug("Submitting project:", updatedFormData);
 
       onSubmit(updatedFormData);
     } catch (error) {
@@ -313,6 +361,7 @@ export default function AdminProjectForm({
               className="md:col-span-2"
               value={formData.ProjectName}
               onChange={handleInputChange}
+              required
             />
             <InputWithLabel
               label="Startup Description"
@@ -321,6 +370,7 @@ export default function AdminProjectForm({
               className="md:col-span-2"
               value={formData.ProjectDescription}
               onChange={handleInputChange}
+              required
             />
             <InputWithLabel
               label="Startup Sector"
@@ -328,6 +378,7 @@ export default function AdminProjectForm({
               placeholder="Enter Startup sector"
               value={formData.ProjectSector}
               onChange={handleInputChange}
+              required
             />
             <InputWithLabel
               label="Startup Maturity"
@@ -335,6 +386,7 @@ export default function AdminProjectForm({
               placeholder="Enter Startup maturity"
               value={formData.ProjectMaturity}
               onChange={handleInputChange}
+              required
             />
           </div>
         </div>
@@ -352,6 +404,7 @@ export default function AdminProjectForm({
               className="md:col-span-2"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
+              required
             />
             <InputWithLabel
               label="Startup Zip Code"
@@ -360,6 +413,7 @@ export default function AdminProjectForm({
               placeholder="Enter Startup zip code"
               value={zipcode}
               onChange={(e) => setZipcode(e.target.value)}
+              required
             />
             <InputWithLabel
               label="Startup Location"
@@ -367,6 +421,7 @@ export default function AdminProjectForm({
               placeholder="Enter Startup location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
+              required
             />
             <InputWithLabel
               label="Startup Legal Status"
@@ -374,6 +429,7 @@ export default function AdminProjectForm({
               placeholder="Enter Startup legal status"
               value={formData.ProjectLegalStatus}
               onChange={handleInputChange}
+              required
             />
             <InputWithLabel
               label="Startup Created"
@@ -382,11 +438,12 @@ export default function AdminProjectForm({
               placeholder="Enter Startup created date"
               value={formData.ProjectCreatedAt}
               onChange={handleInputChange}
+              required
             />
           </div>
         </div>
 
-        {/* Founders - This would need to be developed as a separate component */}
+        {/* Founders */}
         <AddFoundersSection
           founders={formData.ProjectFounders}
           onUpdateFounders={(updatedFounders) => {
@@ -396,23 +453,6 @@ export default function AdminProjectForm({
             }));
           }}
         />
-        {/* <div className="pt-2 border-t border-gray-100">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-lg font-semibold text-gray-800">Founders</h3>
-            <button
-              className="bg-gray-100 hover:bg-gray-200 text-gray-600 p-1.5 rounded-full transition-colors"
-              onClick={() => console.log("Add founder")}
-            >
-              <FaPlus size={14} />
-            </button>
-          </div>
-          <div className="bg-gray-50 rounded-md p-4 flex items-center justify-center">
-            <p className="text-gray-500 text-sm">
-              No founders added yet. Click the plus icon to add founders.
-            </p>
-          </div>
-        </div> */}
-
         {/* Contact Information */}
         <div className="pt-2 border-t border-gray-100">
           <h3 className="text-lg font-semibold text-gray-800 mb-3">
@@ -426,6 +466,7 @@ export default function AdminProjectForm({
               placeholder="Enter Project email"
               value={formData.ProjectEmail}
               onChange={handleInputChange}
+              required
             />
             <InputWithLabel
               label="Project Phone"
@@ -434,6 +475,7 @@ export default function AdminProjectForm({
               placeholder="Enter Project phone"
               value={formData.ProjectPhone}
               onChange={handleInputChange}
+              required
             />
             <InputWithLabel
               label="Project Website"
@@ -442,6 +484,7 @@ export default function AdminProjectForm({
               className="md:col-span-2"
               value={formData.ProjectWebsite}
               onChange={handleInputChange}
+              required
             />
             <InputWithLabel
               label="Project Social"
@@ -450,6 +493,7 @@ export default function AdminProjectForm({
               className="md:col-span-2"
               value={formData.ProjectSocial}
               onChange={handleInputChange}
+              required
             />
           </div>
         </div>
@@ -466,6 +510,7 @@ export default function AdminProjectForm({
               placeholder="Enter Project needs"
               value={formData.ProjectNeeds}
               onChange={handleInputChange}
+              required
             />
             <InputWithLabel
               label="Project Status"
@@ -473,6 +518,7 @@ export default function AdminProjectForm({
               placeholder="Enter Project status"
               value={formData.ProjectStatus}
               onChange={handleInputChange}
+              required
             />
           </div>
         </div>
