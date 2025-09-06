@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "exposed_api.apps.ExposedApiConfig",
     "authentication.apps.AuthenticationConfig",
     "messaging.apps.MessagingConfig",
+    "auditlog.apps.AuditlogConfig",
 ]
 
 MIDDLEWARE = [

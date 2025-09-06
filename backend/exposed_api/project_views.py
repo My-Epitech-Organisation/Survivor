@@ -1,3 +1,4 @@
+from auditlog.models import AuditLog
 from authentication.permissions import IsAdmin
 from django.http import JsonResponse
 from django.utils import timezone
@@ -77,6 +78,11 @@ class ProjectDetailView(APIView):
             serializer = ProjectDetailSerializer(data=request_data)
             if serializer.is_valid():
                 project = serializer.save(id=new_id)
+                AuditLog.objects.create(
+                    action=f"New project created: {project.name}",
+                    user=request.user.name,
+                    type="project",
+                )
                 return Response(ProjectDetailSerializer(project).data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -87,12 +93,23 @@ class ProjectDetailView(APIView):
         project = get_object_or_404(StartupDetail, id=_id)
         serializer = ProjectDetailSerializer(project, data=request.data, partial=False)
         if serializer.is_valid():
-            updated_project = serializer.save()
-            return Response(ProjectDetailSerializer(updated_project).data)
+            serializer.save()
+            AuditLog.objects.create(
+                action=f"Project updated: {serializer.instance.name}",
+                user=request.user.name,
+                type="project",
+            )
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, _id):
         """Handle DELETE requests - admin only"""
         project = get_object_or_404(StartupDetail, id=_id)
+        project_name = project.name
         project.delete()
+        AuditLog.objects.create(
+            action=f"Project deleted: {project_name}",
+            user=request.user.name,
+            type="project",
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)

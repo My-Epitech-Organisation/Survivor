@@ -167,7 +167,7 @@ export const DashboardService = {
         projectVisibility,
         usersConnected,
         monthlyStats,
-        // recentActions will remain mocked
+        recentActions
       ] = await Promise.all([
         DashboardService.getTotalUsers(),
         DashboardService.getTotalStartups(),
@@ -176,6 +176,7 @@ export const DashboardService = {
         DashboardService.getProjectVisibility(),
         DashboardService.getUsersConnected(),
         DashboardService.getMonthlyStats(),
+        DashboardService.getRecentActions(),
       ]);
 
       return {
@@ -186,6 +187,7 @@ export const DashboardService = {
         projectVisibility,
         usersConnected,
         monthlyStats,
+        recentActions
       };
     } catch (error) {
       console.error('Error fetching all dashboard data:', error);
