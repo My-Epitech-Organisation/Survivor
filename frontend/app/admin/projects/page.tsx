@@ -1,8 +1,9 @@
 "use client";
 import AdminNavigation from "@/components/AdminNavigation";
 import ProjectOverviewAdmin from "@/components/ProjectOverviewAdmin";
-import { useEffect, useState, useRef } from "react";
-import { FormProjectDetails, ProjectOverviewProps } from "@/types/project";
+import ProjectFilters from "@/components/ProjectFilters";
+import { useCallback, useEffect, useState, useRef } from "react";
+import { FormProjectDetails, ProjectFiltersProps, ProjectOverviewProps } from "@/types/project";
 import { api } from "@/lib/api";
 import { FaPlus } from "react-icons/fa";
 import {
@@ -20,6 +21,16 @@ export default function AdminProjects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
   const closeDialogRef = useRef<HTMLButtonElement>(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
+
+  const [locations, setLocations] = useState<string[]>([]);
+  const [maturities, setMaturities] = useState<string[]>([]);
+  const [sectors, setSectors] = useState<string[]>([]);
+
+  const [activeFilters, setActiveFilters] = useState({
+    locations: [] as string[],
+    maturities: [] as string[],
+    sectors: [] as string[],
+  });
 
   const handleNewProjectSubmit = (data: FormProjectDetails) => {
     api
@@ -47,14 +58,76 @@ export default function AdminProjects() {
       setProjects(response.data);
       console.debug("Projects loaded:", response.data);
       setIsDataLoading(false);
+
+      const uniqueLocations = [
+        ...new Set(
+          response.data.map(
+            (project: ProjectOverviewProps) => project.ProjectLocation
+          )
+        ),
+      ];
+      const uniqueMaturities = [
+        ...new Set(
+          response.data.map(
+            (project: ProjectOverviewProps) => project.ProjectMaturity
+          )
+        ),
+      ];
+      const uniqueSectors = [
+        ...new Set(
+          response.data.map(
+            (project: ProjectOverviewProps) => project.ProjectSector
+          )
+        ),
+      ];
+
+      setLocations(uniqueLocations as string[]);
+      setMaturities(uniqueMaturities as string[]);
+      setSectors(uniqueSectors as string[]);
     } catch (error) {
       console.error("Erreur API:", error);
     }
   };
 
+  const handleFiltersChange = useCallback(
+    (filters: {
+      locations: string[];
+      maturities: string[];
+      sectors: string[];
+    }) => {
+      setActiveFilters(filters);
+    },
+    []
+  );
+
+  const getFilteredProjects = () => {
+    return projects.filter((project) => {
+      const locationMatch =
+        activeFilters.locations.length === 0 ||
+        activeFilters.locations.includes(project.ProjectLocation);
+      const maturityMatch =
+        activeFilters.maturities.length === 0 ||
+        activeFilters.maturities.includes(project.ProjectMaturity);
+      const sectorMatch =
+        activeFilters.sectors.length === 0 ||
+        activeFilters.sectors.includes(project.ProjectSector);
+      return locationMatch && maturityMatch && sectorMatch;
+    });
+  };
+
+  const filteredProjects = getFilteredProjects();
+
+  const projectFilter: ProjectFiltersProps = {
+    ProjectLocation: locations,
+    ProjectMaturity: maturities,
+    ProjectSector: sectors,
+    onFiltersChange: handleFiltersChange,
+  };
+
   useEffect(() => {
     fetchProjects();
   }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
       <AdminNavigation />
@@ -69,7 +142,7 @@ export default function AdminProjects() {
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between mb-16">
+            <div className="flex items-center justify-between mb-8">
               <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary">
                 Projects Management
               </h1>
@@ -123,12 +196,30 @@ export default function AdminProjects() {
                 </DialogContent>
               </Dialog>
             </div>
-            {/* Projects content placeholder */}
+
+            {/* Filters Section */}
+            <div className="mb-8">
+              <ProjectFilters {...projectFilter} />
+            </div>
+
+            {/* Projects Grid */}
             <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
-              {projects.map((project) => (
+              {filteredProjects.map((project) => (
                 <ProjectOverviewAdmin key={project.ProjectId} {...project} />
               ))}
             </div>
+
+            {/* Message if no projects found */}
+            {filteredProjects.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-app-text-secondary text-lg">
+                  No projects found matching your filters.
+                </p>
+                <p className="text-app-text-muted text-sm mt-2">
+                  Try adjusting your filter criteria.
+                </p>
+              </div>
+            )}
           </>
         )}
       </main>
