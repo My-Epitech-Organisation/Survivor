@@ -175,7 +175,12 @@ function AddFoundersSection({
                   >
                     <button
                       className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 bg-red-100 hover:bg-red-200 text-red-600 p-1.5 rounded-full transition-all"
-                      onClick={() => console.log("Remove founder", id)} // TODO: Remove founder
+                      onClick={() => {
+                      const updatedFounders = founders
+                        ? founders.filter((_, idx) => idx !== id)
+                        : [];
+                      onUpdateFounders(updatedFounders);
+                      }}
                     >
                       <FaTrashAlt size={14} />
                     </button>
