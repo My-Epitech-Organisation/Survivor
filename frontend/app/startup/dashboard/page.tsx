@@ -166,8 +166,8 @@ export default function StartupDashboard() {
             <TbLoader3 className="size-12 animate-spin text-blue-600 mb-4" />
             <p className="text-app-text-secondary text-lg">
               {isLoading
-                ? "Vérification de l'authentification..."
-                : "Chargement de vos données..."}
+                ? "Authentification approvement ..."
+                : "Data loading ..."}
             </p>
           </div>
         ) : (
