@@ -1,3 +1,4 @@
+from auditlog.models import AuditLog
 from authentication.permissions import IsAdmin
 from django.http import JsonResponse
 from rest_framework import status
@@ -11,7 +12,6 @@ from admin_panel.models import Founder, StartupDetail
 
 from .serializers import ProjectDetailSerializer, ProjectSerializer
 from .views import record_project_view
-from auditlog.models import AuditLog
 
 
 @api_view(["GET"])
