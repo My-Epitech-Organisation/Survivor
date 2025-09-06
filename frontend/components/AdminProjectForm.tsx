@@ -145,10 +145,6 @@ function AddFoundersSection({
                           </span>
                           ),
                       });
-                      setNewFounder({
-                        name: "",
-                        picture: "",
-                      });
                       return;
                     }
                     const newFounderWithId = {
