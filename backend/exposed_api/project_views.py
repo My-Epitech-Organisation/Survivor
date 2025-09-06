@@ -1,6 +1,7 @@
 from auditlog.models import AuditLog
 from authentication.permissions import IsAdmin
 from django.http import JsonResponse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
@@ -10,7 +11,7 @@ from rest_framework.views import APIView
 
 from admin_panel.models import Founder, StartupDetail
 
-from .serializers import ProjectDetailSerializer, ProjectSerializer
+from .serializers import ProjectDetailGetSerializer, ProjectDetailSerializer, ProjectSerializer
 from .views import record_project_view
 
 
@@ -24,7 +25,7 @@ def projects_by_founder(request, founder_id):
         founder = Founder.objects.get(id=founder_id)
         projects = StartupDetail.objects.filter(founders=founder)
 
-        serializer = ProjectDetailSerializer(projects, many=True)
+        serializer = ProjectDetailGetSerializer(projects, many=True)
 
         if len(projects) == 1:
             record_project_view(request, projects[0].id)
@@ -54,37 +55,48 @@ class ProjectDetailView(APIView):
             return JsonResponse(serializer.data, safe=False)
         try:
             startup = StartupDetail.objects.get(id=_id)
+            serializer = ProjectDetailGetSerializer(startup)
 
             record_project_view(request, _id)
 
-            serializer = ProjectDetailSerializer(startup)
             return JsonResponse(serializer.data)
         except StartupDetail.DoesNotExist:
             return JsonResponse({"error": f"Project with id {_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
         """Handle POST requests - admin only"""
-        serializer = ProjectSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+        try:
+            highest_id = StartupDetail.objects.all().order_by("-id").first()
+            new_id = 1 if highest_id is None else highest_id.id + 1
 
-            AuditLog.objects.create(
-                action=f"New project created: {serializer.validated_data.get('name')}",
-                user=request.user.name,
-                type="project",
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            request_data = request.data.copy()
+            current_date = timezone.now().strftime("%Y-%m-%d")
+
+            if "ProjectCreatedAt" not in request_data:
+                request_data["ProjectCreatedAt"] = current_date
+
+            serializer = ProjectDetailSerializer(data=request_data, context={"request": request})
+            if serializer.is_valid():
+                project = serializer.save(id=new_id)
+                AuditLog.objects.create(
+                    action=f"New project created: {project.name}",
+                    user=request.user.name,
+                    type="project",
+                )
+                return Response(ProjectDetailSerializer(project).data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def put(self, request, _id):
         """Handle PUT requests - admin only"""
         project = get_object_or_404(StartupDetail, id=_id)
-        serializer = ProjectSerializer(project, data=request.data, partial=False)
+
+        serializer = ProjectDetailSerializer(project, data=request.data, partial=False, context={"request": request})
         if serializer.is_valid():
             serializer.save()
-
             AuditLog.objects.create(
-                action=f"Project updated: {serializer.validated_data.get('name')}",
+                action=f"Project updated: {serializer.instance.name}",
                 user=request.user.name,
                 type="project",
             )

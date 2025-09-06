@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import project_views, user_views, views
+from . import media_views, project_views, user_views, views
 from .event_views import EventDetailView, EventListView
 from .founder_views import FounderDetailView
 from .investor_views import InvestorDetailView
@@ -25,6 +25,8 @@ app_name = "exposed_api"
 
 
 urlpatterns = [
+    # Media endpoints
+    path("media/upload/", media_views.upload_image, name="media_upload"),
     # Project endpoints
     path("projects/", project_views.ProjectDetailView.as_view(), name="project_create_or_list"),
     path("projects/<int:_id>/", project_views.ProjectDetailView.as_view(), name="project_detail_or_crud"),
