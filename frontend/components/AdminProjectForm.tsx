@@ -88,10 +88,10 @@ function AddFoundersSection({
                                 "/media/image",
                                 previewUrl
                               );
-                              if (res.data?.url)
+                              if (res.data)
                                 setNewFounder((prev) => ({
                                   ...prev,
-                                  FounderPictureURL: res.data?.url,
+                                  picture: res.data?.url ?? "",
                                 }));
                               else
                                 throw Error(
