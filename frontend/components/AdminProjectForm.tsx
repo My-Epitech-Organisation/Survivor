@@ -83,23 +83,26 @@ function AddFoundersSection({
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            const formData = new FormData();
-                            formData.append("file", file);
                             try {
-                              const previewUrl = URL.createObjectURL(file);
-                              const res = await api.post<{ url: string }>(
-                                "/media/image",
-                                {url: previewUrl}
-                              );
-                              if (res.data)
-                                setNewFounder((prev) => ({
-                                  ...prev,
-                                  picture: res.data?.url ?? "",
-                                }));
-                              else
-                                throw Error(
-                                  "API didn't return an avatar url image"
+                              const reader = new FileReader();
+                              reader.onloadend = async () => {
+                                const base64String = reader.result as string;
+
+                                const res = await api.post<{ url: string }>(
+                                  "/media/upload/",
+                                  { url: base64String }
                                 );
+
+                                if (res.data) {
+                                  setNewFounder((prev) => ({
+                                    ...prev,
+                                    picture: `${res?.data?.url ?? ""}`,
+                                  }));
+                                } else {
+                                  throw new Error("API didn't return an avatar url image");
+                                }
+                              };
+                              reader.readAsDataURL(file);
                             } catch (error) {
                               console.error("Error uploading image:", error);
                             }
