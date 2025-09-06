@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from admin_panel.models import Founder, StartupDetail
+
 from .serializers import ProjectDetailGetSerializer, ProjectDetailSerializer, ProjectSerializer
 from .views import record_project_view
 
