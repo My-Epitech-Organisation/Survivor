@@ -49,7 +49,7 @@ def register_user(request):
         stats.new_signups += 1
         stats.save()
 
-        AuditLog.objects.create(action=f"New user registered: {user.name} ({user.email})", user=user.name, type="user")
+        AuditLog.objects.create(action=f"New user registered: {user.name}", user=user.name, type="user")
 
         refresh = RefreshToken.for_user(user)
 
