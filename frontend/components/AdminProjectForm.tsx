@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { FaPlus, FaTrashAlt, FaUpload } from "react-icons/fa";
+import { FaPlus, FaTrashAlt, FaUpload, FaEdit } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { DialogClose } from "@radix-ui/react-dialog";
@@ -31,10 +31,53 @@ function AddFoundersSection({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
+  const editCloseRef = useRef<HTMLButtonElement>(null);
+
   const [newFounder, setNewFounder] = useState<MinimalFounder>({
     name: "",
     picture: "",
   });
+
+  const [editFounder, setEditFounder] = useState<{
+    index: number;
+    founder: MinimalFounder;
+  }>({
+    index: -1,
+    founder: {
+      name: "",
+      picture: "",
+    },
+  });
+
+  const handleEditFounder = (founder: MinimalFounder, index: number) => {
+    setEditFounder({
+      index,
+      founder: { ...founder }
+    });
+  };
+
+  const handleSaveEdit = () => {
+    if (editFounder.founder.name === "") {
+      toast("Founder error", {
+        className: "!text-red-500",
+        description: (
+          <span className="text-red-500">
+            Please set a founder name
+          </span>
+        ),
+      });
+      return;
+    }
+
+    if (editFounder.index !== -1 && founders) {
+      const updatedFounders = [...founders];
+      updatedFounders[editFounder.index] = editFounder.founder;
+      onUpdateFounders(updatedFounders);
+      editCloseRef.current?.click();
+    }
+  };
+
   return (
     <div className="pt-2 border-t border-gray-100">
       <div className="flex justify-between items-center mb-3">
@@ -150,7 +193,7 @@ function AddFoundersSection({
                     const newFounderWithId = {
                       ...newFounder,
                     } as MinimalFounder;
-                    
+
                     const updatedFounders = [
                       ...(founders || []),
                       newFounderWithId,
@@ -172,6 +215,7 @@ function AddFoundersSection({
           </DialogContent>
         </Dialog>
       </div>
+
       <div className="bg-gray-50 rounded-lg p-4">
         {!founders || founders.length === 0 ? (
           <div className="text-center py-6">
@@ -182,41 +226,143 @@ function AddFoundersSection({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {founders &&
-              founders.map((founder, id) => {
-                return (
-                  <div
-                    key={id}
-                    className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative group"
-                  >
+              founders.map((founder, id) => (
+                <div
+                  key={id}
+                  className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative group"
+                >
+                  <div className="absolute top-2 right-2 flex space-x-2">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button
+                          className="opacity-0 group-hover:opacity-100 bg-blue-100 hover:bg-blue-200 text-blue-600 p-1.5 rounded-full transition-all cursor-pointer"
+                          onClick={() => handleEditFounder(founder, id)}
+                        >
+                          <FaEdit size={14} />
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Edit Founder</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          <InputWithLabel
+                            label="Name"
+                            id="founder-name-edit"
+                            placeholder="Enter founder name"
+                            value={editFounder.founder.name}
+                            onChange={(e) =>
+                              setEditFounder((prev) => ({
+                                ...prev,
+                                founder: { ...prev.founder, name: e.target.value }
+                              }))
+                            }
+                            required
+                          />
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              Profile Image
+                            </label>
+                            <div className="flex items-center space-x-4">
+                              <Avatar className="w-16 h-16">
+                                <AvatarImage
+                                  src={`${getBackendUrl()}${editFounder.founder.picture}`}
+                                />
+                                <AvatarFallback>
+                                  {editFounder.founder.name?.charAt(0) || "UK"}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1">
+                                <div>
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    ref={editFileInputRef}
+                                    accept="image/*"
+                                    onChange={async (e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        try {
+                                          const reader = new FileReader();
+                                          reader.onloadend = async () => {
+                                            const base64String = reader.result as string;
+
+                                            const res = await api.post<{ url: string }>(
+                                              "/media/upload/",
+                                              { url: base64String }
+                                            );
+
+                                            if (res.data) {
+                                              setEditFounder((prev) => ({
+                                                ...prev,
+                                                founder: {
+                                                  ...prev.founder,
+                                                  picture: `${res?.data?.url ?? ""}`
+                                                }
+                                              }));
+                                            } else {
+                                              throw new Error("API didn't return an avatar url image");
+                                            }
+                                          };
+                                          reader.readAsDataURL(file);
+                                        } catch (error) {
+                                          console.error("Error uploading image:", error);
+                                        }
+                                      }
+                                    }}
+                                  />
+                                  <Button
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={() => editFileInputRef.current?.click()}
+                                  >
+                                    <FaUpload className="mr-2" />
+                                    Upload Photo
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end gap-3 mt-4">
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                editCloseRef.current?.click();
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                            <Button onClick={handleSaveEdit}>
+                              Save Changes
+                            </Button>
+                            <DialogClose ref={editCloseRef} className="hidden" />
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                     <button
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 bg-red-100 hover:bg-red-200 text-red-600 p-1.5 rounded-full transition-all"
+                      className="opacity-0 group-hover:opacity-100 bg-red-100 hover:bg-red-200 text-red-600 p-1.5 rounded-full transition-all cursor-pointer"
                       onClick={() => {
-                      const updatedFounders = founders
-                        ? founders.filter((_, idx) => idx !== id)
-                        : [];
-                      onUpdateFounders(updatedFounders);
+                        const updatedFounders = founders
+                          ? founders.filter((_, idx) => idx !== id)
+                          : [];
+                        onUpdateFounders(updatedFounders);
                       }}
                     >
                       <FaTrashAlt size={14} />
                     </button>
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage
-                          src={`${getBackendUrl()}${founder.picture}`}
-                        />
-                        <AvatarFallback>
-                          {founder.name?.charAt(0) || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">
-                          {founder.name}
-                        </h4>
-                      </div>
+                  </div>
+                  <div className="flex items-start space-x-4">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={`${getBackendUrl()}${founder.picture}`} />
+                      <AvatarFallback>{founder.name?.charAt(0) || "U"}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900">{founder.name}</h4>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
           </div>
         )}
       </div>
