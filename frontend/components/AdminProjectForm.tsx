@@ -30,6 +30,7 @@ function AddFoundersSection({
   onUpdateFounders: (founders: MinimalFounder[]) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   const [newFounder, setNewFounder] = useState<MinimalFounder>({
     name: "",
     picture: "",
@@ -57,6 +58,7 @@ function AddFoundersSection({
                 onChange={(e) =>
                   setNewFounder((prev) => ({ ...prev, name: e.target.value }))
                 }
+                required
               />
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">
@@ -87,7 +89,7 @@ function AddFoundersSection({
                               const previewUrl = URL.createObjectURL(file);
                               const res = await api.post<{ url: string }>(
                                 "/media/image",
-                                previewUrl
+                                {url: previewUrl}
                               );
                               if (res.data)
                                 setNewFounder((prev) => ({
@@ -117,41 +119,55 @@ function AddFoundersSection({
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-4">
-                <DialogClose asChild>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setNewFounder({
+                      name: "",
+                      picture: "",
+                    });
+                    closeRef.current?.click();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (newFounder.name === "") {
+                      toast("Founder error", {
+                        className: "!text-red-500",
+                        description: (
+                          <span className="text-red-500">
+                            Please set a founder name:
+                          </span>
+                          ),
+                      });
                       setNewFounder({
                         name: "",
                         picture: "",
                       });
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button
-                    onClick={() => {
-                      const newFounderWithId = {
-                        ...newFounder,
-                      } as MinimalFounder;
+                      return;
+                    }
+                    const newFounderWithId = {
+                      ...newFounder,
+                    } as MinimalFounder;
+                    
+                    const updatedFounders = [
+                      ...(founders || []),
+                      newFounderWithId,
+                    ];
+                    onUpdateFounders(updatedFounders);
 
-                      const updatedFounders = [
-                        ...(founders || []),
-                        newFounderWithId,
-                      ];
-                      onUpdateFounders(updatedFounders);
-
-                      setNewFounder({
-                        name: "",
-                        picture: "",
-                      });
-                    }}
-                  >
-                    Add Founder
-                  </Button>
-                </DialogClose>
+                    setNewFounder({
+                      name: "",
+                      picture: "",
+                    });
+                    closeRef.current?.click();
+                  }}
+                >
+                  Add Founder
+                </Button>
+                <DialogClose ref={closeRef} className="hidden" />
               </div>
             </div>
           </DialogContent>
@@ -168,7 +184,6 @@ function AddFoundersSection({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {founders &&
               founders.map((founder, id) => {
-                console.log("Founder: ", founder);
                 return (
                   <div
                     key={id}
@@ -529,7 +544,6 @@ export default function AdminProjectForm({
             variant="outline"
             className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700"
             onClick={() => {
-              console.log("Cancel adding project");
             }}
           >
             Cancel

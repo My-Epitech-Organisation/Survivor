@@ -51,7 +51,6 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
     api
       .put(`/projects/${props.ProjectId}/`, apiData)
       .then((response) => {
-        console.log("Project updated successfully:", response.data);
         if (closeDialogRef.current) {
           closeDialogRef.current.click();
         }
@@ -66,7 +65,6 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
     api
       .delete(`/projects/${props.ProjectId}/`)
       .then((response) => {
-        console.log("Project deleted successfully:", response.data);
         if (closeDialogRef.current) {
           closeDialogRef.current.click();
         }

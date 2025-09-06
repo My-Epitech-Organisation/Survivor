@@ -25,7 +25,7 @@ export default function AdminProjects() {
     api
       .post("/projects/", data)
       .then((response) => {
-        console.log("Project created successfully:", response.data);
+        console.debug("Project created successfully:", response.data);
         if (closeDialogRef.current) {
           closeDialogRef.current.click();
         }
@@ -80,7 +80,6 @@ export default function AdminProjects() {
                     const button = e.currentTarget;
                     button.classList.add("scale-95");
                     setTimeout(() => button.classList.remove("scale-95"), 150);
-                    console.log("Add new project clicked");
                   }}
                 >
                   <div className="relative w-5 h-5 flex items-center justify-center">

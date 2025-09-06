@@ -247,7 +247,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
                   <dd className="space-y-3 md:space-y-4">
                     {props.ProjectFounders.map(
                       (founder: Founder, index: number) => {
-                        console.log(
+                        console.debug(
                           "Founder picture URL:",
                           founder.FounderPictureURL
                         );
