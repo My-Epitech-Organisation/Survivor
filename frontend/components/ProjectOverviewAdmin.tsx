@@ -33,7 +33,6 @@ import { useState, useRef } from "react";
 import { api } from "@/lib/api";
 import AdminProjectForm from "./AdminProjectForm";
 import { Founder, MinimalFounder } from "@/types/founders";
-import { toast } from "sonner"
 
 export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
   const [formData, setFormData] = useState<FormProjectDetails>();
