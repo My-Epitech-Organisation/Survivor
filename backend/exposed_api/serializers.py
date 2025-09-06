@@ -14,19 +14,31 @@ class FounderSerializer(serializers.ModelSerializer):
     """
 
     name = serializers.CharField()
-    picture = serializers.SerializerMethodField()
+    picture = serializers.CharField(required=False, allow_null=True)
 
     class Meta:
         model = Founder
         fields = ["name", "picture"]
 
-    def get_picture(self, obj):
-        startup_detail = obj.startups.first()
+    def to_representation(self, instance):
+        """
+        Override to_representation to get the picture URL from founders_images
+        """
+        ret = super().to_representation(instance)
+
+        startup_detail = instance.startups.first()
         if startup_detail and startup_detail.founders_images:
-            founder_id = str(obj.id)
+            founder_id = str(instance.id)
             if founder_id in startup_detail.founders_images:
-                return f"{settings.MEDIA_URL}{startup_detail.founders_images[founder_id]}"
-        return None
+                picture_path = startup_detail.founders_images[founder_id]
+                if not picture_path.startswith("/"):
+                    picture_url = f"/api/media/{picture_path}"
+                else:
+                    picture_url = picture_path
+
+                ret["picture"] = picture_url
+
+        return ret
 
 
 class GetFounderSerializer(serializers.ModelSerializer):
@@ -48,7 +60,13 @@ class GetFounderSerializer(serializers.ModelSerializer):
         if startup_detail and startup_detail.founders_images:
             founder_id = str(obj.id)
             if founder_id in startup_detail.founders_images:
-                return f"{settings.MEDIA_URL}{startup_detail.founders_images[founder_id]}"
+                picture_path = startup_detail.founders_images[founder_id]
+                if not picture_path.startswith("/"):
+                    picture_url = f"/api/media/{picture_path}"
+                else:
+                    picture_url = picture_path
+
+                return picture_url
         return None
 
 
@@ -178,19 +196,37 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        request = self.context.get("request")
+        raw_founders_data = []
+        if request and hasattr(request, "data"):
+            raw_founders_data = request.data.get("ProjectFounders", [])
+
         founders_data = validated_data.pop("founders", [])
         project = StartupDetail.objects.create(**validated_data)
 
         if founders_data:
             founders_images = {}
+
+            founders_with_pics = {}
+            if request and hasattr(request, "data"):
+                for raw_founder in raw_founders_data:
+                    if "name" in raw_founder and "picture" in raw_founder:
+                        founders_with_pics[raw_founder["name"]] = raw_founder["picture"]
+
             for founder_data in founders_data:
                 highest_founder_id = Founder.objects.all().order_by("-id").first()
                 new_founder_id = 1 if highest_founder_id is None else highest_founder_id.id + 1
 
                 founder = Founder.objects.create(id=new_founder_id, name=founder_data["name"], startup_id=project.id)
 
-                if founder_data.get("picture"):
-                    founders_images[str(founder.id)] = founder_data["picture"]
+                picture = founders_with_pics.get(founder_data["name"])
+                if picture:
+                    if "/media/" in picture:
+                        picture = picture.split("/media/")[1]
+                    elif "/api/media/" in picture:
+                        picture = picture.split("/api/media/")[1]
+
+                    founders_images[str(founder.id)] = picture
 
                 project.founders.add(founder)
 
@@ -201,6 +237,11 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
         return project
 
     def update(self, instance, validated_data):
+        request = self.context.get("request")
+        raw_founders_data = []
+        if request and hasattr(request, "data"):
+            raw_founders_data = request.data.get("ProjectFounders", [])
+
         founders_data = validated_data.pop("founders", None)
 
         for attr, value in validated_data.items():
@@ -210,16 +251,26 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             instance.founders.clear()
 
             founders_images = {}
+
+            founders_with_pics = {}
+            if request and hasattr(request, "data"):
+                for raw_founder in raw_founders_data:
+                    if "name" in raw_founder and "picture" in raw_founder:
+                        founders_with_pics[raw_founder["name"]] = raw_founder["picture"]
+
             for founder_data in founders_data:
                 highest_founder_id = Founder.objects.all().order_by("-id").first()
                 new_founder_id = 1 if highest_founder_id is None else highest_founder_id.id + 1
 
                 founder = Founder.objects.create(id=new_founder_id, name=founder_data["name"], startup_id=instance.id)
 
-                if founder_data.get("picture"):
-                    picture = founder_data.get("picture")
+                picture = founders_with_pics.get(founder_data["name"])
+                if picture:
                     if "/media/" in picture:
                         picture = picture.split("/media/")[1]
+                    elif "/api/media/" in picture:
+                        picture = picture.split("/api/media/")[1]
+
                     founders_images[str(founder.id)] = picture
 
                 instance.founders.add(founder)

@@ -75,7 +75,7 @@ class ProjectDetailView(APIView):
             if "ProjectCreatedAt" not in request_data:
                 request_data["ProjectCreatedAt"] = current_date
 
-            serializer = ProjectDetailSerializer(data=request_data)
+            serializer = ProjectDetailSerializer(data=request_data, context={"request": request})
             if serializer.is_valid():
                 project = serializer.save(id=new_id)
                 AuditLog.objects.create(
@@ -91,7 +91,8 @@ class ProjectDetailView(APIView):
     def put(self, request, _id):
         """Handle PUT requests - admin only"""
         project = get_object_or_404(StartupDetail, id=_id)
-        serializer = ProjectDetailSerializer(project, data=request.data, partial=False)
+
+        serializer = ProjectDetailSerializer(project, data=request.data, partial=False, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             AuditLog.objects.create(
