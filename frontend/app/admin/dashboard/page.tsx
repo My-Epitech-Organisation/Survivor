@@ -19,54 +19,29 @@ import {
   Eye,
   MessageSquare,
   Calendar,
+  Newspaper,
+  FileText
 } from "lucide-react";
-import { DashboardService, MonthlyStatsResponse, ProjectVisibilityItem, TotalCountResponse, UsersConnectedResponse } from "@/services/DashboardService";
+import { DashboardService, MonthlyStatsResponse, ProjectVisibilityItem, RecentAction, TotalCountResponse, UsersConnectedResponse } from "@/services/DashboardService";
 
-// Mock data for recent actions only (will be implemented later)
-const mockRecentActions = [
-  {
-    id: 1,
-    action: "New startup registered",
-    user: "TechCorp Inc.",
-    time: "2 hours ago",
-    type: "signup",
-  },
-  {
-    id: 2,
-    action: "Project updated",
-    user: "Sarah Connor",
-    time: "4 hours ago",
-    type: "update",
-  },
-  {
-    id: 3,
-    action: "New user registered",
-    user: "John Doe",
-    time: "6 hours ago",
-    type: "signup",
-  },
-  {
-    id: 4,
-    action: "Event created",
-    user: "Admin",
-    time: "8 hours ago",
-    type: "event",
-  },
-  {
-    id: 5,
-    action: "Project launched",
-    user: "InnovateLab",
-    time: "1 day ago",
-    type: "launch",
-  },
-  {
-    id: 6,
-    action: "User verified",
-    user: "Alice Smith",
-    time: "1 day ago",
-    type: "verification",
-  },
-];
+// Helper function to format relative time
+const formatRelativeTime = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.round(diffMs / 1000);
+  const diffMin = Math.round(diffSec / 60);
+  const diffHour = Math.round(diffMin / 60);
+  const diffDay = Math.round(diffHour / 24);
+
+  if (diffSec < 60) return `${diffSec} seconds ago`;
+  if (diffMin < 60) return `${diffMin} minutes ago`;
+  if (diffHour < 24) return `${diffHour} hours ago`;
+  if (diffDay < 30) return `${diffDay} days ago`;
+  return date.toLocaleDateString();
+};
+
+// We'll replace the mock data with API data
 
 export default function AdminDashboard() {
   // State for dashboard data
@@ -76,6 +51,7 @@ export default function AdminDashboard() {
   const [newSignups, setNewSignups] = useState<TotalCountResponse>({ value: 0 });
   const [projectVisibility, setProjectVisibility] = useState<ProjectVisibilityItem[]>([]);
   const [usersConnected, setUsersConnected] = useState<UsersConnectedResponse>({ rate: 0 });
+  const [recentActions, setRecentActions] = useState<RecentAction[]>([]);
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStatsResponse>({
     projectsLaunched: 0,
     eventsCreated: 0,
@@ -101,6 +77,7 @@ export default function AdminDashboard() {
           projectVisibility,
           usersConnected,
           monthlyStats,
+          recentActions,
         } = await DashboardService.getAllDashboardData();
 
         setTotalUsers(totalUsers);
@@ -110,6 +87,7 @@ export default function AdminDashboard() {
         setProjectVisibility(projectVisibility);
         setUsersConnected(usersConnected);
         setMonthlyStats(monthlyStats);
+        setRecentActions(recentActions || []);
         setError(null);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
@@ -124,12 +102,19 @@ export default function AdminDashboard() {
 
   const getActionIcon = (type: string) => {
     switch (type) {
+      case "user":
+        return <Users className="h-4 w-4" />;
+      case "project":
+        return <FileText className="h-4 w-4" />;
+      case "event":
+        return <Calendar className="h-4 w-4" />;
+      case "news":
+        return <Newspaper className="h-4 w-4" />;
+      // Keep these for backward compatibility
       case "signup":
         return <Users className="h-4 w-4" />;
       case "update":
         return <MessageSquare className="h-4 w-4" />;
-      case "event":
-        return <Calendar className="h-4 w-4" />;
       case "launch":
         return <TrendingUp className="h-4 w-4" />;
       case "verification":
@@ -141,12 +126,19 @@ export default function AdminDashboard() {
 
   const getActionColor = (type: string) => {
     switch (type) {
+      case "user":
+        return "bg-green-100 text-green-800";
+      case "project":
+        return "bg-blue-100 text-blue-800";
+      case "event":
+        return "bg-purple-100 text-purple-800";
+      case "news":
+        return "bg-amber-100 text-amber-800";
+      // Keep these for backward compatibility
       case "signup":
         return "bg-green-100 text-green-800";
       case "update":
         return "bg-blue-100 text-blue-800";
-      case "event":
-        return "bg-purple-100 text-purple-800";
       case "launch":
         return "bg-orange-100 text-orange-800";
       case "verification":
@@ -268,7 +260,7 @@ export default function AdminDashboard() {
           {/* Project Visibility Chart */}
           <ChartBarLabel
             data={projectVisibility.map(item => ({
-              month: item.month.length > 3 ? item.month.substring(0, 3) : item.month, // Robust: use full name if shorter than 3 chars
+              month: item.month.length > 3 ? item.month.substring(0, 3) : item.month,
               views: item.views
             }))}
             title="Project Visibility"
@@ -294,10 +286,11 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockRecentActions.map((action) => (
+                {recentActions.length > 0 ? (
+                recentActions.slice(0, 5).map((action) => (
                   <div
                     key={action.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                    className={`flex rounded-lg items-center justify-between p-3 ${getActionColor(action.type)} transition-colors hover:brightness-90 cursor-pointer`}
                   >
                     <div className="flex items-center space-x-3">
                       <div
@@ -317,10 +310,15 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <Badge variant="secondary" className="text-xs">
-                      {action.time}
+                      {formatRelativeTime(action.time)}
                     </Badge>
                   </div>
-                ))}
+                ))
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-gray-500">No recent actions found</p>
+                </div>
+              )}
               </div>
             </CardContent>
           </Card>

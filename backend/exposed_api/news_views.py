@@ -1,3 +1,4 @@
+from auditlog.models import AuditLog
 from authentication.permissions import IsAdmin
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -37,7 +38,11 @@ class NewsListView(APIView):
             if "image" in request.FILES:
                 serializer.validated_data["image"] = request.FILES["image"]
 
-            serializer.save()
+            news = serializer.save()
+            AuditLog.objects.create(
+                action=f"New news item created: {news.title}", user=request.user.username, type="news"
+            )
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -86,7 +91,11 @@ class NewsDetailView(APIView):
             if "image" in request.FILES:
                 serializer.validated_data["image"] = request.FILES["image"]
 
-            serializer.save()
+            updated_news = serializer.save()
+            AuditLog.objects.create(
+                action=f"News item updated: {updated_news.title}", user=request.user.username, type="news"
+            )
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -97,6 +106,9 @@ class NewsDetailView(APIView):
         news = self.get_object(news_id)
         if not news:
             return Response({"error": "News not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        news_title = news.title
+        AuditLog.objects.create(action=f"News item deleted: {news_title}", user=request.user.username, type="news")
 
         news.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
