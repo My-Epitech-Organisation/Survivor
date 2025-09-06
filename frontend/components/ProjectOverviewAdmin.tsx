@@ -1,7 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ProjectOverviewProps, ProjectDetailsProps, FormProjectDetails } from "@/types/project";
+import {
+  ProjectOverviewProps,
+  ProjectDetailsProps,
+  FormProjectDetails,
+} from "@/types/project";
 import { FaTrash, FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import {
   Card,
@@ -14,7 +18,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogHeader,
   DialogOverlay,
   DialogTitle,
   DialogTrigger,
@@ -25,16 +28,13 @@ import {
   TrendingUp,
   Target,
   CheckCircle,
-  Info,
 } from "lucide-react";
-import ProjectDetails from "./ProjectDetails";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { api } from "@/lib/api";
 import AdminProjectForm from "./AdminProjectForm";
 import { Founder, MinimalFounder } from "@/types/founders";
 
 export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
-  const [projectDetails, setprojectDetails] = useState<ProjectDetailsProps>();
   const [formData, setFormData] = useState<FormProjectDetails>();
   const closeDialogRef = useRef<HTMLButtonElement>(null);
 
@@ -43,44 +43,46 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
 
     const apiData = {
       ...data,
-      ProjectFounders: data.ProjectFounders.map(founder => ({
+      ProjectFounders: data.ProjectFounders.map((founder) => ({
         name: founder.name,
-        picture: founder.picture
-      }))
+        picture: founder.picture,
+      })),
     };
 
     console.log("DATA: ", apiData);
-    api.put(`/projects/${props.ProjectId}/`, apiData)
-      .then(response => {
+    api
+      .put(`/projects/${props.ProjectId}/`, apiData)
+      .then((response) => {
         console.log("Project updated successfully:", response.data);
         if (closeDialogRef.current) {
           closeDialogRef.current.click();
         }
         window.location.reload();
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error updating project:", error);
       });
-  }
+  };
 
   const handleDeleteProject = () => {
-    api.delete(`/projects/${props.ProjectId}/`)
-      .then(response => {
+    api
+      .delete(`/projects/${props.ProjectId}/`)
+      .then((response) => {
         console.log("Project deleted successfully:", response.data);
         if (closeDialogRef.current) {
           closeDialogRef.current.click();
         }
         window.location.reload();
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error deleting project:", error);
       });
-  }
+  };
 
   const FounderToMinimalFounder = (data: Founder[]): MinimalFounder[] => {
-    return data.map(founder => ({
+    return data.map((founder) => ({
       name: founder.FounderName,
-      picture: founder.FounderPictureURL
+      picture: founder.FounderPictureURL,
     }));
   };
 
@@ -93,8 +95,6 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
         console.error("No project data found");
         return;
       }
-      setprojectDetails(response.data);
-      
       const details = response.data;
       setFormData({
         ProjectName: details.ProjectName || "",
@@ -249,15 +249,32 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
                 <DialogTitle className="text-xl font-bold">
                   Edit Project
                 </DialogTitle>
-                <DialogClose className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center" ref={closeDialogRef}>
+                <DialogClose
+                  className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center"
+                  ref={closeDialogRef}
+                >
                   <span className="sr-only">Close</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
                   </svg>
                 </DialogClose>
               </div>
               <div className="p-4 md:p-6 overflow-y-auto">
-                <AdminProjectForm defaultData={formData} onSubmit={handleEditProjectSubmit} />
+                <AdminProjectForm
+                  defaultData={formData}
+                  onSubmit={handleEditProjectSubmit}
+                />
               </div>
             </DialogContent>
           </Dialog>
@@ -281,15 +298,30 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
                 <DialogTitle className="text-xl font-bold">
                   Delete Project
                 </DialogTitle>
-                <DialogClose className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center" ref={closeDialogRef}>
+                <DialogClose
+                  className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center"
+                  ref={closeDialogRef}
+                >
                   <span className="sr-only">Close</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
                   </svg>
                 </DialogClose>
               </div>
               <div className="p-4 md:p-6 overflow-y-auto">
-                Are you sure you want to delete this project ? This action cannot be undone.
+                Are you sure you want to delete this project ? This action
+                cannot be undone.
                 <div className="mt-4">
                   <Button
                     className="w-full text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300"

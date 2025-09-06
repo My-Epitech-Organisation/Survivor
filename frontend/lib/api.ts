@@ -92,6 +92,7 @@ export const api = {
       const data = await response.json();
       return { data };
     } catch (error) {
+      console.error(error);
       return { data: null as T | null };
     }
   },
@@ -108,6 +109,7 @@ export const api = {
       const responseData = await response.json();
       return { data: responseData };
     } catch (error) {
+      console.error(error);
       return { data: null as T | null };
     }
   },
@@ -124,11 +126,14 @@ export const api = {
       const responseData = await response.json();
       return { data: responseData };
     } catch (error) {
+      console.error(error);
       return { data: null as T | null };
     }
   },
 
-  delete: async <T = unknown>(endpoint: string): Promise<{ data: T | null }> => {
+  delete: async <T = unknown>(
+    endpoint: string
+  ): Promise<{ data: T | null }> => {
     const response = await apiDelete(endpoint);
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
@@ -137,6 +142,7 @@ export const api = {
       const responseData = await response.json();
       return { data: responseData };
     } catch (error) {
+      console.error(error);
       return { data: null as T | null };
     }
   },
