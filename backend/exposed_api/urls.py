@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import project_views, user_views, views
+from . import media_views, project_views, user_views, views
 from .event_views import EventDetailView, EventListView
 from .founder_views import FounderDetailView
 from .investor_views import InvestorDetailView
@@ -20,7 +20,6 @@ from .kpi_views import (
 )
 from .news_views import NewsDetailView, NewsListView
 from .partner_views import PartnerDetailView
-from . import media_views
 
 app_name = "exposed_api"
 
