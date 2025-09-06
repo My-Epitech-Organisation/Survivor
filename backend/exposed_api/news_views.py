@@ -39,9 +39,7 @@ class NewsListView(APIView):
                 serializer.validated_data["image"] = request.FILES["image"]
 
             news = serializer.save()
-            AuditLog.objects.create(
-                action=f"New news item created: {news.title}", user=request.user.name, type="news"
-            )
+            AuditLog.objects.create(action=f"New news item created: {news.title}", user=request.user.name, type="news")
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

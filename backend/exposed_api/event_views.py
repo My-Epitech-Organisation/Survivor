@@ -40,9 +40,7 @@ class EventListView(APIView):
 
             event = serializer.save()
 
-            AuditLog.objects.create(
-                action=f"New event created: {event.name}", user=request.user.name, type="event"
-            )
+            AuditLog.objects.create(action=f"New event created: {event.name}", user=request.user.name, type="event")
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
