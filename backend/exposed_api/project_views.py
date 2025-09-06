@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from admin_panel.models import Founder, StartupDetail
-
 from .serializers import ProjectDetailGetSerializer, ProjectDetailSerializer, ProjectSerializer
+from .views import record_project_view
 
 
 @api_view(["GET"])
@@ -24,6 +24,10 @@ def projects_by_founder(request, founder_id):
         projects = StartupDetail.objects.filter(founders=founder)
 
         serializer = ProjectDetailGetSerializer(projects, many=True)
+
+        if len(projects) == 1:
+            record_project_view(request, projects[0].id)
+
         return JsonResponse(serializer.data, safe=False)
     except Founder.DoesNotExist:
         return JsonResponse({"error": f"Founder with id {founder_id} not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -50,6 +54,9 @@ class ProjectDetailView(APIView):
         try:
             startup = StartupDetail.objects.get(id=_id)
             serializer = ProjectDetailGetSerializer(startup)
+
+            record_project_view(request, _id)
+
             return JsonResponse(serializer.data)
         except StartupDetail.DoesNotExist:
             return JsonResponse({"error": f"Project with id {_id} not found"}, status=status.HTTP_404_NOT_FOUND)

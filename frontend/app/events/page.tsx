@@ -34,10 +34,10 @@ export default function Events() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
+    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
       <Navigation />
 
-      <main className="w-full mx-auto py-3 px-2 sm:py-6 sm:px-4 lg:px-8 max-w-screen-xl">
+      <main className="flex-1 w-full mx-auto py-3 px-2 sm:py-6 sm:px-4 lg:px-8 max-w-screen-xl">
         <div className="py-3 sm:py-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-app-text-primary mb-4 sm:mb-6">
             Events Calendar

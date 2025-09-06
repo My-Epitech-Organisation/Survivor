@@ -4,6 +4,8 @@ from rest_framework import serializers
 
 from admin_panel.models import Founder, StartupDetail
 
+from .models import ProjectView
+
 
 class FounderSerializer(serializers.ModelSerializer):
     """
@@ -276,3 +278,30 @@ class ProjectEngagementSerializer(serializers.Serializer):
     """
 
     rate = serializers.IntegerField()
+
+
+class ProjectViewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ProjectView model.
+    """
+
+    project_name = serializers.CharField(source="project.name", read_only=True)
+    user_email = serializers.CharField(source="user.email", read_only=True)
+
+    class Meta:
+        model = ProjectView
+        fields = ["id", "project", "project_name", "timestamp", "user", "user_email", "ip_address", "session_key"]
+        read_only_fields = ["timestamp"]
+
+
+class ProjectViewStatsSerializer(serializers.Serializer):
+    """
+    Serializer for project view statistics.
+    """
+
+    total_views = serializers.IntegerField()
+    unique_users = serializers.IntegerField()
+    unique_ips = serializers.IntegerField()
+    unique_sessions = serializers.IntegerField()
+    period_start = serializers.DateTimeField(required=False)
+    period_end = serializers.DateTimeField(required=False)

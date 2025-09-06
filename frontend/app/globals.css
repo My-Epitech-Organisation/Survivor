@@ -65,6 +65,8 @@
   --color-app-indigo-primary: var(--app-indigo-primary);
   --color-app-indigo-light: var(--app-indigo-light);
   --color-app-red-primary: var(--app-red-primary);
+  --color-app-yellow-primary: var(--app-yellow-primary);
+  --color-app-yellow-light: var(--app-yellow-light);
 }
 
 :root {
@@ -126,6 +128,8 @@
   --app-indigo-primary: oklch(0.515 0.15 270); /* indigo-600 */
   --app-indigo-light: oklch(0.94 0.05 270); /* indigo-100 */
   --app-red-primary: oklch(0.577 0.245 27.325); /* red-600 */
+  --app-yellow-primary: oklch(0.8 0.25 95); /* brighter, more saturated yellow */
+  --app-yellow-light: oklch(0.95 0.08 95); /* yellow-100 */
 }
 
 .dark {
@@ -186,6 +190,8 @@
   --app-indigo-primary: oklch(0.6 0.15 270);
   --app-indigo-light: oklch(0.25 0.05 270);
   --app-red-primary: oklch(0.704 0.191 22.216);
+  --app-yellow-primary: oklch(0.85 0.22 95); /* brighter yellow for dark mode */
+  --app-yellow-light: oklch(0.3 0.08 95);
 }
 
 @layer base {
