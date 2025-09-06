@@ -40,9 +40,7 @@ class EventListView(APIView):
 
             event = serializer.save()
 
-            AuditLog.objects.create(
-                action=f"New event created: {event.name}", user=request.user.username, type="event"
-            )
+            AuditLog.objects.create(action=f"New event created: {event.name}", user=request.user.name, type="event")
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -76,7 +74,7 @@ class EventDetailView(APIView):
             updated_event = serializer.save()
 
             AuditLog.objects.create(
-                action=f"Event updated: {updated_event.name}", user=request.user.username, type="event"
+                action=f"Event updated: {updated_event.name}", user=request.user.name, type="event"
             )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -91,7 +89,7 @@ class EventDetailView(APIView):
             return Response({"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
 
         event_name = event.name
-        AuditLog.objects.create(action=f"Event deleted: {event_name}", user=request.user.username, type="event")
+        AuditLog.objects.create(action=f"Event deleted: {event_name}", user=request.user.name, type="event")
 
         event.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

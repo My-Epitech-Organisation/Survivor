@@ -90,9 +90,7 @@ def update_user_profile(request):
     if serializer.is_valid():
         user = serializer.save()
 
-        AuditLog.objects.create(
-            action=f"User profile updated: {user.name} ({user.email})", user=user.name, type="user"
-        )
+        AuditLog.objects.create(action=f"User profile updated: {user.name}", user=user.name, type="user")
 
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -195,9 +193,7 @@ def reset_password_confirm(request):
     if serializer.is_valid():
         user = serializer.save()
 
-        AuditLog.objects.create(
-            action=f"Password reset completed: {user.name} ({user.email})", user=user.name, type="user"
-        )
+        AuditLog.objects.create(action=f"Password reset completed: {user.name}", user=user.name, type="user")
 
         return Response({"detail": "Your password has been successfully reset."}, status=status.HTTP_200_OK)
 
