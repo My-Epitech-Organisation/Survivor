@@ -10,3 +10,13 @@ export interface User {
   startupId?: number;
   userImag?: string;
 }
+
+
+export interface FormUser {
+  name: string;
+  email: string;
+  role: Roles;
+  founderId?: number;
+  startupId?: number;
+  userImag?: string;
+}
