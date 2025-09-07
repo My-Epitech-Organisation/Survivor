@@ -13,42 +13,43 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getBackendUrl } from "@/lib/config";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaTrash } from "react-icons/fa";
+import { User as UserIcon } from "lucide-react";
 
 const UserList : User[] = [
   {
     name : "Noa",
     email: "noa.roussiere@gmail.com",
     role: "admin",
-    id: 1,
-    founderId: 1,
-    startupId: 1,
+    id: Math.floor(Math.random() * (60 - 1) + 1),
+    founderId: Math.floor(Math.random() * (60 - 1) + 1),
+    startupId: Math.floor(Math.random() * (60 - 1) + 1),
     userImag: "string",
   },
   {
-    name : "Noa",
-    email: "noa.roussiere@gmail.com",
+    name : "Alban",
+    email: "roussee.alban@gmail.com",
     role: "investor",
-    id: 1,
-    founderId: 1,
-    startupId: 1,
+    id: Math.floor(Math.random() * (60 - 1) + 1),
+    founderId: Math.floor(Math.random() * (60 - 1) + 1),
+    startupId: Math.floor(Math.random() * (60 - 1) + 1),
     userImag: "string",
   },
   {
-    name : "Noa",
-    email: "noa.roussiere@gmail.com",
-    role: "user",
-    id: 1,
-    founderId: 1,
-    startupId: 1,
+    name : "Eliott",
+    email: "eliott.tesnier@gmail.com",
+    role: "founder",
+    id: Math.floor(Math.random() * (60 - 1) + 1),
+    founderId: Math.floor(Math.random() * (60 - 1) + 1),
+    startupId: Math.floor(Math.random() * (60 - 1) + 1),
     userImag: "string",
   }, 
   {
-    name : "Noa",
-    email: "noa.roussiere@gmail.com",
-    role: "founder",
-    id: 1,
-    founderId: 1,
-    startupId: 1,
+    name : "Paul-Antoine",
+    email: "pa.salmon@gmail.com",
+    role: "user",
+    id: Math.floor(Math.random() * (60 - 1) + 1),
+    founderId: Math.floor(Math.random() * (60 - 1) + 1),
+    startupId: Math.floor(Math.random() * (60 - 1) + 1),
     userImag: "string",
   }, 
 ]
@@ -129,21 +130,15 @@ export default function AdminUsers() {
 
             {/* Users content placeholder */}
             <div className="max-w-7xl mx-auto bg-white rounded-2xl p-5">
-              {/* <CardHeader>
-                <CardTitle className="text-2xl font-semibold text-app-text-primary mb-6">
-                  Users
-                </CardTitle>
-                <CardDescription className="text-app-text-secondary mb-8">
-                  This is where the users management content will go.
-                </CardDescription>
-              </CardHeader> */}
-              <div className="w-full">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[240px]">User</TableHead>
+                      <TableHead className="text-center">ID</TableHead>
+                      <TableHead className="text-center border-l">User</TableHead>
                       <TableHead className="text-center border-l">Role</TableHead>
                       <TableHead className="text-center border-l">Email</TableHead>
+                      <TableHead className="text-center border-l">Founder ID</TableHead>
+                      <TableHead className="text-center border-l">Founder Startup</TableHead>
                       <TableHead className="text-center border-l">Settings</TableHead>
                       <TableHead className="text-center border-l">Delete</TableHead>
                     </TableRow>
@@ -151,8 +146,9 @@ export default function AdminUsers() {
                   <TableBody>
                     {UserList.map((user, id) => (
                       <TableRow key={id} className="hover:bg-gray-50 transition-colors">
+                        <TableCell className="text-center border-r border-gray-200 align-middle text-app-text-secondary">{user.id}</TableCell>
                         <TableCell className="border-none">
-                          <div className="flex items-center gap-3">
+                          <div className="flex justify-center items-center gap-3">
                             <Avatar>
                               <AvatarImage src={`${getBackendUrl()}${user.userImag}`}></AvatarImage>
                               <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -162,6 +158,8 @@ export default function AdminUsers() {
                         </TableCell>
                         <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{user.role}</TableCell>
                         <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{user.email}</TableCell>
+                        <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{user.founderId}</TableCell>
+                        <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{user.startupId}</TableCell>
                         <TableCell className="text-center border-l border-gray-200 align-middle">
                           <button className="p-2 rounded hover:bg-gray-100 transition-colors" aria-label="Settings">
                             <IoSettingsOutline className="text-xl text-gray-500" />
@@ -176,8 +174,13 @@ export default function AdminUsers() {
                     ))}
                   </TableBody>
                 </Table>
+                {UserList.length === 0 && (
+                  <div className="flex items-center justify-center py-12 gap-3">
+                    <UserIcon className="w-8 h-8 text-gray-400" />
+                    <span className="text-gray-400 text-lg font-medium">No user</span>
+                  </div>
+                )}
               </div>
-            </div>
           </>
         )}
       </main>
