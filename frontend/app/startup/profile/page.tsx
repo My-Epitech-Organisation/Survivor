@@ -490,7 +490,7 @@ export default function StartupProfile() {
                 </div>
 
                 {/* Founders Section */}
-                <div>
+                <div className="mb-3">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-app-text-primary">
                       Founders
