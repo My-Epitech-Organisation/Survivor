@@ -72,10 +72,10 @@ def project_views(request, user_id):
     Returns the views of the user's projects for the last 6 months.
     This is a placeholder implementation.
     Restricted to authenticated users with roles other than regular users.
-    Users can only access their own data unless they are admins.
+    Users can only access their own data unless they are admins or founders.
     """
-    # Check if user is accessing their own data or is an admin
-    if str(request.user.id) != str(user_id) and request.user.role != "admin":
+    # Check if user is accessing their own data or is an admin/founder
+    if str(request.user.id) != str(user_id) and request.user.role not in ["admin", "founder"]:
         return Response({"error": "You do not have permission to access this data"}, status=status.HTTP_403_FORBIDDEN)
 
     # Placeholder data
@@ -99,10 +99,10 @@ def project_engagement(request, user_id):
     Returns the engagement rate for the user's projects.
     This is a placeholder implementation.
     Restricted to authenticated users with roles other than regular users.
-    Users can only access their own data unless they are admins.
+    Users can only access their own data unless they are admins or founders.
     """
-    # Check if user is accessing their own data or is an admin
-    if str(request.user.id) != str(user_id) and request.user.role != "admin":
+    # Check if user is accessing their own data or is an admin/founder
+    if str(request.user.id) != str(user_id) and request.user.role not in ["admin", "founder"]:
         return Response({"error": "You do not have permission to access this data"}, status=status.HTTP_403_FORBIDDEN)
 
     # Placeholder data

@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from auditlog.models import AuditLog
 from authentication.models import CustomUser
-from authentication.permissions import IsAdmin
+from authentication.permissions import IsAdmin, IsAdminOrFounder
 from django.db.models import Count, F, Q
 from django.db.models.functions import TruncDay, TruncMonth
 from django.http import JsonResponse
@@ -63,11 +63,11 @@ def new_signups(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAdmin])
+@permission_classes([IsAdminOrFounder])
 def projects_visibility(request):
     """
     API endpoint that returns project visibility data by month.
-    This endpoint requires admin privileges.
+    This endpoint requires admin or founder privileges.
     """
     now = timezone.now()
     last_6_months = now - timedelta(days=180)
@@ -188,13 +188,13 @@ def monthly_stats(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAdmin])
+@permission_classes([IsAdminOrFounder])
 def project_view_stats(request, project_id=None):
     """
     API endpoint that returns view statistics for projects.
     If project_id is provided, returns stats for that specific project.
     Otherwise, returns stats for all projects.
-    This endpoint requires admin privileges.
+    This endpoint requires admin or founder privileges.
     """
     period = request.GET.get("period", "all")
 
@@ -239,11 +239,11 @@ def project_view_stats(request, project_id=None):
 
 
 @api_view(["GET"])
-@permission_classes([IsAdmin])
+@permission_classes([IsAdminOrFounder])
 def most_viewed_projects(request):
     """
     API endpoint that returns the most viewed projects.
-    This endpoint requires admin privileges.
+    This endpoint requires admin or founder privileges.
     """
     period = request.GET.get("period", "month")
     limit = int(request.GET.get("limit", 5))
@@ -288,13 +288,13 @@ def most_viewed_projects(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAdmin])
+@permission_classes([IsAdminOrFounder])
 def project_views_over_time(request, project_id=None):
     """
     API endpoint that returns project views over time.
     If project_id is provided, returns data for that specific project.
     Otherwise, returns aggregated data for all projects.
-    This endpoint requires admin privileges.
+    This endpoint requires admin or founder privileges.
     """
     grouping = request.GET.get("grouping", "month")
     period = request.GET.get("period", "year")
