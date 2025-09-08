@@ -365,9 +365,6 @@ export default function StartupDashboard() {
                                 <p className="font-medium text-gray-900">
                                   {founder.FounderName}
                                 </p>
-                                <p className="text-sm text-gray-600">
-                                  Founder #{founder.FounderID}
-                                </p>
                               </div>
                             </div>
                           )
