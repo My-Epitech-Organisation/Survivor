@@ -298,4 +298,7 @@ SPECTACULAR_SETTINGS = {
         "displayOperationId": True,
     },
     "COMPONENT_SPLIT_REQUEST": True,
+    "TAGS": [
+        {"name": "messages", "description": "Messaging API endpoints for user communication"},
+    ],
 }

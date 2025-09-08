@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -33,6 +34,28 @@ from .serializers import (
 logger = logging.getLogger(__name__)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        tags=["messages"],
+        summary="List user threads",
+        description="Retrieves all conversation threads for the current user",
+        responses={
+            200: ThreadSerializer(many=True),
+            403: OpenApiResponse(description="Not eligible to use messaging"),
+        },
+    ),
+    post=extend_schema(
+        tags=["messages"],
+        summary="Create a new thread",
+        description="Creates a new conversation thread or returns an existing thread with the same participants",
+        request=ThreadCreateSerializer,
+        responses={
+            201: OpenApiResponse(description="Thread created successfully"),
+            400: OpenApiResponse(description="Invalid data provided"),
+            403: OpenApiResponse(description="Not eligible to use messaging"),
+        },
+    ),
+)
 class ThreadListView(APIView):
     """
     List threads for the current user and create a new thread.
@@ -96,6 +119,35 @@ class ThreadListView(APIView):
         )
 
 
+@extend_schema_view(
+    get=extend_schema(
+        tags=["messages"],
+        summary="Get thread details",
+        description="Retrieves a specific thread with all messages",
+        parameters=[
+            OpenApiParameter(name="thread_id", description="Thread ID", required=True, type=int),
+        ],
+        responses={
+            200: ThreadDetailSerializer,
+            403: OpenApiResponse(description="Not a participant in this thread"),
+            404: OpenApiResponse(description="Thread not found"),
+        },
+    ),
+    delete=extend_schema(
+        tags=["messages"],
+        summary="Delete thread",
+        description="Deletes a thread (only if all messages are deleted)",
+        parameters=[
+            OpenApiParameter(name="thread_id", description="Thread ID", required=True, type=int),
+        ],
+        responses={
+            204: OpenApiResponse(description="Thread deleted successfully"),
+            400: OpenApiResponse(description="Thread still has messages"),
+            403: OpenApiResponse(description="Not a participant in this thread"),
+            404: OpenApiResponse(description="Thread not found"),
+        },
+    ),
+)
 class ThreadDetailView(APIView):
     """
     Retrieve or delete a thread instance.
@@ -131,6 +183,24 @@ class ThreadDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        tags=["messages"],
+        summary="Send message",
+        description="Sends a new message in a thread",
+        parameters=[
+            OpenApiParameter(name="thread_id", description="Thread ID", required=True, type=int),
+        ],
+        request=MessageSerializer,
+        responses={
+            201: MessageSerializer,
+            400: OpenApiResponse(description="Invalid message data"),
+            403: OpenApiResponse(description="Not a participant in this thread"),
+            404: OpenApiResponse(description="Thread not found"),
+            429: OpenApiResponse(description="Rate limit exceeded - sending messages too quickly"),
+        },
+    ),
+)
 class MessageListView(APIView):
     """
     Create messages in a thread
@@ -173,6 +243,28 @@ class MessageListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(
+    tags=["messages"],
+    summary="Mark thread as read",
+    description="Marks messages in a thread as read up to a specified message or the latest message if not specified",
+    parameters=[
+        OpenApiParameter(name="thread_id", description="Thread ID", required=True, type=int),
+    ],
+    request={
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "message_id": {"type": "integer", "description": "ID of the message to mark as read (optional)"}
+            },
+        }
+    },
+    responses={
+        200: ReadReceiptSerializer,
+        400: OpenApiResponse(description="No messages in thread"),
+        403: OpenApiResponse(description="Not a participant in this thread"),
+        404: OpenApiResponse(description="Thread or message not found"),
+    },
+)
 @api_view(["POST"])
 @permission_classes([IsMessagingEligibleUser])
 def mark_thread_read(request, thread_id):
@@ -199,6 +291,31 @@ def mark_thread_read(request, thread_id):
     return Response(ReadReceiptSerializer(read_receipt).data, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    tags=["messages"],
+    summary="Update typing status",
+    description="Updates the typing status for the current user in a thread",
+    parameters=[
+        OpenApiParameter(name="thread_id", description="Thread ID", required=True, type=int),
+    ],
+    request={
+        "application/json": {
+            "type": "object",
+            "properties": {"is_typing": {"type": "boolean", "description": "Whether the user is typing or not"}},
+        }
+    },
+    responses={
+        200: OpenApiResponse(
+            description="Status updated successfully",
+            response={
+                "type": "object",
+                "properties": {"status": {"type": "string", "example": "ok"}, "is_typing": {"type": "boolean"}},
+            },
+        ),
+        403: OpenApiResponse(description="Not a participant in this thread"),
+        404: OpenApiResponse(description="Thread not found"),
+    },
+)
 @api_view(["POST"])
 @permission_classes([IsMessagingEligibleUser])
 def update_typing_status(request, thread_id):
@@ -218,6 +335,22 @@ def update_typing_status(request, thread_id):
     return Response({"status": "ok", "is_typing": is_typing}, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    tags=["messages"],
+    summary="Thread real-time events",
+    description="Stream real-time events from a thread using Server-Sent Events (SSE). Events include new messages, typing indicators, and read receipts.",
+    parameters=[
+        OpenApiParameter(name="thread_id", description="Thread ID", required=True, type=int),
+        OpenApiParameter(
+            name="last_event_id", description="Last event ID for resuming connection", required=False, type=str
+        ),
+    ],
+    responses={
+        200: OpenApiResponse(description="Event stream established - returns text/event-stream"),
+        403: OpenApiResponse(description="Authentication required or not a participant in this thread"),
+        404: OpenApiResponse(description="Thread not found"),
+    },
+)
 @require_GET
 @csrf_exempt
 def thread_events(request, thread_id):
