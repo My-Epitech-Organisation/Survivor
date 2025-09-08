@@ -34,7 +34,7 @@ export default function AdminUsers() {
   const handleEditUserSubmit = (id: number, data: FormUser, btnAction: HTMLButtonElement | null) => {
     console.log("DataSend: ", data);
     api
-      .put(`/users/${id}`, data)
+      .put(`/users/${id}/`, data)
       .then((response) => {
         console.debug("User edit successfully:", response.data);
         if (btnAction) {
