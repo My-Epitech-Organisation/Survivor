@@ -164,13 +164,13 @@ export default function StartupProfile() {
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
             Manage your startup&apos;s profile information, team members, and
             track your visibility metrics.
-            {!formData.name && !isEditing && !isLoading && (
-              <span className="block mt-2 text-sm text-gray-500">
-                Your profile is currently empty. Click "Edit Profile" to add
-                your startup information.
-              </span>
-            )}
           </p>
+          {!formData.name && !isEditing && !isLoading && (
+            <span className="block mt-2 text-sm text-gray-500">
+              Your profile is currently empty. Click "Edit Profile" to add
+              your startup information.
+            </span>
+          )}
         </div>
 
         {isLoading ? (
