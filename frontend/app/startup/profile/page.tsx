@@ -355,10 +355,10 @@ export default function StartupProfile() {
                             SNC
                           </SelectItem>
                           <SelectItem
-                            value="Auto-entrepreneur"
+                            value="Self-Employed"
                             className="cursor-pointer"
                           >
-                            Auto-entrepreneur
+                            Self-Employed
                           </SelectItem>
                         </SelectContent>
                       </Select>
