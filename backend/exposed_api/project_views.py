@@ -5,7 +5,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -41,10 +41,14 @@ class ProjectDetailView(APIView):
     def get_permissions(self):
         """
         Override to return different permissions based on HTTP method.
-        GET requests are allowed for everyone, but POST, PUT, DELETE require admin.
+        GET requests are allowed for everyone,
+        PUT requests require authentication (handled by custom logic in put method),
+        POST and DELETE require admin.
         """
         if self.request.method == "GET":
             return [AllowAny()]
+        elif self.request.method == "PUT":
+            return [IsAuthenticated()]
         return [IsAdmin()]
 
     def get(self, request, _id=None):
@@ -89,8 +93,22 @@ class ProjectDetailView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def put(self, request, _id):
-        """Handle PUT requests - admin only"""
+        """Handle PUT requests - admin or project founders only"""
         project = get_object_or_404(StartupDetail, id=_id)
+
+        is_admin = request.user.role == "admin"
+        is_founder = False
+
+        if request.user.founder_id:
+            is_founder = project.founders.filter(id=request.user.founder_id).exists()
+
+        if not (is_admin or is_founder):
+            return Response(
+                {
+                    "error": "You don't have permission to edit this project. Only admins and project founders can edit projects."
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = ProjectDetailSerializer(project, data=request.data, partial=False, context={"request": request})
         if serializer.is_valid():

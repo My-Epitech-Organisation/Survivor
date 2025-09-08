@@ -14,13 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  FaEdit,
-  FaEye,
-  FaThumbsUp,
-  FaShare,
-  FaUsers,
-} from "react-icons/fa";
+import { FaEdit, FaEye, FaThumbsUp, FaShare, FaUsers } from "react-icons/fa";
 import { FounderResponse } from "@/types/founders";
 import { ProjectDetails, ProjectProfileFormData } from "@/types/project";
 import { authenticatedFetch } from "@/lib/api";
@@ -43,9 +37,9 @@ export default function StartupProfile() {
     website: null,
   });
 
+  const [isFounder, setIsFounder] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
   const visibilityStats = {
     profileViews: 0,
@@ -81,48 +75,86 @@ export default function StartupProfile() {
         return null;
       }
     };
-    fetchStartupId().then((id) => {
-      const fetchStartupDetails = async () => {
-        try {
-          const response = await authenticatedFetch(`/projects/${id}`);
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch startup data");
+    if (user?.founderId) {
+      setIsFounder(true);
+      fetchStartupId().then((id) => {
+        const fetchStartupDetails = async () => {
+          try {
+            const response = await authenticatedFetch(`/projects/${id}`);
+
+            if (!response.ok) {
+              throw new Error("Failed to fetch startup data");
+            }
+
+            const data: ProjectDetails = await response.json();
+            return {
+              id: data.ProjectId,
+              name: data.ProjectName,
+              description: data.ProjectDescription,
+              sector: data.ProjectSector,
+              maturity: data.ProjectMaturity,
+              address: data.ProjectAddress,
+              legalStatus: data.ProjectLegalStatus,
+              email: data.ProjectEmail,
+              phone: data.ProjectPhone,
+              needs: data.ProjectNeeds,
+              status: data.ProjectStatus,
+              social: data.ProjectSocial,
+              website: data.ProjectWebsite,
+            };
+          } catch (err) {
+            return null;
           }
+        };
 
-          const data: ProjectDetails = await response.json();
-          return {
-            id: data.ProjectId,
-            name: data.ProjectName,
-            description: data.ProjectDescription,
-            sector: data.ProjectSector,
-            maturity: data.ProjectMaturity,
-            address: data.ProjectAddress,
-            legalStatus: data.ProjectLegalStatus,
-            email: data.ProjectEmail,
-            phone: data.ProjectPhone,
-            needs: data.ProjectNeeds,
-            status: data.ProjectStatus,
-            social: data.ProjectSocial,
-            website: data.ProjectWebsite,
-          };
-        } catch (err) {
-          return null;
-        }
-      };
-      fetchStartupDetails().then((data) => {
-        if (data) {
-          setFormData(data);
-        }
-        setIsLoading(false);
+        fetchStartupDetails().then((data) => {
+          if (data) {
+            setFormData(data);
+          }
+        });
       });
-    });
+    }
   }, [user?.founderId]);
 
-  const handleSave = () => {
-    // API call to save the data
-    console.log("Saving startup profile:", formData);
-    setIsEditing(false);
+  const handleSave = async () => {
+    if (!formData.id) {
+      console.error("Project ID is missing");
+      return;
+    }
+
+    try {
+      const updateData = {
+        ProjectName: formData.name,
+        ProjectDescription: formData.description,
+        ProjectSector: formData.sector,
+        ProjectMaturity: formData.maturity,
+        ProjectAddress: formData.address,
+        ProjectLegalStatus: formData.legalStatus,
+        ProjectEmail: formData.email,
+        ProjectPhone: formData.phone,
+        ProjectNeeds: formData.needs,
+        ProjectStatus: formData.status,
+        ProjectSocial: formData.social,
+        ProjectWebsite: formData.website,
+      };
+
+      const response = await authenticatedFetch(`/projects/${formData.id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update project");
+      }
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating project:", error);
+    }
   };
 
   const handleCancel = () => {
@@ -145,10 +177,10 @@ export default function StartupProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
+    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
       <StartupNavigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
             Startup Profile Management
@@ -157,24 +189,24 @@ export default function StartupProfile() {
             Manage your startup&apos;s profile information, team members, and
             track your visibility metrics.
           </p>
-          {!formData.name && !isEditing && !isLoading && (
-            <span className="block mt-2 text-sm text-gray-500">
-              Your profile is currently empty. Click "Edit Profile" to add
-              your startup information.
+          {!isFounder ? (
+            <span className="block mt-2 text-sm text-app-text-secondary">
+              You do not have a startup to your name, please contact the
+              administration to add a startup to your profile.
             </span>
+          ) : (
+            !formData.name &&
+            !isEditing &&
+            !isLoading && (
+              <span className="block mt-2 text-sm text-app-text-secondary">
+                Your profile is currently empty. Click "Edit Profile" to add
+                your startup information.
+              </span>
+            )
           )}
         </div>
 
-        {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-app-text-secondary">
-                Loading your startup profile...
-              </p>
-            </div>
-          </div>
-        ) : (
+        {isFounder && (
           <div className="max-w-6xl mx-auto space-y-8">
             {/* Visibility Stats */}
             <Card>
