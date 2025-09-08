@@ -20,6 +20,7 @@ from .kpi_views import (
 )
 from .news_views import NewsDetailView, NewsListView
 from .partner_views import PartnerDetailView
+from .search_views import AdvancedSearchView
 from .user_views import AdminUserView
 
 app_name = "exposed_api"
@@ -28,6 +29,8 @@ app_name = "exposed_api"
 urlpatterns = [
     # Media endpoints
     path("media/upload/", media_views.upload_image, name="media_upload"),
+    # Search endpoint
+    path("search/", AdvancedSearchView.as_view(), name="advanced_search"),
     # Project endpoints
     path("projects/", project_views.ProjectDetailView.as_view(), name="project_create_or_list"),
     path("projects/<int:_id>/", project_views.ProjectDetailView.as_view(), name="project_detail_or_crud"),
