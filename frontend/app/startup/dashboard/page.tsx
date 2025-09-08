@@ -140,7 +140,7 @@ export default function StartupDashboard() {
       <StartupNavigation />
 
       <main className="px-4 sm:px-6 lg:px-8 py-12 flex-1 flex flex-col items-center">
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
             Project Profile
           </h1>
