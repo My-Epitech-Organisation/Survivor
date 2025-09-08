@@ -173,7 +173,7 @@ export default function StartupDashboard() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-8 gap-6 mb-8 max-w-6xl">
+                <div className="grid grid-cols-8 gap-6 mb-8 max-w-6xl">
                   <div className="col-span-full flex justify-end">
                     <Button
                       className="bg-app-blue-primary hover:bg-app-blue-primary-hover text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 font-medium cursor-pointer"
@@ -193,7 +193,7 @@ export default function StartupDashboard() {
                     </Button>
                   </div>
                   {/* Main Header Card */}
-                  <Card className="mb-8 col-span-4 h-full">
+                  <Card className="mb-8 col-span-full md:col-span-4 h-full">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-4">
                         <Avatar className="h-20 w-20">
@@ -224,7 +224,7 @@ export default function StartupDashboard() {
                   </Card>
 
                   {/* Project Name & Description - Large Card */}
-                  <Card className="md:col-span-4 lg:col-span-4 h-full gap-2">
+                  <Card className="col-span-full md:col-span-4 h-full gap-2">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-4 text-2xl">
                         <Building2 className="h-8 w-8 text-app-blue-primary" />
@@ -239,8 +239,8 @@ export default function StartupDashboard() {
                   </Card>
 
                   {/* Sector */}
-                  <Card className="col-span-2 row-span-2">
-                    <CardContent className="p-6 flex flex-col gap-8">
+                  <Card className="col-span-8 sm:col-span-4 md:col-span-2 row-span-2">
+                    <CardContent className="p-6 grid grid-cols-2 sm:grid-cols-1 gap-8">
                       <div className="flex items-start gap-3">
                         <div className="p-3 bg-purple-100 rounded-lg">
                           <Target className="h-6 w-6 text-purple-600" />
@@ -297,7 +297,7 @@ export default function StartupDashboard() {
                   </Card>
 
                   {/* Location */}
-                  <Card className="col-span-3">
+                  <Card className="col-span-8 sm:col-span-4 md:col-span-3">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-3">
                         <div className="p-3 bg-blue-100 rounded-lg">
@@ -316,7 +316,7 @@ export default function StartupDashboard() {
                   </Card>
 
                   {/* Creation Date */}
-                  <Card className="col-span-3">
+                  <Card className="col-span-8 sm:col-span-4 md:col-span-3">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-3">
                         <div className="p-3 bg-yellow-100 rounded-lg">
@@ -335,7 +335,7 @@ export default function StartupDashboard() {
                   </Card>
 
                   {/* Founders - Wide Card */}
-                  <Card className="md:col-span-4 lg:col-span-6">
+                  <Card className="col-span-8 sm:col-span-4 md:col-span-6">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Users className="h-5 w-5 text-green-600" />
@@ -374,7 +374,7 @@ export default function StartupDashboard() {
                   </Card>
 
                   {/* Needs - Full Width Card */}
-                  <Card className="md:col-span-3 lg:col-span-4">
+                  <Card className="col-span-8 sm:col-span-4">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <FileText className="h-5 w-5 text-red-600" />
@@ -390,7 +390,7 @@ export default function StartupDashboard() {
 
                   {/* Website */}
                   {currentProject.ProjectWebsite && (
-                    <Card className="col-span-2">
+                    <Card className="col-span-8 sm:col-span-4 md:col-span-2">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-3">
                           <div className="p-3 bg-cyan-100 rounded-lg">
@@ -421,7 +421,7 @@ export default function StartupDashboard() {
 
                   {/* Social Media */}
                   {currentProject.ProjectSocial && (
-                    <Card className="col-span-2">
+                    <Card className="col-span-8 sm:col-span-4 md:col-span-2">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-3">
                           <div className="p-3 bg-pink-100 rounded-lg">
