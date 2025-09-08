@@ -60,10 +60,30 @@ class UserSerializer(serializers.ModelSerializer):
     Serializer for user profile
     """
 
+    founder = serializers.SerializerMethodField(read_only=True)
+    investor = serializers.SerializerMethodField(read_only=True)
+    is_active = serializers.BooleanField(required=False)
+
     class Meta:
         model = User
-        fields = ("id", "email", "name", "role", "image", "founder_id", "investor_id")
+        fields = ("id", "email", "name", "role", "founder", "investor", "is_active")
         read_only_fields = ("id", "email")
+
+    def get_founder(self, obj):
+        """
+        Return founder information if exists, otherwise None
+        """
+        if obj.founder_id:
+            return obj.founder_id
+        return None
+
+    def get_investor(self, obj):
+        """
+        Return investor information if exists, otherwise None
+        """
+        if obj.investor_id:
+            return obj.investor_id
+        return None
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):

@@ -68,7 +68,7 @@ export default function StartupDashboard() {
         if (userProfileData.founderId) {
           try {
             const projectData = await api.get<ProjectDetailsProps[] | null>(
-              `/projects/founder/${userProfileData.founderId}`
+              {endpoint:`/projects/founder/${userProfileData.founderId}`}
             );
             setProject(projectData.data);
             if (

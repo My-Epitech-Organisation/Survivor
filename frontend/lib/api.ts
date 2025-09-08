@@ -50,9 +50,14 @@ export const authenticatedFetch = async (
 
 export const apiGet = async (
   endpoint: string,
-  token?: string
+  token?: string,
+  data?: unknown
 ): Promise<Response> => {
-  return authenticatedFetch(endpoint, { method: "GET" }, token);
+  return authenticatedFetch(
+    endpoint,
+    { method: "GET", body: data ? JSON.stringify(data) : undefined },
+    token
+  );
 };
 
 export const apiPost = async (
@@ -80,20 +85,25 @@ export const apiDelete = async (endpoint: string): Promise<Response> => {
 };
 
 export const api = {
-  get: async <T = unknown>(
-    endpoint: string,
-    token?: string
-  ): Promise<{ data: T | null }> => {
+  get: async <T = unknown>({
+    endpoint,
+    data,
+    token
+  }: {
+    endpoint: string;
+    data?: unknown;
+    token?: string;
+  }): Promise<{ data: T | null }> => {
     try {
-      const response = await apiGet(endpoint, token);
+      const response = await apiGet(endpoint, token, data);
       if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`);
       }
-      const data = await response.json();
-      return { data };
+      const json = await response.json();
+      return { data: json };
     } catch (error) {
       console.error(error);
-      return { data: null as T | null };
+      return { data: null };
     }
   },
 
