@@ -6,6 +6,7 @@ import { NewsDetailItem } from "@/types/news";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
+import AdminNewsForm from "@/components/AdminNewsForm";
 
 interface AdminNewsProps {
   news: NewsDetailItem,
@@ -47,22 +48,16 @@ export default function AdminNews (props: AdminNewsProps)
               <IoSettingsOutline className="text-xl text-gray-500" />
             </button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw]">
+          <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw] max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 Edit News
               </DialogTitle>
             </DialogHeader>
-            <div className="py-4 text-center text-app-text-primary">
-              <p>
-                Form editing will be implemented in the next phase.
-              </p>
-            </div>
-            <DialogFooter className="flex justify-end gap-2 mt-2">
-              <DialogClose asChild ref={closeBtn}>
-                <Button variant="outline" className="min-w-[90px]">Close</Button>
-              </DialogClose>
-            </DialogFooter>
+            <AdminNewsForm
+              defaultData={props.news}
+              onSubmit={(data) => props.editCB(props.news.id, data, closeBtn.current)}
+            />
           </DialogContent>
         </Dialog>
       </TableCell>

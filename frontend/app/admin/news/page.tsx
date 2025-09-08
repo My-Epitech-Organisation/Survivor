@@ -8,8 +8,10 @@ import { Table, TableHeader, TableBody, TableRow, TableHead } from "@/components
 import { NewsDetailItem } from "@/types/news";
 import { Newspaper } from "lucide-react";
 import api from "@/lib/api";
-import { toast } from "sonner"
+import { toast } from "sonner";
 import AdminNews from "@/components/AdminNews";
+import AdminNewsForm from "@/components/AdminNewsForm";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 
 type SortColumn = 'id' | 'title' | 'category' | 'news_date' | 'location' | 'startup_id' | null;
 type SortDirection = 'asc' | 'desc' | null;
@@ -139,6 +141,7 @@ export default function AdminNewsPage() {
   };
 
   const handleEditNewsSubmit = (id: number, data: NewsDetailItem, btnAction: HTMLButtonElement | null) => {
+    // Image upload functionality will be implemented later
     api
       .put(`/news/${id}/`, data)
       .then((response) => {
@@ -190,6 +193,41 @@ export default function AdminNewsPage() {
       });
   };
 
+  const handleCreateNews = (data: NewsDetailItem) => {
+    // Create a new object without the ID to let the backend generate it
+    const newsData = {
+      title: data.title,
+      category: data.category,
+      news_date: data.news_date,
+      location: data.location,
+      startup_id: data.startup_id || 0,
+      description: data.description,
+      // Image upload functionality will be implemented later
+    };
+
+    console.debug("Sending news data to backend:", newsData);
+    api
+      .post('/news/', newsData)
+      .then((response) => {
+        console.debug("News created successfully:", response.data);
+        fetchNews();
+        toast("News created", {
+          description: "The news has been created successfully.",
+        });
+      })
+      .catch((error) => {
+        toast("Create error", {
+          className: "!text-red-500",
+          description: (
+            <span className="text-red-500">
+              An error occurred while creating news: {String(error)}
+            </span>
+          ),
+        });
+        console.error("Error creating news:", error);
+      });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
       <AdminNavigation />
@@ -208,16 +246,25 @@ export default function AdminNewsPage() {
               <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
                 News Management
               </h1>
-              <button
-                className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-                onClick={() => {
-                  toast("Coming soon", {
-                    description: "Add news functionality will be implemented soon.",
-                  });
-                }}
-              >
-                Add News
-              </button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button
+                    className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Add News
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw] max-h-[85vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      Create New News
+                    </DialogTitle>
+                  </DialogHeader>
+                  <AdminNewsForm
+                    onSubmit={(data) => handleCreateNews(data)}
+                  />
+                </DialogContent>
+              </Dialog>
             </div>
 
             {/* Filters */}
