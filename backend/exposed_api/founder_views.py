@@ -51,7 +51,7 @@ class FounderDetailView(APIView):
             return Response(serializer.data)
         except Founder.DoesNotExist:
             return Response(
-                {"error": f"Founder with id {_id} not found"}, 
+                {"error": f"Founder with id {_id} not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
