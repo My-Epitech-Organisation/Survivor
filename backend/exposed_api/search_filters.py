@@ -5,7 +5,8 @@ These filters allow advanced searching across different entity types.
 
 import django_filters
 from django.db.models import Q
-from admin_panel.models import StartupDetail, Event, NewsDetail, Founder
+
+from admin_panel.models import Event, Founder, NewsDetail, StartupDetail
 
 
 class TextSearchFilter(django_filters.CharFilter):
@@ -17,7 +18,7 @@ class TextSearchFilter(django_filters.CharFilter):
     """
 
     def __init__(self, *args, **kwargs):
-        self.search_fields = kwargs.pop('search_fields', [])
+        self.search_fields = kwargs.pop("search_fields", [])
         super().__init__(*args, **kwargs)
 
     def filter(self, qs, value):
@@ -38,16 +39,15 @@ class StartupDetailFilter(django_filters.FilterSet):
 
     Allows filtering by search terms, sector, maturity, and location.
     """
-    search = TextSearchFilter(
-        search_fields=['name', 'description', 'sector', 'needs']
-    )
-    sector = django_filters.CharFilter(lookup_expr='iexact')
-    maturity = django_filters.CharFilter(lookup_expr='iexact')
-    location = django_filters.CharFilter(field_name='address', lookup_expr='icontains')
+
+    search = TextSearchFilter(search_fields=["name", "description", "sector", "needs"])
+    sector = django_filters.CharFilter(lookup_expr="iexact")
+    maturity = django_filters.CharFilter(lookup_expr="iexact")
+    location = django_filters.CharFilter(field_name="address", lookup_expr="icontains")
 
     class Meta:
         model = StartupDetail
-        fields = ['search', 'sector', 'maturity', 'location']
+        fields = ["search", "sector", "maturity", "location"]
 
 
 class EventFilter(django_filters.FilterSet):
@@ -56,15 +56,14 @@ class EventFilter(django_filters.FilterSet):
 
     Allows filtering by search terms, event type, and location.
     """
-    search = TextSearchFilter(
-        search_fields=['name', 'description', 'event_type']
-    )
-    event_type = django_filters.CharFilter(lookup_expr='iexact')
-    location = django_filters.CharFilter(lookup_expr='icontains')
+
+    search = TextSearchFilter(search_fields=["name", "description", "event_type"])
+    event_type = django_filters.CharFilter(lookup_expr="iexact")
+    location = django_filters.CharFilter(lookup_expr="icontains")
 
     class Meta:
         model = Event
-        fields = ['search', 'event_type', 'location']
+        fields = ["search", "event_type", "location"]
 
 
 class NewsFilter(django_filters.FilterSet):
@@ -73,15 +72,14 @@ class NewsFilter(django_filters.FilterSet):
 
     Allows filtering by search terms, category, and location.
     """
-    search = TextSearchFilter(
-        search_fields=['title', 'description', 'category']
-    )
-    category = django_filters.CharFilter(lookup_expr='iexact')
-    location = django_filters.CharFilter(lookup_expr='icontains')
+
+    search = TextSearchFilter(search_fields=["title", "description", "category"])
+    category = django_filters.CharFilter(lookup_expr="iexact")
+    location = django_filters.CharFilter(lookup_expr="icontains")
 
     class Meta:
         model = NewsDetail
-        fields = ['search', 'category', 'location']
+        fields = ["search", "category", "location"]
 
 
 class FounderFilter(django_filters.FilterSet):
@@ -90,10 +88,9 @@ class FounderFilter(django_filters.FilterSet):
 
     Allows filtering by search terms on founder name.
     """
-    search = TextSearchFilter(
-        search_fields=['name']
-    )
+
+    search = TextSearchFilter(search_fields=["name"])
 
     class Meta:
         model = Founder
-        fields = ['search']
+        fields = ["search"]

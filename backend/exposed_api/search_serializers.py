@@ -4,7 +4,8 @@ These serializers handle the normalization and representation of search results.
 """
 
 from rest_framework import serializers
-from admin_panel.models import StartupDetail, Event, NewsDetail, Founder
+
+from admin_panel.models import Event, Founder, NewsDetail, StartupDetail
 
 
 class FounderSearchSerializer(serializers.ModelSerializer):
@@ -12,7 +13,7 @@ class FounderSearchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Founder
-        fields = ['id', 'name']
+        fields = ["id", "name"]
 
 
 class StartupSearchResultSerializer(serializers.ModelSerializer):
@@ -24,13 +25,21 @@ class StartupSearchResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = StartupDetail
         fields = [
-            'id', 'name', 'description', 'sector', 'maturity',
-            'address', 'website_url', 'project_status', 'founders', 'result_type'
+            "id",
+            "name",
+            "description",
+            "sector",
+            "maturity",
+            "address",
+            "website_url",
+            "project_status",
+            "founders",
+            "result_type",
         ]
 
     def get_result_type(self, obj):
         """Return the type of result."""
-        return 'project'
+        return "project"
 
 
 class EventSearchResultSerializer(serializers.ModelSerializer):
@@ -40,14 +49,11 @@ class EventSearchResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = [
-            'id', 'name', 'description', 'event_type',
-            'location', 'dates', 'result_type'
-        ]
+        fields = ["id", "name", "description", "event_type", "location", "dates", "result_type"]
 
     def get_result_type(self, obj):
         """Return the type of result."""
-        return 'event'
+        return "event"
 
 
 class NewsSearchResultSerializer(serializers.ModelSerializer):
@@ -57,14 +63,11 @@ class NewsSearchResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NewsDetail
-        fields = [
-            'id', 'title', 'description', 'category',
-            'location', 'news_date', 'result_type'
-        ]
+        fields = ["id", "title", "description", "category", "location", "news_date", "result_type"]
 
     def get_result_type(self, obj):
         """Return the type of result."""
-        return 'news'
+        return "news"
 
 
 class SearchResultSerializer(serializers.Serializer):
@@ -74,6 +77,7 @@ class SearchResultSerializer(serializers.Serializer):
     This serializer provides a consistent structure for different result types
     to ensure a uniform API response regardless of the entity type.
     """
+
     id = serializers.IntegerField()
     title = serializers.SerializerMethodField()
     description = serializers.CharField(allow_blank=True, allow_null=True)
@@ -83,8 +87,8 @@ class SearchResultSerializer(serializers.Serializer):
 
     def get_title(self, obj):
         """Extract the appropriate title field based on the entity type."""
-        if hasattr(obj, 'name'):
+        if hasattr(obj, "name"):
             return obj.name
-        elif hasattr(obj, 'title'):
+        if hasattr(obj, "title"):
             return obj.title
         return "Untitled"
