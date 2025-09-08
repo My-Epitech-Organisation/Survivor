@@ -297,6 +297,25 @@ SPECTACULAR_SETTINGS = {
         "deepLinking": True,
         "persistAuthorization": True,
         "displayOperationId": True,
+        "tryItOutEnabled": True,
     },
     "COMPONENT_SPLIT_REQUEST": True,
+    "SCHEMA_PATH_PREFIX": r"/api",
+    "SERVE_PERMISSIONS": [],
+    "SERVE_AUTHENTICATION": None,
+    "REDOC_SETTINGS": {
+        "lazyRendering": True,
+        "hideHostname": False,
+        "expandResponses": "all",
+    },
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            },
+        }
+    },
+    "SECURITY": [{"Bearer": []}],
 }
