@@ -53,8 +53,9 @@ class AdminUserSerializer(serializers.ModelSerializer):
     def validate_userImage(self, value):
         prefix = "/api/media/"
         if isinstance(value, str) and value.startswith(prefix):
-            return value[len(prefix):]
+            return value[len(prefix) :]
         return value
+
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         image_path = rep.get("userImage")
@@ -65,6 +66,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
         else:
             rep["userImage"] = None
         return rep
+
     """
     Serializer for administrative management of users
     """
@@ -92,12 +94,14 @@ class AdminUserSerializer(serializers.ModelSerializer):
             "investor",
             "investor_id",
             "userImage",
-            "is_active"
+            "is_active",
         ]
+
     def get_investor(self, obj):
         if obj.role == "investor" and getattr(obj, "investor_id", None):
             try:
                 from admin_panel.models import Investor
+
                 investor = Investor.objects.get(id=obj.investor_id)
                 # Tu peux adapter le serializer utilisé ici si besoin
                 return {
@@ -110,7 +114,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
                     "created_at": getattr(investor, "created_at", None),
                     "description": getattr(investor, "description", None),
                     "investor_type": getattr(investor, "investor_type", None),
-                    "investment_focus": getattr(investor, "investment_focus", None)
+                    "investment_focus": getattr(investor, "investment_focus", None),
                 }
             except Exception:
                 pass
@@ -124,7 +128,6 @@ class AdminUserSerializer(serializers.ModelSerializer):
             except Founder.DoesNotExist:
                 pass
         return None
-
 
 
 @api_view(["GET"])
