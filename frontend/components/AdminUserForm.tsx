@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { FormUser } from "@/types/user";
-import { MinimalFounder } from "@/types/founders";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Roles } from "@/types/role";
 import { api } from "@/lib/api";
 import {
   Dialog,
@@ -22,6 +21,7 @@ import InputAvatar from "./ui/InputAvatar";
 import { Label } from "./ui/label";
 import {Combobox} from "./ui/comboBox"
 import { Founder } from "@/types/founders";
+import { Investor } from "@/types/investor";
 
 interface AdminUserFormProps {
   defaultData?: FormUser;
@@ -37,31 +37,49 @@ export default function AdminUserForm({
     role: "user",
     email: "",
     founder: undefined,
-    userImag: undefined
+    investor: undefined,
+    userImag: undefined,
+    is_active: undefined
   };
   const [formData, setFormData] = useState<FormUser>(
     defaultData || initialFormData
   );
 
   const [foundersAvailable, setFoundersAvailable] = useState<Founder[] | null>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [investosrAvailable, setInvestorsAvailable] = useState<Investor[] | null>();
+  const [isLoadingFounder, setIsLoadingFounder] = useState<boolean>(true);
+  const [isLoadingInvestor, setIsLoadingInvestor] = useState<boolean>(true);
 
 
   const fetchAvailableFounders = async () => {
     try {
-      setIsLoading(true);
+      setIsLoadingFounder(true);
       const result = (await api.get<Founder[]>({endpoint: `/founders/?founder_available=true`}));
-      console.log(result)
+      console.log("Founders: ", result)
       setFoundersAvailable(result.data);
     } catch (error) {
       console.log(error)
     }
-    setIsLoading(false);
+    setIsLoadingFounder(false);
+  }
+
+
+  const fetchAvailableInvestors = async () => {
+    try {
+      setIsLoadingInvestor(true);
+      const result = (await api.get<Investor[]>({endpoint: `/investors/?investor_available=true`}));
+      console.log("Investors: ", result)
+      setInvestorsAvailable(result.data);
+    } catch (error) {
+      console.log(error)
+    }
+    setIsLoadingInvestor(false);
   }
 
 
   useEffect(() => {
     fetchAvailableFounders();
+    fetchAvailableInvestors();
     if (defaultData) {
       setFormData(defaultData);
     }
@@ -112,13 +130,24 @@ export default function AdminUserForm({
         return;
       }
 
-      const updatedFormData = {
-        ...formData,
-      };
+      const cleanedFormData = { ...formData };
+      switch (formData.role) {
+        case "founder":
+          cleanedFormData.investor = undefined;
+          break;
+        case "investor":
+          cleanedFormData.founder = undefined;
+          break;
+        case "admin":
+        case "user":
+          cleanedFormData.founder = undefined;
+          cleanedFormData.investor = undefined;
+          break;
+      }
 
-      console.debug("Submitting project:", updatedFormData);
+      console.debug("Submitting project:", cleanedFormData);
 
-      onSubmit(updatedFormData);
+      onSubmit(cleanedFormData);
     } catch (error) {
       console.error("Error submitting project:", error);
     }
@@ -181,27 +210,56 @@ export default function AdminUserForm({
               <SelectItem value="investor">Investor</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
             </SelectWithLabel>
-            <Combobox
-              placeholder="Select a founder"
-              elements={
-                foundersAvailable?.map((founder) => ({
-                  label: founder.FounderName,
-                  value: String(founder.FounderID),
-                  url: founder.FounderPictureURL,
-                })) || []
-              }
-              variante="withAvatar"
-              notFound="Founder not found"
-              onChange={async (value) => {
-                try {
-                  const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
-                  console.log(result.data);
-                  setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
-                } catch (error) {
-                  console.error(error);
-                }
-              }}
-            />
+            {formData.role === "founder" && (
+              <>
+                <Combobox
+                  placeholder="Select a founder"
+                  elements={
+                    foundersAvailable?.map((founder) => ({
+                      label: founder.FounderName,
+                      value: String(founder.FounderID),
+                      url: founder.FounderPictureURL,
+                    })) || []
+                  }
+                  variante="withAvatar"
+                  notFound="Founder not found"
+                  onChange={async (value) => {
+                    try {
+                      setFormData((prev) => ({ ...prev, investor: undefined }));
+                      const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
+                      console.log(result.data);
+                      setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }}
+                />
+              </>
+            )}
+            {formData.role === "investor" && (
+              <>
+                <Combobox
+                  placeholder="Select a investor"
+                  elements={
+                    investosrAvailable?.map((investor) => ({
+                      label: investor.name,
+                      value: String(investor.id),
+                    })) || []
+                  }
+                  notFound="Investor not found"
+                  onChange={async (value) => {
+                    setFormData((prev) => ({ ...prev, founder: undefined }));
+                    try {
+                      const result = await api.get<Investor | null>({ endpoint: `/investors/${value}` });
+                      console.log(result.data);
+                      setFormData((prev) => ({ ...prev, investor: result.data ?? undefined }));
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }}
+                />
+                </>
+            )}
           </div>
         </div>
       </div>

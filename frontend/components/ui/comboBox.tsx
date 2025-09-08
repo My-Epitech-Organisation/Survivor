@@ -22,7 +22,7 @@ import {
 import InputAvatar from "@/components/ui/InputAvatar";
 
 interface ComboboxProps {
-  elements: { value: string; label: string, url : string }[];
+  elements: { value: string; label: string, url? : string }[];
   placeholder: string;
   notFound: string;
   variante?: "withAvatar";
@@ -90,47 +90,52 @@ export function Combobox(props: ComboboxProps) {
   }
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {value
-            ? props.elements.find((element) => element.value === value)?.label
-            : props.placeholder}
-          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder={props.placeholder} />
-          <CommandList>
-            <CommandEmpty>{props.notFound}</CommandEmpty>
-            <CommandGroup>
-              {props.elements.map((element) => (
-                <CommandItem
-                  key={element.value}
-                  value={element.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  <CheckIcon
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === element.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {element.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-[200px] justify-between"
+          >
+            {/* AvatarDisplay */}
+            {value ? (
+              <span className="flex items-center gap-2">
+                {props.elements.find((element) => element.label === value)?.label}
+              </span>
+            ) : props.placeholder}
+            <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0">
+          <Command>
+            <CommandInput placeholder={props.placeholder} />
+            <CommandList>
+              <CommandEmpty>{props.notFound}</CommandEmpty>
+              <CommandGroup>
+                {props.elements.map((element) => (
+                  <CommandItem
+                    key={element.value}
+                    value={element.label}
+                    onSelect={(currentValue) => {
+                      setValue(currentValue === value ? "" : currentValue);
+                      setOpen(false);
+                      if (props.onChange)
+                        props.onChange(element.value);
+                    }}
+                  >
+                    {element.label}
+                    <CheckIcon
+                      className={cn(
+                        "ml-2 h-4 w-4",
+                        value === element.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
   );
 }
