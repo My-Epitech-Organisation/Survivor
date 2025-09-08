@@ -31,9 +31,10 @@ export default function AdminUsers() {
     setIsDataLoading(false);
   };
 
-  const handleEditUserSubmit = (data: FormUser, btnAction: HTMLButtonElement | null) => {
+  const handleEditUserSubmit = (id: number, data: FormUser, btnAction: HTMLButtonElement | null) => {
+    console.log("DataSend: ", data);
     api
-      .put("/user/", data)
+      .put(`/users/${id}`, data)
       .then((response) => {
         console.debug("User edit successfully:", response.data);
         if (btnAction) {

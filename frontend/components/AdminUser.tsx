@@ -14,7 +14,7 @@ import { useRef } from "react";
 interface AdminUserProps {
   id: number,
   user: UserSimple,
-  editCB: (formUser: FormUser, btnAction: HTMLButtonElement | null) => void
+  editCB: (userId: number, formUser: FormUser, btnAction: HTMLButtonElement | null) => void
   deleteCB: (userId: number, btnAction: HTMLButtonElement | null) => void
 }
 
@@ -73,7 +73,7 @@ export default function AdminUser (props : AdminUserProps)
                   founder: props.user.founder,
                   userImag: props.user.userImag,
                 }}
-                onSubmit={(formUser) => props.editCB(formUser, closeBtn.current)}
+                onSubmit={(formUser) => props.editCB(props.id, formUser, closeBtn.current)}
               />
             </DialogContent>
           </Dialog>
