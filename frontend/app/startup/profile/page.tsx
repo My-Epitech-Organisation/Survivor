@@ -37,6 +37,22 @@ export default function StartupProfile() {
     social: null,
     website: null,
   });
+  const [originalFormData, setOriginalFormData] =
+    useState<ProjectProfileFormData>({
+      id: null,
+      name: null,
+      description: null,
+      sector: null,
+      maturity: null,
+      address: null,
+      legalStatus: null,
+      email: null,
+      phone: null,
+      needs: null,
+      status: null,
+      social: null,
+      website: null,
+    });
   const [uselessData, setUselessData] = useState({
     createdAt: "",
     founders: [] as Founder[],
@@ -76,7 +92,7 @@ export default function StartupProfile() {
         const data: FounderResponse = await response.json();
 
         return data.startup_id;
-      } catch (err) {
+      } catch {
         return null;
       }
     };
@@ -95,7 +111,7 @@ export default function StartupProfile() {
             const data: ProjectDetails = await response.json();
             setUselessData({
               founders: data.ProjectFounders,
-              createdAt: data.ProjectCreatedAt
+              createdAt: data.ProjectCreatedAt,
             });
             return {
               id: data.ProjectId,
@@ -112,7 +128,7 @@ export default function StartupProfile() {
               social: data.ProjectSocial,
               website: data.ProjectWebsite,
             };
-          } catch (err) {
+          } catch {
             return null;
           }
         };
@@ -120,6 +136,7 @@ export default function StartupProfile() {
         fetchStartupDetails().then((data) => {
           if (data) {
             setFormData(data);
+            setOriginalFormData(data);
           }
         });
       });
@@ -163,6 +180,7 @@ export default function StartupProfile() {
         throw new Error("Failed to update project");
       }
 
+      setOriginalFormData({ ...formData });
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating project:", error);
@@ -170,22 +188,13 @@ export default function StartupProfile() {
   };
 
   const handleCancel = () => {
-    setFormData({
-      id: null,
-      name: null,
-      description: null,
-      sector: null,
-      maturity: null,
-      address: null,
-      legalStatus: null,
-      email: null,
-      phone: null,
-      needs: null,
-      status: null,
-      social: null,
-      website: null,
-    });
+    setFormData({ ...originalFormData });
     setIsEditing(false);
+  };
+
+  const handleStartEditing = () => {
+    setOriginalFormData({ ...formData });
+    setIsEditing(true);
   };
 
   return (
@@ -211,7 +220,7 @@ export default function StartupProfile() {
             !isEditing &&
             !isLoading && (
               <span className="block mt-2 text-sm text-app-text-secondary">
-                Your profile is currently empty. Click "Edit Profile" to add
+                Your profile is currently empty. Click &quot;Edit Profile&quot; to add
                 your startup information.
               </span>
             )
@@ -288,7 +297,7 @@ export default function StartupProfile() {
                     </>
                   ) : (
                     <Button
-                      onClick={() => setIsEditing(true)}
+                      onClick={handleStartEditing}
                       variant="outline"
                       className="cursor-pointer"
                     >
