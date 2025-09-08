@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const token = getToken();
       if (token) {
         try {
-          const resp = await api.get<User>("/user");
+          const resp = await api.get<User>({endpoint:"/user"});
           setUser(resp.data);
         } catch (error) {
           console.error("Authentication error:", error);

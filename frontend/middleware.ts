@@ -8,7 +8,7 @@ async function isValidToken(token: string | null): Promise<User | null> {
     return null;
   }
   try {
-    return (await api.get<User>("/user", token)).data;
+    return (await api.get<User>({endpoint: "/user", token: token})).data;
   } catch (error) {
     console.error("Token validation error:", error);
     return null;

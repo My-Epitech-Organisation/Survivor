@@ -44,7 +44,7 @@ export const DashboardService = {
   // Get total users count
   getTotalUsers: async (): Promise<TotalCountResponse> => {
     try {
-      const { data } = await api.get<TotalCountResponse>(API_ENDPOINTS.TOTAL_USERS);
+      const { data } = await api.get<TotalCountResponse>({endpoint:API_ENDPOINTS.TOTAL_USERS});
       return data || { value: 0 };
     } catch (error) {
       console.error('Error fetching total users:', error);
@@ -55,7 +55,7 @@ export const DashboardService = {
   // Get total startups count
   getTotalStartups: async (): Promise<TotalCountResponse> => {
     try {
-      const { data } = await api.get<TotalCountResponse>(API_ENDPOINTS.TOTAL_STARTUPS);
+      const { data } = await api.get<TotalCountResponse>({endpoint:API_ENDPOINTS.TOTAL_STARTUPS});
       return data || { value: 0 };
     } catch (error) {
       console.error('Error fetching total startups:', error);
@@ -66,7 +66,7 @@ export const DashboardService = {
   // Get total events count
   getTotalEvents: async (): Promise<TotalCountResponse> => {
     try {
-      const { data } = await api.get<TotalCountResponse>(API_ENDPOINTS.TOTAL_EVENTS);
+      const { data } = await api.get<TotalCountResponse>({endpoint:API_ENDPOINTS.TOTAL_EVENTS});
       return data || { value: 0 };
     } catch (error) {
       console.error('Error fetching total events:', error);
@@ -77,7 +77,7 @@ export const DashboardService = {
   // Get new signups count
   getNewSignups: async (): Promise<TotalCountResponse> => {
     try {
-      const { data } = await api.get<TotalCountResponse>(API_ENDPOINTS.NEW_SIGNUPS);
+      const { data } = await api.get<TotalCountResponse>({endpoint:API_ENDPOINTS.NEW_SIGNUPS});
       return data || { value: 0 };
     } catch (error) {
       console.error('Error fetching new signups:', error);
@@ -88,7 +88,7 @@ export const DashboardService = {
   // Get project visibility data
   getProjectVisibility: async (): Promise<ProjectVisibilityItem[]> => {
     try {
-      const { data } = await api.get<ProjectVisibilityItem[]>(API_ENDPOINTS.PROJECTS_VISIBILITY);
+      const { data } = await api.get<ProjectVisibilityItem[]>({endpoint:API_ENDPOINTS.PROJECTS_VISIBILITY});
       return data || [];
     } catch (error) {
       console.error('Error fetching project visibility:', error);
@@ -99,7 +99,7 @@ export const DashboardService = {
   // Get users connected ratio
   getUsersConnected: async (): Promise<UsersConnectedResponse> => {
     try {
-      const { data } = await api.get<UsersConnectedResponse>(API_ENDPOINTS.USERS_CONNECTED);
+      const { data } = await api.get<UsersConnectedResponse>({endpoint:API_ENDPOINTS.USERS_CONNECTED});
       return data || { rate: 0 };
     } catch (error) {
       console.error('Error fetching users connected ratio:', error);
@@ -110,7 +110,7 @@ export const DashboardService = {
   // Get monthly statistics
   getMonthlyStats: async (): Promise<MonthlyStatsResponse> => {
     try {
-      const { data } = await api.get<MonthlyStatsResponse>(API_ENDPOINTS.MONTHLY_STATS);
+      const { data } = await api.get<MonthlyStatsResponse>({endpoint:API_ENDPOINTS.MONTHLY_STATS});
       return data || {
         projectsLaunched: 0,
         eventsCreated: 0,
@@ -137,7 +137,7 @@ export const DashboardService = {
   // Get most viewed projects
   getMostViewedProjects: async (limit: number = 5): Promise<MostViewedProject[]> => {
     try {
-      const { data } = await api.get<MostViewedProject[]>(`${API_ENDPOINTS.MOST_VIEWED_PROJECTS}?limit=${limit}`);
+      const { data } = await api.get<MostViewedProject[]>({endpoint:`${API_ENDPOINTS.MOST_VIEWED_PROJECTS}?limit=${limit}`});
       return data || [];
     } catch (error) {
       console.error('Error fetching most viewed projects:', error);
@@ -148,7 +148,7 @@ export const DashboardService = {
   // Get recent actions (Note: this will use mock data as mentioned)
   getRecentActions: async (): Promise<RecentAction[]> => {
     try {
-      const { data } = await api.get<RecentAction[]>(API_ENDPOINTS.RECENT_ACTIONS);
+      const { data } = await api.get<RecentAction[]>({endpoint:API_ENDPOINTS.RECENT_ACTIONS});
       return data || [];
     } catch (error) {
       console.error('Error fetching recent actions:', error);
