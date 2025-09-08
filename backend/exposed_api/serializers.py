@@ -13,12 +13,25 @@ class FounderSerializer(serializers.ModelSerializer):
     For POST and PUT requests.
     """
 
-    name = serializers.CharField()
+    name = serializers.CharField(required=False)
     picture = serializers.CharField(required=False, allow_null=True)
+
+    FounderName = serializers.CharField(required=False)
+    FounderPictureURL = serializers.CharField(required=False, allow_null=True)
 
     class Meta:
         model = Founder
-        fields = ["name", "picture"]
+        fields = ["name", "picture", "FounderName", "FounderPictureURL"]
+
+    def is_valid(self, *args, **kwargs):
+        if "FounderName" in self.initial_data and "name" not in self.initial_data:
+            self.initial_data["name"] = self.initial_data["FounderName"]
+
+        if "FounderPictureURL" in self.initial_data and "picture" not in self.initial_data:
+            self.initial_data["picture"] = self.initial_data["FounderPictureURL"]
+
+        is_valid = super().is_valid(*args, **kwargs)
+        return is_valid
 
     def to_representation(self, instance):
         """
@@ -175,6 +188,10 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
     ProjectSocial = serializers.CharField(source="social_media_url", allow_null=True)
     ProjectWebsite = serializers.CharField(source="website_url", allow_null=True)
 
+    def is_valid(self, *args, **kwargs):
+        is_valid = super().is_valid(*args, **kwargs)
+        return is_valid
+
     class Meta:
         model = StartupDetail
         fields = [
@@ -238,6 +255,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         request = self.context.get("request")
+
         raw_founders_data = []
         if request and hasattr(request, "data"):
             raw_founders_data = request.data.get("ProjectFounders", [])
@@ -248,32 +266,100 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
 
         if founders_data is not None:
+            existing_founders = {}
+            for founder in instance.founders.all():
+                existing_founders[founder.id] = {"name": founder.name, "id": founder.id}
+
             instance.founders.clear()
 
             founders_images = {}
 
-            founders_with_pics = {}
-            if request and hasattr(request, "data"):
+            if raw_founders_data:
+                founder_name_to_id = {}
+                for founder_id, founder_info in existing_founders.items():
+                    founder_name_to_id[founder_info["name"]] = founder_id
+
                 for raw_founder in raw_founders_data:
-                    if "name" in raw_founder and "picture" in raw_founder:
-                        founders_with_pics[raw_founder["name"]] = raw_founder["picture"]
+                    founder_name = raw_founder.get("FounderName")
+                    founder_id = raw_founder.get("FounderID")
+                    picture_url = raw_founder.get("FounderPictureURL")
 
-            for founder_data in founders_data:
-                highest_founder_id = Founder.objects.all().order_by("-id").first()
-                new_founder_id = 1 if highest_founder_id is None else highest_founder_id.id + 1
+                    if not founder_name:
+                        continue
 
-                founder = Founder.objects.create(id=new_founder_id, name=founder_data["name"], startup_id=instance.id)
+                    reuse_id = None
+                    if founder_id and founder_id in existing_founders:
+                        reuse_id = founder_id
+                    elif founder_name in founder_name_to_id:
+                        reuse_id = founder_name_to_id[founder_name]
 
-                picture = founders_with_pics.get(founder_data["name"])
-                if picture:
-                    if "/media/" in picture:
-                        picture = picture.split("/media/")[1]
-                    elif "/api/media/" in picture:
-                        picture = picture.split("/api/media/")[1]
+                    if not reuse_id:
+                        highest_founder_id = Founder.objects.all().order_by("-id").first()
+                        reuse_id = 1 if highest_founder_id is None else highest_founder_id.id + 1
 
-                    founders_images[str(founder.id)] = picture
+                    try:
+                        founder = Founder.objects.get(id=reuse_id)
+                        founder.name = founder_name
+                        founder.startup_id = instance.id
+                        founder.save()
+                    except Founder.DoesNotExist:
+                        founder = Founder.objects.create(id=reuse_id, name=founder_name, startup_id=instance.id)
 
-                instance.founders.add(founder)
+                    if picture_url:
+                        if "/media/" in picture_url:
+                            picture_url = picture_url.split("/media/")[1]
+                        elif "/api/media/" in picture_url:
+                            picture_url = picture_url.split("/api/media/")[1]
+
+                        founders_images[str(founder.id)] = picture_url
+
+                    instance.founders.add(founder)
+            else:
+                founder_name_to_id = {}
+                for founder_id, founder_info in existing_founders.items():
+                    founder_name_to_id[founder_info["name"]] = founder_id
+
+                founders_with_pics = {}
+                if request and hasattr(request, "data"):
+                    for raw_founder in raw_founders_data:
+                        if "name" in raw_founder and "picture" in raw_founder:
+                            founders_with_pics[raw_founder["name"]] = raw_founder["picture"]
+
+                for founder_data in founders_data:
+                    if not founder_data:
+                        continue
+
+                    if "name" not in founder_data:
+                        continue
+
+                    founder_name = founder_data["name"]
+
+                    reuse_id = None
+                    if founder_name in founder_name_to_id:
+                        reuse_id = founder_name_to_id[founder_name]
+
+                    if not reuse_id:
+                        highest_founder_id = Founder.objects.all().order_by("-id").first()
+                        reuse_id = 1 if highest_founder_id is None else highest_founder_id.id + 1
+
+                    try:
+                        founder = Founder.objects.get(id=reuse_id)
+                        founder.name = founder_name
+                        founder.startup_id = instance.id
+                        founder.save()
+                    except Founder.DoesNotExist:
+                        founder = Founder.objects.create(id=reuse_id, name=founder_name, startup_id=instance.id)
+
+                    picture = founders_with_pics.get(founder_name)
+                    if picture:
+                        if "/media/" in picture:
+                            picture = picture.split("/media/")[1]
+                        elif "/api/media/" in picture:
+                            picture = picture.split("/api/media/")[1]
+
+                        founders_images[str(founder.id)] = picture
+
+                    instance.founders.add(founder)
 
             if founders_images:
                 instance.founders_images = founders_images

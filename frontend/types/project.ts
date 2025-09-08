@@ -42,6 +42,30 @@ export interface ProjectDetailsProps {
   ProjectWebsite: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface ProjectDetails extends ProjectDetailsProps {}
+
+export interface ProjectProfileFormData {
+  id: number | null,
+  name: string | null,
+  description: string | null,
+  sector: string | null,
+  maturity: string | null,
+  address: string | null,
+  legalStatus: string | null,
+  email: string | null,
+  phone: string | null,
+  needs: string | null,
+  status: string | null,
+  social: string | null,
+  website: string | null,
+}
+
+export interface ProjectProfileUselessData {
+  founders: Founder[],
+  createdAt: string,
+}
+
 export interface FormProjectDetails {
   ProjectId?: number;
   ProjectName: string;
