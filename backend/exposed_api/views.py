@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from admin_panel.models import StartupDetail
+from admin_panel.models import Founder, StartupDetail
 
 from .models import ProjectView
 from .serializers import (
@@ -21,6 +21,8 @@ def record_project_view(request, project_id):
     Utility function to record a view for a project.
     This handles both authenticated and anonymous users.
 
+    Views are NOT counted when a founder views their own project.
+
     Args:
         request: The HTTP request object
         project_id: The ID of the project being viewed
@@ -30,8 +32,14 @@ def record_project_view(request, project_id):
     """
     try:
         project = StartupDetail.objects.get(id=project_id)
-
         user = request.user if request.user.is_authenticated else None
+        if (
+            user
+            and user.role == "founder"
+            and user.founder_id is not None
+            and project.founders.filter(id=user.founder_id).exists()
+        ):
+            return True
 
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         ip_address = x_forwarded_for.split(",")[0] if x_forwarded_for else request.META.get("REMOTE_ADDR")
