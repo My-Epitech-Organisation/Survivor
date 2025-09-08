@@ -2,6 +2,7 @@ from auditlog.models import AuditLog
 from authentication.permissions import IsAdmin
 from django.http import JsonResponse
 from django.utils import timezone
+from drf_spectacular.utils import OpenApiExample, OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
@@ -15,31 +16,18 @@ from .serializers import ProjectDetailGetSerializer, ProjectDetailSerializer, Pr
 from .views import record_project_view
 
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
-
 @extend_schema(
     summary="Get projects by founder",
     description="Retrieves all projects/startups associated with a specific founder identified by their ID.",
     parameters=[
-        OpenApiParameter(
-            name="founder_id",
-            description="Unique identifier of the founder",
-            required=True,
-            type=int
-        )
+        OpenApiParameter(name="founder_id", description="Unique identifier of the founder", required=True, type=int)
     ],
     responses={
         200: ProjectDetailGetSerializer(many=True),
-        404: OpenApiExample(
-            "Founder not found",
-            value={"error": "Founder with id X not found"}
-        ),
-        500: OpenApiExample(
-            "Server error",
-            value={"error": "Internal server error"}
-        )
+        404: OpenApiExample("Founder not found", value={"error": "Founder with id X not found"}),
+        500: OpenApiExample("Server error", value={"error": "Internal server error"}),
     },
-    tags=["Projects"]
+    tags=["Projects"],
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
@@ -83,7 +71,7 @@ class ProjectDetailView(APIView):
         """
         if self.request.method == "GET":
             return [AllowAny()]
-        elif self.request.method == "PUT":
+        if self.request.method == "PUT":
             return [IsAuthenticated()]
         return [IsAdmin()]
 
@@ -132,16 +120,16 @@ class ProjectDetailView(APIView):
         """Handle PUT requests - admin or project founders only"""
         project = get_object_or_404(StartupDetail, id=_id)
 
-        is_admin = hasattr(request.user, 'role') and request.user.role == "admin"
+        is_admin = hasattr(request.user, "role") and request.user.role == "admin"
         is_founder = False
 
-        project_founder_ids = list(project.founders.values_list('id', flat=True))
+        project_founder_ids = list(project.founders.values_list("id", flat=True))
 
-        if hasattr(request.user, 'founder_id') and request.user.founder_id:
+        if hasattr(request.user, "founder_id") and request.user.founder_id:
             founder_id = request.user.founder_id
             is_founder = founder_id in project_founder_ids
 
-        is_founder_role = hasattr(request.user, 'role') and request.user.role == "founder"
+        is_founder_role = hasattr(request.user, "role") and request.user.role == "founder"
         is_orphan_project = len(project_founder_ids) == 0
         has_permission = is_admin or is_founder or (is_founder_role and is_orphan_project)
 
@@ -153,10 +141,12 @@ class ProjectDetailView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        is_founder_claiming_orphan = is_founder_role and is_orphan_project and hasattr(request.user, 'founder_id') and request.user.founder_id
+        is_founder_claiming_orphan = (
+            is_founder_role and is_orphan_project and hasattr(request.user, "founder_id") and request.user.founder_id
+        )
 
         if is_founder_claiming_orphan:
-            request_data = request.data.copy() if hasattr(request, 'data') else {}
+            request_data = request.data.copy() if hasattr(request, "data") else {}
             founder_id = request.user.founder_id
 
             try:
@@ -164,11 +154,7 @@ class ProjectDetailView(APIView):
                 if not request_data.get("ProjectFounders"):
                     request_data["ProjectFounders"] = []
 
-                founder_data = {
-                    "FounderID": founder.id,
-                    "FounderName": founder.name,
-                    "FounderStartupID": project.id
-                }
+                founder_data = {"FounderID": founder.id, "FounderName": founder.name, "FounderStartupID": project.id}
 
                 founder_exists = False
                 for existing_founder in request_data.get("ProjectFounders", []):
@@ -179,12 +165,18 @@ class ProjectDetailView(APIView):
                 if not founder_exists:
                     request_data["ProjectFounders"].append(founder_data)
 
-                serializer = ProjectDetailSerializer(project, data=request_data, partial=True, context={"request": request})
+                serializer = ProjectDetailSerializer(
+                    project, data=request_data, partial=True, context={"request": request}
+                )
             except Founder.DoesNotExist:
 
-                serializer = ProjectDetailSerializer(project, data=request.data, partial=True, context={"request": request})
+                serializer = ProjectDetailSerializer(
+                    project, data=request.data, partial=True, context={"request": request}
+                )
         else:
-            serializer = ProjectDetailSerializer(project, data=request.data, partial=True, context={"request": request})
+            serializer = ProjectDetailSerializer(
+                project, data=request.data, partial=True, context={"request": request}
+            )
 
         if serializer.is_valid():
             serializer.save()
@@ -194,7 +186,6 @@ class ProjectDetailView(APIView):
                 type="project",
             )
             return Response(serializer.data)
-
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
