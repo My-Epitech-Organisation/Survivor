@@ -69,6 +69,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     role = serializers.ChoiceField(choices=CustomUser.ROLE_CHOICES)
     founder = serializers.SerializerMethodField()
+    investor = serializers.SerializerMethodField()
     userImage = serializers.CharField(source="image", required=False, allow_blank=True, allow_null=True)
 
     def validate_userImage(self, value):
@@ -86,7 +87,40 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ["id", "name", "email", "role", "founder", "founder_id", "investor_id", "userImage", "is_active"]
+        fields = [
+            "id",
+            "name",
+            "email",
+            "role",
+            "founder",
+            "founder_id",
+            "investor",
+            "investor_id",
+            "userImage",
+            "is_active",
+        ]
+
+    def get_investor(self, obj):
+        if obj.role == "investor" and getattr(obj, "investor_id", None):
+            try:
+                from admin_panel.models import Investor
+
+                investor = Investor.objects.get(id=obj.investor_id)
+                return {
+                    "id": investor.id,
+                    "name": getattr(investor, "name", None),
+                    "legal_status": getattr(investor, "legal_status", None),
+                    "address": getattr(investor, "address", None),
+                    "email": getattr(investor, "email", None),
+                    "phone": getattr(investor, "phone", None),
+                    "created_at": getattr(investor, "created_at", None),
+                    "description": getattr(investor, "description", None),
+                    "investor_type": getattr(investor, "investor_type", None),
+                    "investment_focus": getattr(investor, "investment_focus", None),
+                }
+            except Exception:
+                pass
+        return None
 
     def get_founder(self, obj):
         if obj.role == "founder" and obj.founder_id:
@@ -154,14 +188,17 @@ class AdminUserView(APIView):
         except CustomUser.DoesNotExist:
             return Response({"error": f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Si founder est présent dans le payload, on assigne founder_id
         data = request.data.copy()
         founder = data.get("founder")
         investor = data.get("investor")
-        if founder and isinstance(founder, dict) and founder.get("FounderID") is not None:
+        if founder is None:
+            data["founder_id"] = None
+        elif isinstance(founder, dict) and founder.get("FounderID") is not None:
             data["founder_id"] = founder["FounderID"]
             data["investor_id"] = None
-        if investor and isinstance(investor, dict) and investor.get("id") is not None:
+        if investor is None:
+            data["investor_id"] = None
+        elif isinstance(investor, dict) and investor.get("id") is not None:
             data["investor_id"] = investor["id"]
             data["founder_id"] = None
         serializer = AdminUserSerializer(user, data=data, partial=True)
