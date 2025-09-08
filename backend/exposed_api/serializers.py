@@ -387,7 +387,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_pictureURL(self, obj):
         if obj.image:
-            return f"{settings.MEDIA_URL}{obj.image}"
+            image_path = obj.image
+            if image_path.startswith('/'):
+                image_path = image_path[1:]
+            return f"{settings.MEDIA_URL.rstrip('/')}/{image_path}"
         return None
 
     def get_nbStartups(self, obj):
