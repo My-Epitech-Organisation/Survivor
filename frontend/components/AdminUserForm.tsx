@@ -227,23 +227,29 @@ export default function AdminUserForm({
                   <Label htmlFor="founder-combobox">Founder</Label>
                   <Combobox
                     id="founder-combobox"
+                    defaultValue={String(formData.founder?.FounderID)}
+                  defaultLabel={formData.founder?.FounderName}
                     placeholder="Select a founder"
                     elements={
                       foundersAvailable?.map((founder) => ({
                         label: founder.FounderName,
                         value: String(founder.FounderID),
-                        url: founder.FounderPictureURL,
+                        url: getBackendUrl() + founder.FounderPictureURL,
                       })) || []
                     }
                     variante="withAvatar"
                     notFound="Founder not found"
                     onChange={async (value) => {
-                      try {
-                        setFormData((prev) => ({ ...prev, investor: undefined }));
-                        const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
-                        setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
-                      } catch (error) {
-                        console.error(error);
+                      setFormData((prev) => ({ ...prev, investor: undefined }));
+                      if (value) {
+                        try {
+                          const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
+                          setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
+                        } catch (error) {
+                          console.error(error);
+                        }
+                      } else {
+                        setFormData((prev) => ({ ...prev, founder: undefined }));
                       }
                     }}
                   />
@@ -255,6 +261,8 @@ export default function AdminUserForm({
                 <Label htmlFor="investor-combobox">Investor</Label>
                 <Combobox
                   id="investor-combobox"
+                  defaultValue={String(formData.investor?.id)}
+                  defaultLabel={formData.investor?.name}
                   placeholder="Select a investor"
                   elements={
                     investosrAvailable?.map((investor) => ({
@@ -265,11 +273,15 @@ export default function AdminUserForm({
                   notFound="Investor not found"
                   onChange={async (value) => {
                     setFormData((prev) => ({ ...prev, founder: undefined }));
-                    try {
-                      const result = await api.get<Investor | null>({ endpoint: `/investors/${value}` });
-                      setFormData((prev) => ({ ...prev, investor: result.data ?? undefined }));
-                    } catch (error) {
-                      console.error(error);
+                    if (value) {
+                      try {
+                        const result = await api.get<Investor | null>({ endpoint: `/investors/${value}` });
+                        setFormData((prev) => ({ ...prev, investor: result.data ?? undefined }));
+                      } catch (error) {
+                        console.error(error);
+                      }
+                    } else {
+                      setFormData((prev) => ({ ...prev, investor: undefined }));
                     }
                   }}
                 />

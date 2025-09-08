@@ -73,6 +73,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     role = serializers.ChoiceField(choices=CustomUser.ROLE_CHOICES)
     founder = serializers.SerializerMethodField()
+    investor = serializers.SerializerMethodField()
     userImage = serializers.CharField(source="image", required=False, allow_blank=True, allow_null=True)
     def validate_userImage(self, value):
         if value in [None, ""]:
@@ -95,10 +96,32 @@ class AdminUserSerializer(serializers.ModelSerializer):
             "role",
             "founder",
             "founder_id",
+            "investor",
             "investor_id",
             "userImage",
             "is_active"
         ]
+    def get_investor(self, obj):
+        if obj.role == "investor" and getattr(obj, "investor_id", None):
+            try:
+                from admin_panel.models import Investor
+                investor = Investor.objects.get(id=obj.investor_id)
+                # Tu peux adapter le serializer utilisé ici si besoin
+                return {
+                    "id": investor.id,
+                    "name": getattr(investor, "name", None),
+                    "legal_status": getattr(investor, "legal_status", None),
+                    "address": getattr(investor, "address", None),
+                    "email": getattr(investor, "email", None),
+                    "phone": getattr(investor, "phone", None),
+                    "created_at": getattr(investor, "created_at", None),
+                    "description": getattr(investor, "description", None),
+                    "investor_type": getattr(investor, "investor_type", None),
+                    "investment_focus": getattr(investor, "investment_focus", None)
+                }
+            except Exception:
+                pass
+        return None
 
     def get_founder(self, obj):
         if obj.role == "founder" and obj.founder_id:
