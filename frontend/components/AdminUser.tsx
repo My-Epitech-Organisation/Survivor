@@ -27,12 +27,12 @@ export default function AdminUser (props : AdminUserProps)
       <TableRow key={props.id} className="hover:bg-gray-50 transition-colors">
         <TableCell className="text-center border-r border-gray-200 align-middle text-app-text-secondary">{props.user.id}</TableCell>
         <TableCell className="border-none">
-        <div className="flex justify-center items-center gap-3">
-            <Avatar>
+        <div className="flex items-center gap-3 relative w-full">
+            <Avatar className="absolute left-3">
             <AvatarImage src={`${getBackendUrl()}${props.user.userImage}`}></AvatarImage>
             <AvatarFallback>{props.user.name.charAt(0)}</AvatarFallback>
             </Avatar>
-            <span className="font-medium text-app-text-primary">{props.user.name}</span>
+            <span className="font-medium text-app-text-primary w-full text-center pl-12 pr-3 truncate">{props.user.name}</span>
         </div>
         </TableCell>
         <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.user.role}</TableCell>
@@ -59,7 +59,7 @@ export default function AdminUser (props : AdminUserProps)
         <Dialog>
             <DialogTrigger asChild>
               <button
-                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center"
+                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
                 aria-label="Edit"
                 title={`Edit ${props.user.name}`}
               >
@@ -92,7 +92,7 @@ export default function AdminUser (props : AdminUserProps)
           <Dialog>
             <DialogTrigger asChild>
               <button
-                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center"
+                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
                 aria-label="Delete"
                 title={`Delete ${props.user.name}`}
               >
