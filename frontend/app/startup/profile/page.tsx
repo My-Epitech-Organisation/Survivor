@@ -17,6 +17,7 @@ import {
 import { FaEdit, FaEye, FaThumbsUp, FaShare, FaUsers } from "react-icons/fa";
 import { FounderResponse } from "@/types/founders";
 import { ProjectDetails, ProjectProfileFormData } from "@/types/project";
+import { Founder } from "@/types/founders";
 import { authenticatedFetch } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -35,6 +36,10 @@ export default function StartupProfile() {
     status: null,
     social: null,
     website: null,
+  });
+  const [uselessData, setUselessData] = useState({
+    createdAt: "",
+    founders: [] as Founder[],
   });
 
   const [isFounder, setIsFounder] = useState(false);
@@ -70,7 +75,7 @@ export default function StartupProfile() {
 
         const data: FounderResponse = await response.json();
 
-        return data.startupId;
+        return data.startup_id;
       } catch (err) {
         return null;
       }
@@ -88,6 +93,10 @@ export default function StartupProfile() {
             }
 
             const data: ProjectDetails = await response.json();
+            setUselessData({
+              founders: data.ProjectFounders,
+              createdAt: data.ProjectCreatedAt
+            });
             return {
               id: data.ProjectId,
               name: data.ProjectName,
@@ -125,6 +134,7 @@ export default function StartupProfile() {
 
     try {
       const updateData = {
+        ProjectId: formData.id,
         ProjectName: formData.name,
         ProjectDescription: formData.description,
         ProjectSector: formData.sector,
@@ -137,6 +147,8 @@ export default function StartupProfile() {
         ProjectStatus: formData.status,
         ProjectSocial: formData.social,
         ProjectWebsite: formData.website,
+        ProjectFounders: uselessData.founders,
+        ProjectCreatedAt: uselessData.createdAt,
       };
 
       const response = await authenticatedFetch(`/projects/${formData.id}/`, {

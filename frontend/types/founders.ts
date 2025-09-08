@@ -13,5 +13,5 @@ export interface Founder {
 export interface FounderResponse {
   id: number;
   name: string;
-  startupId: number;
+  startup_id: number;
 }

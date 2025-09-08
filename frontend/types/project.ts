@@ -60,6 +60,11 @@ export interface ProjectProfileFormData {
   website: string | null,
 }
 
+export interface ProjectProfileUselessData {
+  founders: Founder[],
+  createdAt: string,
+}
+
 export interface FormProjectDetails {
   ProjectId?: number;
   ProjectName: string;
