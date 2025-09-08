@@ -10,7 +10,7 @@ from django.db.models import Q
 from admin_panel.models import Founder
 from authentication.models import CustomUser
 
-from .founder_serializers import FounderCrudSerializer
+from .founder_serializers import FounderCrudSerializer, FounderDetailSerializer
 
 
 class FounderDetailView(APIView):
@@ -42,15 +42,18 @@ class FounderDetailView(APIView):
 
                 founders_queryset = founders_queryset.exclude(id__in=linked_founder_ids)
 
-            serializer = FounderCrudSerializer(founders_queryset, many=True)
-            return JsonResponse(serializer.data, safe=False)
+            serializer = FounderDetailSerializer(founders_queryset, many=True)
+            return Response(serializer.data)
 
         try:
             founder = Founder.objects.get(id=_id)
-            serializer = FounderCrudSerializer(founder)
-            return JsonResponse(serializer.data)
+            serializer = FounderDetailSerializer(founder)
+            return Response(serializer.data)
         except Founder.DoesNotExist:
-            return JsonResponse({"error": f"Founder with id {_id} not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": f"Founder with id {_id} not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
 
     def post(self, request):
         """Handle POST requests - admin only"""
