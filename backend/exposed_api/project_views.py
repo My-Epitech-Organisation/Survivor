@@ -96,13 +96,31 @@ class ProjectDetailView(APIView):
         """Handle PUT requests - admin or project founders only"""
         project = get_object_or_404(StartupDetail, id=_id)
 
-        is_admin = request.user.role == "admin"
+        # Vérifier si l'utilisateur est un admin
+        is_admin = hasattr(request.user, 'role') and request.user.role == "admin"
         is_founder = False
 
-        if request.user.founder_id:
-            is_founder = project.founders.filter(id=request.user.founder_id).exists()
+        # Récupérer tous les IDs des fondateurs du projet
+        project_founder_ids = list(project.founders.values_list('id', flat=True))
 
-        if not (is_admin or is_founder):
+        # Vérifier si l'utilisateur est un fondateur de ce projet
+        if hasattr(request.user, 'founder_id') and request.user.founder_id:
+            founder_id = request.user.founder_id
+            is_founder = founder_id in project_founder_ids
+
+        # Vérifier si le rôle de l'utilisateur est fondateur
+        is_founder_role = hasattr(request.user, 'role') and request.user.role == "founder"
+
+        # Vérifier si le projet n'a pas de fondateurs (projet orphelin)
+        is_orphan_project = len(project_founder_ids) == 0
+
+        # Définir la politique d'autorisation:
+        # 1. Les administrateurs peuvent tout modifier
+        # 2. Les fondateurs peuvent modifier les projets auxquels ils sont associés
+        # 3. Les utilisateurs avec le rôle "founder" peuvent s'approprier des projets orphelins
+        has_permission = is_admin or is_founder or (is_founder_role and is_orphan_project)
+
+        if not has_permission:
             return Response(
                 {
                     "error": "You don't have permission to edit this project. Only admins and project founders can edit projects."
@@ -110,7 +128,50 @@ class ProjectDetailView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = ProjectDetailSerializer(project, data=request.data, partial=False, context={"request": request})
+
+
+        # Vérifier si c'est un fondateur qui s'approprie un projet orphelin
+        is_founder_claiming_orphan = is_founder_role and is_orphan_project and hasattr(request.user, 'founder_id') and request.user.founder_id
+
+        # Si l'utilisateur revendique un projet orphelin, assurons-nous qu'il est ajouté comme fondateur
+        if is_founder_claiming_orphan:
+            # Créer une copie des données de la requête
+            request_data = request.data.copy() if hasattr(request, 'data') else {}
+
+            # S'assurer que ProjectFounders existe et contient au moins l'ID du fondateur actuel
+            founder_id = request.user.founder_id
+
+            # Chercher le fondateur dans la base de données
+            try:
+                founder = Founder.objects.get(id=founder_id)
+                # Créer ou mettre à jour les données de fondateurs dans la requête
+                if not request_data.get("ProjectFounders"):
+                    request_data["ProjectFounders"] = []
+
+                # Ajouter le fondateur actuel s'il n'est pas déjà présent
+                founder_data = {
+                    "FounderID": founder.id,
+                    "FounderName": founder.name,
+                    "FounderStartupID": project.id
+                }
+
+                # Vérifier si le fondateur est déjà dans la liste
+                founder_exists = False
+                for existing_founder in request_data.get("ProjectFounders", []):
+                    if existing_founder.get("FounderID") == founder.id:
+                        founder_exists = True
+                        break
+
+                if not founder_exists:
+                    request_data["ProjectFounders"].append(founder_data)
+
+                serializer = ProjectDetailSerializer(project, data=request_data, partial=True, context={"request": request})
+            except Founder.DoesNotExist:
+
+                serializer = ProjectDetailSerializer(project, data=request.data, partial=True, context={"request": request})
+        else:
+            serializer = ProjectDetailSerializer(project, data=request.data, partial=True, context={"request": request})
+
         if serializer.is_valid():
             serializer.save()
             AuditLog.objects.create(
@@ -119,6 +180,8 @@ class ProjectDetailView(APIView):
                 type="project",
             )
             return Response(serializer.data)
+
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, _id):

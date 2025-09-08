@@ -266,7 +266,15 @@ def fetch_startup_detail(startup_id, headers):
                 founder_id = founder_data.get("id")
                 founder_name = founder_data.get("name")
 
-                if founder_id and founder_name:
+                if not founder_id:
+                    logging.warning(f"Missing founder ID for startup {startup_id}, skipping this founder")
+                    continue
+
+                if not founder_name:
+                    founder_name = f"Unnamed Founder {founder_id}"
+                    logging.warning(f"Missing founder name for ID {founder_id}, using default: {founder_name}")
+
+                try:
                     founder, created = Founder.objects.get_or_create(
                         id=founder_id, defaults={"name": founder_name, "startup_id": startup_id}
                     )
@@ -275,7 +283,12 @@ def fetch_startup_detail(startup_id, headers):
                     founder.startup_id = startup_id
                     founder.save()
 
-                    startup_detail.founders.add(founder)
+                    if not startup_detail.founders.filter(id=founder_id).exists():
+                        startup_detail.founders.add(founder)
+
+                except Exception as e:
+                    logging.error(f"Error creating/updating founder {founder_id} for startup {startup_id}: {e}")
+                    continue
 
                 try:
                     image_url = settings.JEB_API_FOUNDER_IMAGE_URL.format(startup_id=startup_id, founder_id=founder_id)
@@ -292,9 +305,8 @@ def fetch_startup_detail(startup_id, headers):
                 except Exception as e:
                     logging.error(f"Error fetching founder image for {founder_id}: {e}")
 
-            if founders_images:
-                startup_detail.founders_images = founders_images
-                startup_detail.save()
+            startup_detail.founders_images = founders_images
+            startup_detail.save()
 
         return startup_detail
     except requests.RequestException as e:
