@@ -20,6 +20,7 @@ from .kpi_views import (
 )
 from .news_views import NewsDetailView, NewsListView
 from .partner_views import PartnerDetailView
+from .user_views import AdminUserView
 
 app_name = "exposed_api"
 
@@ -49,6 +50,9 @@ urlpatterns = [
     # User endpoints
     path("user/", user_views.get_current_user, name="current_user"),
     path("user/<int:user_id>/", user_views.user_detail, name="user_detail"),
+    # Admin user management
+    path("users/", AdminUserView.as_view(), name="admin_user_list"),
+    path("users/<int:user_id>/", AdminUserView.as_view(), name="admin_user_detail"),
     # Other endpoints
     path("projectViews/<int:user_id>/", views.project_views, name="project_views"),
     path("projectEngagement/<int:user_id>/", views.project_engagement, name="project_engagement"),
