@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 
 from init.utils import fetch_and_create_news
 
-from .models import Event, News, NewsDetail, StartupDetail
+from .models import Event, NewsDetail, StartupDetail
 from .serializers import EventSerializer, NewsDetailSerializer, StartupDetailSerializer
 
 

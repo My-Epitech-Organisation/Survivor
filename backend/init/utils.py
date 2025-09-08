@@ -112,7 +112,7 @@ def fetch_news_detail(news_id, headers):
 
 def fetch_and_create_news():
     """
-    Fetch news from JEB API and create them in database
+    Fetch news from JEB API and create them in database using NewsDetail model
     """
     try:
         jeb_token = os.environ.get("JEB_API_TOKEN")
@@ -127,19 +127,8 @@ def fetch_and_create_news():
         response = fetch_with_retry(url, params=params, headers=headers)
         news_data = response.json()
 
-        News = apps.get_model("admin_panel", "News")
-
+        # Process each news item directly through fetch_news_detail
         for item in news_data:
-            news = News(
-                id=item.get("id"),
-                title=item.get("title"),
-                news_date=item.get("news_date"),
-                location=item.get("location"),
-                category=item.get("category"),
-                startup_id=item.get("startup_id"),
-            )
-            news.save()
-
             news_id = item.get("id")
             fetch_news_detail(news_id, headers)
 

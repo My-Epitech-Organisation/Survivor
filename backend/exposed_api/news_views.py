@@ -6,8 +6,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from admin_panel.models import News, NewsDetail
-from admin_panel.serializers import NewsDetailSerializer, NewsSerializer
+from admin_panel.models import NewsDetail
+from admin_panel.serializers import NewsDetailSerializer
 
 
 class NewsListView(APIView):
@@ -24,24 +24,39 @@ class NewsListView(APIView):
         """
         List all news items, open to everyone
         """
-        news = News.objects.all()
-        serializer = NewsSerializer(news, many=True)
+        news = NewsDetail.objects.all()
+        serializer = NewsDetailSerializer(news, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         """
         Create a new news item, only for admins
         """
-        serializer = NewsDetailSerializer(data=request.data)
-        if serializer.is_valid():
+        # Get request data without ID (we'll generate it)
+        request_data = request.data.copy()
+        if 'id' in request_data:
+            del request_data['id']
 
+        # Generate a new unique ID
+        latest_news = NewsDetail.objects.order_by('-id').first()
+        new_id = 1
+        if latest_news:
+            new_id = latest_news.id + 1
+
+        # Add the generated ID to the data
+        request_data['id'] = new_id
+
+        print(f"Creating news with data: {request_data}")
+        serializer = NewsDetailSerializer(data=request_data)
+        if serializer.is_valid():
             if "image" in request.FILES:
                 serializer.validated_data["image"] = request.FILES["image"]
 
             news = serializer.save()
             AuditLog.objects.create(action=f"New news item created: {news.title}", user=request.user.name, type="news")
-
+            print(f"Successfully created news with ID: {news.id}")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(f"Invalid news data. Errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
