@@ -94,11 +94,11 @@ export const api = {
     data?: unknown;
     token?: string;
   }): Promise<{ data: T | null }> => {
-    const response = await apiGet(endpoint, token, data);
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
-    }
     try {
+      const response = await apiGet(endpoint, token, data);
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.statusText}`);
+      }
       const json = await response.json();
       return { data: json };
     } catch (error) {
