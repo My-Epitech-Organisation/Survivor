@@ -56,10 +56,11 @@ class AdminUserSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(choices=CustomUser.ROLE_CHOICES)
     founder = serializers.SerializerMethodField()
     userImage = serializers.SerializerMethodField()
+    is_active = serializers.BooleanField()
 
     class Meta:
         model = CustomUser
-        fields = ["id", "name", "email", "role", "founder", "userImage"]
+        fields = ["id", "name", "email", "role", "founder", "userImage", "is_active"]
 
     def get_founder(self, obj):
         if obj.role == "founder" and obj.founder_id:
