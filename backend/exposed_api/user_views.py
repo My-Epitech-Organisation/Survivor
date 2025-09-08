@@ -73,12 +73,32 @@ class AdminUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     role = serializers.ChoiceField(choices=CustomUser.ROLE_CHOICES)
     founder = serializers.SerializerMethodField()
-    userImage = serializers.CharField(source="image", required=False, allow_blank=True)
+    userImage = serializers.CharField(source="image", required=False, allow_blank=True, allow_null=True)
+    def validate_userImage(self, value):
+        if value in [None, ""]:
+            return None
+        prefix = "/api/media/"
+        if isinstance(value, str) and value.startswith(prefix):
+            return value[len(prefix):]
+        return value
     is_active = serializers.BooleanField()
+
+    founder_id = serializers.IntegerField(required=False, allow_null=True)
+    investor_id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = CustomUser
-        fields = ["id", "name", "email", "role", "founder", "userImage", "is_active"]
+        fields = [
+            "id",
+            "name",
+            "email",
+            "role",
+            "founder",
+            "founder_id",
+            "investor_id",
+            "userImage",
+            "is_active"
+        ]
 
     def get_founder(self, obj):
         if obj.role == "founder" and obj.founder_id:
@@ -147,7 +167,17 @@ class AdminUserView(APIView):
         except CustomUser.DoesNotExist:
             return Response({"error": f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = AdminUserSerializer(user, data=request.data, partial=True)
+        # Si founder est présent dans le payload, on assigne founder_id
+        data = request.data.copy()
+        founder = data.get("founder")
+        investor = data.get("investor")
+        if founder and isinstance(founder, dict) and founder.get("FounderID") is not None:
+            data["founder_id"] = founder["FounderID"]
+            data["investor_id"] = None
+        if investor and isinstance(investor, dict) and investor.get("id") is not None:
+            data["investor_id"] = investor["id"]
+            data["founder_id"] = None
+        serializer = AdminUserSerializer(user, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
