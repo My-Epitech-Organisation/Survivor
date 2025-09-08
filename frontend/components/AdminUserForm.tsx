@@ -223,32 +223,38 @@ export default function AdminUserForm({
             </SelectWithLabel>
             {formData.role === "founder" && (
               <>
-                <Combobox
-                  placeholder="Select a founder"
-                  elements={
-                    foundersAvailable?.map((founder) => ({
-                      label: founder.FounderName,
-                      value: String(founder.FounderID),
-                      url: founder.FounderPictureURL,
-                    })) || []
-                  }
-                  variante="withAvatar"
-                  notFound="Founder not found"
-                  onChange={async (value) => {
-                    try {
-                      setFormData((prev) => ({ ...prev, investor: undefined }));
-                      const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
-                      setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
-                    } catch (error) {
-                      console.error(error);
+                <div className="grid w-full max-w-sm items-center gap-3">
+                  <Label htmlFor="founder-combobox">Founder</Label>
+                  <Combobox
+                    id="founder-combobox"
+                    placeholder="Select a founder"
+                    elements={
+                      foundersAvailable?.map((founder) => ({
+                        label: founder.FounderName,
+                        value: String(founder.FounderID),
+                        url: founder.FounderPictureURL,
+                      })) || []
                     }
-                  }}
-                />
+                    variante="withAvatar"
+                    notFound="Founder not found"
+                    onChange={async (value) => {
+                      try {
+                        setFormData((prev) => ({ ...prev, investor: undefined }));
+                        const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
+                        setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
+                      } catch (error) {
+                        console.error(error);
+                      }
+                    }}
+                  />
+                </div>
               </>
             )}
             {formData.role === "investor" && (
-              <>
+              <div className="grid w-full max-w-sm items-center gap-3">
+                <Label htmlFor="investor-combobox">Investor</Label>
                 <Combobox
+                  id="investor-combobox"
                   placeholder="Select a investor"
                   elements={
                     investosrAvailable?.map((investor) => ({
@@ -267,7 +273,7 @@ export default function AdminUserForm({
                     }
                   }}
                 />
-                </>
+                </div>
             )}
           </div>
         </div>

@@ -40,11 +40,18 @@ export default function AdminUser (props : AdminUserProps)
         {props.user.founder ? (
         <>
           <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.user.founder.FounderID}</TableCell>
-          <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.user.founder.FounderStartupID}</TableCell>
         </>
         ) : (
         <>
           <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">none</TableCell>
+        </>
+        )}
+        {props.user.investor ? (
+        <>
+          <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.user.investor.id}</TableCell>
+        </>
+        ) : (
+        <>
           <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">none</TableCell>
         </>
         )}

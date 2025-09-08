@@ -25,6 +25,7 @@ interface ComboboxProps {
   elements: { value: string; label: string, url? : string }[];
   placeholder: string;
   notFound: string;
+  id?: string;
   variante?: "withAvatar";
   onChange?: (value: string | undefined) => void;
 }
@@ -37,7 +38,7 @@ export function Combobox(props: ComboboxProps) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
+          <Button id={props.id}
             variant="outline"
             role="combobox"
             aria-expanded={open}

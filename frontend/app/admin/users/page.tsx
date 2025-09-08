@@ -109,7 +109,7 @@ export default function AdminUsers() {
                       <TableHead className="text-center border-l">Role</TableHead>
                       <TableHead className="text-center border-l">Email</TableHead>
                       <TableHead className="text-center border-l">Founder ID</TableHead>
-                      <TableHead className="text-center border-l">Founder Startup</TableHead>
+                      <TableHead className="text-center border-l">Investor ID</TableHead>
                       <TableHead className="text-center border-l">Settings</TableHead>
                       <TableHead className="text-center border-l">Delete</TableHead>
                     </TableRow>
