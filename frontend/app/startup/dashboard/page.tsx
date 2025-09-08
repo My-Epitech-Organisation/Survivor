@@ -86,7 +86,7 @@ export default function StartupDashboard() {
                 }
 
                 const projectViewsData = await projectViewsResponse.json();
-                setProjectViews(projectViewsData.data?.total_views);
+                setProjectViews(projectViewsData.total_views);
               } catch (err) {
                 console.error("Error fetching project views: ", err);
               }
