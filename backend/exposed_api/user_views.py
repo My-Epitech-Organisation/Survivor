@@ -75,13 +75,6 @@ class AdminUserSerializer(serializers.ModelSerializer):
     founder = serializers.SerializerMethodField()
     investor = serializers.SerializerMethodField()
     userImage = serializers.CharField(source="image", required=False, allow_blank=True, allow_null=True)
-    def validate_userImage(self, value):
-        if value in [None, ""]:
-            return None
-        prefix = "/api/media/"
-        if isinstance(value, str) and value.startswith(prefix):
-            return value[len(prefix):]
-        return value
     is_active = serializers.BooleanField()
 
     founder_id = serializers.IntegerField(required=False, allow_null=True)

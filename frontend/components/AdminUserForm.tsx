@@ -56,7 +56,6 @@ export default function AdminUserForm({
       setIsLoadingFounder(true);
       const result = (await api.get<Founder[]>({endpoint: `/founders/?founder_available=true`}));
       let available = Array.isArray(result.data) ? result.data : [];
-      // Ajoute le founder actuel si il n'est pas déjà dans la liste
       if (
         defaultData?.founder &&
         defaultData.founder.FounderID &&
