@@ -194,10 +194,16 @@ class AdminUserView(APIView):
         data = request.data.copy()
         founder = data.get("founder")
         investor = data.get("investor")
-        if founder and isinstance(founder, dict) and founder.get("FounderID") is not None:
+        # Si founder est undefined/null, on supprime founder_id
+        if founder is None:
+            data["founder_id"] = None
+        elif isinstance(founder, dict) and founder.get("FounderID") is not None:
             data["founder_id"] = founder["FounderID"]
             data["investor_id"] = None
-        if investor and isinstance(investor, dict) and investor.get("id") is not None:
+        # Si investor est undefined/null, on supprime investor_id
+        if investor is None:
+            data["investor_id"] = None
+        elif isinstance(investor, dict) and investor.get("id") is not None:
             data["investor_id"] = investor["id"]
             data["founder_id"] = None
         serializer = AdminUserSerializer(user, data=data, partial=True)

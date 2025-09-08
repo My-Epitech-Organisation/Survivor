@@ -55,7 +55,16 @@ export default function AdminUserForm({
     try {
       setIsLoadingFounder(true);
       const result = (await api.get<Founder[]>({endpoint: `/founders/?founder_available=true`}));
-      setFoundersAvailable(result.data);
+      let available = Array.isArray(result.data) ? result.data : [];
+      // Ajoute le founder actuel si il n'est pas déjà dans la liste
+      if (
+        defaultData?.founder &&
+        defaultData.founder.FounderID &&
+        !available.some(f => f.FounderID === defaultData.founder?.FounderID)
+      ) {
+        available = [...available, defaultData.founder];
+      }
+      setFoundersAvailable(available);
     } catch (error) {
       console.error(error)
     }
@@ -227,17 +236,16 @@ export default function AdminUserForm({
                   <Label htmlFor="founder-combobox">Founder</Label>
                   <Combobox
                     id="founder-combobox"
+                    variante="withAvatar"
                     defaultValue={String(formData.founder?.FounderID)}
-                  defaultLabel={formData.founder?.FounderName}
+                    defaultLabel={formData.founder?.FounderName}
                     placeholder="Select a founder"
                     elements={
                       foundersAvailable?.map((founder) => ({
                         label: founder.FounderName,
                         value: String(founder.FounderID),
-                        url: getBackendUrl() + founder.FounderPictureURL,
                       })) || []
                     }
-                    variante="withAvatar"
                     notFound="Founder not found"
                     onChange={async (value) => {
                       setFormData((prev) => ({ ...prev, investor: undefined }));
