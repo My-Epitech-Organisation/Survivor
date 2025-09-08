@@ -4,6 +4,7 @@ django-cors-headers==4.7.0
 djangorestframework==3.16.1
 djangorestframework-simplejwt==5.3.0
 django-csp==3.7
+django-filter==24.2
 sqlparse==0.5.3
 python-socketio==5.10.0
 channels==4.0.0

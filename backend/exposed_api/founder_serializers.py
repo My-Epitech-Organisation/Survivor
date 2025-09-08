@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from rest_framework import serializers
 
 from admin_panel.models import Founder, StartupDetail
@@ -35,7 +38,11 @@ class FounderDetailSerializer(serializers.ModelSerializer):
         try:
             startup = StartupDetail.objects.get(id=obj.startup_id)
             if startup.founders_images and isinstance(startup.founders_images, dict):
-                return startup.founders_images.get(str(obj.id))
+                picture_path = startup.founders_images.get(str(obj.id))
+                if picture_path:
+                    if not picture_path.startswith("/"):
+                        return os.path.join(settings.MEDIA_URL.rstrip("/"), picture_path)
+                    return picture_path
             return None
         except StartupDetail.DoesNotExist:
             return None

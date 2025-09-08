@@ -102,6 +102,7 @@ ignore = [
     "PLR0913",  # Too many arguments
     "SIM108",  # Use ternary operator
     "PLR0912",  # Too many branches
+    "PT009",  # Use assert in pytest
 ]
 
 # Allow autofix for all enabled rules (when '--fix') is provided

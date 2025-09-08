@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "drf_spectacular",
+    "django_filters",
     "init.apps.InitConfig",
     "admin_panel",
     "exposed_api.apps.ExposedApiConfig",
@@ -58,6 +59,13 @@ INSTALLED_APPS = [
     "messaging.apps.MessagingConfig",
     "auditlog.apps.AuditlogConfig",
 ]
+
+# Django REST Framework configuration
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -297,6 +305,25 @@ SPECTACULAR_SETTINGS = {
         "deepLinking": True,
         "persistAuthorization": True,
         "displayOperationId": True,
+        "tryItOutEnabled": True,
     },
     "COMPONENT_SPLIT_REQUEST": True,
+    "SCHEMA_PATH_PREFIX": r"/api",
+    "SERVE_PERMISSIONS": [],
+    "SERVE_AUTHENTICATION": None,
+    "REDOC_SETTINGS": {
+        "lazyRendering": True,
+        "hideHostname": False,
+        "expandResponses": "all",
+    },
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            },
+        }
+    },
+    "SECURITY": [{"Bearer": []}],
 }
