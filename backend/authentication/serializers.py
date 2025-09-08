@@ -59,6 +59,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for user profile
     """
+
     founder = serializers.SerializerMethodField(read_only=True)
     investor = serializers.SerializerMethodField(read_only=True)
     is_active = serializers.BooleanField(required=False)

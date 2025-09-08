@@ -34,17 +34,17 @@ class NewsListView(APIView):
         """
         # Get request data without ID (we'll generate it)
         request_data = request.data.copy()
-        if 'id' in request_data:
-            del request_data['id']
+        if "id" in request_data:
+            del request_data["id"]
 
         # Generate a new unique ID
-        latest_news = NewsDetail.objects.order_by('-id').first()
+        latest_news = NewsDetail.objects.order_by("-id").first()
         new_id = 1
         if latest_news:
             new_id = latest_news.id + 1
 
         # Add the generated ID to the data
-        request_data['id'] = new_id
+        request_data["id"] = new_id
 
         print(f"Creating news with data: {request_data}")
         serializer = NewsDetailSerializer(data=request_data)

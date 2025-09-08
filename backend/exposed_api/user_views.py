@@ -50,11 +50,6 @@ class CurrentUserSerializer(serializers.ModelSerializer):
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
-    def validate_userImage(self, value):
-        prefix = "/api/media/"
-        if isinstance(value, str) and value.startswith(prefix):
-            return value[len(prefix):]
-        return value
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         image_path = rep.get("userImage")
@@ -65,6 +60,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
         else:
             rep["userImage"] = None
         return rep
+
     """
     Serializer for administrative management of users
     """
@@ -74,13 +70,15 @@ class AdminUserSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(choices=CustomUser.ROLE_CHOICES)
     founder = serializers.SerializerMethodField()
     userImage = serializers.CharField(source="image", required=False, allow_blank=True, allow_null=True)
+
     def validate_userImage(self, value):
         if value in [None, ""]:
             return None
         prefix = "/api/media/"
         if isinstance(value, str) and value.startswith(prefix):
-            return value[len(prefix):]
+            return value[len(prefix) :]
         return value
+
     is_active = serializers.BooleanField()
 
     founder_id = serializers.IntegerField(required=False, allow_null=True)
@@ -88,17 +86,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = [
-            "id",
-            "name",
-            "email",
-            "role",
-            "founder",
-            "founder_id",
-            "investor_id",
-            "userImage",
-            "is_active"
-        ]
+        fields = ["id", "name", "email", "role", "founder", "founder_id", "investor_id", "userImage", "is_active"]
 
     def get_founder(self, obj):
         if obj.role == "founder" and obj.founder_id:
@@ -108,7 +96,6 @@ class AdminUserSerializer(serializers.ModelSerializer):
             except Founder.DoesNotExist:
                 pass
         return None
-
 
 
 @api_view(["GET"])
