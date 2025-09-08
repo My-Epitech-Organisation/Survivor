@@ -21,6 +21,7 @@ import {
   Target,
   Activity,
   ExternalLink,
+  Eye,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { ProjectDetailsProps } from "@/types/project";
@@ -41,6 +42,7 @@ export default function StartupDashboard() {
   const [project, setProject] = useState<ProjectDetailsProps[] | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const [projectViews, setProjectViews] = useState<number | null>(0);
 
   useEffect(() => {
     setIsDataLoading(true);
@@ -69,6 +71,26 @@ export default function StartupDashboard() {
               `/projects/founder/${userProfileData.founderId}`
             );
             setProject(projectData.data);
+            if (
+              projectData.data &&
+              projectData.data.length > 0 &&
+              projectData.data[0].ProjectId
+            ) {
+              try {
+                const projectViewsResponse = await authenticatedFetch(
+                  `/kpi/project-views/${projectData.data[0].ProjectId}`
+                );
+
+                if (!projectViewsResponse.ok) {
+                  throw new Error("Failed to fetch project views");
+                }
+
+                const projectViewsData = await projectViewsResponse.json();
+                setProjectViews(projectViewsData.data?.total_views);
+              } catch (err) {
+                console.error("Error fetching project views: ", err);
+              }
+            }
           } catch (error) {
             console.error("Error fetching projects:", error);
           }
@@ -167,7 +189,8 @@ export default function StartupDashboard() {
                   No Project Found
                 </h2>
                 <p className="text-gray-500">
-                  You don&apos;t have any projects associated with your account yet.
+                  You don&apos;t have any projects associated with your account
+                  yet.
                 </p>
               </div>
             ) : (
@@ -334,7 +357,7 @@ export default function StartupDashboard() {
                   </Card>
 
                   {/* Founders - Wide Card */}
-                  <Card className="col-span-8 sm:col-span-4 md:col-span-6">
+                  <Card className="col-span-8 sm:col-span-4">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Users className="h-5 w-5 text-green-600" />
@@ -368,6 +391,25 @@ export default function StartupDashboard() {
                             </div>
                           )
                         )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Views */}
+                  <Card className="col-span-8 sm:col-span-4 md:col-span-2">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-3">
+                        <div className="p-3 bg-blue-100 rounded-lg">
+                          <Eye className="h-6 w-6 text-app-blue-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">
+                            Project views
+                          </p>
+                          <p className="text-lg font-bold text-gray-900">
+                            {projectViews || 0}
+                          </p>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
