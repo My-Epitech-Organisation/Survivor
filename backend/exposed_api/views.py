@@ -35,12 +35,8 @@ def record_project_view(request, project_id):
 
         user = request.user if request.user.is_authenticated else None
         if user and user.role == "founder" and user.founder_id is not None:
-            try:
-                founder = Founder.objects.get(id=user.founder_id)
-                if project.founders.filter(id=founder.id).exists():
-                    return True
-            except Founder.DoesNotExist:
-                pass
+            if project.founders.filter(id=user.founder_id).exists():
+                return True
 
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         ip_address = x_forwarded_for.split(",")[0] if x_forwarded_for else request.META.get("REMOTE_ADDR")
