@@ -50,6 +50,21 @@ class CurrentUserSerializer(serializers.ModelSerializer):
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
+    def validate_userImage(self, value):
+        prefix = "/api/media/"
+        if isinstance(value, str) and value.startswith(prefix):
+            return value[len(prefix):]
+        return value
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        image_path = rep.get("userImage")
+        if image_path:
+            if image_path.startswith("/"):
+                image_path = image_path[1:]
+            rep["userImage"] = f"{settings.MEDIA_URL.rstrip('/')}/{image_path}"
+        else:
+            rep["userImage"] = None
+        return rep
     """
     Serializer for administrative management of users
     """
@@ -58,7 +73,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     role = serializers.ChoiceField(choices=CustomUser.ROLE_CHOICES)
     founder = serializers.SerializerMethodField()
-    userImage = serializers.SerializerMethodField()
+    userImage = serializers.CharField(source="image", required=False, allow_blank=True)
     is_active = serializers.BooleanField()
 
     class Meta:
@@ -74,13 +89,6 @@ class AdminUserSerializer(serializers.ModelSerializer):
                 pass
         return None
 
-    def get_userImage(self, obj):
-        if obj.image:
-            image_path = obj.image
-            if image_path.startswith("/"):
-                image_path = image_path[1:]
-            return f"{settings.MEDIA_URL.rstrip('/')}/{image_path}"
-        return None
 
 
 @api_view(["GET"])
