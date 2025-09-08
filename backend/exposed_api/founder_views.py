@@ -1,14 +1,14 @@
+from authentication.models import CustomUser
 from authentication.permissions import IsAdmin
+from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.db.models import Q
 
 from admin_panel.models import Founder
-from authentication.models import CustomUser
 
 from .founder_serializers import FounderCrudSerializer, FounderDetailSerializer
 
@@ -20,7 +20,7 @@ class FounderDetailView(APIView):
         GET requests for individual founders are allowed for everyone,
         but listing with filtering and other operations require admin.
         """
-        if self.request.method == "GET" and self.kwargs.get('_id') is not None:
+        if self.request.method == "GET" and self.kwargs.get("_id") is not None:
             return [AllowAny()]
         return [IsAdmin()]
 
@@ -31,14 +31,14 @@ class FounderDetailView(APIView):
         - For listing all founders (no _id): admin only, with optional filtering
         """
         if _id is None:
-            founder_available = request.query_params.get('founder_available', 'false').lower() == 'true'
+            founder_available = request.query_params.get("founder_available", "false").lower() == "true"
 
             founders_queryset = Founder.objects.all()
 
             if founder_available:
-                linked_founder_ids = CustomUser.objects.filter(
-                    founder_id__isnull=False
-                ).values_list('founder_id', flat=True)
+                linked_founder_ids = CustomUser.objects.filter(founder_id__isnull=False).values_list(
+                    "founder_id", flat=True
+                )
 
                 founders_queryset = founders_queryset.exclude(id__in=linked_founder_ids)
 
@@ -50,10 +50,7 @@ class FounderDetailView(APIView):
             serializer = FounderDetailSerializer(founder)
             return Response(serializer.data)
         except Founder.DoesNotExist:
-            return Response(
-                {"error": f"Founder with id {_id} not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": f"Founder with id {_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
         """Handle POST requests - admin only"""

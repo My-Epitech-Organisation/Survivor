@@ -17,14 +17,15 @@ class FounderDetailSerializer(serializers.ModelSerializer):
     """
     Serializer for Founder model with formatted field names and additional fields.
     """
-    FounderID = serializers.IntegerField(source='id')
-    FounderName = serializers.CharField(source='name')
-    FounderStartupID = serializers.IntegerField(source='startup_id')
+
+    FounderID = serializers.IntegerField(source="id")
+    FounderName = serializers.CharField(source="name")
+    FounderStartupID = serializers.IntegerField(source="startup_id")
     FounderPictureURL = serializers.SerializerMethodField()
 
     class Meta:
         model = Founder
-        fields = ['FounderID', 'FounderName', 'FounderStartupID', 'FounderPictureURL']
+        fields = ["FounderID", "FounderName", "FounderStartupID", "FounderPictureURL"]
 
     def get_FounderPictureURL(self, obj):
         """

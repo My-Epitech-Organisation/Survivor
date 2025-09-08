@@ -1,4 +1,5 @@
 from authentication.models import CustomUser
+from authentication.permissions import IsAdmin
 from django.conf import settings
 from django.http import JsonResponse
 from rest_framework import serializers, status
@@ -6,11 +7,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from authentication.permissions import IsAdmin
+
 from admin_panel.models import Founder
 
-from .serializers import UserSerializer
 from .founder_serializers import FounderDetailSerializer
+from .serializers import UserSerializer
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):
@@ -49,6 +50,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
     """
     Serializer for administrative management of users
     """
+
     name = serializers.CharField()
     email = serializers.EmailField()
     role = serializers.ChoiceField(choices=CustomUser.ROLE_CHOICES)
@@ -57,7 +59,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'name', 'email', 'role', 'founder', 'userImage']
+        fields = ["id", "name", "email", "role", "founder", "userImage"]
 
     def get_founder(self, obj):
         if obj.role == "founder" and obj.founder_id:
@@ -102,6 +104,7 @@ class AdminUserView(APIView):
     """
     API endpoint for administrative user management.
     """
+
     permission_classes = [IsAdmin]
 
     def get(self, request, user_id=None):
@@ -118,10 +121,7 @@ class AdminUserView(APIView):
             serializer = AdminUserSerializer(user)
             return Response(serializer.data)
         except CustomUser.DoesNotExist:
-            return Response(
-                {"error": f"User with id {user_id} not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, user_id):
         """
@@ -130,10 +130,7 @@ class AdminUserView(APIView):
         try:
             user = CustomUser.objects.get(id=user_id)
         except CustomUser.DoesNotExist:
-            return Response(
-                {"error": f"User with id {user_id} not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = AdminUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
@@ -148,10 +145,7 @@ class AdminUserView(APIView):
         try:
             user = CustomUser.objects.get(id=user_id)
         except CustomUser.DoesNotExist:
-            return Response(
-                {"error": f"User with id {user_id} not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
