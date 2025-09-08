@@ -35,12 +35,13 @@ urlpatterns = [
     path("api/auth/", include("authentication.urls")),  # Authentication endpoints
     path("api/threads/", include("messaging.urls")),  # Messaging endpoints
     # OpenAPI schema endpoints
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/schema/", SpectacularAPIView.as_view(permission_classes=[]), name="schema"),
     path(
         "api/docs/",
         SpectacularSwaggerView.as_view(
             url_name="schema",
             template_name="swagger-ui.html",
+            permission_classes=[],
         ),
         name="swagger-ui",
     ),
@@ -49,6 +50,7 @@ urlpatterns = [
         SpectacularRedocView.as_view(
             url_name="schema",
             template_name="redoc.html",
+            permission_classes=[],
         ),
         name="redoc",
     ),
