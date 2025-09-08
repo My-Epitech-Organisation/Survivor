@@ -9,3 +9,9 @@ export interface Founder {
   FounderStartupID: number;
   FounderPictureURL: string;
 }
+
+export interface FounderResponse {
+  id: number;
+  name: string;
+  startup_id: number;
+}
