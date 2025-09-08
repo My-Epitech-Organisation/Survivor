@@ -127,7 +127,6 @@ def fetch_and_create_news():
         response = fetch_with_retry(url, params=params, headers=headers)
         news_data = response.json()
 
-        # Process each news item directly through fetch_news_detail
         for item in news_data:
             news_id = item.get("id")
             fetch_news_detail(news_id, headers)

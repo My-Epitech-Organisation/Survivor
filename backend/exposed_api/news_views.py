@@ -58,9 +58,7 @@ class NewsListView(APIView):
 
             news = serializer.save()
             AuditLog.objects.create(action=f"New news item created: {news.title}", user=request.user.name, type="news")
-            print(f"Successfully created news with ID: {news.id}")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(f"Invalid news data. Errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
