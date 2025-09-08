@@ -7,7 +7,7 @@ import { NewsDetailItem } from "@/types/news";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Label } from "./ui/label";
-import Image from "next/image";
+import { getBackendUrl } from "@/lib/config";
 
 interface AdminNewsFormProps {
   defaultData?: NewsDetailItem;
@@ -34,10 +34,9 @@ export default function AdminNewsForm({
   );
   const [categories, setCategories] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
-  const [file, setFile] = useState<File | null>(null);
+  const [_file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
-  // Fetch existing categories and locations for dropdown options
   const fetchOptions = async () => {
     try {
       const result = (await api.get<NewsDetailItem[]>({endpoint: "/news/"}));
@@ -81,16 +80,37 @@ export default function AdminNewsForm({
     setFormData((prev) => ({ ...prev, [fieldName]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
 
-      // Create a preview URL
-      const objectUrl = URL.createObjectURL(selectedFile);
-      setPreview(objectUrl);
+      try {
+        const objectUrl = URL.createObjectURL(selectedFile);
+        setPreview(objectUrl);
 
-      // We're not setting the pictureURL field yet - that will be set after upload
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64String = reader.result as string;
+          try {
+            const res = await api.post<{ url: string }>("/media/upload/", { url: base64String });
+            if (res && res.data && res.data.url) {
+              const imageUrl = res.data.url;
+              setFormData(prev => ({ ...prev, image_url: imageUrl }));
+              toast.success("Image uploaded successfully");
+            } else {
+              throw new Error("API didn't return an image url");
+            }
+          } catch (error) {
+            console.error("Error uploading image:", error);
+            toast.error("Failed to upload image");
+          }
+        };
+        reader.readAsDataURL(selectedFile);
+      } catch (error) {
+        console.error("Error processing image:", error);
+        toast.error("Failed to process image");
+      }
     }
   };
 
@@ -119,20 +139,9 @@ export default function AdminNewsForm({
         return;
       }
 
-      // Prepare data for submission
       const submissionData = { ...formData };
       if (!submissionData.startup_id) {
-        // If startup_id is 0 or empty, convert to null
         submissionData.startup_id = 0;
-      }
-
-      // For now, we're not handling image uploads
-      // This will be implemented later
-      if (file) {
-        // We'll implement file upload functionality in the future
-        toast.info("Image upload will be implemented in a future update", {
-          description: "Currently, image uploads for news are not supported."
-        });
       }
 
       console.debug("Submitting news:", submissionData);
@@ -153,19 +162,18 @@ export default function AdminNewsForm({
             </div>
           </div>
 
-          {/* News image upload section - This will be fully implemented later */}
+          {/* News image upload section */}
           <div className="mb-6 flex flex-col items-center">
             <div className="w-full mb-4">
-              <Label htmlFor="news-image" className="mb-2 block">News Image <span className="text-xs text-gray-500">(Image upload will be implemented later)</span></Label>
+              <Label htmlFor="news-image" className="mb-2 block">News Image</Label>
               <div className="flex flex-col items-center gap-3">
                 {preview && (
                   <div className="w-full max-h-60 overflow-hidden rounded-lg mb-2">
-                    <Image
-                      src={preview.startsWith('http') ? preview : URL.createObjectURL(file!)}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={preview.startsWith('/') ? `${getBackendUrl()}${preview}` : preview}
                       alt="News preview"
-                      width={500}
-                      height={300}
-                      className="w-full h-auto object-cover"
+                      className="w-full h-auto object-cover rounded-lg"
                     />
                   </div>
                 )}
@@ -229,7 +237,7 @@ export default function AdminNewsForm({
               type="date"
               placeholder="Enter news date"
               className="cursor-pointer"
-              value={formData.news_date.split('T')[0]} // Format date for input
+              value={formData.news_date.split('T')[0]}
               onChange={handleInputChange}
               required
             />

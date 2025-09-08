@@ -58,7 +58,7 @@ export default function NewsCard({ item }: NewsCardProps) {
         const selectedItem: NewsDetailItem = {
           ...item,
           description: newsDetail.description,
-          pictureURL: newsDetail.image_url || "",
+          image_url: newsDetail.image_url || "",
         };
         setSelectedNews(selectedItem);
       }
@@ -160,11 +160,11 @@ export default function NewsCard({ item }: NewsCardProps) {
 
             {/* Content area */}
             <div className="flex-1 overflow-y-auto">
-              {selectedNews?.pictureURL && (
+              {selectedNews?.image_url && (
                 <div className="relative h-64 sm:h-80 bg-gray-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={getBackendUrl() + selectedNews.pictureURL}
+                    src={`${getBackendUrl()}${selectedNews.image_url}`}
                     alt={selectedNews.title}
                     className="w-full h-full object-cover"
                   />

@@ -32,24 +32,28 @@ class NewsListView(APIView):
         """
         Create a new news item, only for admins
         """
-        # Get request data without ID (we'll generate it)
         request_data = request.data.copy()
         if "id" in request_data:
             del request_data["id"]
 
-        # Generate a new unique ID
         latest_news = NewsDetail.objects.order_by("-id").first()
         new_id = 1
         if latest_news:
             new_id = latest_news.id + 1
 
-        # Add the generated ID to the data
         request_data["id"] = new_id
 
-        print(f"Creating news with data: {request_data}")
         serializer = NewsDetailSerializer(data=request_data)
         if serializer.is_valid():
-            if "image" in request.FILES:
+            if request_data.get("image_url"):
+                image_path = request_data["image_url"]
+                from django.conf import settings
+
+                media_url = settings.MEDIA_URL.rstrip("/")
+                if image_path.startswith(media_url):
+                    image_path = image_path[len(media_url) :]
+                serializer.validated_data["image"] = image_path.lstrip("/")
+            elif "image" in request.FILES:
                 serializer.validated_data["image"] = request.FILES["image"]
 
             news = serializer.save()
@@ -100,8 +104,15 @@ class NewsDetailView(APIView):
 
         serializer = NewsDetailSerializer(news, data=request.data, partial=True)
         if serializer.is_valid():
+            if request.data.get("image_url"):
+                image_path = request.data["image_url"]
+                from django.conf import settings
 
-            if "image" in request.FILES:
+                media_url = settings.MEDIA_URL.rstrip("/")
+                if image_path.startswith(media_url):
+                    image_path = image_path[len(media_url) :]
+                serializer.validated_data["image"] = image_path.lstrip("/")
+            elif "image" in request.FILES:
                 serializer.validated_data["image"] = request.FILES["image"]
 
             updated_news = serializer.save()

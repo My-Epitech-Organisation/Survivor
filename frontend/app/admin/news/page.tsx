@@ -141,7 +141,6 @@ export default function AdminNewsPage() {
   };
 
   const handleEditNewsSubmit = (id: number, data: NewsDetailItem, btnAction: HTMLButtonElement | null) => {
-    // Image upload functionality will be implemented later
     api
       .put(`/news/${id}/`, data)
       .then((response) => {
@@ -194,7 +193,6 @@ export default function AdminNewsPage() {
   };
 
   const handleCreateNews = (data: NewsDetailItem) => {
-    // Create a new object without the ID to let the backend generate it
     const newsData = {
       title: data.title,
       category: data.category,
@@ -202,7 +200,7 @@ export default function AdminNewsPage() {
       location: data.location,
       startup_id: data.startup_id || 0,
       description: data.description,
-      // Image upload functionality will be implemented later
+      image_url: data.image_url
     };
 
     console.debug("Sending news data to backend:", newsData);
