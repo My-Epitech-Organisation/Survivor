@@ -220,8 +220,8 @@ export default function StartupProfile() {
             !isEditing &&
             !isLoading && (
               <span className="block mt-2 text-sm text-app-text-secondary">
-                Your profile is currently empty. Click &quot;Edit Profile&quot; to add
-                your startup information.
+                Your profile is currently empty. Click &quot;Edit Profile&quot;
+                to add your startup information.
               </span>
             )
           )}
