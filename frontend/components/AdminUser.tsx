@@ -29,7 +29,7 @@ export default function AdminUser (props : AdminUserProps)
         <TableCell className="border-none">
         <div className="flex justify-center items-center gap-3">
             <Avatar>
-            <AvatarImage src={`${getBackendUrl()}${props.user.userImag}`}></AvatarImage>
+            <AvatarImage src={`${getBackendUrl()}${props.user.userImage}`}></AvatarImage>
             <AvatarFallback>{props.user.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="font-medium text-app-text-primary">{props.user.name}</span>
@@ -73,7 +73,7 @@ export default function AdminUser (props : AdminUserProps)
                   founder: props.user.founder,
                   investor: props.user.investor,
 
-                  userImag: props.user.userImag,
+                  userImage: props.user.userImage,
                   is_active: props.user.is_active
                 }}
                 onSubmit={(formUser) => props.editCB(props.id, formUser, closeBtn.current)}

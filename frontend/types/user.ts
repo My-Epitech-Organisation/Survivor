@@ -10,7 +10,7 @@ export interface User {
   id: number;
   founderId?: number;
   startupId?: number;
-  userImag?: string;
+  userImage?: string;
 }
 
 export interface UserSimple {
@@ -20,7 +20,7 @@ export interface UserSimple {
   id: number;
   founder?: Founder;
   investor?: Investor;
-  userImag?: string;
+  userImage?: string;
   is_active?: undefined
 }
 
@@ -31,6 +31,6 @@ export interface FormUser {
   role: Roles;
   founder?: Founder;
   investor?: Investor;
-  userImag?: string;
+  userImage?: string;
   is_active?: boolean
 }

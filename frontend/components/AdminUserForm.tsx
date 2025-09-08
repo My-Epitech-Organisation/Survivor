@@ -38,7 +38,7 @@ export default function AdminUserForm({
     email: "",
     founder: undefined,
     investor: undefined,
-    userImag: undefined,
+    userImage: undefined,
     is_active: undefined
   };
   const [formData, setFormData] = useState<FormUser>(
@@ -161,9 +161,9 @@ export default function AdminUserForm({
                 defaultChar={formData.name.charAt(0)}
                 variente="modifiable"
                 size={24}
-                url={formData.userImag}
+                url={formData.userImage}
                 onChange={(imgUrl: string) =>
-                  setFormData((prev) => ({ ...prev, userImag: imgUrl }))
+                  setFormData((prev) => ({ ...prev, userImage: imgUrl }))
                 }
               />
               <div>
