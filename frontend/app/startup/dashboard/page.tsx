@@ -4,7 +4,6 @@ import StartupNavigation from "@/components/StartupNavigation";
 import Footer from "@/components/Footer";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { authenticatedFetch } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -168,7 +167,7 @@ export default function StartupDashboard() {
                   No Project Found
                 </h2>
                 <p className="text-gray-500">
-                  You don't have any projects associated with your account yet.
+                  You don&apos;t have any projects associated with your account yet.
                 </p>
               </div>
             ) : (
