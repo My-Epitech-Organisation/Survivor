@@ -59,7 +59,7 @@ export default function AdminUser (props : AdminUserProps)
         <Dialog>
             <DialogTrigger asChild>
               <button
-                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center"
+                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
                 aria-label="Edit"
                 title={`Edit ${props.user.name}`}
               >
@@ -92,7 +92,7 @@ export default function AdminUser (props : AdminUserProps)
           <Dialog>
             <DialogTrigger asChild>
               <button
-                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center"
+                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
                 aria-label="Delete"
                 title={`Delete ${props.user.name}`}
               >
