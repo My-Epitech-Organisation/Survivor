@@ -43,7 +43,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
     def get_userImage(self, obj):
         if obj.image:
             image_path = obj.image
-            if image_path.startswith('/'):
+            if image_path.startswith("/"):
                 image_path = image_path[1:]
             return f"{settings.MEDIA_URL.rstrip('/')}/{image_path}"
         return None
@@ -78,7 +78,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
         if obj.image:
             # Make sure the path doesn't have double slashes
             image_path = obj.image
-            if image_path.startswith('/'):
+            if image_path.startswith("/"):
                 image_path = image_path[1:]
             return f"{settings.MEDIA_URL.rstrip('/')}/{image_path}"
         return None
