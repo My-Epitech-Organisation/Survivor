@@ -18,6 +18,22 @@ class TextSearchFilter(django_filters.CharFilter):
     """
 
     def __init__(self, *args, **kwargs):
+        """Initialize the filter.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments forwarded to the superclass initializer.
+        **kwargs : dict
+            Keyword arguments forwarded to the superclass initializer. Recognized key:
+            - search_fields (list, optional): list of field names used for searching.
+                If present, it is popped from kwargs and assigned to self.search_fields.
+                Defaults to an empty list.
+
+        Returns:
+        -------
+        None
+        """
         self.search_fields = kwargs.pop("search_fields", [])
         super().__init__(*args, **kwargs)
 
