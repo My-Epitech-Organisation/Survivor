@@ -52,7 +52,6 @@ export interface ProjectProfileFormData {
   maturity: string | null,
   address: string | null,
   legalStatus: string | null,
-  founders: Founder[] | null,
   email: string | null,
   phone: string | null,
   needs: string | null,

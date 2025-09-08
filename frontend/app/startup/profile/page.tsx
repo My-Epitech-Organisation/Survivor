@@ -36,7 +36,6 @@ export default function StartupProfile() {
     maturity: null,
     address: null,
     legalStatus: null,
-    founders: null,
     email: null,
     phone: null,
     needs: null,
@@ -57,10 +56,6 @@ export default function StartupProfile() {
   };
 
   const getFormValue = (value: string | null): string => value || "";
-
-  const getFounders = (): Founder[] => {
-    return formData.founders || [];
-  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -105,7 +100,6 @@ export default function StartupProfile() {
             maturity: data.ProjectMaturity,
             address: data.ProjectAddress,
             legalStatus: data.ProjectLegalStatus,
-            founders: data.ProjectFounders,
             email: data.ProjectEmail,
             phone: data.ProjectPhone,
             needs: data.ProjectNeeds,
@@ -141,7 +135,6 @@ export default function StartupProfile() {
       maturity: null,
       address: null,
       legalStatus: null,
-      founders: null,
       email: null,
       phone: null,
       needs: null,
@@ -486,52 +479,6 @@ export default function StartupProfile() {
                       disabled={!isEditing}
                       placeholder="e.g., Funding, Technical Support, Marketing..."
                     />
-                  </div>
-                </div>
-
-                {/* Founders Section */}
-                <div className="mb-3">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-app-text-primary">
-                      Founders
-                    </h3>
-                  </div>
-                  <div className="space-y-4">
-                    {getFounders().length === 0 ? (
-                      <>
-                        <p className="text-app-text-muted pl-4 text-sm">
-                          No founders
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        {getFounders().map((founder, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
-                          >
-                            <Avatar className="h-12 w-12">
-                              <AvatarImage
-                                src={founder.FounderName}
-                                alt={founder.FounderName}
-                              />
-                              <AvatarFallback>
-                                {founder.FounderName.split(" ")
-                                  .map((word: string) => word[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1">
-                              <Input
-                                value={founder.FounderName}
-                                disabled={true}
-                                placeholder="Founder name"
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </>
-                    )}
                   </div>
                 </div>
               </CardContent>
