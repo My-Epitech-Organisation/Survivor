@@ -55,10 +55,9 @@ export default function AdminUserForm({
     try {
       setIsLoadingFounder(true);
       const result = (await api.get<Founder[]>({endpoint: `/founders/?founder_available=true`}));
-      console.log("Founders: ", result)
       setFoundersAvailable(result.data);
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
     setIsLoadingFounder(false);
   }
@@ -68,10 +67,9 @@ export default function AdminUserForm({
     try {
       setIsLoadingInvestor(true);
       const result = (await api.get<Investor[]>({endpoint: `/investors/?investor_available=true`}));
-      console.log("Investors: ", result)
       setInvestorsAvailable(result.data);
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
     setIsLoadingInvestor(false);
   }
@@ -101,7 +99,6 @@ export default function AdminUserForm({
     setFormData((prev) => ({ ...prev, [fieldName]: value }));
   };
   const handleSubmitProject = async () => {
-    console.log("FORMDATA", formData);
     try {
       const requiredFields = [
         "name",
@@ -195,13 +192,27 @@ export default function AdminUserForm({
               onChange={handleInputChange}
               required
             />
+            <div className="flex flex-col md:col-span-1 gap-4">
+              <Label htmlFor="user-active" className="mb-1 cursor-pointer">
+              Is active
+              </Label>
+              <input
+              type="checkbox"
+              id="user-active"
+              checked={!!formData.is_active}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, is_active: e.target.checked }))
+              }
+              className="h-5 w-5 accent-blue-600"
+              />
+            </div>
             <SelectWithLabel
               label="Role"
               id="user-role"
               className="cursor-pointer"
               value={formData.role}
               onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, role: value }))
+              setFormData((prev) => ({ ...prev, role: value }))
               }
             >
               <SelectLabel>Role</SelectLabel>
@@ -227,7 +238,6 @@ export default function AdminUserForm({
                     try {
                       setFormData((prev) => ({ ...prev, investor: undefined }));
                       const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
-                      console.log(result.data);
                       setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
                     } catch (error) {
                       console.error(error);
@@ -251,7 +261,6 @@ export default function AdminUserForm({
                     setFormData((prev) => ({ ...prev, founder: undefined }));
                     try {
                       const result = await api.get<Investor | null>({ endpoint: `/investors/${value}` });
-                      console.log(result.data);
                       setFormData((prev) => ({ ...prev, investor: result.data ?? undefined }));
                     } catch (error) {
                       console.error(error);

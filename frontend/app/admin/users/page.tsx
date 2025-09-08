@@ -24,7 +24,8 @@ export default function AdminUsers() {
   const fetchUsers = async () => {
     setIsDataLoading(true);
     try {
-      setUserList((await api.get<UserSimple[]>({endpoint: "/users/"})).data);
+      const resp = (await api.get<UserSimple[]>({endpoint: "/users/"})).data
+      setUserList(resp);
     } catch (error) {
       console.error(error);
     }
@@ -32,7 +33,7 @@ export default function AdminUsers() {
   };
 
   const handleEditUserSubmit = (id: number, data: FormUser, btnAction: HTMLButtonElement | null) => {
-    console.log("DataSend: ", data);
+    console.debug("DataSend: ", data);
     api
       .put(`/users/${id}/`, data)
       .then((response) => {

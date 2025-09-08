@@ -19,7 +19,9 @@ export interface UserSimple {
   role: Roles;
   id: number;
   founder?: Founder;
+  investor?: Investor;
   userImag?: string;
+  is_active?: undefined
 }
 
 

@@ -71,7 +71,10 @@ export default function AdminUser (props : AdminUserProps)
                   email: props.user.email,
                   role: props.user.role,
                   founder: props.user.founder,
+                  investor: props.user.investor,
+
                   userImag: props.user.userImag,
+                  is_active: props.user.is_active
                 }}
                 onSubmit={(formUser) => props.editCB(props.id, formUser, closeBtn.current)}
               />
