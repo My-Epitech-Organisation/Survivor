@@ -87,12 +87,9 @@ class SearchResultSerializer(serializers.Serializer):
 
     def get_title(self, obj):
         """Extract the appropriate title from the normalized result dict."""
-        # obj is the normalized result dict; prefer 'title', then 'name', then fallback.
         try:
-            # obj may be a dict-like object
             return obj.get("title") or obj.get("name") or "Untitled"
         except Exception:
-            # Fall back to attribute access for compatibility
             if hasattr(obj, "title"):
                 return obj.title
             if hasattr(obj, "name"):

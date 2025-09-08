@@ -64,7 +64,6 @@ class AdvancedSearchView(views.APIView):
         score = 0.0
         search_terms = search_term.lower().split()
 
-        # Field importance weights
         field_weights = {
             "name": 2.0,
             "title": 2.0,
@@ -86,12 +85,9 @@ class AdvancedSearchView(views.APIView):
             field_text = field_value.lower()
             field_weight = field_weights.get(field_name, 1.0)
 
-            # Calculate relevance for each search term
             for term in search_terms:
-                # Exact word matches get higher score
                 if re.search(r"\b" + re.escape(term) + r"\b", field_text):
                     score += 2.0 * field_weight
-                # Partial matches get lower score
                 elif term in field_text:
                     score += 1.0 * field_weight
 
@@ -151,14 +147,11 @@ class AdvancedSearchView(views.APIView):
         Processes search parameters, applies filters, calculates relevance scores,
         and returns paginated normalized results.
         """
-        # Extract search parameters
         search_term = request.query_params.get("search", "")
         result_type = request.query_params.get("type", None)
 
-        # Initialize results list
         all_results = []
 
-        # Search in projects (StartupDetail)
         if not result_type or result_type == "project":
             project_filter = StartupDetailFilter(
                 request.query_params, queryset=StartupDetail.objects.all().prefetch_related("founders")
@@ -180,7 +173,6 @@ class AdvancedSearchView(views.APIView):
                         }
                     )
 
-        # Search in events
         if not result_type or result_type == "event":
             event_filter = EventFilter(request.query_params, queryset=Event.objects.all())
             filtered_events = event_filter.qs
@@ -200,7 +192,6 @@ class AdvancedSearchView(views.APIView):
                         }
                     )
 
-        # Search in news
         if not result_type or result_type == "news":
             news_filter = NewsFilter(request.query_params, queryset=NewsDetail.objects.all())
             filtered_news = news_filter.qs
@@ -220,7 +211,6 @@ class AdvancedSearchView(views.APIView):
                         }
                     )
 
-        # Search in founders (if searching projects)
         if (not result_type or result_type == "project") and search_term:
             founder_filter = FounderFilter(
                 {"search": search_term}, queryset=Founder.objects.all().prefetch_related("startups")
@@ -229,19 +219,15 @@ class AdvancedSearchView(views.APIView):
 
             for founder in filtered_founders:
                 for startup in founder.startups.all():
-                    # Add bonus score for founder matches
                     score = self.get_bm25_score(startup, search_term, ["name", "description", "sector"])
-                    # Add founder match bonus
                     founder_match_score = 2.0
                     total_score = score + founder_match_score
 
-                    # Check if this startup is already in results
                     existing_entry = next(
                         (item for item in all_results if item["type"] == "project" and item["id"] == startup.id), None
                     )
 
                     if existing_entry:
-                        # Update the score if it's higher
                         existing_entry["score"] = max(existing_entry["score"], total_score)
                     else:
                         serialized_project = StartupSearchResultSerializer(startup).data
@@ -256,10 +242,8 @@ class AdvancedSearchView(views.APIView):
                             }
                         )
 
-        # Sort results by score (descending) then by title (ascending) for deterministic ordering
         sorted_results = sorted(all_results, key=lambda x: (-x["score"], x.get("title", "")))
 
-        # Apply pagination
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(sorted_results, request)
 
