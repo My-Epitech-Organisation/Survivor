@@ -9,7 +9,7 @@ export interface NewsItem {
 
 export interface NewsDetailItem extends NewsItem {
   description: string;
-  pictureURL: string;
+  image_url?: string;
 }
 
 export interface NewsCardProps {

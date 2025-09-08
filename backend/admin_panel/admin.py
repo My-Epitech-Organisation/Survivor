@@ -2,17 +2,13 @@ from authentication.models import CustomUser
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Event, Founder, Investor, News, NewsDetail, Partner, StartupDetail
+from .models import Event, Founder, Investor, NewsDetail, Partner, StartupDetail
 
 
 class NewsDetailAdmin(admin.ModelAdmin):
     list_display = ["id", "title", "news_date", "category", "location"]
     fields = ["id", "title", "news_date", "category", "location", "startup_id", "description", "image"]
     readonly_fields = ["image"]
-
-
-class NewsAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "news_date", "category", "location"]
 
 
 class EventAdmin(admin.ModelAdmin):
@@ -140,7 +136,6 @@ class PartnerAdmin(admin.ModelAdmin):
     list_filter = ["partnership_type", "legal_status"]
 
 
-admin.site.register(News, NewsAdmin)
 admin.site.register(NewsDetail, NewsDetailAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(StartupDetail, StartupDetailAdmin)
