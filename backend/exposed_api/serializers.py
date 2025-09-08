@@ -24,11 +24,11 @@ class FounderSerializer(serializers.ModelSerializer):
         fields = ["name", "picture", "FounderName", "FounderPictureURL"]
 
     def is_valid(self, *args, **kwargs):
-        if 'FounderName' in self.initial_data and 'name' not in self.initial_data:
-            self.initial_data['name'] = self.initial_data['FounderName']
+        if "FounderName" in self.initial_data and "name" not in self.initial_data:
+            self.initial_data["name"] = self.initial_data["FounderName"]
 
-        if 'FounderPictureURL' in self.initial_data and 'picture' not in self.initial_data:
-            self.initial_data['picture'] = self.initial_data['FounderPictureURL']
+        if "FounderPictureURL" in self.initial_data and "picture" not in self.initial_data:
+            self.initial_data["picture"] = self.initial_data["FounderPictureURL"]
 
         is_valid = super().is_valid(*args, **kwargs)
         return is_valid
@@ -268,10 +268,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
         if founders_data is not None:
             existing_founders = {}
             for founder in instance.founders.all():
-                existing_founders[founder.id] = {
-                    "name": founder.name,
-                    "id": founder.id
-                }
+                existing_founders[founder.id] = {"name": founder.name, "id": founder.id}
 
             instance.founders.clear()
 
@@ -369,6 +366,8 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the user endpoint.

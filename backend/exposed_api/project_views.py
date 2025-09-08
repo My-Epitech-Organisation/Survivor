@@ -47,7 +47,7 @@ class ProjectDetailView(APIView):
         """
         if self.request.method == "GET":
             return [AllowAny()]
-        elif self.request.method == "PUT":
+        if self.request.method == "PUT":
             return [IsAuthenticated()]
         return [IsAdmin()]
 
@@ -97,19 +97,19 @@ class ProjectDetailView(APIView):
         project = get_object_or_404(StartupDetail, id=_id)
 
         # Vérifier si l'utilisateur est un admin
-        is_admin = hasattr(request.user, 'role') and request.user.role == "admin"
+        is_admin = hasattr(request.user, "role") and request.user.role == "admin"
         is_founder = False
 
         # Récupérer tous les IDs des fondateurs du projet
-        project_founder_ids = list(project.founders.values_list('id', flat=True))
+        project_founder_ids = list(project.founders.values_list("id", flat=True))
 
         # Vérifier si l'utilisateur est un fondateur de ce projet
-        if hasattr(request.user, 'founder_id') and request.user.founder_id:
+        if hasattr(request.user, "founder_id") and request.user.founder_id:
             founder_id = request.user.founder_id
             is_founder = founder_id in project_founder_ids
 
         # Vérifier si le rôle de l'utilisateur est fondateur
-        is_founder_role = hasattr(request.user, 'role') and request.user.role == "founder"
+        is_founder_role = hasattr(request.user, "role") and request.user.role == "founder"
 
         # Vérifier si le projet n'a pas de fondateurs (projet orphelin)
         is_orphan_project = len(project_founder_ids) == 0
@@ -128,15 +128,15 @@ class ProjectDetailView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-
-
         # Vérifier si c'est un fondateur qui s'approprie un projet orphelin
-        is_founder_claiming_orphan = is_founder_role and is_orphan_project and hasattr(request.user, 'founder_id') and request.user.founder_id
+        is_founder_claiming_orphan = (
+            is_founder_role and is_orphan_project and hasattr(request.user, "founder_id") and request.user.founder_id
+        )
 
         # Si l'utilisateur revendique un projet orphelin, assurons-nous qu'il est ajouté comme fondateur
         if is_founder_claiming_orphan:
             # Créer une copie des données de la requête
-            request_data = request.data.copy() if hasattr(request, 'data') else {}
+            request_data = request.data.copy() if hasattr(request, "data") else {}
 
             # S'assurer que ProjectFounders existe et contient au moins l'ID du fondateur actuel
             founder_id = request.user.founder_id
@@ -149,11 +149,7 @@ class ProjectDetailView(APIView):
                     request_data["ProjectFounders"] = []
 
                 # Ajouter le fondateur actuel s'il n'est pas déjà présent
-                founder_data = {
-                    "FounderID": founder.id,
-                    "FounderName": founder.name,
-                    "FounderStartupID": project.id
-                }
+                founder_data = {"FounderID": founder.id, "FounderName": founder.name, "FounderStartupID": project.id}
 
                 # Vérifier si le fondateur est déjà dans la liste
                 founder_exists = False
@@ -165,12 +161,18 @@ class ProjectDetailView(APIView):
                 if not founder_exists:
                     request_data["ProjectFounders"].append(founder_data)
 
-                serializer = ProjectDetailSerializer(project, data=request_data, partial=True, context={"request": request})
+                serializer = ProjectDetailSerializer(
+                    project, data=request_data, partial=True, context={"request": request}
+                )
             except Founder.DoesNotExist:
 
-                serializer = ProjectDetailSerializer(project, data=request.data, partial=True, context={"request": request})
+                serializer = ProjectDetailSerializer(
+                    project, data=request.data, partial=True, context={"request": request}
+                )
         else:
-            serializer = ProjectDetailSerializer(project, data=request.data, partial=True, context={"request": request})
+            serializer = ProjectDetailSerializer(
+                project, data=request.data, partial=True, context={"request": request}
+            )
 
         if serializer.is_valid():
             serializer.save()
@@ -180,7 +182,6 @@ class ProjectDetailView(APIView):
                 type="project",
             )
             return Response(serializer.data)
-
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

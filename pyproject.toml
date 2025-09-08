@@ -101,6 +101,7 @@ ignore = [
     "PLR0915",  # Too many statements
     "PLR0913",  # Too many arguments
     "SIM108",  # Use ternary operator
+    "PLR0912",  # Too many branches
 ]
 
 # Allow autofix for all enabled rules (when '--fix') is provided
