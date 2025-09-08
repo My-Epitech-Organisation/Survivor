@@ -26,7 +26,7 @@ interface ComboboxProps {
   placeholder: string;
   notFound: string;
   variante?: "withAvatar";
-  onChange?: (value: string) => void;
+  onChange?: (value: string | undefined) => void;
 }
 
 export function Combobox(props: ComboboxProps) {
@@ -65,6 +65,8 @@ export function Combobox(props: ComboboxProps) {
                     onSelect={(currentValue) => {
                       setValue(currentValue === value ? "" : currentValue);
                       setOpen(false);
+                      if (props.onChange)
+                        props.onChange(element.value);
                     }}
                   >
                     <span className="flex items-center gap-2 flex-1">

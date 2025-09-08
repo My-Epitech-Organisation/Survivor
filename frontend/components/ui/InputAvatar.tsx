@@ -18,7 +18,6 @@ interface InputAvatar {
 export default function InputAvatar(props: InputAvatar) {
   const [img, setImgUrl] = useState<string>(props.url ?? "");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  console.log("URL: ", props.url);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

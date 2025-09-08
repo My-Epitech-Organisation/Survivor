@@ -83,6 +83,7 @@ export default function AdminUserForm({
     setFormData((prev) => ({ ...prev, [fieldName]: value }));
   };
   const handleSubmitProject = async () => {
+    console.log("FORMDATA", formData);
     try {
       const requiredFields = [
         "name",
@@ -194,6 +195,7 @@ export default function AdminUserForm({
               onChange={async (value) => {
                 try {
                   const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
+                  console.log(result.data);
                   setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
                 } catch (error) {
                   console.error(error);
