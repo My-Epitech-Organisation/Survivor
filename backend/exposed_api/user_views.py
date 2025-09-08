@@ -186,17 +186,14 @@ class AdminUserView(APIView):
         except CustomUser.DoesNotExist:
             return Response({"error": f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Si founder est présent dans le payload, on assigne founder_id
         data = request.data.copy()
         founder = data.get("founder")
         investor = data.get("investor")
-        # Si founder est undefined/null, on supprime founder_id
         if founder is None:
             data["founder_id"] = None
         elif isinstance(founder, dict) and founder.get("FounderID") is not None:
             data["founder_id"] = founder["FounderID"]
             data["investor_id"] = None
-        # Si investor est undefined/null, on supprime investor_id
         if investor is None:
             data["investor_id"] = None
         elif isinstance(investor, dict) and investor.get("id") is not None:

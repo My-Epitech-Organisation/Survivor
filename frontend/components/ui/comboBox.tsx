@@ -38,14 +38,12 @@ export function Combobox(props: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
-  // Ajout d'une valeur par défaut si le champ value est undefined au montage
   React.useEffect(() => {
     if ((value === undefined || value === "") && props.defaultValue) {
       setValue(props.defaultValue);
     }
   }, [props.defaultValue, value]);
 
-  // Fonction pour gérer la sélection et la suppression de la valeur par défaut
   const handleSelect = (currentValue: string) => {
     if (currentValue === value && currentValue === props.defaultValue) {
       setValue("");
@@ -57,12 +55,10 @@ export function Combobox(props: ComboboxProps) {
     setOpen(false);
   };
 
-  // Détermine le label à afficher
   const displayLabel = value
     ? props.elements.find((element) => element.value === value)?.label
     : (props.defaultLabel || props.placeholder);
 
-  // Si displayLabel est vide, affiche le placeholder
   const finalLabel = displayLabel && displayLabel.trim() !== "" ? displayLabel : props.placeholder;
 
   if (props.variante === "withAvatar") {
