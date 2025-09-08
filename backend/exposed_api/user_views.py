@@ -103,7 +103,6 @@ class AdminUserSerializer(serializers.ModelSerializer):
                 from admin_panel.models import Investor
 
                 investor = Investor.objects.get(id=obj.investor_id)
-                # Tu peux adapter le serializer utilisé ici si besoin
                 return {
                     "id": investor.id,
                     "name": getattr(investor, "name", None),
