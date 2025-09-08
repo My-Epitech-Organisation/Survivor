@@ -34,7 +34,6 @@ class FounderDetailSerializer(serializers.ModelSerializer):
         try:
             startup = StartupDetail.objects.get(id=obj.startup_id)
             if startup.founders_images and isinstance(startup.founders_images, dict):
-                # If founders_images is a dictionary with founder IDs as keys
                 return startup.founders_images.get(str(obj.id))
             return None
         except StartupDetail.DoesNotExist:
