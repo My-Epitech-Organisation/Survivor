@@ -201,9 +201,9 @@ export default function StartupProfile() {
     <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
       <StartupNavigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1">
+      <main className="px-4 sm:px-6 lg:px-8 py-12 flex-1 transition-all">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6 transition-all">
             Startup Profile Management
           </h1>
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
@@ -273,11 +273,11 @@ export default function StartupProfile() {
 
             {/* Profile Form */}
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-6">
                 <CardTitle className="text-2xl text-app-text-primary">
                   Company Profile
                 </CardTitle>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-col sm:flex-row">
                   {isEditing ? (
                     <>
                       <Button
