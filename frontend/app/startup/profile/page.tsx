@@ -22,7 +22,7 @@ import {
   FaShare,
   FaUsers,
 } from "react-icons/fa";
-import { FounderResponse, Founder } from "@/types/founders";
+import { FounderResponse } from "@/types/founders";
 import { ProjectDetails, ProjectProfileFormData } from "@/types/project";
 import { authenticatedFetch } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
