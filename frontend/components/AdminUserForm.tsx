@@ -38,7 +38,7 @@ export default function AdminUserForm({
     email: "",
     founder: undefined,
     investor: undefined,
-    userImag: undefined,
+    userImage: undefined,
     is_active: undefined
   };
   const [formData, setFormData] = useState<FormUser>(
@@ -55,7 +55,15 @@ export default function AdminUserForm({
     try {
       setIsLoadingFounder(true);
       const result = (await api.get<Founder[]>({endpoint: `/founders/?founder_available=true`}));
-      setFoundersAvailable(result.data);
+      let available = Array.isArray(result.data) ? result.data : [];
+      if (
+        defaultData?.founder &&
+        defaultData.founder.FounderID &&
+        !available.some(f => f.FounderID === defaultData.founder?.FounderID)
+      ) {
+        available = [...available, defaultData.founder];
+      }
+      setFoundersAvailable(available);
     } catch (error) {
       console.error(error)
     }
@@ -161,9 +169,9 @@ export default function AdminUserForm({
                 defaultChar={formData.name.charAt(0)}
                 variente="modifiable"
                 size={24}
-                url={formData.userImag}
+                url={formData.userImage}
                 onChange={(imgUrl: string) =>
-                  setFormData((prev) => ({ ...prev, userImag: imgUrl }))
+                  setFormData((prev) => ({ ...prev, userImage: imgUrl }))
                 }
               />
               <div>
@@ -223,32 +231,45 @@ export default function AdminUserForm({
             </SelectWithLabel>
             {formData.role === "founder" && (
               <>
-                <Combobox
-                  placeholder="Select a founder"
-                  elements={
-                    foundersAvailable?.map((founder) => ({
-                      label: founder.FounderName,
-                      value: String(founder.FounderID),
-                      url: founder.FounderPictureURL,
-                    })) || []
-                  }
-                  variante="withAvatar"
-                  notFound="Founder not found"
-                  onChange={async (value) => {
-                    try {
-                      setFormData((prev) => ({ ...prev, investor: undefined }));
-                      const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
-                      setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
-                    } catch (error) {
-                      console.error(error);
+                <div className="grid w-full max-w-sm items-center gap-3">
+                  <Label htmlFor="founder-combobox">Founder</Label>
+                  <Combobox
+                    id="founder-combobox"
+                    variante="withAvatar"
+                    defaultValue={String(formData.founder?.FounderID)}
+                    defaultLabel={formData.founder?.FounderName}
+                    placeholder="Select a founder"
+                    elements={
+                      foundersAvailable?.map((founder) => ({
+                        label: founder.FounderName,
+                        value: String(founder.FounderID),
+                      })) || []
                     }
-                  }}
-                />
+                    notFound="Founder not found"
+                    onChange={async (value) => {
+                      setFormData((prev) => ({ ...prev, investor: undefined }));
+                      if (value) {
+                        try {
+                          const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
+                          setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
+                        } catch (error) {
+                          console.error(error);
+                        }
+                      } else {
+                        setFormData((prev) => ({ ...prev, founder: undefined }));
+                      }
+                    }}
+                  />
+                </div>
               </>
             )}
             {formData.role === "investor" && (
-              <>
+              <div className="grid w-full max-w-sm items-center gap-3">
+                <Label htmlFor="investor-combobox">Investor</Label>
                 <Combobox
+                  id="investor-combobox"
+                  defaultValue={String(formData.investor?.id)}
+                  defaultLabel={formData.investor?.name}
                   placeholder="Select a investor"
                   elements={
                     investosrAvailable?.map((investor) => ({
@@ -259,15 +280,19 @@ export default function AdminUserForm({
                   notFound="Investor not found"
                   onChange={async (value) => {
                     setFormData((prev) => ({ ...prev, founder: undefined }));
-                    try {
-                      const result = await api.get<Investor | null>({ endpoint: `/investors/${value}` });
-                      setFormData((prev) => ({ ...prev, investor: result.data ?? undefined }));
-                    } catch (error) {
-                      console.error(error);
+                    if (value) {
+                      try {
+                        const result = await api.get<Investor | null>({ endpoint: `/investors/${value}` });
+                        setFormData((prev) => ({ ...prev, investor: result.data ?? undefined }));
+                      } catch (error) {
+                        console.error(error);
+                      }
+                    } else {
+                      setFormData((prev) => ({ ...prev, investor: undefined }));
                     }
                   }}
                 />
-                </>
+                </div>
             )}
           </div>
         </div>

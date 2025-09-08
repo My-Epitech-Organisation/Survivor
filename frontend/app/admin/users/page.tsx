@@ -3,6 +3,7 @@
 import AdminNavigation from "@/components/AdminNavigation";
 import { useState, useRef, useEffect } from "react";
 import { TbLoader3 } from "react-icons/tb";
+import { FaSortDown, FaSortUp, FaSort } from "react-icons/fa";
 import { Dialog, DialogTrigger, DialogOverlay, DialogContent, DialogTitle, DialogClose } from "@radix-ui/react-dialog";
 import { Card,  CardContent,  CardDescription,  CardHeader,  CardTitle } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
@@ -13,9 +14,14 @@ import api from "@/lib/api";
 import AdminUser from "@/components/AdminUser";
 import { toast } from "sonner"
 
+type SortColumn = 'id' | 'name' | 'role' | 'email' | 'founderID' | 'investorID' | null;
+type SortDirection = 'asc' | 'desc' | null;
+
 export default function AdminUsers() {
   const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
   const [UserList, setUserList] = useState<UserSimple[] | null>(null);
+  const [sortColumn, setSortColumn] = useState<SortColumn>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -30,6 +36,76 @@ export default function AdminUsers() {
       console.error(error);
     }
     setIsDataLoading(false);
+  };
+
+  const handleSort = (column: SortColumn) => {
+    let newDirection: SortDirection = 'asc';
+
+    // cycle through: null -> asc -> desc -> null
+    if (sortColumn === column) {
+      if (sortDirection === null) {
+        newDirection = 'asc';
+      } else if (sortDirection === 'asc') {
+        newDirection = 'desc';
+      } else {
+        newDirection = null;
+        setSortColumn(null);
+        setSortDirection(null);
+        console.debug(`Sorting reset`);
+        return;
+      }
+    } else {
+      newDirection = 'asc';
+    }
+
+    setSortColumn(column);
+    setSortDirection(newDirection);
+    console.debug(`Sorting by ${column} in ${newDirection === 'asc' ? 'ascending' : 'descending'} order`);
+  };
+
+  const getSortedUserList = () => {
+    if (!UserList || !sortColumn || !sortDirection) {
+      return UserList;
+    }
+
+    return [...UserList].sort((a, b) => {
+      let valueA, valueB;
+
+      switch (sortColumn) {
+        case 'id':
+          valueA = a.id;
+          valueB = b.id;
+          break;
+        case 'name':
+          valueA = typeof a.name === 'string' ? a.name.toLowerCase() : a.name;
+          valueB = typeof b.name === 'string' ? b.name.toLowerCase() : b.name;
+          break;
+        case 'role':
+          valueA = typeof a.role === 'string' ? a.role.toLowerCase() : a.role;
+          valueB = typeof b.role === 'string' ? b.role.toLowerCase() : b.role;
+          break;
+        case 'email':
+          valueA = typeof a.email === 'string' ? a.email.toLowerCase() : a.email;
+          valueB = typeof b.email === 'string' ? b.email.toLowerCase() : b.email;
+          break;
+        case 'founderID':
+          valueA = a.founder ? a.founder.FounderID : Number.MIN_SAFE_INTEGER;
+          valueB = b.founder ? b.founder.FounderID : Number.MIN_SAFE_INTEGER;
+          break;
+        case 'investorID':
+          valueA = a.investor ? a.investor.id : Number.MIN_SAFE_INTEGER;
+          valueB = b.investor ? b.investor.id : Number.MIN_SAFE_INTEGER;
+          break;
+        default:
+          return 0;
+      }
+
+      if (sortDirection === 'asc') {
+        return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+      } else {
+        return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
+      }
+    });
   };
 
   const handleEditUserSubmit = (id: number, data: FormUser, btnAction: HTMLButtonElement | null) => {
@@ -104,19 +180,85 @@ export default function AdminUsers() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="text-center">ID</TableHead>
-                      <TableHead className="text-center border-l">User</TableHead>
-                      <TableHead className="text-center border-l">Role</TableHead>
-                      <TableHead className="text-center border-l">Email</TableHead>
-                      <TableHead className="text-center border-l">Founder ID</TableHead>
-                      <TableHead className="text-center border-l">Founder Startup</TableHead>
+                      <TableHead
+                        className="text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                        onClick={() => handleSort('id')}
+                      >
+                        <div className="flex items-center justify-center gap-1">
+                          ID
+                          {sortColumn === 'id' && (
+                            sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                          )}
+                          {sortColumn !== 'id' && <FaSort className="text-gray-300" />}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                        onClick={() => handleSort('name')}
+                      >
+                        <div className="flex items-center justify-center gap-1">
+                          User
+                          {sortColumn === 'name' && (
+                            sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                          )}
+                          {sortColumn !== 'name' && <FaSort className="text-gray-300" />}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                        onClick={() => handleSort('role')}
+                      >
+                        <div className="flex items-center justify-center gap-1">
+                          Role
+                          {sortColumn === 'role' && (
+                            sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                          )}
+                          {sortColumn !== 'role' && <FaSort className="text-gray-300" />}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                        onClick={() => handleSort('email')}
+                      >
+                        <div className="flex items-center justify-center gap-1">
+                          Email
+                          {sortColumn === 'email' && (
+                            sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                          )}
+                          {sortColumn !== 'email' && <FaSort className="text-gray-300" />}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                        onClick={() => handleSort('founderID')}
+                      >
+                        <div className="flex items-center justify-center gap-1">
+                          Founder ID
+                          {sortColumn === 'founderID' && (
+                            sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                          )}
+                          {sortColumn !== 'founderID' && <FaSort className="text-gray-300" />}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                        onClick={() => handleSort('investorID')}
+                      >
+                        <div className="flex items-center justify-center gap-1">
+                          Investor ID
+                          {sortColumn === 'investorID' && (
+                            sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                          )}
+                          {sortColumn !== 'investorID' && <FaSort className="text-gray-300" />}
+                        </div>
+                      </TableHead>
                       <TableHead className="text-center border-l">Settings</TableHead>
                       <TableHead className="text-center border-l">Delete</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {UserList && UserList.length > 0 && (
-                      UserList.map((user, id) => (
+                      getSortedUserList()?.map((user, id) => (
                         <AdminUser key={id} id={user.id} user={user} editCB={handleEditUserSubmit} deleteCB={handleDeleteUserSubmit}/>
                       ))
                     )}

@@ -27,12 +27,12 @@ export default function AdminUser (props : AdminUserProps)
       <TableRow key={props.id} className="hover:bg-gray-50 transition-colors">
         <TableCell className="text-center border-r border-gray-200 align-middle text-app-text-secondary">{props.user.id}</TableCell>
         <TableCell className="border-none">
-        <div className="flex justify-center items-center gap-3">
-            <Avatar>
-            <AvatarImage src={`${getBackendUrl()}${props.user.userImag}`}></AvatarImage>
+        <div className="flex items-center gap-3 relative w-full">
+            <Avatar className="absolute left-3">
+            <AvatarImage src={`${getBackendUrl()}${props.user.userImage}`}></AvatarImage>
             <AvatarFallback>{props.user.name.charAt(0)}</AvatarFallback>
             </Avatar>
-            <span className="font-medium text-app-text-primary">{props.user.name}</span>
+            <span className="font-medium text-app-text-primary w-full text-center pl-12 pr-3 truncate">{props.user.name}</span>
         </div>
         </TableCell>
         <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.user.role}</TableCell>
@@ -40,11 +40,18 @@ export default function AdminUser (props : AdminUserProps)
         {props.user.founder ? (
         <>
           <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.user.founder.FounderID}</TableCell>
-          <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.user.founder.FounderStartupID}</TableCell>
         </>
         ) : (
         <>
           <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">none</TableCell>
+        </>
+        )}
+        {props.user.investor ? (
+        <>
+          <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.user.investor.id}</TableCell>
+        </>
+        ) : (
+        <>
           <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">none</TableCell>
         </>
         )}
@@ -52,7 +59,7 @@ export default function AdminUser (props : AdminUserProps)
         <Dialog>
             <DialogTrigger asChild>
               <button
-                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center"
+                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
                 aria-label="Edit"
                 title={`Edit ${props.user.name}`}
               >
@@ -73,7 +80,7 @@ export default function AdminUser (props : AdminUserProps)
                   founder: props.user.founder,
                   investor: props.user.investor,
 
-                  userImag: props.user.userImag,
+                  userImage: props.user.userImage,
                   is_active: props.user.is_active
                 }}
                 onSubmit={(formUser) => props.editCB(props.id, formUser, closeBtn.current)}
@@ -85,7 +92,7 @@ export default function AdminUser (props : AdminUserProps)
           <Dialog>
             <DialogTrigger asChild>
               <button
-                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center"
+                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
                 aria-label="Delete"
                 title={`Delete ${props.user.name}`}
               >
