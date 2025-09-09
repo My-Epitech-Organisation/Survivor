@@ -385,10 +385,10 @@ export default function StartupPDF({
           {/* Footer */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>
-              Document généré le {new Date().toLocaleDateString("fr-FR")}
+              Document generated on {new Date().toLocaleDateString("en-US")}
             </Text>
             <Text style={styles.footerText}>
-              ID Projet: {project.ProjectId}
+              Project ID: {project.ProjectId}
             </Text>
           </View>
         </Page>

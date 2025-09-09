@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, Filter, Users, DollarSign } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 type PartnerItem = {
   id: string;
@@ -22,42 +23,35 @@ type PartnerItem = {
   contact_email?: string;
 };
 
-type InvestorMatch = {
+type InvestorItem = {
   id: string;
   name: string;
   investor_type?: string;
   investment_focus?: string;
-  score: number;
   description: string;
 };
 
-const MOCK_INVESTORS: InvestorMatch[] = [
-  {
-    id: "i1",
-    name: "SeedOne Capital",
-    investor_type: "VC - seed",
-    investment_focus: "SaaS, DeepTech, Health",
-    score: 86,
-    description:
-      "Fonds seed axé sur les équipes techniques ayant validé un MVP. Favorise levées de 200k-1M€.",
-  },
-  {
-    id: "i2",
-    name: "Angel Collective",
-    investor_type: "Angel Network",
-    investment_focus: "Climate, Energy",
-    score: 72,
-    description:
-      "Réseau d'anges investisseurs intéressés par early-stage impact projects.",
-  },
-];
+type InvestorMatch = {
+  investor_id: number;
+  name: string;
+  score: number;
+  reason: string;
+  investor_type?: string;
+  investment_focus?: string;
+  description?: string;
+  location?: string;
+};
 
 export default function StartupOpportunities() {
+  const { user } = useAuth();
   const [tab, setTab] = useState<"opportunities" | "matches">(
     "opportunities"
   );
   const [partners, setPartners] = useState<PartnerItem[]>([]);
-  const [investors, setInvestors] = useState<InvestorMatch[]>([]);
+  const [investors, setInvestors] = useState<InvestorItem[]>([]);
+  const [matches, setMatches] = useState<InvestorMatch[]>([]);
+  const [matchesLoading, setMatchesLoading] = useState(false);
+  const [matchesError, setMatchesError] = useState<string | null>(null);
   const partnersCardRef = useRef<HTMLDivElement | null>(null);
   const partnersListRef = useRef<HTMLDivElement | null>(null);
   const fundingCardRef = useRef<HTMLDivElement | null>(null);
@@ -108,12 +102,12 @@ export default function StartupOpportunities() {
 
         const uniqueTypes = [
           ...new Set(
-            data.map((investor: InvestorMatch) => investor.investor_type).filter(Boolean)
+            data.map((investor: InvestorItem) => investor.investor_type).filter(Boolean)
           ),
         ];
         const uniqueFocuses = [
           ...new Set(
-            data.map((investor: InvestorMatch) => investor.investment_focus).filter(Boolean)
+            data.map((investor: InvestorItem) => investor.investment_focus).filter(Boolean)
           ),
         ];
         setInvestorTypes(uniqueTypes as string[]);
@@ -161,6 +155,81 @@ export default function StartupOpportunities() {
       window.removeEventListener("orientationchange", compute);
     };
   }, [partners, investors]);
+
+  useEffect(() => {
+    const computeFor = (card: HTMLDivElement | null, list: HTMLDivElement | null) => {
+      if (!card || !list) return;
+      const top = card.getBoundingClientRect().top;
+      const available = window.innerHeight - top - 24;
+      const firstChild = list.firstElementChild as HTMLElement | null;
+      let twoItemsHeight = 0;
+      if (firstChild) {
+        const itemH = firstChild.getBoundingClientRect().height;
+        let gap = 16;
+        if (list.children.length > 1) {
+          const second = list.children[1] as HTMLElement;
+          const firstRect = firstChild.getBoundingClientRect();
+          const secondRect = second.getBoundingClientRect();
+          gap = Math.max(0, secondRect.top - (firstRect.top + firstRect.height));
+        }
+        twoItemsHeight = itemH * 2 + gap;
+      }
+
+      const min = 120;
+      const desired = twoItemsHeight > 0 ? Math.max(min, twoItemsHeight) : Math.max(min, available);
+      list.style.maxHeight = `${Math.min(available, desired)}px`;
+    };
+
+    const compute = () => {
+      computeFor(partnersCardRef.current, partnersListRef.current);
+      computeFor(fundingCardRef.current, fundingListRef.current);
+    };
+
+    compute();
+    window.addEventListener("resize", compute);
+    window.addEventListener("orientationchange", compute);
+    return () => {
+      window.removeEventListener("resize", compute);
+      window.removeEventListener("orientationchange", compute);
+    };
+  }, [partners, investors]);
+
+  useEffect(() => {
+    const fetchMatches = async () => {
+      if (!user?.startupId) {
+        setMatchesError("Aucune startup associée à votre compte.");
+        return;
+      }
+
+      setMatchesLoading(true);
+      setMatchesError(null);
+
+      try {
+        const apiBase = getAPIUrl();
+        const res = await fetch(`${apiBase}/opportunities/matches/?startup_id=${user.startupId}`);
+
+        if (!res.ok) {
+          if (res.status === 400) {
+            setMatchesError("Startup introuvable.");
+          } else {
+            setMatchesError("Error retrieving matches.");
+          }
+          return;
+        }
+
+        const data = await res.json();
+        setMatches(data.matches || []);
+      } catch {
+        setMatchesError("Connection error. Please try again.");
+      } finally {
+        setMatchesLoading(false);
+      }
+    };
+
+    if (tab === "matches" && user) {
+      fetchMatches();
+    }
+  }, [tab, user]);
 
   const handlePartnerFiltersChange = (filters: { types: string[] }) => {
     setActivePartnerFilters(filters);
@@ -245,7 +314,7 @@ export default function StartupOpportunities() {
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Filter className="h-5 w-5 text-app-text-secondary" />
-                  <span className="text-lg font-medium text-app-text-primary">Filters</span>
+                  <span className="text-lg font-medium text-app-text-primary">Filtres</span>
                 </div>
                 <div className="flex flex-wrap gap-4">
                   <div className="flex-1 min-w-[200px]">
@@ -257,7 +326,7 @@ export default function StartupOpportunities() {
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="w-full justify-between">
                           {activePartnerFilters.types.length === 0
-                            ? "All Types"
+                            ? "All types"
                             : activePartnerFilters.types.length === 1
                             ? activePartnerFilters.types[0]
                             : `${activePartnerFilters.types.length} selected`}
@@ -265,7 +334,7 @@ export default function StartupOpportunities() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-full">
-                        <DropdownMenuLabel>Select Type</DropdownMenuLabel>
+                        <DropdownMenuLabel>Select type</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {partnerTypes.map((type) => (
                           <DropdownMenuCheckboxItem
@@ -299,7 +368,7 @@ export default function StartupOpportunities() {
 
               <div
                 ref={partnersListRef}
-                className="space-y-4 overflow-y-auto flex-1"
+                className="space-y-4 overflow-y-auto flex-1 max-h-90"
               >
                 {filteredPartners.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
@@ -325,10 +394,10 @@ export default function StartupOpportunities() {
                       <p className="mt-3 text-app-text-secondary">{p.description}</p>
                       <div className="mt-4 flex gap-2">
                         <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm">
-                          Voir
+                          View
                         </button>
                         <button className="px-3 py-1 rounded border border-app-border text-sm">
-                          Contacter
+                          Contact
                         </button>
                       </div>
                     </div>
@@ -358,7 +427,7 @@ export default function StartupOpportunities() {
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="w-full justify-between">
                           {activeInvestorFilters.types.length === 0
-                            ? "All Types"
+                            ? "All types"
                             : activeInvestorFilters.types.length === 1
                             ? activeInvestorFilters.types[0]
                             : `${activeInvestorFilters.types.length} selected`}
@@ -366,7 +435,7 @@ export default function StartupOpportunities() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-full">
-                        <DropdownMenuLabel>Select Type</DropdownMenuLabel>
+                        <DropdownMenuLabel>Select type</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {investorTypes.map((type) => (
                           <DropdownMenuCheckboxItem
@@ -396,7 +465,7 @@ export default function StartupOpportunities() {
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="w-full justify-between">
                           {activeInvestorFilters.focuses.length === 0
-                            ? "All Focuses"
+                            ? "All focuses"
                             : activeInvestorFilters.focuses.length === 1
                             ? activeInvestorFilters.focuses[0]
                             : `${activeInvestorFilters.focuses.length} selected`}
@@ -404,7 +473,7 @@ export default function StartupOpportunities() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-full">
-                        <DropdownMenuLabel>Select Focus</DropdownMenuLabel>
+                        <DropdownMenuLabel>Select focus</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {investmentFocuses.map((focus) => (
                           <DropdownMenuCheckboxItem
@@ -437,7 +506,7 @@ export default function StartupOpportunities() {
                 </div>
               </div>
 
-              <div ref={fundingListRef} className="space-y-4 overflow-y-auto flex-1">
+              <div ref={fundingListRef} className="space-y-4 overflow-y-auto flex-1 max-h-90">
                 {filteredInvestors.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
                     {investors.length === 0 ? "No funding opportunities available." : "No funding opportunities match your filters."}
@@ -460,10 +529,10 @@ export default function StartupOpportunities() {
                       <p className="mt-3 text-app-text-secondary">{inv.description}</p>
                       <div className="mt-4 flex gap-2">
                         <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm">
-                          Détails
+                          Details
                         </button>
                         <button className="px-3 py-1 rounded border border-app-border text-sm">
-                          Demander info
+                          Request info
                         </button>
                       </div>
                     </div>
@@ -477,30 +546,106 @@ export default function StartupOpportunities() {
             <h3 className="text-2xl font-semibold text-app-text-primary mb-4">
               Investor matches
             </h3>
-            <p className="text-app-text-secondary mb-6">Matches générés automatiquement (placeholder).</p>
+            <p className="text-app-text-secondary mb-6">
+              Discover the investors best suited to your startup. The match score is calculated based on your sector, maturity, needs, and location.
+            </p>
 
-            <div className="space-y-4">
-              {MOCK_INVESTORS.map((m) => (
-                <div
-                  key={m.id}
-                  className="border border-app-border rounded-md p-4 bg-white flex justify-between items-start"
-                >
-                  <div>
-                    <h4 className="text-lg font-medium text-app-text-primary">{m.name}</h4>
-                    <div className="text-sm text-app-text-secondary">{m.investor_type} • {m.investment_focus}</div>
-                    <p className="mt-2 text-app-text-secondary">{m.description}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-app-text-primary">{m.score}%</div>
-                    <div className="text-sm text-app-text-secondary">match</div>
-                    <div className="mt-3 flex flex-col gap-2">
-                      <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm">Contacter</button>
-                      <button className="px-3 py-1 rounded border border-app-border text-sm">Sauvegarder</button>
+            <div className="bg-app-blue-primary/5 border border-app-blue-primary/20 rounded-lg p-4 mb-6">
+              <h4 className="text-sm font-medium text-app-text-primary mb-2">How does matching work?</h4>
+              <div className="text-xs text-app-text-secondary space-y-1">
+                <p>• <strong>Sector:</strong> Direct or thematic match (e.g., DeepTech → Tech, Innovation)</p>
+                <p>• <strong>Maturity:</strong> Fit between your startup stage and investor type</p>
+                <p>• <strong>Needs:</strong> Alignment with investors&apos; areas of interest</p>
+                <p>• <strong>Location:</strong> Preference for investors in your region</p>
+              </div>
+            </div>
+
+            {matchesLoading ? (
+              <div className="flex items-center justify-center h-32">
+                <div className="text-app-text-secondary">Loading matches...</div>
+              </div>
+            ) : matchesError ? (
+              <div className="flex items-center justify-center h-32">
+                <div className="text-center text-app-text-secondary">
+                  <p className="mb-2">{matchesError}</p>
+                  {matchesError.includes("startup") && (
+                    <p className="text-sm">Please contact the administrator to associate a startup with your account.</p>
+                  )}
+                </div>
+              </div>
+            ) : matches.length === 0 ? (
+              <div className="flex items-center justify-center h-32">
+                <div className="text-center text-app-text-secondary">
+                  <p className="mb-2 text-lg">No perfect matches found.</p>
+                  <p className="text-sm mb-4">We suggest completing your startup profile with detailed information about your sector, maturity, and needs for better results.</p>
+                  <button className="px-4 py-2 bg-app-blue-primary text-white rounded hover:bg-app-blue-primary/90 transition-colors">
+                    Complete my profile
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {matches.map((m) => (
+                  <div
+                    key={m.investor_id}
+                    className="border border-app-border rounded-md p-6 bg-white flex justify-between items-start"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="text-lg font-medium text-app-text-primary">{m.name}</h4>
+                        <div className="text-right">
+                          <div className={`text-2xl font-bold ${
+                            m.score >= 40 ? 'text-green-600' :
+                            m.score >= 25 ? 'text-yellow-600' :
+                            'text-app-text-secondary'
+                          }`}>
+                            {m.score}%
+                          </div>
+                          <div className="text-sm text-app-text-secondary">match</div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {m.investor_type && (
+                          <span className="px-3 py-1 bg-gradient-to-r from-app-blue-primary/10 to-app-blue-primary/20 text-app-blue-primary text-xs font-medium rounded-full border border-app-blue-primary/20">
+                            {m.investor_type}
+                          </span>
+                        )}
+                        {m.investment_focus && (
+                          <span className="px-3 py-1 bg-gradient-to-r from-app-purple-primary/10 to-app-purple-primary/20 text-app-purple-primary text-xs font-medium rounded-full border border-app-purple-primary/20">
+                            {m.investment_focus}
+                          </span>
+                        )}
+                      </div>
+
+                      {m.description && (
+                        <p className="text-app-text-secondary text-sm mb-3 line-clamp-2">{m.description}</p>
+                      )}
+
+                      <div className="flex items-center gap-4 text-xs text-app-text-secondary">
+                        <span className="flex items-center gap-1">
+                          <span className="font-medium">Reason:</span> {m.reason}
+                        </span>
+                        {m.location && (
+                          <span className="flex items-center gap-1">
+                            📍 {m.location.split(',')[1]?.trim() || m.location}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="ml-6 flex flex-col gap-2">
+                      <button className="px-4 py-2 rounded bg-app-blue-primary text-white text-sm font-medium hover:bg-app-blue-primary/90 transition-colors">
+                        Contact
+                      </button>
+                      <button className="px-4 py-2 rounded border border-app-border text-sm hover:bg-app-surface transition-colors">
+                        Save
+                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </main>

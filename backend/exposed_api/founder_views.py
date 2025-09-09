@@ -20,7 +20,7 @@ class FounderDetailView(APIView):
         GET requests for individual founders are allowed for everyone,
         but listing with filtering and other operations require admin.
         """
-        if self.request.method == "GET" and self.kwargs.get("_id") is not None:
+        if self.request.method == "GET":
             return [AllowAny()]
         return [IsAdmin()]
 

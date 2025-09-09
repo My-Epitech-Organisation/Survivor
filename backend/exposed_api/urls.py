@@ -19,6 +19,7 @@ from .kpi_views import (
     users_connected_ratio,
 )
 from .news_views import NewsDetailView, NewsListView
+from .opportunity_views import OpportunitiesMatchesView
 from .partner_views import PartnerDetailView
 from .search_views import AdvancedSearchView
 from .user_views import AdminUserView
@@ -50,6 +51,8 @@ urlpatterns = [
     # Partners endpoints
     path("partners/", PartnerDetailView.as_view(), name="partner_create_or_list"),
     path("partners/<int:_id>/", PartnerDetailView.as_view(), name="partner_detail_or_crud"),
+    # Opportunities / matches
+    path("opportunities/matches/", OpportunitiesMatchesView.as_view(), name="opportunities_matches"),
     # User endpoints
     path("user/", user_views.get_current_user, name="current_user"),
     path("user/<int:user_id>/", user_views.user_detail, name="user_detail"),
