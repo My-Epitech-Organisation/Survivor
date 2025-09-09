@@ -348,34 +348,6 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 </div>
               )}
 
-              {folders && folders.length === 0 && files && files.length === 0 && (
-                <div className="col-span-full text-center">
-                  <div className="flex flex-col items-center py-12">
-                    <div className="flex items-center mb-4">
-                      <Folder className="h-12 w-12 text-muted-foreground/50 mr-2" />
-                      <File className="h-12 w-12 text-muted-foreground/50" />
-                    </div>
-                    <div className="flex gap-3 mt-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setNewFolderDialogOpen(true)}
-                      >
-                        <FolderPlus className="h-4 w-4 mr-2" />
-                        Create Folder
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setUploadDialogOpen(true)}
-                      >
-                        <UploadCloud className="h-4 w-4 mr-2" />
-                        Upload File
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </>
