@@ -4,15 +4,14 @@ import AdminNavigation from "@/components/AdminNavigation";
 import { useState, useEffect } from "react";
 import { TbLoader3 } from "react-icons/tb";
 import { FaSortDown, FaSortUp, FaSort } from "react-icons/fa";
-import { FaTrashAlt } from "react-icons/fa";
-import { IoSettingsOutline } from "react-icons/io5";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Table, TableHeader, TableBody, TableRow, TableHead } from "@/components/ui/table";
 import { Event } from "@/types/event";
 import { CalendarIcon } from "lucide-react";
 import api from "@/lib/api";
 import { toast } from "sonner";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
+import AdminEvent from "@/components/AdminEvent";
+import AdminEventForm from "@/components/AdminEventForm";
 
 type SortColumn = 'id' | 'name' | 'dates' | 'location' | 'event_type' | 'target_audience' | null;
 type SortDirection = 'asc' | 'desc' | null;
@@ -149,11 +148,90 @@ export default function AdminEvents() {
     return filteredList;
   };
 
-  const handleDelete = (eventId: number) => {
-    // Placeholder for delete functionality
-    toast("Delete action", {
-      description: `Delete action for event ID: ${eventId} (not implemented yet)`,
-    });
+  const handleEditEventSubmit = (id: number, data: Event, btnAction: HTMLButtonElement | null) => {
+    api
+      .put(`/events/${id}/`, data)
+      .then((response) => {
+        console.debug("Event edited successfully:", response.data);
+        if (btnAction) {
+          btnAction.click();
+        }
+        fetchEvents();
+        toast("Event updated", {
+          description: "The event has been updated successfully.",
+        });
+      })
+      .catch((error) => {
+        toast("Edit error", {
+          className: "!text-red-500",
+          description: (
+            <span className="text-red-500">
+              An error occurred while editing event: {String(error)}
+            </span>
+          ),
+        });
+        console.error("Error editing event:", error);
+      });
+  };
+
+  const handleDeleteEventSubmit = (eventId: number, btnAction: HTMLButtonElement | null) => {
+    api
+      .delete(`/events/${eventId}/`)
+      .then((response) => {
+        console.debug("Event deleted successfully:", response.data);
+        if (btnAction) {
+          btnAction.click();
+        }
+        fetchEvents();
+        toast("Event deleted", {
+          description: "The event has been deleted successfully.",
+        });
+      })
+      .catch((error) => {
+        toast("Delete error", {
+          className: "!text-red-500",
+          description: (
+            <span className="text-red-500">
+              An error occurred while deleting event: {String(error)}
+            </span>
+          ),
+        });
+        console.error("Error deleting event:", error);
+      });
+  };
+
+  const handleCreateEvent = (data: Event) => {
+    const eventData = {
+      name: data.name,
+      dates: data.dates,
+      location: data.location,
+      description: data.description,
+      event_type: data.event_type,
+      target_audience: data.target_audience,
+      image: data.pictureURL
+    };
+
+    console.debug("Sending event data to backend:", eventData);
+    api
+      .post('/events/', eventData)
+      .then((response) => {
+        console.debug("Event created successfully:", response.data);
+        fetchEvents();
+        toast("Event created", {
+          description: "The event has been created successfully.",
+        });
+      })
+      .catch((error) => {
+        toast("Create error", {
+          className: "!text-red-500",
+          description: (
+            <span className="text-red-500">
+              An error occurred while creating event: {String(error)}
+            </span>
+          ),
+        });
+        console.error("Error creating event:", error);
+      });
   };
 
   return (
@@ -188,9 +266,9 @@ export default function AdminEvents() {
                       Create New Event
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="p-4 text-center">
-                    <p>Form will be implemented later</p>
-                  </div>
+                  <AdminEventForm
+                    onSubmit={(data) => handleCreateEvent(data)}
+                  />
                 </DialogContent>
               </Dialog>
             </div>
@@ -320,77 +398,16 @@ export default function AdminEvents() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {getSortedEventsList()?.map((event) => (
-                    <TableRow key={event.id} className="hover:bg-gray-50 transition-colors">
-                      <TableCell className="text-center border-r border-gray-200 align-middle text-app-text-secondary">{event.id}</TableCell>
-                      <TableCell className="text-center border-l border-gray-200 align-middle font-medium text-app-text-primary">{event.name}</TableCell>
-                      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{event.dates}</TableCell>
-                      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{event.location}</TableCell>
-                      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{event.event_type}</TableCell>
-                      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{event.target_audience}</TableCell>
-                      <TableCell className="text-center border-l border-gray-200 align-middle">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <button
-                              className="p-2 rounded-full hover:bg-blue-50 transition-colors w-full flex items-center justify-center cursor-pointer"
-                              aria-label="Edit"
-                              title={`Edit ${event.name}`}
-                            >
-                              <IoSettingsOutline className="text-xl text-gray-500" />
-                            </button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw] max-h-[85vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle className="flex items-center gap-2">
-                                Edit Event
-                              </DialogTitle>
-                            </DialogHeader>
-                            <div className="p-4 text-center">
-                              <p>Edit form will be implemented later</p>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
-                      <TableCell className="text-center border-l border-gray-200 align-middle">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <button
-                              className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
-                              aria-label="Delete"
-                              title={`Delete ${event.name}`}
-                            >
-                              <FaTrashAlt className="text-xl text-red-500" />
-                            </button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[400px]">
-                            <DialogHeader>
-                              <DialogTitle className="flex items-center gap-2">
-                                Delete Event
-                              </DialogTitle>
-                            </DialogHeader>
-                            <div className="py-4 text-center text-app-text-primary">
-                              <p>
-                                Are you sure you want to <span className="font-semibold text-red-600">delete</span> the event <span className="font-semibold">&ldquo;{event.name}&rdquo;</span> ?
-                              </p>
-                            </div>
-                            <DialogFooter className="flex justify-center gap-2 mt-2">
-                              <DialogClose asChild>
-                                <Button variant="outline" className="min-w-[90px]">Cancel</Button>
-                              </DialogClose>
-                              <Button
-                                type="button"
-                                variant="destructive"
-                                className="min-w-[90px]"
-                                onClick={() => handleDelete(event.id)}
-                              >
-                                Delete
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {getSortedEventsList()?.map((event) => {
+                    return (
+                      <AdminEvent
+                        key={event.id}
+                        event={event}
+                        editCB={handleEditEventSubmit}
+                        deleteCB={handleDeleteEventSubmit}
+                      />
+                    );
+                  })}
                 </TableBody>
               </Table>
               {(!eventsList || eventsList.length === 0) && (
