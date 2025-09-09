@@ -355,7 +355,6 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                       <Folder className="h-12 w-12 text-muted-foreground/50 mr-2" />
                       <File className="h-12 w-12 text-muted-foreground/50" />
                     </div>
-                    <p className="text-muted-foreground mb-4">This location is empty.</p>
                     <div className="flex gap-3 mt-2">
                       <Button
                         variant="outline"
