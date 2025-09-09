@@ -17,6 +17,7 @@ export default function StartupNavigation() {
     { href: "/startup/profile", label: "Profile" },
     { href: "/startup/messaging", label: "Messaging" },
     { href: "/startup/opportunities", label: "Opportunities" },
+    { href: "/startup/drive", label: "Drive" },
   ];
 
   const handleLogout = () => {

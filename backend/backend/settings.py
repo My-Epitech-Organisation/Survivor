@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "authentication.apps.AuthenticationConfig",
     "messaging.apps.MessagingConfig",
     "auditlog.apps.AuditlogConfig",
+    "drive.apps.DriveConfig",
 ]
 
 # Django REST Framework configuration

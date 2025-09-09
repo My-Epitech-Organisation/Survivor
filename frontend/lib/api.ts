@@ -80,6 +80,16 @@ export const apiPut = async (
   });
 };
 
+export const apiPatch = async (
+  endpoint: string,
+  data?: unknown
+): Promise<Response> => {
+  return authenticatedFetch(endpoint, {
+    method: "PATCH",
+    body: data ? JSON.stringify(data) : undefined,
+  });
+};
+
 export const apiDelete = async (endpoint: string): Promise<Response> => {
   return authenticatedFetch(endpoint, { method: "DELETE" });
 };
@@ -154,6 +164,55 @@ export const api = {
     } catch (error) {
       console.error(error);
       return { data: null as T | null };
+    }
+  },
+
+  patch: async <T = unknown>(
+    endpoint: string,
+    data?: unknown
+  ): Promise<{ data: T | null }> => {
+    const response = await apiPatch(endpoint, data);
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.statusText}`);
+    }
+    try {
+      const responseData = await response.json();
+      return { data: responseData };
+    } catch (error) {
+      console.error(error);
+      return { data: null as T | null };
+    }
+  },
+
+  postFormData: async <T = unknown>(
+    endpoint: string,
+    formData: FormData
+  ): Promise<T> => {
+    try {
+      const apiUrl = getAPIUrl();
+      const url = endpoint.startsWith("http") ? endpoint : `${apiUrl}${endpoint}`;
+      const token = getToken();
+
+      const headers: HeadersInit = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      return responseData;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw error;
     }
   },
 };
