@@ -126,7 +126,7 @@ Voici un plan d'implémentation pour ajouter une fonctionnalité "Drive" permett
 - Drag & drop pour l'upload et l'organisation
 
 **Interactions**
-- Preview des fichiers (PDF, images, etc.) 
+- Preview des fichiers (PDF, images, etc.)
 - Téléchargement direct
 - Partage de liens (optionnel)
 - Indication de l'espace utilisé / disponible
