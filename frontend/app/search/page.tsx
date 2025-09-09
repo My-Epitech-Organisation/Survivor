@@ -32,33 +32,6 @@ import {
 import ReactMarkdown from "react-markdown";
 import { SearchItem, SearchResponse } from "@/types/search";
 
-const isEvent = (item: any): boolean => {
-  return (
-    item &&
-    item.result_type === "event" &&
-    "dates" in item &&
-    "event_type" in item
-  );
-};
-
-const isNews = (item: any): boolean => {
-  return (
-    item &&
-    item.result_type === "news" &&
-    "news_date" in item &&
-    "category" in item
-  );
-};
-
-const isProject = (item: any): boolean => {
-  return (
-    item &&
-    item.result_type === "project" &&
-    "sector" in item &&
-    "maturity" in item
-  );
-};
-
 export default function SearchPage() {
   const [searchResults, setSearchResults] = useState<SearchResponse | null>(
     null
@@ -400,7 +373,7 @@ export default function SearchPage() {
               <div className="flex-1 overflow-y-auto">
                 {itemDetails ? (
                   <div className="p-6">
-                    {selectedItem.type === "event" && isEvent(itemDetails) && (
+                    {selectedItem.type === "event" && (
                       <div className="space-y-6">
                         {/* Event Details */}
                         <div className="flex flex-wrap gap-4 text-sm text-gray-600">
@@ -478,7 +451,7 @@ export default function SearchPage() {
                       </div>
                     )}
 
-                    {selectedItem.type === "news" && isNews(itemDetails) && (
+                    {selectedItem.type === "news" && (
                       <div className="space-y-6">
                         {/* News Metadata */}
                         <div className="flex flex-wrap gap-4 text-sm text-gray-600">
@@ -565,167 +538,166 @@ export default function SearchPage() {
                       </div>
                     )}
 
-                    {selectedItem.type === "project" &&
-                      isProject(itemDetails) && (
-                        <div className="space-y-6">
-                          {/* Project Status Badges */}
-                          <div className="flex flex-wrap gap-3">
-                            {itemDetails.sector && (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700 border border-blue-200">
-                                <Building className="w-4 h-4" />
-                                {itemDetails.sector}
-                              </span>
+                    {selectedItem.type === "project" && (
+                      <div className="space-y-6">
+                        {/* Project Status Badges */}
+                        <div className="flex flex-wrap gap-3">
+                          {itemDetails.sector && (
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700 border border-blue-200">
+                              <Building className="w-4 h-4" />
+                              {itemDetails.sector}
+                            </span>
+                          )}
+                          {itemDetails.project_status && (
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 border border-green-200">
+                              <CheckCircle className="w-4 h-4" />
+                              {itemDetails.project_status}
+                            </span>
+                          )}
+                          {itemDetails.maturity && (
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700 border border-purple-200">
+                              <TrendingUp className="w-4 h-4" />
+                              {itemDetails.maturity}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Project Details Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            {itemDetails.address && (
+                              <div>
+                                <h3 className="text-sm font-semibold text-gray-700 mb-1">
+                                  Address
+                                </h3>
+                                <p className="text-gray-900">
+                                  {itemDetails.address}
+                                </p>
+                              </div>
                             )}
-                            {itemDetails.project_status && (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 border border-green-200">
-                                <CheckCircle className="w-4 h-4" />
-                                {itemDetails.project_status}
-                              </span>
-                            )}
-                            {itemDetails.maturity && (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700 border border-purple-200">
-                                <TrendingUp className="w-4 h-4" />
-                                {itemDetails.maturity}
-                              </span>
+                            {itemDetails.name && (
+                              <div>
+                                <h3 className="text-sm font-semibold text-gray-700 mb-1">
+                                  Project Name
+                                </h3>
+                                <p className="text-gray-900">
+                                  {itemDetails.name}
+                                </p>
+                              </div>
                             )}
                           </div>
-
-                          {/* Project Details Grid */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                              {itemDetails.address && (
-                                <div>
-                                  <h3 className="text-sm font-semibold text-gray-700 mb-1">
-                                    Address
-                                  </h3>
-                                  <p className="text-gray-900">
-                                    {itemDetails.address}
-                                  </p>
-                                </div>
-                              )}
-                              {itemDetails.name && (
-                                <div>
-                                  <h3 className="text-sm font-semibold text-gray-700 mb-1">
-                                    Project Name
-                                  </h3>
-                                  <p className="text-gray-900">
-                                    {itemDetails.name}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                            <div className="space-y-4">
-                              {itemDetails.website_url && (
-                                <div>
-                                  <h3 className="text-sm font-semibold text-gray-700 mb-1">
-                                    Website
-                                  </h3>
-                                  <a
-                                    href={itemDetails.website_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 hover:text-blue-800 transition-colors"
-                                  >
-                                    {itemDetails.website_url}
-                                  </a>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Project Description */}
-                          {itemDetails.description && (
-                            <div className="mt-6 pt-6 border-t border-gray-200">
-                              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                                Description
-                              </h3>
-                              <div className="prose prose-gray max-w-none">
-                                <ReactMarkdown
-                                  components={{
-                                    h1: ({ children }) => (
-                                      <h1 className="text-xl font-bold text-gray-900 mb-3">
-                                        {children}
-                                      </h1>
-                                    ),
-                                    h2: ({ children }) => (
-                                      <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                                        {children}
-                                      </h2>
-                                    ),
-                                    h3: ({ children }) => (
-                                      <h3 className="text-base font-medium text-gray-700 mb-2">
-                                        {children}
-                                      </h3>
-                                    ),
-                                    p: ({ children }) => (
-                                      <p className="text-gray-600 mb-3 leading-relaxed">
-                                        {children}
-                                      </p>
-                                    ),
-                                    ul: ({ children }) => (
-                                      <ul className="list-disc list-inside mb-3 text-gray-600 space-y-1">
-                                        {children}
-                                      </ul>
-                                    ),
-                                    ol: ({ children }) => (
-                                      <ol className="list-decimal list-inside mb-3 text-gray-600 space-y-1">
-                                        {children}
-                                      </ol>
-                                    ),
-                                    strong: ({ children }) => (
-                                      <strong className="font-semibold text-gray-800">
-                                        {children}
-                                      </strong>
-                                    ),
-                                    em: ({ children }) => (
-                                      <em className="italic text-gray-700">
-                                        {children}
-                                      </em>
-                                    ),
-                                  }}
+                          <div className="space-y-4">
+                            {itemDetails.website_url && (
+                              <div>
+                                <h3 className="text-sm font-semibold text-gray-700 mb-1">
+                                  Website
+                                </h3>
+                                <a
+                                  href={itemDetails.website_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 transition-colors"
                                 >
-                                  {itemDetails.description}
-                                </ReactMarkdown>
+                                  {itemDetails.website_url}
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Project Description */}
+                        {itemDetails.description && (
+                          <div className="mt-6 pt-6 border-t border-gray-200">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                              Description
+                            </h3>
+                            <div className="prose prose-gray max-w-none">
+                              <ReactMarkdown
+                                components={{
+                                  h1: ({ children }) => (
+                                    <h1 className="text-xl font-bold text-gray-900 mb-3">
+                                      {children}
+                                    </h1>
+                                  ),
+                                  h2: ({ children }) => (
+                                    <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                                      {children}
+                                    </h2>
+                                  ),
+                                  h3: ({ children }) => (
+                                    <h3 className="text-base font-medium text-gray-700 mb-2">
+                                      {children}
+                                    </h3>
+                                  ),
+                                  p: ({ children }) => (
+                                    <p className="text-gray-600 mb-3 leading-relaxed">
+                                      {children}
+                                    </p>
+                                  ),
+                                  ul: ({ children }) => (
+                                    <ul className="list-disc list-inside mb-3 text-gray-600 space-y-1">
+                                      {children}
+                                    </ul>
+                                  ),
+                                  ol: ({ children }) => (
+                                    <ol className="list-decimal list-inside mb-3 text-gray-600 space-y-1">
+                                      {children}
+                                    </ol>
+                                  ),
+                                  strong: ({ children }) => (
+                                    <strong className="font-semibold text-gray-800">
+                                      {children}
+                                    </strong>
+                                  ),
+                                  em: ({ children }) => (
+                                    <em className="italic text-gray-700">
+                                      {children}
+                                    </em>
+                                  ),
+                                }}
+                              >
+                                {itemDetails.description}
+                              </ReactMarkdown>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Project Team */}
+                        {itemDetails.founders &&
+                          itemDetails.founders.length > 0 && (
+                            <div className="mt-6 pt-6 border-t border-gray-200">
+                              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                <Users className="w-5 h-5 text-blue-500" />
+                                Team Members
+                              </h3>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {itemDetails.founders.map(
+                                  (founder: any, index: number) => (
+                                    <div
+                                      key={index}
+                                      className="bg-gray-50 rounded-lg p-4 border"
+                                    >
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                          <Users className="w-6 h-6 text-blue-600" />
+                                        </div>
+                                        <div>
+                                          <p className="font-medium text-gray-900">
+                                            {founder.name}
+                                          </p>
+                                          <p className="text-sm text-gray-600">
+                                            Team Member
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )
+                                )}
                               </div>
                             </div>
                           )}
-
-                          {/* Project Team */}
-                          {itemDetails.founders &&
-                            itemDetails.founders.length > 0 && (
-                              <div className="mt-6 pt-6 border-t border-gray-200">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                  <Users className="w-5 h-5 text-blue-500" />
-                                  Team Members
-                                </h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                  {itemDetails.founders.map(
-                                    (founder: any, index: number) => (
-                                      <div
-                                        key={index}
-                                        className="bg-gray-50 rounded-lg p-4 border"
-                                      >
-                                        <div className="flex items-center gap-3">
-                                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                            <Users className="w-6 h-6 text-blue-600" />
-                                          </div>
-                                          <div>
-                                            <p className="font-medium text-gray-900">
-                                              {founder.name}
-                                            </p>
-                                            <p className="text-sm text-gray-600">
-                                              Team Member
-                                            </p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                        </div>
-                      )}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex justify-center items-center py-12">
