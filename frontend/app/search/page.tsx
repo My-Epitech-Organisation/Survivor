@@ -28,26 +28,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import ReactMarkdown from "react-markdown";
-import { getBackendUrl } from "@/lib/config";
-import { Event } from "@/types/event";
-import { NewsDetailItem } from "@/types/news";
-import { ProjectDetailsProps } from "@/types/project";
-
-interface SearchItem {
-  title: string;
-  description: string;
-  score: number;
-  id: number;
-  type: string;
-  entity: any;
-}
-
-interface SearchResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: SearchItem[];
-}
+import { SearchItem, SearchResponse } from "@/types/search";
 
 const isEvent = (item: any): boolean => {
   return (
