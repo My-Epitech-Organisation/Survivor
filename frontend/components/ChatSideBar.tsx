@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { Plus } from "lucide-react";
 import api from "@/lib/api";
 import { Thread } from "@/types/chat"
 import { getBackendUrl } from "@/lib/config";
 import { MessageCircleOff } from 'lucide-react';
+import NewThreadChat from "./NewThreadChat";
 
 export default function ChatSideBar({
   onSelect,
@@ -40,9 +39,7 @@ export default function ChatSideBar({
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Conversations</h2>
-          <Button size="sm" variant="outline" aria-label="Nouvelle conversation">
-            <Plus className="w-4 h-4" />
-          </Button>
+          <NewThreadChat />
         </div>
       </div>
 
