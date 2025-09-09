@@ -403,6 +403,39 @@ class UserSerializer(serializers.ModelSerializer):
         return 0
 
 
+class InvestorUserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing users that are linked to an Investor (users with investor_id set).
+    Returns the fields expected by the frontend: name, email, role, id, optional founderId, optional startupId and userImage.
+    """
+
+    role = serializers.CharField()
+    startupId = serializers.SerializerMethodField()
+    founderId = serializers.IntegerField(source="founder_id", allow_null=True)
+    userImage = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CustomUser
+        fields = ["name", "email", "role", "id", "founderId", "startupId", "userImage"]
+
+    def get_startupId(self, obj):
+        if obj.role == "founder" and obj.founder_id:
+            try:
+                founder = Founder.objects.filter(id=obj.founder_id).first()
+                if founder:
+                    return founder.startup_id
+            except Exception:
+                pass
+        return None
+
+    def get_userImage(self, obj):
+        if obj.image:
+            image_path = obj.image
+            if image_path.startswith("/"):
+                image_path = image_path[1:]
+            return f"{settings.MEDIA_URL.rstrip('/')}/{image_path}"
+        return None
+
 class ProjectViewsSerializer(serializers.Serializer):
     """
     Serializer for the project views endpoint.
