@@ -9,7 +9,6 @@ import {
   ProjectOverviewProps,
 } from "@/types/project";
 import { api } from "@/lib/api";
-import { FaPlus } from "react-icons/fa";
 import {
   Dialog,
   DialogTitle,
