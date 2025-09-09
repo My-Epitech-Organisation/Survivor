@@ -91,8 +91,9 @@ export default function StartupProfile() {
 
         const data: FounderResponse = await response.json();
 
-        return data.startup_id;
+        return data.FounderStartupID;
       } catch {
+        console.error("Error fetching startup ID");
         return null;
       }
     };
@@ -198,12 +199,12 @@ export default function StartupProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
       <StartupNavigation />
 
       <main className="px-4 sm:px-6 lg:px-8 py-12 flex-1 transition-all">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6 transition-all">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-app-text-primary mb-6 transition-all">
             Startup Profile Management
           </h1>
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
@@ -232,7 +233,7 @@ export default function StartupProfile() {
             {/* Visibility Stats */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl text-app-text-primary flex items-center gap-2">
+                <CardTitle className="font-heading text-2xl text-app-text-primary flex items-center gap-2">
                   <FaEye className="text-blue-500" />
                   Visibility Statistics
                 </CardTitle>
@@ -274,7 +275,7 @@ export default function StartupProfile() {
             {/* Profile Form */}
             <Card>
               <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                <CardTitle className="text-2xl text-app-text-primary">
+                <CardTitle className="font-heading text-2xl text-app-text-primary">
                   Company Profile
                 </CardTitle>
                 <div className="flex gap-2 flex-col sm:flex-row">
@@ -283,14 +284,14 @@ export default function StartupProfile() {
                       <Button
                         onClick={handleSave}
                         variant="default"
-                        className="cursor-pointer"
+                        className="bg-jeb-primary hover:bg-jeb-hover text-app-white cursor-pointer"
                       >
                         Save Changes
                       </Button>
                       <Button
                         onClick={handleCancel}
                         variant="outline"
-                        className="cursor-pointer"
+                        className="border-jeb-primary text-jeb-primary hover:text-jeb-hover hover:bg-jeb-light cursor-pointer"
                       >
                         Cancel
                       </Button>
@@ -299,7 +300,7 @@ export default function StartupProfile() {
                     <Button
                       onClick={handleStartEditing}
                       variant="outline"
-                      className="cursor-pointer"
+                      className="border-jeb-primary text-jeb-primary hover:text-jeb-hover hover:bg-jeb-light cursor-pointer"
                     >
                       <FaEdit className="mr-2" />
                       Edit Profile
@@ -310,7 +311,7 @@ export default function StartupProfile() {
               <CardContent className="space-y-6">
                 {/* Basic Information */}
                 <div>
-                  <h3 className="text-lg font-semibold text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                     Basic Information
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -368,7 +369,7 @@ export default function StartupProfile() {
 
                 {/* Contact Information */}
                 <div>
-                  <h3 className="text-lg font-semibold text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                     Contact Information
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -434,7 +435,7 @@ export default function StartupProfile() {
 
                 {/* Online Presence */}
                 <div>
-                  <h3 className="text-lg font-semibold text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                     Online Presence
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -471,7 +472,7 @@ export default function StartupProfile() {
 
                 {/* Project Details */}
                 <div>
-                  <h3 className="text-lg font-semibold text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                     Project Details
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">

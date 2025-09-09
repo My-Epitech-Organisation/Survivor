@@ -14,7 +14,6 @@ export default function InvestorNavigation() {
 
   const navItems = [
     { href: "/investor/messaging", label: "Messaging" },
-    { href: "/investor/opportunities", label: "Opportunities" },
   ];
 
   const handleLogout = () => {
@@ -33,7 +32,7 @@ export default function InvestorNavigation() {
           {/* Logo */}
           <div className="flex items-center">
             <Link
-              href="/investor/opportunities"
+              href="/investor/messaging"
               className="text-2xl font-bold text-blue-600"
             >
               JEB <span className="text-sm text-gray-500">Investor</span>

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { DriveFile } from '@/types/drive';
 import { useDrive } from '@/contexts/DriveContext';
+import { downloadFile } from '@/lib/downloadUtils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -60,18 +61,22 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
       setStartupId(startupId);
       console.log('DriveExplorer - Setting startup ID:', startupId);
     }
-  }, [startupId, setStartupId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startupId]);
 
   React.useEffect(() => {
     if (startupId) {
       refreshCurrentFolder();
     }
-  }, [startupId, refreshCurrentFolder]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startupId]);
 
+  /*
   React.useEffect(() => {
     console.log('DriveExplorer - Files:', files);
     console.log('DriveExplorer - Folders:', folders);
   }, [files, folders]);
+  */
 
   const handleCreateFolder = async () => {
     if (newFolderName.trim()) {
@@ -102,6 +107,10 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
     } else {
       navigateToFolder(null);
     }
+  };
+
+  const handleFileDownload = async (file: DriveFile) => {
+    await downloadFile(file.id, file.name);
   };
 
   const renderFileIcon = (file: DriveFile) => {
@@ -315,7 +324,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => window.open(file.download_url, '_blank')}>
+                          <DropdownMenuItem onClick={() => handleFileDownload(file)}>
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </DropdownMenuItem>

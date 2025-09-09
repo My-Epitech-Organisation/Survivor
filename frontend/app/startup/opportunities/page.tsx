@@ -413,12 +413,12 @@ export default function StartupOpportunities() {
   const filteredInvestors = getFilteredInvestors();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 overflow-hidden">
       <StartupNavigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-4">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-app-text-primary mb-4">
             Opportunities
           </h1>
           <p className="text-lg text-app-text-secondary max-w-3xl mx-auto">
@@ -433,8 +433,8 @@ export default function StartupOpportunities() {
               onClick={() => setTab("opportunities")}
               className={`px-4 py-2 text-sm font-medium rounded-l-md focus:outline-none cursor-pointer ${
                 tab === "opportunities"
-                  ? "bg-app-surface border border-app-border text-app-text-primary"
-                  : "bg-white border border-app-border text-app-text-secondary"
+                  ? "bg-jeb-primary text-app-white border border-jeb-primary"
+                  : "bg-app-surface border border-app-border text-app-text-secondary hover:bg-jeb-light"
               }`}
             >
               Opportunities
@@ -443,8 +443,8 @@ export default function StartupOpportunities() {
               onClick={() => setTab("matches")}
               className={`px-4 py-2 text-sm font-medium rounded-r-md focus:outline-none cursor-pointer ${
                 tab === "matches"
-                  ? "bg-app-surface border border-app-border text-app-text-primary"
-                  : "bg-white border border-app-border text-app-text-secondary"
+                  ? "bg-jeb-primary text-app-white border border-jeb-primary"
+                  : "bg-app-surface border border-app-border text-app-text-secondary hover:bg-jeb-light"
               }`}
             >
               Matches
@@ -458,7 +458,7 @@ export default function StartupOpportunities() {
               ref={partnersCardRef}
               className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col"
             >
-              <h3 className="text-2xl font-semibold text-app-text-primary mb-6">
+              <h3 className="font-heading text-2xl font-semibold text-app-text-primary mb-6">
                 Partners
               </h3>
 
@@ -482,7 +482,7 @@ export default function StartupOpportunities() {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="outline"
-                          className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors"
+                          className="w-full justify-between cursor-pointer hover:bg-jeb-light hover:border-jeb-primary/50 transition-colors"
                         >
                           {activePartnerFilters.types.length === 0
                             ? "All types"
@@ -508,7 +508,7 @@ export default function StartupOpportunities() {
                                     ),
                               })
                             }
-                            className="hover:bg-app-blue-primary/10 transition-colors cursor-pointer"
+                            className="hover:bg-jeb-light transition-colors cursor-pointer"
                           >
                             {type}
                           </DropdownMenuCheckboxItem>
@@ -519,7 +519,7 @@ export default function StartupOpportunities() {
                   <div className="flex-shrink-0">
                     <Button
                       variant="ghost"
-                      className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap cursor-pointer"
+                      className="text-app-text-secondary hover:text-jeb-primary whitespace-nowrap cursor-pointer"
                       onClick={() => handlePartnerFiltersChange({ types: [] })}
                     >
                       Clear
@@ -560,7 +560,7 @@ export default function StartupOpportunities() {
                       <div className="mt-4 flex gap-2">
                         <button
                           onClick={() => handlePartnerView(p)}
-                          className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm cursor-pointer hover:bg-app-blue-primary/90 transition-colors"
+                          className="px-3 py-1 rounded bg-jeb-primary text-app-white text-sm cursor-pointer hover:bg-jeb-hover transition-colors"
                         >
                           View
                         </button>
@@ -575,7 +575,7 @@ export default function StartupOpportunities() {
               ref={fundingCardRef}
               className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col"
             >
-              <h3 className="text-2xl font-semibold text-app-text-primary mb-6">
+              <h3 className="font-heading text-2xl font-semibold text-app-text-primary mb-6">
                 Funding opportunities
               </h3>
 
@@ -599,7 +599,7 @@ export default function StartupOpportunities() {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="outline"
-                          className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors"
+                          className="w-full justify-between cursor-pointer hover:bg-jeb-light hover:border-jeb-primary/50 transition-colors"
                         >
                           {activeInvestorFilters.types.length === 0
                             ? "All types"
@@ -626,7 +626,7 @@ export default function StartupOpportunities() {
                                 focuses: activeInvestorFilters.focuses,
                               })
                             }
-                            className="hover:bg-app-blue-primary/10 transition-colors cursor-pointer"
+                            className="hover:bg-jeb-light transition-colors cursor-pointer"
                           >
                             {type}
                           </DropdownMenuCheckboxItem>
@@ -645,7 +645,7 @@ export default function StartupOpportunities() {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="outline"
-                          className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors"
+                          className="w-full justify-between cursor-pointer hover:bg-jeb-light hover:border-jeb-primary/50 transition-colors"
                         >
                           {activeInvestorFilters.focuses.length === 0
                             ? "All focuses"
@@ -674,7 +674,7 @@ export default function StartupOpportunities() {
                                     ),
                               })
                             }
-                            className="hover:bg-app-blue-primary/10 transition-colors cursor-pointer"
+                            className="hover:bg-jeb-light transition-colors cursor-pointer"
                           >
                             {focus}
                           </DropdownMenuCheckboxItem>
@@ -685,7 +685,7 @@ export default function StartupOpportunities() {
                   <div className="flex-shrink-0">
                     <Button
                       variant="ghost"
-                      className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap cursor-pointer"
+                      className="text-app-text-secondary hover:text-jeb-primary whitespace-nowrap cursor-pointer"
                       onClick={() =>
                         handleInvestorFiltersChange({ types: [], focuses: [] })
                       }
@@ -731,7 +731,7 @@ export default function StartupOpportunities() {
                       <div className="mt-4 flex gap-2">
                         <button
                           onClick={() => handleInvestorView(inv)}
-                          className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm cursor-pointer hover:bg-app-blue-primary/90 transition-colors"
+                          className="px-3 py-1 rounded bg-jeb-primary text-app-white text-sm cursor-pointer hover:bg-jeb-hover transition-colors"
                         >
                           Details
                         </button>
@@ -749,7 +749,7 @@ export default function StartupOpportunities() {
           >
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-2xl font-semibold text-app-text-primary mb-2">
+                <h3 className="font-heading text-2xl font-semibold text-app-text-primary mb-2">
                   Investor matches
                 </h3>
                 <p className="text-app-text-secondary">
@@ -765,7 +765,7 @@ export default function StartupOpportunities() {
                   className={`px-4 py-2 rounded-lg font-bold transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
                     isAnalyzing
                       ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                      : "bg-blue-600 text-white hover:bg-blue-700 transform hover:scale-105"
+                      : "bg-jeb-primary text-app-white hover:bg-jeb-hover transform hover:scale-105"
                   }`}
                 >
                   {isAnalyzing ? (
@@ -833,7 +833,7 @@ export default function StartupOpportunities() {
                   <button
                     onClick={startAIAnalysis}
                     disabled={isAnalyzing}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-bold shadow-lg disabled:opacity-50 cursor-pointer"
+                    className="px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover transition-all font-bold shadow-lg disabled:opacity-50 cursor-pointer"
                   >
                     {isAnalyzing ? "✨ Running..." : "✨ RUN AI ANALYSIS"}
                   </button>
@@ -946,7 +946,7 @@ export default function StartupOpportunities() {
                       <div className="ml-6 flex flex-col gap-2">
                         <button
                           onClick={() => handleMatchView(m)}
-                          className="px-4 py-2 rounded bg-app-blue-primary text-white text-sm font-medium hover:bg-app-blue-primary/90 transition-colors cursor-pointer"
+                          className="px-4 py-2 rounded bg-jeb-primary text-app-white text-sm font-medium hover:bg-jeb-hover transition-colors cursor-pointer"
                         >
                           Details
                         </button>
@@ -977,15 +977,15 @@ export default function StartupOpportunities() {
           {selectedPartner && (
             <div className="flex flex-col h-full max-h-[90vh]">
               {/* Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+              <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white p-6">
                 <DialogHeader>
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-white">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-app-white">
                       <Building className="w-4 h-4" />
                       <span className="capitalize">Partner</span>
                     </span>
                   </div>
-                  <DialogTitle className="text-2xl font-bold leading-tight pr-8">
+                  <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-8">
                     {selectedPartner.name}
                   </DialogTitle>
                 </DialogHeader>
@@ -1039,7 +1039,7 @@ export default function StartupOpportunities() {
                         <div className="flex items-center gap-4">
                           <a
                             href={`mailto:${selectedPartner.email}`}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-app-blue-primary text-white rounded-lg hover:bg-app-blue-primary/90 transition-colors"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover transition-colors"
                           >
                             <Mail className="w-4 h-4" />
                             Send Email
@@ -1085,15 +1085,15 @@ export default function StartupOpportunities() {
           {selectedInvestor && (
             <div className="flex flex-col h-full max-h-[90vh]">
               {/* Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+              <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white p-6">
                 <DialogHeader>
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-white">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-app-white">
                       <DollarSign className="w-4 h-4" />
                       <span className="capitalize">Investor</span>
                     </span>
                   </div>
-                  <DialogTitle className="text-2xl font-bold leading-tight pr-8">
+                  <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-8">
                     {selectedInvestor.name}
                   </DialogTitle>
                 </DialogHeader>
@@ -1147,7 +1147,7 @@ export default function StartupOpportunities() {
                         <div className="flex items-center gap-4">
                           <a
                             href={`mailto:${selectedInvestor.email}`}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-app-blue-primary text-white rounded-lg hover:bg-app-blue-primary/90 transition-colors"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover transition-colors"
                           >
                             <Mail className="w-4 h-4" />
                             Send Email
@@ -1193,10 +1193,10 @@ export default function StartupOpportunities() {
           {selectedMatch && (
             <div className="flex flex-col h-full max-h-[90vh]">
               {/* Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+              <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white p-6">
                 <DialogHeader>
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-white">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-app-white">
                       <DollarSign className="w-4 h-4" />
                       <span className="capitalize">Match</span>
                     </span>
@@ -1215,7 +1215,7 @@ export default function StartupOpportunities() {
                       </div>
                     </div>
                   </div>
-                  <DialogTitle className="text-2xl font-bold leading-tight pr-16">
+                  <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-16">
                     {selectedMatch.name}
                   </DialogTitle>
                 </DialogHeader>
@@ -1378,7 +1378,7 @@ export default function StartupOpportunities() {
                         </p>
                         <a
                           href={`mailto:?subject=Investment Interest in ${selectedMatch.name}&body=Dear ${selectedMatch.name},%0A%0AI am interested in discussing potential investment opportunities with your firm. Our startup has been matched with your investment criteria, and I would like to explore how we might work together.%0A%0ABest regards,%0A[Your Name]`}
-                          className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                          className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white font-semibold rounded-lg hover:from-jeb-two hover:to-jeb-eight transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
                         >
                           <Mail className="w-5 h-5" />
                           Express Interest

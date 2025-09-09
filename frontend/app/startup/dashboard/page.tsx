@@ -50,13 +50,12 @@ export default function StartupDashboard() {
       if (!isLoading && !user) {
         setIsDataLoading(false);
       }
-      return;
     }
 
     const fetchDataSequentially = async () => {
       try {
         const userProfileResponse = await authenticatedFetch(
-          `/user/${user.id}`
+          user && user.id ? `/user/${user.id}` : "/user/0"
         );
         if (!userProfileResponse.ok) {
           throw new Error("Failed to fetch user profile");
@@ -157,12 +156,12 @@ export default function StartupDashboard() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+    <div className="bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
       <StartupNavigation />
 
       <main className="px-4 sm:px-6 lg:px-8 py-12 flex-1 flex flex-col items-center">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
             Project Profile
           </h1>
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
@@ -184,11 +183,11 @@ export default function StartupDashboard() {
           <>
             {!currentProject ? (
               <div className="text-center py-12">
-                <Building2 className="size-16 text-gray-400 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-600 mb-2">
+                <Building2 className="size-16 text-app-text-muted mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-app-text-primary mb-2">
                   No Project Found
                 </h2>
-                <p className="text-gray-500">
+                <p className="text-app-text-secondary">
                   You don&apos;t have any projects associated with your account
                   yet.
                 </p>
@@ -198,7 +197,7 @@ export default function StartupDashboard() {
                 <div className="grid grid-cols-8 gap-6 mb-8 max-w-6xl">
                   <div className="col-span-full flex justify-end">
                     <Button
-                      className="bg-app-blue-primary hover:bg-app-blue-primary-hover text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 font-medium cursor-pointer"
+                      className="bg-jeb-primary hover:bg-jeb-hover text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 font-medium cursor-pointer"
                       onClick={exportProfileToPDF}
                     >
                       {isExporting ? (
@@ -248,13 +247,13 @@ export default function StartupDashboard() {
                   {/* Project Name & Description - Large Card */}
                   <Card className="col-span-full md:col-span-4 h-full gap-2">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-4 text-2xl">
+                      <CardTitle className="font-heading flex items-center gap-4 text-2xl">
                         <Building2 className="h-8 w-8 text-app-blue-primary" />
                         {currentProject.ProjectName}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-gray-600 leading-relaxed">
+                      <p className="text-app-text-secondary leading-relaxed">
                         {currentProject.ProjectDescription}
                       </p>
                     </CardContent>
@@ -264,53 +263,53 @@ export default function StartupDashboard() {
                   <Card className="col-span-8 sm:col-span-4 md:col-span-2 row-span-2">
                     <CardContent className="p-6 grid grid-cols-2 sm:grid-cols-1 gap-8">
                       <div className="flex items-start gap-3">
-                        <div className="p-3 bg-purple-100 rounded-lg">
-                          <Target className="h-6 w-6 text-purple-600" />
+                        <div className="p-3 bg-app-purple-light rounded-lg">
+                          <Target className="h-6 w-6 text-app-purple-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-600">
+                          <p className="text-sm font-medium text-app-text-secondary">
                             Sector
                           </p>
-                          <p className="text-lg font-bold text-gray-900">
+                          <p className="text-lg font-bold text-app-text-primary">
                             {currentProject.ProjectSector}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-start gap-3">
-                        <div className="p-3 bg-green-100 rounded-lg">
-                          <Activity className="h-6 w-6 text-green-600" />
+                        <div className="p-3 bg-app-green-light rounded-lg">
+                          <Activity className="h-6 w-6 text-app-green-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-600">
+                          <p className="text-sm font-medium text-app-text-secondary">
                             Maturity
                           </p>
-                          <p className="text-lg font-bold text-gray-900">
+                          <p className="text-lg font-bold text-app-text-primary">
                             {currentProject.ProjectMaturity}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-start gap-3">
-                        <div className="p-3 bg-orange-100 rounded-lg">
-                          <Activity className="h-6 w-6 text-orange-600" />
+                        <div className="p-3 bg-app-orange-light rounded-lg">
+                          <Activity className="h-6 w-6 text-app-orange-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-600">
+                          <p className="text-sm font-medium text-app-text-secondary">
                             Project Status
                           </p>
-                          <p className="text-lg font-bold text-gray-900">
+                          <p className="text-lg font-bold text-app-text-primary">
                             {currentProject.ProjectStatus}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-start gap-3">
-                        <div className="p-3 bg-indigo-100 rounded-lg">
-                          <Scale className="h-6 w-6 text-indigo-600" />
+                        <div className="p-3 bg-app-indigo-light rounded-lg">
+                          <Scale className="h-6 w-6 text-app-indigo-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-600">
+                          <p className="text-sm font-medium text-app-text-secondary">
                             Legal Status
                           </p>
-                          <p className="text-lg font-bold text-gray-900">
+                          <p className="text-lg font-bold text-app-text-primary">
                             {currentProject.ProjectLegalStatus}
                           </p>
                         </div>
@@ -322,14 +321,14 @@ export default function StartupDashboard() {
                   <Card className="col-span-8 sm:col-span-4 md:col-span-3">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-3">
-                        <div className="p-3 bg-blue-100 rounded-lg">
+                        <div className="p-3 bg-app-blue-light rounded-lg">
                           <MapPin className="h-6 w-6 text-app-blue-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-600">
+                          <p className="text-sm font-medium text-app-text-secondary">
                             Location
                           </p>
-                          <p className="text-lg font-bold text-gray-900">
+                          <p className="text-lg font-bold text-app-text-primary">
                             {currentProject.ProjectAddress}
                           </p>
                         </div>
@@ -341,14 +340,14 @@ export default function StartupDashboard() {
                   <Card className="col-span-8 sm:col-span-4 md:col-span-3">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-3">
-                        <div className="p-3 bg-yellow-100 rounded-lg">
-                          <Calendar className="h-6 w-6 text-yellow-600" />
+                        <div className="p-3 bg-app-yellow-light rounded-lg">
+                          <Calendar className="h-6 w-6 text-app-yellow-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-600">
+                          <p className="text-sm font-medium text-app-text-secondary">
                             Founded
                           </p>
-                          <p className="text-lg font-bold text-gray-900">
+                          <p className="text-lg font-bold text-app-text-primary">
                             {formatDate(currentProject.ProjectCreatedAt)}
                           </p>
                         </div>
@@ -359,7 +358,7 @@ export default function StartupDashboard() {
                   {/* Founders - Wide Card */}
                   <Card className="col-span-8 sm:col-span-4">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="font-heading flex items-center gap-2">
                         <Users className="h-5 w-5 text-green-600" />
                         Founders
                       </CardTitle>
@@ -370,7 +369,7 @@ export default function StartupDashboard() {
                           (founder, index) => (
                             <div
                               key={index}
-                              className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg"
+                              className="flex items-center gap-3 p-4 bg-app-surface-hover rounded-lg"
                             >
                               <Avatar className="h-12 w-12">
                                 <AvatarImage
@@ -384,7 +383,7 @@ export default function StartupDashboard() {
                                 </AvatarFallback>
                               </Avatar>
                               <div>
-                                <p className="font-medium text-gray-900">
+                                <p className="font-medium text-app-text-primary">
                                   {founder.FounderName}
                                 </p>
                               </div>
@@ -399,14 +398,14 @@ export default function StartupDashboard() {
                   <Card className="col-span-8 sm:col-span-4 md:col-span-2">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-3">
-                        <div className="p-3 bg-blue-100 rounded-lg">
+                        <div className="p-3 bg-app-blue-light rounded-lg">
                           <Eye className="h-6 w-6 text-app-blue-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-600">
+                          <p className="text-sm font-medium text-app-text-secondary">
                             Project views
                           </p>
-                          <p className="text-lg font-bold text-gray-900">
+                          <p className="text-lg font-bold text-app-text-primary">
                             {projectViews || 0}
                           </p>
                         </div>
@@ -417,13 +416,13 @@ export default function StartupDashboard() {
                   {/* Needs - Full Width Card */}
                   <Card className="col-span-8 sm:col-span-4">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="font-heading flex items-center gap-2">
                         <FileText className="h-5 w-5 text-red-600" />
                         Project Needs
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-gray-700 leading-relaxed text-lg">
+                      <p className="text-app-text-secondary leading-relaxed text-lg">
                         {currentProject.ProjectNeeds}
                       </p>
                     </CardContent>
@@ -434,11 +433,11 @@ export default function StartupDashboard() {
                     <Card className="col-span-8 sm:col-span-4 md:col-span-2">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-3">
-                          <div className="p-3 bg-cyan-100 rounded-lg">
-                            <Globe className="h-6 w-6 text-cyan-600" />
+                          <div className="p-3 bg-app-blue-light rounded-lg">
+                            <Globe className="h-6 w-6 text-app-blue-primary" />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-600 mb-1">
+                            <p className="text-sm font-medium text-app-text-secondary mb-1">
                               Website
                             </p>
                             <a
@@ -449,7 +448,7 @@ export default function StartupDashboard() {
                               }
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-app-blue-primary hover:text-blue-800 flex items-center gap-1 font-medium"
+                              className="text-jeb-primary hover:text-jeb-hover flex items-center gap-1 font-medium"
                             >
                               Visit Website
                               <ExternalLink className="h-4 w-4" />
@@ -465,11 +464,11 @@ export default function StartupDashboard() {
                     <Card className="col-span-8 sm:col-span-4 md:col-span-2">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-3">
-                          <div className="p-3 bg-pink-100 rounded-lg">
-                            <Users className="h-6 w-6 text-pink-600" />
+                          <div className="p-3 bg-app-purple-light rounded-lg">
+                            <Users className="h-6 w-6 text-app-purple-primary" />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-600 mb-1">
+                            <p className="text-sm font-medium text-app-text-secondary mb-1">
                               Social Media
                             </p>
                             <a
@@ -480,7 +479,7 @@ export default function StartupDashboard() {
                               }
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-app-blue-primary hover:text-blue-800 flex items-center gap-1 font-medium"
+                              className="text-jeb-primary hover:text-jeb-hover flex items-center gap-1 font-medium"
                             >
                               Follow Us
                               <ExternalLink className="h-4 w-4" />

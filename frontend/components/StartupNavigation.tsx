@@ -37,9 +37,9 @@ export default function StartupNavigation() {
           <div className="flex items-center">
             <Link
               href="/startup/dashboard"
-              className="text-2xl font-bold text-blue-600"
+              className="text-2xl font-bold text-jeb-primary"
             >
-              JEB <span className="text-sm text-gray-500">Startup</span>
+              JEB <span className="text-sm text-app-text-secondary">Startup</span>
             </Link>
           </div>
 
@@ -51,8 +51,8 @@ export default function StartupNavigation() {
                 href={item.href}
                 className={`transition-colors ${
                   pathname === item.href
-                    ? "text-blue-600 font-medium"
-                    : "text-gray-600 hover:text-blue-600"
+                    ? "text-jeb-primary font-medium"
+                    : "text-app-text-secondary hover:text-jeb-primary"
                 }`}
               >
                 {item.label}
@@ -64,13 +64,13 @@ export default function StartupNavigation() {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={handleSwitchToPublic}
-              className="text-gray-600 hover:text-blue-600 transition-colors cursor-pointer"
+              className="text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
             >
               Public Area
             </button>
             <button
               onClick={handleLogout}
-              className="font-bold text-gray-600 hover:text-red-600 transition-colors cursor-pointer"
+              className="font-bold text-app-text-secondary hover:text-red-600 transition-colors cursor-pointer"
             >
               Logout
             </button>
@@ -80,7 +80,7 @@ export default function StartupNavigation() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-blue-600 focus:outline-none focus:text-blue-600 transition-colors"
+              className="text-app-text-secondary hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -102,8 +102,8 @@ export default function StartupNavigation() {
                   onClick={() => setIsMenuOpen(false)}
                   className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     pathname === item.href
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                      ? "text-jeb-primary bg-jeb-light"
+                      : "text-app-text-secondary hover:text-jeb-primary hover:bg-jeb-light"
                   }`}
                 >
                   {item.label}
@@ -115,7 +115,7 @@ export default function StartupNavigation() {
                     handleSwitchToPublic();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-app-text-secondary hover:text-jeb-primary hover:bg-jeb-light transition-colors cursor-pointer"
                 >
                   Public Area
                 </button>
@@ -124,7 +124,7 @@ export default function StartupNavigation() {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-red-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-red-600 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Logout
                 </button>
