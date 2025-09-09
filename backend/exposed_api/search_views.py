@@ -9,6 +9,7 @@ from django.db.models import Q
 from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status, views
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from admin_panel.models import Event, Founder, NewsDetail, StartupDetail
@@ -44,6 +45,7 @@ class AdvancedSearchView(views.APIView):
     and consistent pagination.
     """
 
+    permission_classes = [AllowAny]
     pagination_class = CustomSearchPagination
 
     def get_bm25_score(self, obj, search_term, fields):
