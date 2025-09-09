@@ -43,6 +43,8 @@ type InvestorMatch = {
   investor_id: number;
   name: string;
   score: number;
+  rule_score: number;
+  ai_score: number;
   reason: string;
   investor_type?: string;
   investment_focus?: string;
@@ -60,6 +62,10 @@ export default function StartupOpportunities() {
   const [matches, setMatches] = useState<InvestorMatch[]>([]);
   const [matchesLoading, setMatchesLoading] = useState(false);
   const [matchesError, setMatchesError] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [analysisResults, setAnalysisResults] = useState<InvestorMatch[]>([]);
   const partnersCardRef = useRef<HTMLDivElement | null>(null);
   const partnersListRef = useRef<HTMLDivElement | null>(null);
   const fundingCardRef = useRef<HTMLDivElement | null>(null);
@@ -83,6 +89,16 @@ export default function StartupOpportunities() {
     types: [] as string[],
     focuses: [] as string[],
   });
+
+  const parseMatchReason = (reason: string) => {
+    const aiMatch = reason.match(/AI:\s*(.+)/);
+    const ruleReason = reason.replace(/,\s*AI:\s*.+/, '');
+    return {
+      ruleReason: ruleReason.trim(),
+      aiReason: aiMatch ? aiMatch[1].trim() : null,
+      hasAI: !!aiMatch
+    };
+  };
 
   useEffect(() => {
     const fetchPartners = async () => {
@@ -205,7 +221,7 @@ export default function StartupOpportunities() {
   useEffect(() => {
     const fetchMatches = async () => {
       if (!user?.startupId) {
-        setMatchesError("Aucune startup associée à votre compte.");
+        setMatchesError("No startup associated with your account.");
         return;
       }
 
@@ -218,7 +234,7 @@ export default function StartupOpportunities() {
 
         if (!res.ok) {
           if (res.status === 400) {
-            setMatchesError("Startup introuvable.");
+            setMatchesError("Startup not found.");
           } else {
             setMatchesError("Error retrieving matches.");
           }
@@ -290,6 +306,82 @@ export default function StartupOpportunities() {
     });
   };
 
+  const startAIAnalysis = async () => {
+    if (!user?.startupId) {
+      setMatchesError("No startup associated with your account.");
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setAnalysisProgress(0);
+    setAnalysisId(null);
+    setMatchesError(null);
+
+    try {
+      const apiBase = getAPIUrl();
+      const response = await fetch(`${apiBase}/opportunities/ai-analysis/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          startup_id: user.startupId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to start AI analysis');
+      }
+
+      const data = await response.json();
+      setAnalysisId(data.analysis_id);
+
+      pollAnalysisStatus(data.analysis_id);
+    } catch (error) {
+      console.error("AI analysis error:", error);
+      setMatchesError("Failed to start AI analysis. Please try again.");
+      setIsAnalyzing(false);
+    }
+  };
+
+  const pollAnalysisStatus = async (id: string) => {
+    const poll = async () => {
+      try {
+        const apiBase = getAPIUrl();
+        const response = await fetch(`${apiBase}/opportunities/ai-analysis/${id}/`);
+
+        if (!response.ok) {
+          throw new Error('Failed to get analysis status');
+        }
+
+        const data = await response.json();
+
+        setAnalysisProgress(data.progress || 0);
+
+        if (data.status === 'completed') {
+          setAnalysisResults(data.results || []);
+          setMatches(data.results || []);
+          setIsAnalyzing(false);
+          setAnalysisId(null);
+        } else if (data.status === 'error') {
+          setMatchesError(data.error || "AI analysis failed");
+          setIsAnalyzing(false);
+          setAnalysisId(null);
+        } else if (data.status === 'processing') {
+          // Continue polling
+          setTimeout(poll, 2000);
+        }
+      } catch (error) {
+        console.error("Analysis status error:", error);
+        setMatchesError("Failed to check analysis status");
+        setIsAnalyzing(false);
+        setAnalysisId(null);
+      }
+    };
+
+    poll();
+  };
+
   const filteredPartners = getFilteredPartners();
   const filteredInvestors = getFilteredInvestors();
 
@@ -344,7 +436,7 @@ export default function StartupOpportunities() {
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Filter className="h-5 w-5 text-app-text-secondary" />
-                  <span className="text-lg font-medium text-app-text-primary">Filtres</span>
+                  <span className="text-lg font-medium text-app-text-primary">Filters</span>
                 </div>
                 <div className="flex flex-wrap gap-4">
                   <div className="flex-1 min-w-[200px]">
@@ -575,20 +667,57 @@ export default function StartupOpportunities() {
           </div>
         ) : (
           <div ref={matchesCardRef} className="bg-app-surface rounded-lg shadow-md p-8">
-            <h3 className="text-2xl font-semibold text-app-text-primary mb-4">
-              Investor matches
-            </h3>
-            <p className="text-app-text-secondary mb-6">
-              Discover the investors best suited to your startup. The match score is calculated based on your sector, maturity, needs, and location.
-            </p>
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-2xl font-semibold text-app-text-primary mb-2">
+                  Investor matches
+                </h3>
+                <p className="text-app-text-secondary">
+                  Discover the investors best suited to your startup. The match score is calculated by combining algorithmic rules and advanced AI analysis for optimal compatibility.
+                </p>
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                                                <button
+                  onClick={startAIAnalysis}
+                  disabled={isAnalyzing || !user?.startupId}
+                  className={`px-4 py-2 rounded-lg font-bold transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
+                    isAnalyzing
+                      ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                      : 'bg-blue-600 text-white hover:bg-blue-700 transform hover:scale-105'
+                  }`}
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>AI Running...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-xl">✨</span>
+                      <span className="text-sm font-bold">RUN AI ANALYSIS</span>
+                    </>
+                  )}
+                </button>
+                {isAnalyzing && (
+                  <div className="text-sm text-app-text-secondary">
+                    Progress: {analysisProgress}%
+                  </div>
+                )}
+              </div>
+            </div>
 
             <div className="bg-app-blue-primary/5 border border-app-blue-primary/20 rounded-lg p-4 mb-6">
-              <h4 className="text-sm font-medium text-app-text-primary mb-2">How does matching work?</h4>
-              <div className="text-xs text-app-text-secondary space-y-1">
-                <p>• <strong>Sector:</strong> Direct or thematic match (e.g., DeepTech → Tech, Innovation)</p>
-                <p>• <strong>Maturity:</strong> Fit between your startup stage and investor type</p>
-                <p>• <strong>Needs:</strong> Alignment with investors&apos; areas of interest</p>
-                <p>• <strong>Location:</strong> Preference for investors in your region</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">🎯</span>
+                  <div>
+                    <h4 className="text-sm font-bold text-app-text-primary">Smart Matching</h4>
+                    <p className="text-xs text-app-text-secondary">Rules + AI = Better Matches</p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-700 text-xs font-bold rounded-full border border-purple-400/50">
+                  🤖 AI POWERED
+                </span>
               </div>
             </div>
 
@@ -608,74 +737,108 @@ export default function StartupOpportunities() {
             ) : matches.length === 0 ? (
               <div className="flex items-center justify-center h-32">
                 <div className="text-center text-app-text-secondary">
-                  <p className="mb-2 text-lg">No perfect matches found.</p>
-                  <p className="text-sm mb-4">We suggest completing your startup profile with detailed information about your sector, maturity, and needs for better results.</p>
-                  <button className="px-4 py-2 bg-app-blue-primary text-white rounded hover:bg-app-blue-primary/90 transition-colors">
-                    Complete my profile
+                  <p className="mb-2 text-lg">No matches ≥5%</p>
+                  <p className="text-sm mb-4">Try AI analysis!</p>
+                  <button
+                    onClick={startAIAnalysis}
+                    disabled={isAnalyzing}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-bold shadow-lg disabled:opacity-50 cursor-pointer"
+                  >
+                    {isAnalyzing ? '✨ Running...' : '✨ RUN AI ANALYSIS'}
                   </button>
                 </div>
               </div>
             ) : (
               <div ref={matchesListRef} className="space-y-4 overflow-y-auto max-h-96">
-                {matches.map((m) => (
-                  <div
-                    key={m.investor_id}
-                    className="border border-app-border rounded-md p-6 bg-white flex justify-between items-start"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="text-lg font-medium text-app-text-primary">{m.name}</h4>
-                        <div className="text-right">
-                          <div className={`text-2xl font-bold ${
-                            m.score >= 40 ? 'text-green-600' :
-                            m.score >= 25 ? 'text-yellow-600' :
-                            'text-app-text-secondary'
-                          }`}>
-                            {m.score}%
+                {matches.map((m) => {
+                  const { ruleReason, hasAI } = parseMatchReason(m.reason);
+                  return (
+                    <div
+                      key={m.investor_id}
+                      className="border border-app-border rounded-md p-6 bg-white flex justify-between items-start"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="text-lg font-medium text-app-text-primary">{m.name}</h4>
+                          <div className="text-right">
+                            <div className="flex flex-col items-end gap-1">
+                              <div className={`text-4xl font-black ${
+                                m.score >= 70 ? 'text-green-600' :
+                                m.score >= 50 ? 'text-blue-600' :
+                                m.score >= 30 ? 'text-yellow-600' :
+                                'text-red-600'
+                              }`}>
+                                {m.score}%
+                              </div>
+                              {hasAI && (
+                                <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg border-2 border-white">
+                                  ✨ AI: {m.ai_score}%
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <div className="text-sm text-app-text-secondary">match</div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {m.investor_type && (
+                            <span className="px-3 py-1 bg-gradient-to-r from-app-blue-primary/10 to-app-blue-primary/20 text-app-blue-primary text-xs font-medium rounded-full border border-app-blue-primary/20">
+                              {m.investor_type}
+                            </span>
+                          )}
+                          {m.investment_focus && (
+                            <span className="px-3 py-1 bg-gradient-to-r from-app-purple-primary/10 to-app-purple-primary/20 text-app-purple-primary text-xs font-medium rounded-full border border-app-purple-primary/20">
+                              {m.investment_focus}
+                            </span>
+                          )}
+                        </div>
+
+                        {m.description && (
+                          <p className="text-app-text-secondary text-sm mb-3 line-clamp-2">{m.description}</p>
+                        )}
+
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-4 text-sm text-app-text-secondary">
+                            <span className="flex items-center gap-1">
+                              <span className="font-medium">📊 Rules:</span> {ruleReason}
+                            </span>
+                            {m.location && (
+                              <span className="flex items-center gap-1">
+                                📍 {m.location.split(',')[1]?.trim() || m.location}
+                              </span>
+                            )}
+                          </div>
+                          {hasAI && (
+                            <div className="bg-gradient-to-r from-purple-100 to-blue-100 border-2 border-purple-300 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="font-bold text-purple-800 flex items-center gap-2">
+                                  ✨ AI SCORE
+                                </span>
+                                <div className="text-right">
+                                  <div className="text-3xl font-black text-purple-700">{m.ai_score}%</div>
+                                  <div className="text-xs text-purple-600">AI compatibility</div>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-4 text-sm">
+                                <span className="text-purple-700 font-semibold">Rules: {m.rule_score}%</span>
+                                <span className="text-purple-700 font-semibold">AI: {m.ai_score}%</span>
+                                <span className="text-green-700 font-bold">Combined: {m.score}%</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {m.investor_type && (
-                          <span className="px-3 py-1 bg-gradient-to-r from-app-blue-primary/10 to-app-blue-primary/20 text-app-blue-primary text-xs font-medium rounded-full border border-app-blue-primary/20">
-                            {m.investor_type}
-                          </span>
-                        )}
-                        {m.investment_focus && (
-                          <span className="px-3 py-1 bg-gradient-to-r from-app-purple-primary/10 to-app-purple-primary/20 text-app-purple-primary text-xs font-medium rounded-full border border-app-purple-primary/20">
-                            {m.investment_focus}
-                          </span>
-                        )}
-                      </div>
-
-                      {m.description && (
-                        <p className="text-app-text-secondary text-sm mb-3 line-clamp-2">{m.description}</p>
-                      )}
-
-                      <div className="flex items-center gap-4 text-xs text-app-text-secondary">
-                        <span className="flex items-center gap-1">
-                          <span className="font-medium">Reason:</span> {m.reason}
-                        </span>
-                        {m.location && (
-                          <span className="flex items-center gap-1">
-                            📍 {m.location.split(',')[1]?.trim() || m.location}
-                          </span>
-                        )}
+                      <div className="ml-6 flex flex-col gap-2">
+                        <button
+                          onClick={() => handleMatchView(m)}
+                          className="px-4 py-2 rounded bg-app-blue-primary text-white text-sm font-medium hover:bg-app-blue-primary/90 transition-colors cursor-pointer"
+                        >
+                          Details
+                        </button>
                       </div>
                     </div>
-
-                    <div className="ml-6 flex flex-col gap-2">
-                      <button
-                        onClick={() => handleMatchView(m)}
-                        className="px-4 py-2 rounded bg-app-blue-primary text-white text-sm font-medium hover:bg-app-blue-primary/90 transition-colors cursor-pointer"
-                      >
-                        Details
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -969,17 +1132,42 @@ export default function StartupOpportunities() {
                         <TrendingUp className="w-5 h-5 text-blue-500" />
                         Why this match?
                       </h3>
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <p className="text-gray-700 leading-relaxed">
-                          {selectedMatch.reason}
-                        </p>
+                      <div className="space-y-3">
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-sm font-medium text-blue-700">📋 Rule-based analysis:</span>
+                          </div>
+                          <p className="text-gray-700 leading-relaxed">
+                            {parseMatchReason(selectedMatch.reason).ruleReason}
+                          </p>
+                        </div>
+                        {parseMatchReason(selectedMatch.reason).hasAI && (
+                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-sm font-medium text-purple-700 flex items-center gap-1">
+                                🤖 AI Analysis:
+                              </span>
+                              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
+                                Groq Llama 3.1
+                              </span>
+                            </div>
+                            <p className="text-gray-700 leading-relaxed">
+                              {parseMatchReason(selectedMatch.reason).aiReason}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     {/* Match Score Explanation */}
                     <div className="mt-6 pt-6 border-t border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                         Match Score Breakdown
+                        {parseMatchReason(selectedMatch.reason).hasAI && (
+                          <span className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-700 text-xs font-medium rounded-full border border-purple-300/30">
+                            🤖 AI Included
+                          </span>
+                        )}
                       </h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
@@ -1004,11 +1192,14 @@ export default function StartupOpportunities() {
                             </span>
                           </div>
                         </div>
-                        <div className="text-xs text-gray-500 mt-2">
+                        <div className="text-xs text-gray-500 mt-2 space-y-1">
                           <p>• <strong>Sector:</strong> Direct or thematic match</p>
-                          <p>• <strong>Maturity:</strong> Fit between your startup stage and investor type</p>
-                          <p>• <strong>Needs:</strong> Alignment with investor&apos;s areas of interest</p>
-                          <p>• <strong>Location:</strong> Geographic preference match</p>
+                          <p>• <strong>Maturity:</strong> Alignment between your development stage and investor type</p>
+                          <p>• <strong>Needs:</strong> Alignment with investor interest areas</p>
+                          <p>• <strong>Location:</strong> Geographic preference</p>
+                          {parseMatchReason(selectedMatch.reason).hasAI && (
+                            <p>• <strong>🤖 AI:</strong> Advanced semantic analysis of descriptions (averaged with rules)</p>
+                          )}
                         </div>
                       </div>
                     </div>
