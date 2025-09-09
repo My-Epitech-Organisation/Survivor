@@ -60,18 +60,22 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
       setStartupId(startupId);
       console.log('DriveExplorer - Setting startup ID:', startupId);
     }
-  }, [startupId, setStartupId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startupId]);
 
   React.useEffect(() => {
     if (startupId) {
       refreshCurrentFolder();
     }
-  }, [startupId, refreshCurrentFolder]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startupId]);
 
+  /*
   React.useEffect(() => {
     console.log('DriveExplorer - Files:', files);
     console.log('DriveExplorer - Folders:', folders);
   }, [files, folders]);
+  */
 
   const handleCreateFolder = async () => {
     if (newFolderName.trim()) {

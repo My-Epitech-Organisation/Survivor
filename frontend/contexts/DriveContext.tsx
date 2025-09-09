@@ -158,9 +158,9 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   };
 
-  const refreshCurrentFolder = async () => {
+  const refreshCurrentFolder = useCallback(async () => {
     await fetchFolderContents(currentFolder?.id || null);
-  };
+  }, [fetchFolderContents, currentFolder]);
 
   useEffect(() => {
     if (startupId) {
@@ -172,10 +172,12 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   }, [startupId, fetchFolderContents]);
 
+  /*
   useEffect(() => {
     console.log('DriveContext - Current files:', files);
     console.log('DriveContext - Current startupId:', startupId);
   }, [files, startupId]);
+  */
 
   const value = {
     currentFolder,
