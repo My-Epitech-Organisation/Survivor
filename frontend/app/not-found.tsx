@@ -17,24 +17,24 @@ const openSans = Open_Sans({
 
 export default function Custom404() {
   return (
-    <div className="h-screen flex flex-col w-full">
+    <div className="h-screen flex flex-col w-full bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50">
       <Navigation />
       <div
-        className={`flex-1 bg-gradient-to-br from-app-gradient-from to-app-gradient-to text-app-white flex items-center justify-center px-4 ${openSans.variable} ${montserrat.variable}`}
+        className={`flex-1 text-app-white flex items-center justify-center px-4 ${openSans.variable} ${montserrat.variable}`}
       >
         <div className="text-center">
           <h1
-            className={`text-[120px] md:text-[180px] font-black text-app-blue-primary mb-1 ${montserrat.className}`}
+            className={`text-9xl font-black text-jeb-primary mb-1 ${montserrat.className}`}
           >
             <em>404</em>
           </h1>
-          <p className={`text-xl ${openSans.className} text-app-blue-primary`}>
-            Page not found
+          <p className={`text-xl ${montserrat.className} text-jeb-primary`}>
+            <em>Page not found</em>
           </p>
-          <div className="mt-8">
+          <div className="mt-24">
             <Link
               href="/"
-              className={`bg-app-blue-primary hover:bg-app-blue-primary-hover text-app-white font-medium py-3 px-6 rounded-full transition duration-300 ${openSans.className}`}
+              className={`bg-jeb-primary hover:bg-jeb-hover text-app-white font-medium py-3 px-6 rounded-full transition duration-300 ${openSans.className}`}
             >
               Go back home
             </Link>
