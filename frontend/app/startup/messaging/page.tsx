@@ -8,10 +8,13 @@ import ChatSideBar from "@/components/ChatSideBar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TbLoader3 } from "react-icons/tb";
+import { Thread } from "@/types/chat"
 
 export default function StartupMessaging() {
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeThread, setActiveThread] = useState<Thread | null>(null);
+
 
   useEffect(() => {
     // Simule un chargement
@@ -36,13 +39,13 @@ export default function StartupMessaging() {
               <CardContent className="p-0 h-full">
                 <div className="h-full grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)]">
                   {/* Sidebar desktop */}
-                  <aside className="hidden lg:flex flex-col border-r">
-                    <ChatSideBar />
+                  <aside className="hidden lg:flex flex-col flex-1 min-h-0 h-full border-r">
+                    <ChatSideBar onSelect={(conv) => setActiveThread(conv)}/>
                   </aside>
 
                   {/* Zone chat */}
                   <section className="min-w-0 flex">
-                    <ChatComponent onOpenConversations={() => setIsSidebarOpen(true)} />
+                    <ChatComponent conv={activeThread} onOpenConversations={() => setIsSidebarOpen(true)} />
                   </section>
                 </div>
               </CardContent>

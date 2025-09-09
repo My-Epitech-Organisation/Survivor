@@ -1,57 +1,40 @@
+"use client"
+
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
-
-interface Conversation {
-  id: string;
-  name: string;
-  lastMessage: string;
-  timestamp: string;
-  unreadCount: number;
-  avatar: string; // ex: "AJ"
-}
-
-const mockConversations: Conversation[] = [
-  {
-    id: "1",
-    name: "Eliott Tesnier",
-    lastMessage: "Pourquoi tu code du devrais prompter?",
-    timestamp: "10:40 AM",
-    unreadCount: 1,
-    avatar: "ET",
-  },
-  {
-    id: "2",
-    name: "Bob Smith",
-    lastMessage: "Thanks for the update!",
-    timestamp: "Yesterday",
-    unreadCount: 0,
-    avatar: "BS",
-  },
-  {
-    id: "3",
-    name: "Carol Davis",
-    lastMessage: "Looking forward to our meeting",
-    timestamp: "2 days ago",
-    unreadCount: 3,
-    avatar: "CD",
-  },
-  {
-    id: "4",
-    name: "David Wilson",
-    lastMessage: "Can you send me the pitch deck?",
-    timestamp: "1 week ago",
-    unreadCount: 0,
-    avatar: "DW",
-  },
-];
+import api from "@/lib/api";
+import { Thread } from "@/types/chat"
+import { getBackendUrl } from "@/lib/config";
+import { MessageCircleOff } from 'lucide-react';
 
 export default function ChatSideBar({
   onSelect,
 }: {
-  onSelect?: (id: string) => void;
+  onSelect?: (conv: Thread) => void;
 }) {
+  const [isThreadLoading, setIsThreadLoading] = useState<boolean>(false);
+  const [listThreads, setListThreads] = useState<Thread[] | null>(null);
+
+
+  useEffect(() => {
+    const fetchThreads = async () => {
+      try {
+        setIsThreadLoading(true);
+        const res = await api.get<Thread[] | null>({endpoint: "/threads/"});
+        setListThreads(res.data);
+      } catch (error) {
+        setListThreads(null);
+        console.error(error);
+      } finally {
+        setIsThreadLoading(false);
+      }
+    }
+    fetchThreads();
+  }, [])
+
   return (
     <div className="h-full flex flex-col">
       <div className="p-4 border-b">
@@ -63,37 +46,45 @@ export default function ChatSideBar({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 min-h-0 overflow-y-auto max-h-[calc(100vh-112px)]">
         <div className="p-3 space-y-2">
-          {mockConversations.map((conversation) => (
+          {!listThreads || listThreads.length == 0 && (
+            <>
+              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                <MessageCircleOff className="w-8 h-8 mb-2" />
+                <span>No threads</span>
+              </div>
+            </>
+          )}
+          {listThreads && listThreads.map((thread) => (
             <button
-              key={conversation.id}
-              onClick={() => onSelect?.(conversation.id)}
+              key={thread.id}
+              onClick={() => onSelect?.(thread)}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted/60 cursor-pointer transition-all duration-200 border border-transparent hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <Avatar className="w-10 h-10 shrink-0">
+              <Avatar className="w-10 h-10 shrink-0"> {/* Utilisé avatar input */}
                 <AvatarImage
-                  src={`/avatars/${conversation.avatar}.jpg`}
-                  alt={conversation.name}
+                  src={`${getBackendUrl()}${thread.participants.at(0)?.userImage}.jpg`}
+                  alt={thread.participants.at(0)?.name}
                 />
-                <AvatarFallback>{conversation.avatar}</AvatarFallback>
+                <AvatarFallback>{thread.participants.at(0)?.name.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
 
               <div className="flex-1 min-w-0 text-left">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="font-medium text-sm truncate">{conversation.name}</p>
+                  <p className="font-medium text-sm truncate">{thread.participants.at(0)?.name}</p>
                   <span className="text-xs text-muted-foreground shrink-0">
-                    {conversation.timestamp}
+                    {thread.last_message_at}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground truncate">
-                  {conversation.lastMessage}
+                  {thread.last_message}
                 </p>
               </div>
 
-              {conversation.unreadCount > 0 && (
+              {Number(thread.unread_count) > 0 && (
                 <Badge variant="destructive" className="ml-2 shrink-0">
-                  {conversation.unreadCount}
+                  {thread.unread_count}
                 </Badge>
               )}
             </button>

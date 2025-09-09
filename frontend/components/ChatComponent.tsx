@@ -1,8 +1,10 @@
-import React from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Paperclip, ArrowLeft, SendHorizontal } from "lucide-react";
+import api from "@/lib/api";
+import { Thread } from "@/types/chat";
 
 interface Message {
   id: string;
@@ -12,7 +14,7 @@ interface Message {
   isOwn: boolean;
 }
 
-const mockMessages: Message[] = [
+const mockMessages: Message[] | null = [
   {
     id: "1",
     sender: "Eliott Tesnier",
@@ -54,41 +56,60 @@ const mockMessages: Message[] = [
   },
 ];
 
-export default function ChatComponent({
-  onOpenConversations,
-}: {
-  onOpenConversations?: () => void;
-}) {
-  const [messages, setMessages] = React.useState<Message[]>(mockMessages);
-  const [inputValue, setInputValue] = React.useState("");
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
-  const messagesContainerRef = React.useRef<HTMLDivElement>(null);
 
-  // Scroll en bas au montage et à chaque nouveau message
-  React.useEffect(() => {
+interface ChatComponentProps {
+  onOpenConversations?: () => void;
+  conv: Thread | null;
+}
+
+export default function ChatComponent({ onOpenConversations, conv }: ChatComponentProps) {
+  const [messages, setMessages] = useState<Message[] | null>(null);
+  const [isMessageLoading, setIsMessageLoading] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!conv)
+        return;
+      try {
+        setIsMessageLoading(true);
+        console.debug(`/threads/${conv.id}/`);
+        api.get({endpoint: `/threads/${conv.id}/`})
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setIsMessageLoading(false);
+      }
+    }
+    fetchMessages();
+  }, [])
+
+  useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop =
         messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
-  // Auto-resize du textarea
-  const autoResize = React.useCallback(() => {
+  const autoResize = useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "0px";
-    const next = Math.min(el.scrollHeight, 160); // cap à ~8-9 lignes
+    const next = Math.min(el.scrollHeight, 160);
     el.style.height = next + "px";
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     autoResize();
   }, [inputValue, autoResize]);
 
   const handleSend = () => {
     if (inputValue.trim() === "") return;
     setMessages((prev) => [
-      ...prev,
+      ...(prev ?? []),
       {
         id: String(Date.now()),
         sender: "You",
@@ -121,13 +142,24 @@ export default function ChatComponent({
             <ArrowLeft className="w-5 h-5" />
           </Button>
         )}
-        <Avatar className="w-10 h-10">
-          <AvatarImage src="/placeholder-avatar.jpg" alt="Eliott Tesnier" />
-          <AvatarFallback>ET</AvatarFallback>
-        </Avatar>
-        <div className="min-w-0">
-          <div className="font-semibold text-base truncate">Eliott Tesnier</div>
-        </div>
+        {conv ? (
+          <>
+            <Avatar className="w-10 h-10">
+              <AvatarImage src="/placeholder-avatar.jpg" alt="Eliott Tesnier" />
+              <AvatarFallback>ET</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <div className="font-semibold text-base truncate">Eliott Tesnier</div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="min-w-0">
+              <div className="font-semibold text-base truncate">No active threads </div>
+            </div>
+          </>
+        )}
+
       </div>
 
       {/* Zone messages */}
@@ -137,22 +169,24 @@ export default function ChatComponent({
         aria-live="polite"
       >
         {/* Message système */}
-        <div className="flex items-center gap-3 justify-center py-2">
-          <Avatar className="w-8 h-8">
-            <AvatarImage src="/placeholder-avatar.jpg" alt="Eliott Tesnier" />
-            <AvatarFallback>ET</AvatarFallback>
-          </Avatar>
-          <div>
-            <span className="font-medium text-sm">Eliott Tesnier</span>
-            <span className="block text-xs text-muted-foreground">
-              Starting conversation with Eliott Tesnier
-            </span>
+        {conv && (
+          <div className="flex items-center gap-3 justify-center py-2">
+            <Avatar className="w-8 h-8">
+              <AvatarImage src="/placeholder-avatar.jpg" alt="Eliott Tesnier" />
+              <AvatarFallback>ET</AvatarFallback>
+            </Avatar>
+            <div>
+              <span className="font-medium text-sm">Eliott Tesnier</span>
+              <span className="block text-xs text-muted-foreground">
+                Starting conversation with Eliott Tesnier
+              </span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Messages */}
         <div className="space-y-3">
-          {messages.map((message) => (
+          {messages && messages.map((message) => (
             <div
               key={message.id}
               className={`flex items-end gap-2 ${
@@ -187,41 +221,43 @@ export default function ChatComponent({
       </div>
 
       {/* Composer */}
-      <div className="border-t p-2 bg-background sticky bottom-0 z-10 pb-[env(safe-area-inset-bottom)]">
-        <div className="flex gap-2 items-end w-full">
-          <Button size="icon" variant="outline" className="shrink-0 h-[44px]">
-            <Paperclip className="w-5 h-5" />
-          </Button>
-          <div className="relative flex-1">
-            <Textarea
-              ref={textareaRef}
-              placeholder="Type your message..."
-              className="w-full min-h-[44px] max-h-[160px] pr-12 resize-none"
-              rows={1}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onInput={autoResize}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-              style={{ overflowY: "auto" }}
-            />
-            <Button
-              type="button"
-              size="icon"
-              aria-label="Envoyer"
-              className="absolute right-2 top-1/2 -translate-y-1/2 h-[36px] w-[36px] p-0 rounded-full !bg-blue-600 text-white shadow-md group transition-transform duration-200 disabled:opacity-60"
-              onClick={handleSend}
-              disabled={!inputValue.trim()}
-            >
-              <SendHorizontal className="w-5 h-5 text-white transition-transform duration-200 group-hover:rotate-[-45deg] group-active:scale-110 group-active:rotate-[-90deg]" />
+      {conv && (
+        <div className="border-t p-2 bg-background sticky bottom-0 z-10 pb-[env(safe-area-inset-bottom)]">
+          <div className="flex gap-2 items-end w-full">
+            <Button size="icon" variant="outline" className="shrink-0 h-[44px]">
+              <Paperclip className="w-5 h-5" />
             </Button>
+            <div className="relative flex-1">
+              <Textarea
+                ref={textareaRef}
+                placeholder="Type your message..."
+                className="w-full min-h-[44px] max-h-[160px] pr-12 resize-none"
+                rows={1}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onInput={autoResize}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                style={{ overflowY: "auto" }}
+              />
+              <Button
+                type="button"
+                size="icon"
+                aria-label="Envoyer"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-[36px] w-[36px] p-0 rounded-full !bg-blue-600 text-white shadow-md group transition-transform duration-200 disabled:opacity-60"
+                onClick={handleSend}
+                disabled={!inputValue.trim()}
+              >
+                <SendHorizontal className="w-5 h-5 text-white transition-transform duration-200 group-hover:rotate-[-45deg] group-active:scale-110 group-active:rotate-[-90deg]" />
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
