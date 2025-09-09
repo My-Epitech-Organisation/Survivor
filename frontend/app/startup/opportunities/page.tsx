@@ -2,6 +2,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import StartupNavigation from "@/components/StartupNavigation";
 import { getAPIUrl } from "@/lib/config";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, Filter, Users, DollarSign } from "lucide-react";
 
 type PartnerItem = {
   id: string;
@@ -53,6 +63,19 @@ export default function StartupOpportunities() {
   const fundingCardRef = useRef<HTMLDivElement | null>(null);
   const fundingListRef = useRef<HTMLDivElement | null>(null);
 
+  const [partnerTypes, setPartnerTypes] = useState<string[]>([]);
+  const [investorTypes, setInvestorTypes] = useState<string[]>([]);
+  const [investmentFocuses, setInvestmentFocuses] = useState<string[]>([]);
+
+  const [activePartnerFilters, setActivePartnerFilters] = useState({
+    types: [] as string[],
+  });
+
+  const [activeInvestorFilters, setActiveInvestorFilters] = useState({
+    types: [] as string[],
+    focuses: [] as string[],
+  });
+
   useEffect(() => {
     const fetchPartners = async () => {
       try {
@@ -61,6 +84,13 @@ export default function StartupOpportunities() {
         if (!res.ok) return;
         const data = await res.json();
         setPartners(data);
+
+        const uniqueTypes = [
+          ...new Set(
+            data.map((partner: PartnerItem) => partner.partnership_type).filter(Boolean)
+          ),
+        ];
+        setPartnerTypes(uniqueTypes as string[]);
       } catch {
       }
     };
@@ -75,6 +105,19 @@ export default function StartupOpportunities() {
         if (!res.ok) return;
         const data = await res.json();
         setInvestors(data);
+
+        const uniqueTypes = [
+          ...new Set(
+            data.map((investor: InvestorMatch) => investor.investor_type).filter(Boolean)
+          ),
+        ];
+        const uniqueFocuses = [
+          ...new Set(
+            data.map((investor: InvestorMatch) => investor.investment_focus).filter(Boolean)
+          ),
+        ];
+        setInvestorTypes(uniqueTypes as string[]);
+        setInvestmentFocuses(uniqueFocuses as string[]);
       } catch {
       }
     };
@@ -97,7 +140,7 @@ export default function StartupOpportunities() {
           const secondRect = second.getBoundingClientRect();
           gap = Math.max(0, secondRect.top - (firstRect.top + firstRect.height));
         }
-        twoItemsHeight = itemH * 2.5 + gap;
+        twoItemsHeight = itemH * 2 + gap;
       }
 
       const min = 120;
@@ -118,6 +161,38 @@ export default function StartupOpportunities() {
       window.removeEventListener("orientationchange", compute);
     };
   }, [partners, investors]);
+
+  const handlePartnerFiltersChange = (filters: { types: string[] }) => {
+    setActivePartnerFilters(filters);
+  };
+
+  const handleInvestorFiltersChange = (filters: { types: string[]; focuses: string[] }) => {
+    setActiveInvestorFilters(filters);
+  };
+
+  const getFilteredPartners = () => {
+    return partners.filter((partner) => {
+      const typeMatch =
+        activePartnerFilters.types.length === 0 ||
+        activePartnerFilters.types.includes(partner.partnership_type || "");
+      return typeMatch;
+    });
+  };
+
+  const getFilteredInvestors = () => {
+    return investors.filter((investor) => {
+      const typeMatch =
+        activeInvestorFilters.types.length === 0 ||
+        activeInvestorFilters.types.includes(investor.investor_type || "");
+      const focusMatch =
+        activeInvestorFilters.focuses.length === 0 ||
+        activeInvestorFilters.focuses.includes(investor.investment_focus || "");
+      return typeMatch && focusMatch;
+    });
+  };
+
+  const filteredPartners = getFilteredPartners();
+  const filteredInvestors = getFilteredInvestors();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
@@ -165,16 +240,73 @@ export default function StartupOpportunities() {
               <h3 className="text-2xl font-semibold text-app-text-primary mb-6">
                 Partners
               </h3>
+
+              {/* Partner Filters */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Filter className="h-5 w-5 text-app-text-secondary" />
+                  <span className="text-lg font-medium text-app-text-primary">Filters</span>
+                </div>
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex-1 min-w-[200px]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users className="h-4 w-4 text-app-blue-primary" />
+                      <span className="text-sm font-medium text-app-text-primary">Type</span>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="w-full justify-between">
+                          {activePartnerFilters.types.length === 0
+                            ? "All Types"
+                            : activePartnerFilters.types.length === 1
+                            ? activePartnerFilters.types[0]
+                            : `${activePartnerFilters.types.length} selected`}
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-full">
+                        <DropdownMenuLabel>Select Type</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {partnerTypes.map((type) => (
+                          <DropdownMenuCheckboxItem
+                            key={type}
+                            checked={activePartnerFilters.types.includes(type)}
+                            onCheckedChange={(checked) =>
+                              handlePartnerFiltersChange({
+                                types: checked
+                                  ? [...activePartnerFilters.types, type]
+                                  : activePartnerFilters.types.filter((t) => t !== type),
+                              })
+                            }
+                          >
+                            {type}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <Button
+                      variant="ghost"
+                      className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap"
+                      onClick={() => handlePartnerFiltersChange({ types: [] })}
+                    >
+                      Clear
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
               <div
                 ref={partnersListRef}
                 className="space-y-4 overflow-y-auto flex-1"
               >
-                {partners.length === 0 ? (
+                {filteredPartners.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
-                    No partners available.
+                    {partners.length === 0 ? "No partners available." : "No partners match your filters."}
                   </div>
                 ) : (
-                  partners.map((p) => (
+                  filteredPartners.map((p) => (
                     <div
                       key={p.id}
                       className="border border-app-border rounded-md p-4 bg-white"
@@ -209,13 +341,109 @@ export default function StartupOpportunities() {
               <h3 className="text-2xl font-semibold text-app-text-primary mb-6">
                 Funding opportunities
               </h3>
+
+              {/* Investor Filters */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Filter className="h-5 w-5 text-app-text-secondary" />
+                  <span className="text-lg font-medium text-app-text-primary">Filters</span>
+                </div>
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex-1 min-w-[200px]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <DollarSign className="h-4 w-4 text-app-green-primary" />
+                      <span className="text-sm font-medium text-app-text-primary">Type</span>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="w-full justify-between">
+                          {activeInvestorFilters.types.length === 0
+                            ? "All Types"
+                            : activeInvestorFilters.types.length === 1
+                            ? activeInvestorFilters.types[0]
+                            : `${activeInvestorFilters.types.length} selected`}
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-full">
+                        <DropdownMenuLabel>Select Type</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {investorTypes.map((type) => (
+                          <DropdownMenuCheckboxItem
+                            key={type}
+                            checked={activeInvestorFilters.types.includes(type)}
+                            onCheckedChange={(checked) =>
+                              handleInvestorFiltersChange({
+                                types: checked
+                                  ? [...activeInvestorFilters.types, type]
+                                  : activeInvestorFilters.types.filter((t) => t !== type),
+                                focuses: activeInvestorFilters.focuses,
+                              })
+                            }
+                          >
+                            {type}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <div className="flex-1 min-w-[200px]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users className="h-4 w-4 text-app-purple-primary" />
+                      <span className="text-sm font-medium text-app-text-primary">Focus</span>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="w-full justify-between">
+                          {activeInvestorFilters.focuses.length === 0
+                            ? "All Focuses"
+                            : activeInvestorFilters.focuses.length === 1
+                            ? activeInvestorFilters.focuses[0]
+                            : `${activeInvestorFilters.focuses.length} selected`}
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-full">
+                        <DropdownMenuLabel>Select Focus</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {investmentFocuses.map((focus) => (
+                          <DropdownMenuCheckboxItem
+                            key={focus}
+                            checked={activeInvestorFilters.focuses.includes(focus)}
+                            onCheckedChange={(checked) =>
+                              handleInvestorFiltersChange({
+                                types: activeInvestorFilters.types,
+                                focuses: checked
+                                  ? [...activeInvestorFilters.focuses, focus]
+                                  : activeInvestorFilters.focuses.filter((f) => f !== focus),
+                              })
+                            }
+                          >
+                            {focus}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <Button
+                      variant="ghost"
+                      className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap"
+                      onClick={() => handleInvestorFiltersChange({ types: [], focuses: [] })}
+                    >
+                      Clear
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
               <div ref={fundingListRef} className="space-y-4 overflow-y-auto flex-1">
-                {investors.length === 0 ? (
+                {filteredInvestors.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
-                    No funding opportunities available.
+                    {investors.length === 0 ? "No funding opportunities available." : "No funding opportunities match your filters."}
                   </div>
                 ) : (
-                  investors.map((inv) => (
+                  filteredInvestors.map((inv) => (
                     <div
                       key={inv.id}
                       className="border border-app-border rounded-md p-4 bg-white"
