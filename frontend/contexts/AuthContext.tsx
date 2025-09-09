@@ -47,32 +47,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // Tentative de récupération des informations de startup depuis l'API
-      console.log(`getUserStartupInfo: Attempting to fetch startup info (attempt ${retryCount + 1}/${MAX_STARTUP_INFO_RETRIES})`);
-      
-      // Note: cet endpoint est à adapter en fonction de votre API
-      const response = await api.get<{ id: number, name: string }>({
-        endpoint: "/admin/founder-startup/"
-      });
+      // Si l'utilisateur est un fondateur mais n'a pas de founderId, essayer de récupérer ses données complètes
+      if (!currentUser.founderId) {
+        console.log("getUserStartupInfo: User is a founder but has no founderId, fetching complete user data");
+        
+        // Tenter de récupérer les données utilisateur complètes qui pourraient contenir le founderId
+        const userResponse = await api.get<User>({
+          endpoint: "/user"
+        });
+        
+        if (userResponse.data && userResponse.data.founderId) {
+          console.log("getUserStartupInfo: Got founderId from user endpoint", userResponse.data.founderId);
+          currentUser = {
+            ...currentUser,
+            founderId: userResponse.data.founderId
+          };
+        } else {
+          console.log("getUserStartupInfo: Still no founderId after fetching user data");
+        }
+      }
 
-      if (response.data && response.data.id) {
-        const enrichedUser = {
-          ...currentUser,
-          startupId: response.data.id
-        };
+      // Si nous avons un founderId, essayer de récupérer les informations de startup
+      if (currentUser.founderId) {
+        console.log(`getUserStartupInfo: Attempting to fetch startup info (attempt ${retryCount + 1}/${MAX_STARTUP_INFO_RETRIES})`);
         
-        // Stockage des données enrichies avec un timestamp
-        const storageData = {
-          user: enrichedUser,
-          timestamp: Date.now()
-        };
-        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(storageData));
-        
-        console.log("getUserStartupInfo: Successfully retrieved startup info", enrichedUser);
-        return enrichedUser;
+        const response = await api.get<{ FounderStartupID: number, FounderName: string }>({
+          endpoint: `/founders/${currentUser.founderId}/`
+        });
+
+        if (response.data && response.data.FounderStartupID) {
+          const enrichedUser = {
+            ...currentUser,
+            startupId: response.data.FounderStartupID
+          };
+          
+          // Stockage des données enrichies avec un timestamp
+          const storageData = {
+            user: enrichedUser,
+            timestamp: Date.now()
+          };
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(storageData));
+          
+          console.log("getUserStartupInfo: Successfully retrieved startup info", enrichedUser);
+          return enrichedUser;
+        }
+      } else {
+        console.log("getUserStartupInfo: User is a founder but has no founderId");
       }
       
-      throw new Error("Invalid response format");
+      throw new Error("Invalid response format or missing founderId");
     } catch (error) {
       console.error("getUserStartupInfo: Error fetching startup info", error);
       
@@ -86,9 +109,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Fallback: utiliser un ID par défaut pour les fondateurs
       console.warn("getUserStartupInfo: Maximum retries reached, using fallback startupId (1)");
+      
+      // Si l'utilisateur a un founderId mais que nous n'avons pas pu récupérer le startupId,
+      // on utilise le founderId comme startupId par défaut
+      const fallbackId = currentUser.founderId || 1;
+      
       const fallbackUser = {
         ...currentUser,
-        startupId: 1 // ID par défaut comme fallback
+        startupId: fallbackId
       };
       
       // Stockage des données avec fallback
@@ -122,6 +150,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 console.log('Using cached user data', cachedData.user);
                 setUser(cachedData.user);
                 setIsLoading(false);
+                
+                // Même avec des données en cache valides, si c'est un fallback,
+                // essayer de rafraîchir les données en arrière-plan
+                if (cachedData.isFallback) {
+                  console.log('Cached data is fallback, trying to refresh in background');
+                  refreshUserInfo().catch(e => console.warn('Background refresh failed:', e));
+                }
                 return;
               } else {
                 console.log('Cached user data expired, fetching fresh data');
@@ -138,9 +173,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             throw new Error('Invalid user data received');
           }
           
-          // Enrichir les données utilisateur avec les informations de startup si nécessaire
-          const enrichedUser = await getUserStartupInfo(resp.data);
-          setUser(enrichedUser);
+          // Si l'utilisateur est un fondateur et n'a pas de startupId, enrichir les données
+          if (resp.data.role === 'founder' && !resp.data.startupId) {
+            console.log('User is a founder without startupId, enriching data');
+            // Enrichir les données utilisateur avec les informations de startup
+            const enrichedUser = await getUserStartupInfo(resp.data);
+            setUser(enrichedUser);
+          } else {
+            // Sinon, utiliser les données telles quelles
+            setUser(resp.data);
+          }
         } catch (error) {
           console.error("Authentication error:", error);
           logout();
@@ -155,9 +197,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (token: string, userData: User) => {
     document.cookie = `authToken=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
     
+    // Si les données utilisateur contiennent déjà un startupId, les utiliser directement
+    if (userData.startupId) {
+      console.log("login: User already has startupId", userData);
+      setUser(userData);
+      return;
+    }
+    
     // Pour les fondateurs, essayer de récupérer les informations de startup
     if (userData.role === 'founder') {
       try {
+        // Si l'utilisateur est un fondateur mais n'a pas de founderId, essayer de récupérer ses données complètes
+        if (!userData.founderId) {
+          console.log("login: User is a founder but has no founderId, fetching complete user data first");
+          // Récupérer d'abord les données utilisateur complètes qui pourraient contenir le founderId
+          const userResponse = await api.get<User>({
+            endpoint: "/user"
+          });
+          
+          if (userResponse.data && userResponse.data.founderId) {
+            console.log("login: Got founderId from user endpoint", userResponse.data.founderId);
+            userData = {
+              ...userData,
+              founderId: userResponse.data.founderId
+            };
+          }
+        }
+        
+        // Enrichir les données utilisateur
         const enrichedUser = await getUserStartupInfo(userData);
         setUser(enrichedUser);
       } catch (error) {
@@ -208,10 +275,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Invalid user data');
       }
 
-      // Récupérer les informations de startup si nécessaire
-      const enrichedUser = await getUserStartupInfo(response.data);
-      setUser(enrichedUser);
+      // Si l'utilisateur est un fondateur et n'a pas de startupId, enrichir les données
+      let enrichedUser = response.data;
+      if (response.data.role === 'founder' && !response.data.startupId) {
+        // Récupérer les informations de startup si nécessaire
+        enrichedUser = await getUserStartupInfo(response.data);
+      }
       
+      setUser(enrichedUser);
       console.log('refreshUserInfo: User info refreshed successfully', enrichedUser);
       return enrichedUser;
     } catch (error) {
