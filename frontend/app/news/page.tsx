@@ -103,12 +103,12 @@ export default function News() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
         <Navigation />
 
         <main className="flex-1 py-6">
           <div className="max-w-[90rem] mx-auto px-4 sm:px-6">
-            <h1 className="text-3xl font-bold text-app-text-primary mb-6">
+            <h1 className="font-heading text-3xl font-bold text-app-text-primary mb-6">
               News
             </h1>
 

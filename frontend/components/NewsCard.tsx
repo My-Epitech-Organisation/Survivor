@@ -88,7 +88,7 @@ export default function NewsCard({ item }: NewsCardProps) {
 
         {/* Content */}
         <div className="p-4 pt-3 flex-1 flex flex-col">
-          <h3 className="font-semibold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors flex-1">
+          <h3 className="font-semibold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-jeb-hover transition-colors flex-1">
             {item.title}
           </h3>
 
@@ -106,7 +106,7 @@ export default function NewsCard({ item }: NewsCardProps) {
         </div>
 
         {/* Hover effect border */}
-        <div className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        <div className="h-1 bg-gradient-to-r from-jeb-one to-jeb-nine transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
       </div>
 
       <Dialog
@@ -125,7 +125,7 @@ export default function NewsCard({ item }: NewsCardProps) {
             </DialogClose>
 
             {/* Header with gradient background */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+            <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-white p-6">
               <DialogHeader>
                 <div className="flex items-center gap-3 mb-2">
                   <div
@@ -175,7 +175,7 @@ export default function NewsCard({ item }: NewsCardProps) {
               {/* Description */}
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <Newspaper className="w-5 h-5 text-blue-600" />
+                  <Newspaper className="w-5 h-5 text-jeb-primary" />
                   Article Details
                 </h3>
                 <div className="prose prose-gray max-w-none">

@@ -96,7 +96,7 @@ export default function AdminUser(props: AdminUserProps) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw]">
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
+                <DialogTitle className="font-heading flex items-center gap-2">
                   Edit User
                 </DialogTitle>
               </DialogHeader>
@@ -131,7 +131,7 @@ export default function AdminUser(props: AdminUserProps) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[400px]">
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
+                <DialogTitle className="font-heading flex items-center gap-2">
                   Delete User
                 </DialogTitle>
               </DialogHeader>
@@ -145,14 +145,14 @@ export default function AdminUser(props: AdminUserProps) {
               </div>
               <DialogFooter className="flex justify-center gap-2 mt-2">
                 <DialogClose asChild ref={closeBtn}>
-                  <Button variant="outline" className="min-w-[90px]">
+                  <Button variant="outline" className="min-w-[90px] cursor-pointer">
                     Cancel
                   </Button>
                 </DialogClose>
                 <Button
                   type="button"
                   variant="destructive"
-                  className="min-w-[90px]"
+                  className="min-w-[90px] cursor-pointer"
                   onClick={() =>
                     props.deleteCB(props.user.id, closeBtn.current)
                   }

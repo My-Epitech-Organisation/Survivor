@@ -65,7 +65,7 @@ export function ResetPasswordForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Reset your password</CardTitle>
+          <CardTitle className="font-heading text-xl">Reset your password</CardTitle>
           <CardDescription>
             Enter your email to receive a password reset link
           </CardDescription>
@@ -98,7 +98,7 @@ export function ResetPasswordForm({
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover"
+                  className="w-full bg-jeb-primary hover:bg-jeb-hover font-bold cursor-pointer"
                   disabled={isLoading}
                 >
                   {isLoading ? "Sending..." : "Send Reset Link"}

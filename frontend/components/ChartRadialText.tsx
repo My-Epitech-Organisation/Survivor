@@ -59,7 +59,7 @@ export function ChartRadialText({
   return (
     <Card className="flex flex-col gap-0">
       <CardHeader className="items-center pb-0">
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="font-heading">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">

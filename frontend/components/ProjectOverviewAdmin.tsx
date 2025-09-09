@@ -116,7 +116,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
   return (
     <Card className="w-full hover:shadow-xl transition-all duration-300 border border-app-border-light bg-app-surface overflow-hidden flex flex-col h-full">
       <CardHeader className="pb-4">
-        <CardTitle className="text-center text-lg font-bold text-app-text-primary mb-2">
+        <CardTitle className="font-heading text-center text-lg font-bold text-app-text-primary mb-2">
           {props.ProjectName}
         </CardTitle>
         {props.ProjectDescription && (
@@ -135,7 +135,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <Building className="h-4 w-4 text-app-blue-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Sector
                   </h4>
                 </div>
@@ -155,7 +155,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <MapPin className="h-4 w-4 text-app-green-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Location
                   </h4>
                 </div>
@@ -174,7 +174,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <TrendingUp className="h-4 w-4 text-app-purple-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Maturity
                   </h4>
                 </div>
@@ -194,7 +194,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle className="h-4 w-4 text-app-green-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Status
                   </h4>
                 </div>
@@ -213,7 +213,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
               <div className="space-y-3">
                 <div className="flex items-center justify-center gap-2">
                   <Target className="h-4 w-4 text-app-orange-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Project Needs
                   </h4>
                 </div>
@@ -231,10 +231,10 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
         <div className="pt-7 h-[8vh] border-t grid grid-cols-2 gap-4 border-app-border-light mt-auto space-y-0">
           <Dialog>
             <DialogTrigger
-              className="rounded-md w-full text-app-white hover:text-app-white bg-app-blue-primary hover:bg-app-blue-primary-hover cursor-pointer transition-all duration-300 group"
+              className="rounded-md w-full text-app-white hover:text-app-white bg-jeb-primary hover:bg-jeb-hover transition-all duration-300 group cursor-pointer"
               onClick={() => fetchProject()}
             >
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2 font-bold">
                 <FaPencilAlt className="h-3.5 w-3.5" />
                 <span>Edit</span>
               </div>
@@ -242,11 +242,11 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
             <DialogOverlay className="fixed inset-0 bg-black/50 z-40" />
             <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-0 min-w-[62%] max-h-[85vh] shadow-lg z-50 flex flex-col">
               <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-lg">
-                <DialogTitle className="text-xl font-bold">
+                <DialogTitle className="font-heading text-xl font-bold">
                   Edit Project
                 </DialogTitle>
                 <DialogClose
-                  className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center"
+                  className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center cursor-pointer"
                   ref={closeDialogRef}
                 >
                   <span className="sr-only">Close</span>
@@ -277,10 +277,10 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
 
           <Dialog>
             <DialogTrigger
-              className="rounded-md w-full text-app-white hover:text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 group"
+              className="rounded-md w-full text-app-white hover:text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer"
               onClick={() => fetchProject()}
             >
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2 font-bold">
                 <div className="relative h-4 w-4 flex items-center justify-center">
                   <FaTrashAlt className="h-4 w-4 absolute transition-opacity duration-200 opacity-100 group-hover:opacity-0" />
                   <FaTrash className="h-4 w-4 absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100" />

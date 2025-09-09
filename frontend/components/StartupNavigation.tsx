@@ -63,13 +63,13 @@ export default function StartupNavigation() {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={handleSwitchToPublic}
-              className="text-gray-600 hover:text-blue-600 transition-colors"
+              className="text-gray-600 hover:text-blue-600 transition-colors cursor-pointer"
             >
               Public Area
             </button>
             <button
               onClick={handleLogout}
-              className="font-bold text-gray-600 hover:text-red-600 transition-colors"
+              className="font-bold text-gray-600 hover:text-red-600 transition-colors cursor-pointer"
             >
               Logout
             </button>
@@ -114,7 +114,7 @@ export default function StartupNavigation() {
                     handleSwitchToPublic();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Public Area
                 </button>
@@ -123,7 +123,7 @@ export default function StartupNavigation() {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-red-600 hover:bg-gray-50 transition-colors"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-red-600 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Logout
                 </button>

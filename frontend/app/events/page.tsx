@@ -34,12 +34,12 @@ export default function Events() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
       <Navigation />
 
       <main className="flex-1 w-full mx-auto py-3 px-2 sm:py-6 sm:px-4 lg:px-8 max-w-screen-xl">
         <div className="py-3 sm:py-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-app-text-primary mb-4 sm:mb-6">
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-app-text-primary mb-4 sm:mb-6">
             Events Calendar
           </h1>
           <div className="mb-4 sm:mb-6">
@@ -57,7 +57,7 @@ export default function Events() {
       >
         <DialogContent className="max-w-[60vw] w-full sm:max-w-[50vw] md:max-w-[40vw] lg:max-w-[40vw] xl:max-w-[40vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl font-bold text-app-text-primary mb-2 pr-8">
+            <DialogTitle className="font-heading text-lg sm:text-xl font-bold text-app-text-primary mb-2 pr-8">
               {selectedEvent?.name}
             </DialogTitle>
           </DialogHeader>
