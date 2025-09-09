@@ -127,7 +127,7 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
                     </div>
                     <p className="text-xs text-muted-foreground truncate">
                       <>
-                        {console.log("LASTMESSAGE", thread.last_message)}
+                        {/* {console.log("LASTMESSAGE", thread.last_message)} */}
                         {thread.last_message.body}
                       </>
                     </p>

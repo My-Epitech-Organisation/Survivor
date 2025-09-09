@@ -4,7 +4,7 @@ import { Textarea } from "./ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Paperclip, ArrowLeft, SendHorizontal } from "lucide-react";
 import api from "@/lib/api";
-import { Thread, Message, ThreadDetails, MessageReceive } from "@/types/chat";
+import { Thread, Message, ThreadDetails, MessageReceive, NewThread } from "@/types/chat";
 import { useAuth } from "@/contexts/AuthContext";
 import Router from "next/router";
 import { MessageCircleOff, MessageCircle } from 'lucide-react';
@@ -217,20 +217,24 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
     // Send the new message to other ! using le truc d'Eliott a la manière d'une socket
     if (conv?.created == false) {
       const participantIds = conv.participants.map(p => p.id);
-      const result = await api.post<Thread>("/threads/", { "participants": participantIds, "message": message.content });
+      const result = await api.post<NewThread>("/threads/", { "participants": participantIds, "message": message.content });
+      conv.created = true;
+      console.log("result: ", result, "resultData: ",result.data)
       if (result.data) {
+        console.log("New thread Created: ", result.data.thread.id);
         onNewConv({
-          id: result.data.id,
+          id: result.data.thread.id,
           participants: conv.participants,
           created: conv.created,
-          created_at: result.data.created_at,
-          last_message_at: result.data.last_message_at,
-          last_message: result.data.last_message,
-          unread_count: result.data.unread_count
+          created_at: result.data.thread.created_at,
+          last_message_at: result.data.thread.last_message_at,
+          last_message: result.data.thread.last_message,
+          unread_count: result.data.thread.unread_count
         });
       }
     } else {
       try {
+        console.log("Je vais envoyer a l'id", conv.id);
         const resp = await api.post<MessageReceive>(`/threads/${conv.id}/messages/`, {body: message.content});
       } catch (error) {
         console.error(error);

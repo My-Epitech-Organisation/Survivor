@@ -67,6 +67,7 @@ export default function StartupMessaging() {
                       ref={chatRef}
                       onNewConv={(thread) => {
                         console.log('New conversation:', thread); // Debug
+                        setActiveThread(thread);
                         sideBarRef.current?.refreshThreads();
                       }}
                       conv={activeThread}

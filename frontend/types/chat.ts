@@ -34,6 +34,12 @@ export interface Thread {
 	unread_count: string
 }
 
+
+export interface NewThread {
+	thread: Thread,
+	message: MessageReceive
+}
+
 export interface ThreadDetails {
 	id:	number,
 	participants: User[],
