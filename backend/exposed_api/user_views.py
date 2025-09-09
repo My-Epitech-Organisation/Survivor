@@ -179,6 +179,7 @@ class AdminUserView(APIView):
             user = serializer.save()
             return Response(AdminUserSerializer(user).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     """
     API endpoint for administrative user management.
     """
