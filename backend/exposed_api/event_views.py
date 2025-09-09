@@ -35,18 +35,18 @@ class EventListView(APIView):
         """
         # Remove id from request data if present
         request_data = request.data.copy()
-        if 'id' in request_data:
-            del request_data['id']
+        if "id" in request_data:
+            del request_data["id"]
 
         # Generate a new ID
         try:
-            max_id = Event.objects.all().order_by('-id').first()
+            max_id = Event.objects.all().order_by("-id").first()
             new_id = 1 if not max_id else max_id.id + 1
         except Exception:
             new_id = 1
 
         # Add the new ID to the request data
-        request_data['id'] = new_id
+        request_data["id"] = new_id
 
         serializer = EventSerializer(data=request_data)
         if serializer.is_valid():
@@ -89,9 +89,10 @@ class EventDetailView(APIView):
             if request.data.get("image_url"):
                 image_path = request.data["image_url"]
                 from django.conf import settings
+
                 media_url = settings.MEDIA_URL.rstrip("/")
                 if image_path.startswith(media_url):
-                    image_path = image_path[len(media_url):]
+                    image_path = image_path[len(media_url) :]
                 serializer.validated_data["image"] = image_path.lstrip("/")
             elif "image" in request.FILES:
                 serializer.validated_data["image"] = request.FILES["image"]

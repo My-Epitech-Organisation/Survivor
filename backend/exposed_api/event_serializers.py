@@ -21,7 +21,7 @@ class EventSerializer(serializers.ModelSerializer):
             "id",
             "pictureURL",
         ]
-        read_only_fields = ['id']
+        read_only_fields = ["id"]
 
     def get_pictureURL(self, obj):
         if obj.image:
