@@ -49,9 +49,6 @@ interface SearchResponse {
   results: SearchItem[];
 }
 
-type DetailedItem = Event | NewsDetailItem | ProjectDetailsProps;
-
-// Type guards for entity data
 const isEvent = (item: any): boolean => {
   return (
     item &&
