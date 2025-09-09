@@ -1,0 +1,253 @@
+import api from '../lib/api';
+import {
+  DriveFile, DriveFolder, DriveShare, DriveActivity, StorageStats,
+  DriveFilesResponse, DriveFoldersResponse, DriveSharesResponse, DriveActivitiesResponse,
+  DriveFileFilters, DriveFolderFilters, FileUpload
+} from '../types/drive';
+
+// Update constants with Drive API endpoints
+const DRIVE_API = {
+  FILES: '/drive/files/',
+  FOLDERS: '/drive/folders/',
+  SHARES: '/drive/shares/',
+  ACTIVITIES: '/drive/activities/',
+  STATS: '/drive/stats/',
+};
+
+/**
+ * Service for interacting with the Drive API
+ */
+export const DriveService = {
+  /**
+   * Get a list of files with optional filtering
+   */
+  getFiles: async (filters?: DriveFileFilters): Promise<DriveFilesResponse> => {
+    const queryParams = new URLSearchParams();
+    
+    if (filters) {
+      if (filters.startup) queryParams.append('startup', filters.startup.toString());
+      if (filters.folder) queryParams.append('folder', filters.folder.toString());
+      if (filters.type) queryParams.append('type', filters.type);
+      if (filters.archived !== undefined) queryParams.append('archived', filters.archived.toString());
+      if (filters.search) queryParams.append('search', filters.search);
+      if (filters.page) queryParams.append('page', filters.page.toString());
+      if (filters.page_size) queryParams.append('page_size', filters.page_size.toString());
+    }
+    
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    const response = await api.get<DriveFile[] | DriveFilesResponse>({
+      endpoint: `${DRIVE_API.FILES}${query}`
+    });
+    
+    // Handle both direct array response and paginated response
+    if (Array.isArray(response.data)) {
+      console.log('Files API returned direct array:', response.data);
+      // Transform direct array into paginated response format
+      return { 
+        count: response.data.length, 
+        next: null, 
+        previous: null, 
+        results: response.data 
+      };
+    }
+    
+    return response.data || { count: 0, next: null, previous: null, results: [] };
+  },
+
+  /**
+   * Get a single file by ID
+   */
+  getFile: async (fileId: number): Promise<DriveFile | null> => {
+    const response = await api.get<DriveFile>({
+      endpoint: `${DRIVE_API.FILES}${fileId}/`
+    });
+    return response.data;
+  },
+
+  /**
+   * Upload a new file
+   */
+  uploadFile: async (startupId: number, fileData: FileUpload): Promise<DriveFile> => {
+    const formData = new FormData();
+    formData.append('file', fileData.file);
+    
+    if (fileData.folder !== undefined) {
+      formData.append('folder', fileData.folder ? fileData.folder.toString() : '');
+    }
+    
+    if (fileData.description) {
+      formData.append('description', fileData.description);
+    }
+    
+    // Use the upload endpoint with the startup ID as a query parameter
+    return api.postFormData<DriveFile>(`${DRIVE_API.FILES}upload/?startup=${startupId}`, formData);
+  },
+
+  /**
+   * Update a file's metadata
+   */
+  updateFile: async (fileId: number, data: Partial<DriveFile>): Promise<DriveFile | null> => {
+    const response = await api.patch<DriveFile>(`${DRIVE_API.FILES}${fileId}/`, data);
+    return response.data;
+  },
+
+  /**
+   * Delete a file
+   */
+  deleteFile: async (fileId: number): Promise<void> => {
+    await api.delete(`${DRIVE_API.FILES}${fileId}/`);
+  },
+
+  /**
+   * Archive a file (soft delete)
+   */
+  archiveFile: async (fileId: number): Promise<void> => {
+    await api.post(`${DRIVE_API.FILES}${fileId}/archive/`);
+  },
+
+  /**
+   * Restore an archived file
+   */
+  restoreFile: async (fileId: number): Promise<void> => {
+    await api.post(`${DRIVE_API.FILES}${fileId}/restore/`);
+  },
+
+  /**
+   * Download a file - returns the download URL to be used in a new window or iframe
+   */
+  getDownloadUrl: (fileId: number): string => {
+    const token = localStorage.getItem('authToken');
+    return `/api${DRIVE_API.FILES}${fileId}/download/?token=${token}`;
+  },
+
+  /**
+   * Get a list of folders with optional filtering
+   */
+  getFolders: async (filters?: DriveFolderFilters): Promise<DriveFoldersResponse> => {
+    const queryParams = new URLSearchParams();
+    
+    if (filters) {
+      if (filters.startup) queryParams.append('startup', filters.startup.toString());
+      if (filters.parent) queryParams.append('parent', filters.parent.toString());
+      if (filters.search) queryParams.append('search', filters.search);
+      if (filters.page) queryParams.append('page', filters.page.toString());
+      if (filters.page_size) queryParams.append('page_size', filters.page_size.toString());
+    }
+    
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    const response = await api.get<DriveFolder[] | DriveFoldersResponse>({
+      endpoint: `${DRIVE_API.FOLDERS}${query}`
+    });
+    
+    // Handle both direct array response and paginated response
+    if (Array.isArray(response.data)) {
+      console.log('Folders API returned direct array:', response.data);
+      // Transform direct array into paginated response format
+      return { 
+        count: response.data.length, 
+        next: null, 
+        previous: null, 
+        results: response.data 
+      };
+    }
+    
+    return response.data || { count: 0, next: null, previous: null, results: [] };
+  },
+
+  /**
+   * Get a single folder by ID
+   */
+  getFolder: async (folderId: number): Promise<DriveFolder | null> => {
+    const response = await api.get<DriveFolder>({
+      endpoint: `${DRIVE_API.FOLDERS}${folderId}/`
+    });
+    return response.data;
+  },
+
+  /**
+   * Create a new folder
+   */
+  createFolder: async (startupId: number, name: string, parentId?: number): Promise<DriveFolder | null> => {
+    const response = await api.post<DriveFolder>(DRIVE_API.FOLDERS, {
+      startup: startupId,
+      name,
+      parent: parentId || null
+    });
+    return response.data;
+  },
+
+  /**
+   * Update a folder
+   */
+  updateFolder: async (folderId: number, data: Partial<DriveFolder>): Promise<DriveFolder | null> => {
+    const response = await api.patch<DriveFolder>(`${DRIVE_API.FOLDERS}${folderId}/`, data);
+    return response.data;
+  },
+
+  /**
+   * Delete a folder
+   */
+  deleteFolder: async (folderId: number): Promise<void> => {
+    await api.delete(`${DRIVE_API.FOLDERS}${folderId}/`);
+  },
+
+  /**
+   * Get storage statistics for a startup
+   */
+  getStorageStats: async (startupId: number): Promise<StorageStats | null> => {
+    const response = await api.get<StorageStats>({
+      endpoint: `${DRIVE_API.STATS}${startupId}/`
+    });
+    return response.data;
+  },
+
+  /**
+   * Get drive activities for a startup
+   */
+  getActivities: async (startupId: number, page: number = 1, pageSize: number = 10): Promise<DriveActivitiesResponse> => {
+    const query = `?startup=${startupId}&page=${page}&page_size=${pageSize}`;
+    const response = await api.get<DriveActivitiesResponse>({
+      endpoint: `${DRIVE_API.ACTIVITIES}${query}`
+    });
+    return response.data || { count: 0, next: null, previous: null, results: [] };
+  },
+
+  /**
+   * Create a share for a file or folder
+   */
+  createShare: async (data: { file?: number, folder?: number, expires_at?: string }): Promise<DriveShare | null> => {
+    const response = await api.post<DriveShare>(DRIVE_API.SHARES, data);
+    return response.data;
+  },
+
+  /**
+   * Get shares for a file or folder
+   */
+  getShares: async (fileId?: number, folderId?: number): Promise<DriveSharesResponse> => {
+    const queryParams = new URLSearchParams();
+    
+    if (fileId) queryParams.append('file', fileId.toString());
+    if (folderId) queryParams.append('folder', folderId.toString());
+    
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    const response = await api.get<DriveSharesResponse>({
+      endpoint: `${DRIVE_API.SHARES}${query}`
+    });
+    return response.data || { count: 0, next: null, previous: null, results: [] };
+  },
+
+  /**
+   * Deactivate a share
+   */
+  deactivateShare: async (shareId: number): Promise<DriveShare | null> => {
+    const response = await api.patch<DriveShare>(`${DRIVE_API.SHARES}${shareId}/`, { is_active: false });
+    return response.data;
+  },
+
+  /**
+   * Delete a share
+   */
+  deleteShare: async (shareId: number): Promise<void> => {
+    await api.delete(`${DRIVE_API.SHARES}${shareId}/`);
+  }
+};
