@@ -20,6 +20,7 @@ import {
 } from "@radix-ui/react-dialog";
 import AdminProjectForm from "@/components/AdminProjectForm";
 import { TbLoader3 } from "react-icons/tb";
+import Footer from "@/components/Footer";
 
 export default function AdminProjects() {
   const [projects, setProjects] = useState<ProjectOverviewProps[]>([]);
@@ -149,30 +150,26 @@ export default function AdminProjects() {
         ) : (
           <>
             <div className="flex items-center justify-between mb-8">
-              <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary">
+              <h1 className="font-heading text-4xl md:text-5xl font-bold text-app-text-primary">
                 Projects Management
               </h1>
               <Dialog>
                 <DialogTrigger
-                  className="inline-flex items-center justify-center gap-2 bg-app-blue-primary hover:bg-app-blue-primary-hover rounded-lg px-6 py-3 text-white font-medium shadow-md hover:shadow-lg transition-all duration-300 group cursor-pointer"
                   onClick={(e) => {
                     const button = e.currentTarget;
                     button.classList.add("scale-95");
                     setTimeout(() => button.classList.remove("scale-95"), 150);
                   }}
                 >
-                  <div className="relative w-5 h-5 flex items-center justify-center">
-                    <FaPlus className="h-5 w-5 text-white absolute transition-all duration-300 opacity-100 group-hover:rotate-90" />
-                  </div>
-                  <span className="hidden md:block text-white font-medium">
-                    Add New Project
-                  </span>
+                  <button className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer">
+                    Add Project
+                  </button>
                 </DialogTrigger>
                 <DialogOverlay className="fixed inset-0 bg-black/50 z-40" />
                 <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-0 w-[95%] max-w-[1200px] max-h-[85vh] shadow-lg z-50 flex flex-col">
                   <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-lg">
-                    <DialogTitle className="text-xl font-bold">
-                      Add New Project
+                    <DialogTitle className="font-heading text-xl font-bold">
+                      Add new Project
                     </DialogTitle>
                     <DialogClose asChild ref={closeDialogRef}>
                       <button
@@ -229,6 +226,7 @@ export default function AdminProjects() {
           </>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

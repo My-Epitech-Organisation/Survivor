@@ -24,6 +24,7 @@ import { User as UserIcon } from "lucide-react";
 import api from "@/lib/api";
 import AdminUser from "@/components/AdminUser";
 import { toast } from "sonner";
+import Footer from "@/components/Footer";
 
 type SortColumn =
   | "id"
@@ -243,7 +244,7 @@ export default function AdminUsers() {
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw] max-h-[85vh] overflow-y-auto">
                     <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2">
+                      <DialogTitle className="font-heading flex items-center gap-2">
                         Add User
                       </DialogTitle>
                     </DialogHeader>
@@ -394,6 +395,7 @@ export default function AdminUsers() {
           </>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

@@ -24,6 +24,7 @@ import {
   DialogTitle,
   DialogHeader,
 } from "@/components/ui/dialog";
+import Footer from "@/components/Footer";
 
 type SortColumn =
   | "id"
@@ -274,7 +275,7 @@ export default function AdminNewsPage() {
         ) : (
           <>
             <div className="flex items-center justify-between mb-8">
-              <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
+              <h1 className="font-heading text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
                 News Management
               </h1>
               <Dialog>
@@ -285,8 +286,8 @@ export default function AdminNewsPage() {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw] max-h-[85vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                      Create New News
+                    <DialogTitle className="font-heading flex items-center gap-2">
+                      Create new News
                     </DialogTitle>
                   </DialogHeader>
                   <AdminNewsForm onSubmit={(data) => handleCreateNews(data)} />
@@ -481,6 +482,7 @@ export default function AdminNewsPage() {
           </>
         )}
       </main>
+      <Footer />
     </div>
   );
 }
