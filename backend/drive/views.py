@@ -45,7 +45,7 @@ class StartupDrivePermission(permissions.BasePermission):
             return True
 
         startup = None
-        if isinstance(obj, DriveFolder) or isinstance(obj, DriveFile):
+        if isinstance(obj, DriveFolder | DriveFile):
             startup = obj.startup
         elif isinstance(obj, DriveShare):
             if obj.file:
@@ -251,9 +251,10 @@ class DriveFileViewSet(viewsets.ModelViewSet):
         content_type, encoding = mimetypes.guess_type(file_path)
         content_type = content_type or "application/octet-stream"
 
-        response = HttpResponse(FileWrapper(open(file_path, "rb")), content_type=content_type)
-        response["Content-Disposition"] = f'attachment; filename="{file_obj.name}"'
-        response["Content-Length"] = os.path.getsize(file_path)
+        with open(file_path, "rb") as file:
+            response = HttpResponse(FileWrapper(file), content_type=content_type)
+            response["Content-Disposition"] = f'attachment; filename="{file_obj.name}"'
+            response["Content-Length"] = os.path.getsize(file_path)
 
         return response
 
@@ -643,9 +644,10 @@ class SharedFileDownloadView(SharedItemView):
         content_type, encoding = mimetypes.guess_type(file_path)
         content_type = content_type or "application/octet-stream"
 
-        response = HttpResponse(FileWrapper(open(file_path, "rb")), content_type=content_type)
-        response["Content-Disposition"] = f'attachment; filename="{file_obj.name}"'
-        response["Content-Length"] = os.path.getsize(file_path)
+        with open(file_path, "rb") as file:
+            response = HttpResponse(FileWrapper(file), content_type=content_type)
+            response["Content-Disposition"] = f'attachment; filename="{file_obj.name}"'
+            response["Content-Length"] = os.path.getsize(file_path)
 
         DriveActivity.objects.create(
             startup=file_obj.startup,

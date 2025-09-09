@@ -37,6 +37,7 @@ class DriveFileAdmin(admin.ModelAdmin):
             if size < 1024 or unit == "TB":
                 return f"{size:.2f} {unit}"
             size /= 1024
+        return f"{size:.2f} TB"  # Default fallback, should not reach here
 
     size_display.short_description = "Size"
 

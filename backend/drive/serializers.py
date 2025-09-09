@@ -77,6 +77,7 @@ class DriveFileSerializer(serializers.ModelSerializer):
             if size < 1024 or unit == "TB":
                 return f"{size:.2f} {unit}"
             size /= 1024
+        return f"{size:.2f} TB"  # Default fallback, should not reach here
 
     def get_uploaded_by_name(self, obj):
         """Get the name of the uploader"""
@@ -109,6 +110,7 @@ class DriveFileListSerializer(serializers.ModelSerializer):
             if size < 1024 or unit == "TB":
                 return f"{size:.2f} {unit}"
             size /= 1024
+        return f"{size:.2f} TB"  # Default fallback, should not reach here
 
     def get_uploaded_by_name(self, obj):
         """Get the name of the uploader"""

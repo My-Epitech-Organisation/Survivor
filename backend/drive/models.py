@@ -40,6 +40,7 @@ class DriveFolder(models.Model):
         ordering = ["name"]
 
     def __str__(self):
+        """Return string representation of the folder"""
         return f"{self.name} ({self.startup.name})"
 
     @property
@@ -93,6 +94,7 @@ class DriveFile(models.Model):
         ordering = ["-uploaded_at"]
 
     def __str__(self):
+        """Return string representation of the file"""
         return f"{self.name} ({self.startup.name})"
 
     @property
@@ -158,6 +160,7 @@ class DriveShare(models.Model):
         ]
 
     def __str__(self):
+        """Return string representation of the share"""
         if self.file:
             return f"Share of file: {self.file.name}"
         return f"Share of folder: {self.folder.name}"
@@ -230,4 +233,5 @@ class DriveActivity(models.Model):
         ordering = ["-timestamp"]
 
     def __str__(self):
+        """Return string representation of the activity"""
         return f"{self.get_action_display()} by {self.user} on {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
