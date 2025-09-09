@@ -112,7 +112,7 @@ def fetch_news_detail(news_id, headers):
 
 def fetch_and_create_news():
     """
-    Fetch news from JEB API and create them in database
+    Fetch news from JEB API and create them in database using NewsDetail model
     """
     try:
         jeb_token = os.environ.get("JEB_API_TOKEN")
@@ -127,19 +127,7 @@ def fetch_and_create_news():
         response = fetch_with_retry(url, params=params, headers=headers)
         news_data = response.json()
 
-        News = apps.get_model("admin_panel", "News")
-
         for item in news_data:
-            news = News(
-                id=item.get("id"),
-                title=item.get("title"),
-                news_date=item.get("news_date"),
-                location=item.get("location"),
-                category=item.get("category"),
-                startup_id=item.get("startup_id"),
-            )
-            news.save()
-
             news_id = item.get("id")
             fetch_news_detail(news_id, headers)
 
@@ -220,24 +208,43 @@ def fetch_startup_detail(startup_id, headers):
         detail_response = fetch_with_retry(detail_url, headers=headers)
         startup_detail_data = detail_response.json()
 
-        startup_detail = StartupDetail(
-            id=startup_detail_data.get("id"),
-            name=startup_detail_data.get("name"),
-            legal_status=startup_detail_data.get("legal_status"),
-            address=startup_detail_data.get("address"),
-            email=startup_detail_data.get("email"),
-            phone=startup_detail_data.get("phone"),
-            created_at=startup_detail_data.get("created_at"),
-            description=startup_detail_data.get("description"),
-            website_url=startup_detail_data.get("website_url"),
-            social_media_url=startup_detail_data.get("social_media_url"),
-            project_status=startup_detail_data.get("project_status"),
-            needs=startup_detail_data.get("needs"),
-            sector=startup_detail_data.get("sector"),
-            maturity=startup_detail_data.get("maturity"),
-            founders_images={},
-        )
+        try:
+            startup_detail = StartupDetail.objects.get(id=startup_detail_data.get("id"))
+            startup_detail.name = startup_detail_data.get("name")
+            startup_detail.legal_status = startup_detail_data.get("legal_status")
+            startup_detail.address = startup_detail_data.get("address")
+            startup_detail.email = startup_detail_data.get("email")
+            startup_detail.phone = startup_detail_data.get("phone")
+            startup_detail.created_at = startup_detail_data.get("created_at")
+            startup_detail.description = startup_detail_data.get("description")
+            startup_detail.website_url = startup_detail_data.get("website_url")
+            startup_detail.social_media_url = startup_detail_data.get("social_media_url")
+            startup_detail.project_status = startup_detail_data.get("project_status")
+            startup_detail.needs = startup_detail_data.get("needs")
+            startup_detail.sector = startup_detail_data.get("sector")
+            startup_detail.maturity = startup_detail_data.get("maturity")
+            startup_detail.founders_images = {}
+        except StartupDetail.DoesNotExist:
+            startup_detail = StartupDetail(
+                id=startup_detail_data.get("id"),
+                name=startup_detail_data.get("name"),
+                legal_status=startup_detail_data.get("legal_status"),
+                address=startup_detail_data.get("address"),
+                email=startup_detail_data.get("email"),
+                phone=startup_detail_data.get("phone"),
+                created_at=startup_detail_data.get("created_at"),
+                description=startup_detail_data.get("description"),
+                website_url=startup_detail_data.get("website_url"),
+                social_media_url=startup_detail_data.get("social_media_url"),
+                project_status=startup_detail_data.get("project_status"),
+                needs=startup_detail_data.get("needs"),
+                sector=startup_detail_data.get("sector"),
+                maturity=startup_detail_data.get("maturity"),
+                founders_images={},
+            )
+
         startup_detail.save()
+        startup_detail.founders.clear()
 
         founders_data = startup_detail_data.get("founders", [])
         founders_images = {}
@@ -247,10 +254,29 @@ def fetch_startup_detail(startup_id, headers):
                 founder_id = founder_data.get("id")
                 founder_name = founder_data.get("name")
 
-                if founder_id and founder_name:
-                    founder = Founder(id=founder_id, name=founder_name, startup_id=startup_id)
+                if not founder_id:
+                    logging.warning(f"Missing founder ID for startup {startup_id}, skipping this founder")
+                    continue
+
+                if not founder_name:
+                    founder_name = f"Unnamed Founder {founder_id}"
+                    logging.warning(f"Missing founder name for ID {founder_id}, using default: {founder_name}")
+
+                try:
+                    founder, created = Founder.objects.get_or_create(
+                        id=founder_id, defaults={"name": founder_name, "startup_id": startup_id}
+                    )
+
+                    founder.name = founder_name
+                    founder.startup_id = startup_id
                     founder.save()
-                    startup_detail.founders.add(founder)
+
+                    if not startup_detail.founders.filter(id=founder_id).exists():
+                        startup_detail.founders.add(founder)
+
+                except Exception as e:
+                    logging.error(f"Error creating/updating founder {founder_id} for startup {startup_id}: {e}")
+                    continue
 
                 try:
                     image_url = settings.JEB_API_FOUNDER_IMAGE_URL.format(startup_id=startup_id, founder_id=founder_id)
@@ -267,9 +293,8 @@ def fetch_startup_detail(startup_id, headers):
                 except Exception as e:
                     logging.error(f"Error fetching founder image for {founder_id}: {e}")
 
-            if founders_images:
-                startup_detail.founders_images = founders_images
-                startup_detail.save()
+            startup_detail.founders_images = founders_images
+            startup_detail.save()
 
         return startup_detail
     except requests.RequestException as e:
@@ -297,21 +322,7 @@ def fetch_and_create_startups():
         response = fetch_with_retry(url, params=params, headers=headers)
         startups_data = response.json()
 
-        StartupList = apps.get_model("admin_panel", "StartupList")
-
         for item in startups_data:
-            startup = StartupList(
-                id=item.get("id"),
-                name=item.get("name"),
-                legal_status=item.get("legal_status"),
-                address=item.get("address"),
-                email=item.get("email"),
-                phone=item.get("phone"),
-                sector=item.get("sector"),
-                maturity=item.get("maturity"),
-            )
-            startup.save()
-
             startup_id = item.get("id")
             fetch_startup_detail(startup_id, headers)
 

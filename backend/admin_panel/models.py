@@ -1,23 +1,10 @@
 from django.db import models
 
 
-# News models
-class News(models.Model):
-    """
-    Represents a news item.
-    """
-
-    news_date = models.CharField(max_length=255, null=True)
-    location = models.CharField(max_length=255, null=True)
-    title = models.CharField(max_length=255, null=False)
-    category = models.CharField(max_length=255, null=True)
-    startup_id = models.IntegerField(null=True)
-    id = models.IntegerField(null=False, primary_key=True)
-
-
+# News model
 class NewsDetail(models.Model):
     """
-    Represents a news detail item.
+    Represents a news item with detailed information.
     """
 
     news_date = models.CharField(max_length=255, null=True)
@@ -47,21 +34,6 @@ class Event(models.Model):
 
 
 # Startup models
-class StartupList(models.Model):
-    """
-    Represents a startup listing.
-    """
-
-    id = models.IntegerField(null=False, primary_key=True)
-    name = models.CharField(max_length=255, null=False)
-    legal_status = models.CharField(max_length=255, null=True)
-    address = models.CharField(max_length=255, null=True)
-    email = models.CharField(max_length=255, null=False)
-    phone = models.CharField(max_length=255, null=True)
-    sector = models.CharField(max_length=255, null=True)
-    maturity = models.CharField(max_length=255, null=True)
-
-
 class StartupDetail(models.Model):
     """
     Represents detailed information about a startup.

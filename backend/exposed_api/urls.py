@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import project_views, user_views, views
+from . import media_views, project_views, user_views, views
 from .event_views import EventDetailView, EventListView
 from .founder_views import FounderDetailView
 from .investor_views import InvestorDetailView
@@ -20,11 +20,17 @@ from .kpi_views import (
 )
 from .news_views import NewsDetailView, NewsListView
 from .partner_views import PartnerDetailView
+from .search_views import AdvancedSearchView
+from .user_views import AdminUserView
 
 app_name = "exposed_api"
 
 
 urlpatterns = [
+    # Media endpoints
+    path("media/upload/", media_views.upload_image, name="media_upload"),
+    # Search endpoint
+    path("search/", AdvancedSearchView.as_view(), name="advanced_search"),
     # Project endpoints
     path("projects/", project_views.ProjectDetailView.as_view(), name="project_create_or_list"),
     path("projects/<int:_id>/", project_views.ProjectDetailView.as_view(), name="project_detail_or_crud"),
@@ -47,6 +53,9 @@ urlpatterns = [
     # User endpoints
     path("user/", user_views.get_current_user, name="current_user"),
     path("user/<int:user_id>/", user_views.user_detail, name="user_detail"),
+    # Admin user management
+    path("users/", AdminUserView.as_view(), name="admin_user_list"),
+    path("users/<int:user_id>/", AdminUserView.as_view(), name="admin_user_detail"),
     # Other endpoints
     path("projectViews/<int:user_id>/", views.project_views, name="project_views"),
     path("projectEngagement/<int:user_id>/", views.project_engagement, name="project_engagement"),

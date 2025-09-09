@@ -2,7 +2,7 @@ from authentication.models import CustomUser
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Event, Founder, Investor, News, NewsDetail, Partner, StartupDetail, StartupList
+from .models import Event, Founder, Investor, NewsDetail, Partner, StartupDetail
 
 
 class NewsDetailAdmin(admin.ModelAdmin):
@@ -11,19 +11,10 @@ class NewsDetailAdmin(admin.ModelAdmin):
     readonly_fields = ["image"]
 
 
-class NewsAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "news_date", "category", "location"]
-
-
 class EventAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "dates", "location", "event_type"]
     fields = ["id", "name", "dates", "location", "description", "event_type", "target_audience", "image"]
     readonly_fields = ["image"]
-
-
-class StartupListAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "legal_status", "sector", "maturity"]
-    fields = ["id", "name", "legal_status", "address", "email", "phone", "sector", "maturity"]
 
 
 class FounderInline(admin.TabularInline):
@@ -145,10 +136,8 @@ class PartnerAdmin(admin.ModelAdmin):
     list_filter = ["partnership_type", "legal_status"]
 
 
-admin.site.register(News, NewsAdmin)
 admin.site.register(NewsDetail, NewsDetailAdmin)
 admin.site.register(Event, EventAdmin)
-admin.site.register(StartupList, StartupListAdmin)
 admin.site.register(StartupDetail, StartupDetailAdmin)
 admin.site.register(Founder, FounderAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)

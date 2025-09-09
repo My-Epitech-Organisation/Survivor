@@ -2,7 +2,7 @@ from authentication.models import CustomUser
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Event, Founder, News, NewsDetail, Partner, StartupDetail, StartupList
+from .models import Event, Founder, NewsDetail, Partner, StartupDetail
 
 DjangoUser = get_user_model()
 
@@ -27,12 +27,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
             return f"{settings.MEDIA_URL}{obj.image}"
         return None
-
-
-class NewsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = News
-        fields = "__all__"
 
 
 class NewsDetailSerializer(serializers.ModelSerializer):
@@ -63,12 +57,6 @@ class EventSerializer(serializers.ModelSerializer):
 
             return f"{settings.MEDIA_URL}{obj.image}"
         return None
-
-
-class StartupListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StartupList
-        fields = "__all__"
 
 
 class FounderSerializer(serializers.ModelSerializer):

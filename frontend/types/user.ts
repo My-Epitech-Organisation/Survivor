@@ -1,4 +1,6 @@
 // types/project.ts
+import { Founder } from "./founders";
+import { Investor } from "./investor";
 import { Roles } from "./role";
 
 export interface User {
@@ -8,5 +10,27 @@ export interface User {
   id: number;
   founderId?: number;
   startupId?: number;
-  userImag?: string;
+  userImage?: string;
+}
+
+export interface UserSimple {
+  name: string;
+  email: string;
+  role: Roles;
+  id: number;
+  founder?: Founder;
+  investor?: Investor;
+  userImage?: string;
+  is_active?: undefined
+}
+
+
+export interface FormUser {
+  name: string;
+  email: string;
+  role: Roles;
+  founder?: Founder;
+  investor?: Investor;
+  userImage?: string;
+  is_active?: boolean
 }

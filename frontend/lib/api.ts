@@ -50,9 +50,14 @@ export const authenticatedFetch = async (
 
 export const apiGet = async (
   endpoint: string,
-  token?: string
+  token?: string,
+  data?: unknown
 ): Promise<Response> => {
-  return authenticatedFetch(endpoint, { method: "GET" }, token);
+  return authenticatedFetch(
+    endpoint,
+    { method: "GET", body: data ? JSON.stringify(data) : undefined },
+    token
+  );
 };
 
 export const apiPost = async (
@@ -80,49 +85,76 @@ export const apiDelete = async (endpoint: string): Promise<Response> => {
 };
 
 export const api = {
-  get: async <T = unknown>(
-    endpoint: string,
-    token?: string
-  ): Promise<{ data: T }> => {
-    const response = await apiGet(endpoint, token);
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+  get: async <T = unknown>({
+    endpoint,
+    data,
+    token
+  }: {
+    endpoint: string;
+    data?: unknown;
+    token?: string;
+  }): Promise<{ data: T | null }> => {
+    try {
+      const response = await apiGet(endpoint, token, data);
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.statusText}`);
+      }
+      const json = await response.json();
+      return { data: json };
+    } catch (error) {
+      console.error(error);
+      return { data: null };
     }
-    const data = await response.json();
-    return { data };
   },
 
   post: async <T = unknown>(
     endpoint: string,
     data?: unknown
-  ): Promise<{ data: T }> => {
+  ): Promise<{ data: T | null }> => {
     const response = await apiPost(endpoint, data);
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    const responseData = await response.json();
-    return { data: responseData };
+    try {
+      const responseData = await response.json();
+      return { data: responseData };
+    } catch (error) {
+      console.error(error);
+      return { data: null as T | null };
+    }
   },
 
   put: async <T = unknown>(
     endpoint: string,
     data?: unknown
-  ): Promise<{ data: T }> => {
+  ): Promise<{ data: T | null }> => {
     const response = await apiPut(endpoint, data);
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    const responseData = await response.json();
-    return { data: responseData };
+    try {
+      const responseData = await response.json();
+      return { data: responseData };
+    } catch (error) {
+      console.error(error);
+      return { data: null as T | null };
+    }
   },
 
-  delete: async <T = unknown>(endpoint: string): Promise<{ data: T }> => {
+  delete: async <T = unknown>(
+    endpoint: string
+  ): Promise<{ data: T | null }> => {
     const response = await apiDelete(endpoint);
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    const responseData = await response.json();
-    return { data: responseData };
+    try {
+      const responseData = await response.json();
+      return { data: responseData };
+    } catch (error) {
+      console.error(error);
+      return { data: null as T | null };
+    }
   },
 };
 
