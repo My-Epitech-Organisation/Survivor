@@ -94,13 +94,13 @@ export default function SearchPage() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case "project":
-        return "text-blue-600 bg-blue-100";
+        return "text-app-blue-primary bg-app-blue-muted";
       case "event":
-        return "text-green-600 bg-green-100";
+        return "text-app-green-primary bg-app-green-light";
       case "news":
-        return "text-orange-600 bg-orange-100";
+        return "text-app-orange-primary bg-app-orange-light";
       default:
-        return "text-blue-600 bg-blue-100";
+        return "text-app-blue-primary bg-app-blue-muted";
     }
   };
 
