@@ -30,7 +30,7 @@ export default function Navigation() {
   };
 
   const handleSwitchToInvestor = () => {
-    router.push("/investor/opportunities");
+    router.push("/investor/messaging");
   };
 
   const handleSwitchToAdmin = () => {
