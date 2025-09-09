@@ -214,9 +214,9 @@ export default function AdminEventForm({
                   className="w-full text-sm text-slate-500
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-md file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-app-blue-primary file:text-white
-                    hover:file:bg-app-blue-primary-hover cursor-pointer"
+                    file:text-sm file:font-bold
+                    file:bg-jeb-primary file:text-white
+                    hover:file:bg-jeb-hover cursor-pointer"
                 />
               </div>
             </div>
@@ -380,13 +380,13 @@ export default function AdminEventForm({
         <DialogClose asChild>
           <Button
             variant="outline"
-            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg cursor-pointer"
+            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg cursor-pointer font-bold"
           >
             Cancel
           </Button>
         </DialogClose>
         <Button
-          className="w-full sm:w-auto px-6 py-2 bg-app-blue-primary hover:bg-app-blue-primary-hover text-white rounded-lg font-semibold shadow cursor-pointer"
+          className="w-full sm:w-auto px-6 py-2 bg-jeb-primary hover:bg-jeb-hover text-white rounded-lg shadow cursor-pointer font-bold"
           onClick={handleSubmit}
         >
           Save

@@ -37,9 +37,9 @@ export default function AdminNavigation() {
           <div className="flex items-center">
             <Link
               href="/admin/dashboard"
-              className="font-heading text-2xl font-black text-app-blue-primary"
+              className="font-heading text-2xl font-black italic text-jeb-primary"
             >
-              JEB <span className="text-sm text-gray-500">Admin</span>
+              JEB <span className="text-sm text-gray-500 not-italic">Admin</span>
             </Link>
           </div>
 
@@ -51,8 +51,8 @@ export default function AdminNavigation() {
                 href={item.href}
                 className={`font-heading transition-colors ${
                   pathname === item.href
-                    ? "text-app-blue-primary font-semibold"
-                    : "text-app-text-secondary hover:text-app-blue-primary font-medium"
+                    ? "text-jeb-primary font-semibold"
+                    : "text-app-text-secondary hover:text-jeb-primary font-medium"
                 }`}
               >
                 {item.label}
@@ -64,7 +64,7 @@ export default function AdminNavigation() {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={handleSwitchToPublic}
-              className="font-heading text-gray-600 hover:text-app-blue-primary transition-colors cursor-pointer"
+              className="font-heading font-medium text-gray-600 hover:text-jeb-primary transition-colors cursor-pointer"
             >
               Public Area
             </button>
@@ -80,7 +80,7 @@ export default function AdminNavigation() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-app-blue-primary focus:outline-none focus:text-app-blue-primary transition-colors"
+              className="text-gray-600 hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -102,8 +102,8 @@ export default function AdminNavigation() {
                   onClick={() => setIsMenuOpen(false)}
                   className={`font-heading block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     pathname === item.href
-                      ? "text-app-blue-primary bg-blue-50"
-                      : "text-gray-600 hover:text-app-blue-primary hover:bg-gray-50"
+                      ? "text-jeb-primary bg-blue-50"
+                      : "text-gray-600 hover:text-jeb-primary hover:bg-gray-50"
                   }`}
                 >
                   {item.label}
@@ -115,7 +115,7 @@ export default function AdminNavigation() {
                     handleSwitchToPublic();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-app-blue-primary hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-jeb-primary hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Public Area
                 </button>

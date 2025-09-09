@@ -231,10 +231,10 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
         <div className="pt-7 h-[8vh] border-t grid grid-cols-2 gap-4 border-app-border-light mt-auto space-y-0">
           <Dialog>
             <DialogTrigger
-              className="rounded-md w-full text-app-white hover:text-app-white bg-app-blue-primary hover:bg-app-blue-primary-hover cursor-pointer transition-all duration-300 group"
+              className="rounded-md w-full text-app-white hover:text-app-white bg-jeb-primary hover:bg-jeb-hover transition-all duration-300 group cursor-pointer"
               onClick={() => fetchProject()}
             >
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2 font-bold">
                 <FaPencilAlt className="h-3.5 w-3.5" />
                 <span>Edit</span>
               </div>
@@ -277,10 +277,10 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
 
           <Dialog>
             <DialogTrigger
-              className="rounded-md w-full text-app-white hover:text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 group"
+              className="rounded-md w-full text-app-white hover:text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer"
               onClick={() => fetchProject()}
             >
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2 font-bold">
                 <div className="relative h-4 w-4 flex items-center justify-center">
                   <FaTrashAlt className="h-4 w-4 absolute transition-opacity duration-200 opacity-100 group-hover:opacity-0" />
                   <FaTrash className="h-4 w-4 absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100" />

@@ -304,13 +304,13 @@ export default function AdminUserForm({
         <DialogClose asChild>
           <Button
             variant="outline"
-            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg cursor-pointer"
+            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg cursor-pointer font-bold"
           >
             Cancel
           </Button>
         </DialogClose>
         <Button
-          className="w-full sm:w-auto px-6 py-2 bg-app-blue-primary hover:bg-app-blue-primary-hover text-white rounded-lg font-semibold shadow cursor-pointer"
+          className="w-full sm:w-auto px-6 py-2 bg-jeb-primary hover:bg-jeb-hover text-white rounded-lg font-bold shadow cursor-pointer"
           onClick={handleSubmitProject}
         >
           Save

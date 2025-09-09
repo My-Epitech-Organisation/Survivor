@@ -84,7 +84,7 @@ function AddFoundersSection({
         </h3>
         <Dialog>
           <DialogTrigger asChild>
-            <button className="bg-app-blue-primary hover:bg-app-blue-primary-hover text-white p-2 rounded-full transition-colors">
+            <button className="bg-jeb-primary hover:bg-jeb-hover text-white p-2 rounded-full transition-colors cursor-pointer">
               <FaPlus size={14} />
             </button>
           </DialogTrigger>
@@ -170,7 +170,7 @@ function AddFoundersSection({
               </div>
               <div className="flex justify-end gap-3 mt-4">
                 <Button
-                  className="cursor-pointer"
+                  className="cursor-pointer font-bold"
                   variant="outline"
                   onClick={() => {
                     setNewFounder({
@@ -183,7 +183,7 @@ function AddFoundersSection({
                   Cancel
                 </Button>
                 <Button
-                  className="cursor-pointer"
+                  className="cursor-pointer bg-jeb-primary hover:bg-jeb-hover font-bold"
                   onClick={() => {
                     if (newFounder.name === "") {
                       toast("Founder error", {
@@ -241,7 +241,7 @@ function AddFoundersSection({
                     <Dialog>
                       <DialogTrigger asChild>
                         <button
-                          className="opacity-0 group-hover:opacity-100 bg-blue-100 hover:bg-blue-200 text-blue-600 p-1.5 rounded-full transition-all cursor-pointer"
+                          className="opacity-0 group-hover:opacity-100 bg-jeb-five hover:bg-jeb-six text-jeb-nine p-1.5 rounded-full transition-all cursor-pointer"
                           onClick={() => handleEditFounder(founder, id)}
                         >
                           <FaEdit size={14} />
@@ -349,7 +349,7 @@ function AddFoundersSection({
                           </div>
                           <div className="flex justify-end gap-3 mt-4">
                             <Button
-                              className="cursor-pointer"
+                              className="cursor-pointer font-bold"
                               variant="outline"
                               onClick={() => {
                                 editCloseRef.current?.click();
@@ -358,7 +358,7 @@ function AddFoundersSection({
                               Cancel
                             </Button>
                             <Button
-                              className="cursor-pointer"
+                              className="cursor-pointer font-bold bg-jeb-primary hover:bg-jeb-hover"
                               onClick={handleSaveEdit}
                             >
                               Save Changes
@@ -725,14 +725,14 @@ export default function AdminProjectForm({
         <DialogClose asChild>
           <Button
             variant="outline"
-            className="cursor-pointer w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700"
+            className="cursor-pointer w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 font-bold"
             onClick={() => {}}
           >
             Cancel
           </Button>
         </DialogClose>
         <Button
-          className="cursor-pointer w-full sm:w-auto px-6 py-2 bg-app-blue-primary hover:bg-app-blue-primary-hover text-white rounded-lg hover:text-white"
+          className="cursor-pointer w-full sm:w-auto px-6 py-2 bg-jeb-primary hover:bg-jeb-hover text-white rounded-lg font-bold"
           onClick={handleSubmitProject}
         >
           Save Project
