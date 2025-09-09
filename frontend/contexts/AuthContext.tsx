@@ -24,7 +24,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  // Nous n'utilisons pas ces états pour le moment, mais ils pourraient être utiles à l'avenir
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_startupInfoRetries, _setStartupInfoRetries] = useState(0);
 
