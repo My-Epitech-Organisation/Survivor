@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
@@ -22,11 +22,11 @@ export default function AdminNewsForm({
     id: 0,
     title: "",
     category: "",
-    news_date: new Date().toISOString().split('T')[0],
+    news_date: new Date().toISOString().split("T")[0],
     location: "",
     startup_id: 0,
     description: "",
-    image_url: ""
+    image_url: "",
   };
 
   const [formData, setFormData] = useState<NewsDetailItem>(
@@ -38,12 +38,16 @@ export default function AdminNewsForm({
 
   const fetchOptions = async () => {
     try {
-      const result = (await api.get<NewsDetailItem[]>({endpoint: "/news/"}));
+      const result = await api.get<NewsDetailItem[]>({ endpoint: "/news/" });
       const newsData = result.data;
 
       if (newsData) {
-        const uniqueCategories = [...new Set(newsData.map(news => news.category))];
-        const uniqueLocations = [...new Set(newsData.map(news => news.location))];
+        const uniqueCategories = [
+          ...new Set(newsData.map((news) => news.category)),
+        ];
+        const uniqueLocations = [
+          ...new Set(newsData.map((news) => news.location)),
+        ];
 
         setCategories(uniqueCategories);
         setLocations(uniqueLocations);
@@ -63,7 +67,9 @@ export default function AdminNewsForm({
     }
   }, [defaultData]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { id, value } = e.target;
 
     const fieldMappings: Record<string, string> = {
@@ -72,7 +78,7 @@ export default function AdminNewsForm({
       "news-date": "news_date",
       "news-location": "location",
       "news-startup-id": "startup_id",
-      "news-description": "description"
+      "news-description": "description",
     };
 
     const fieldName = fieldMappings[id] || id;
@@ -91,10 +97,12 @@ export default function AdminNewsForm({
         reader.onloadend = async () => {
           const base64String = reader.result as string;
           try {
-            const res = await api.post<{ url: string }>("/media/upload/", { url: base64String });
+            const res = await api.post<{ url: string }>("/media/upload/", {
+              url: base64String,
+            });
             if (res && res.data && res.data.url) {
               const imageUrl = res.data.url;
-              setFormData(prev => ({ ...prev, image_url: imageUrl }));
+              setFormData((prev) => ({ ...prev, image_url: imageUrl }));
               toast.success("Image uploaded successfully");
             } else {
               throw new Error("API didn't return an image url");
@@ -114,13 +122,19 @@ export default function AdminNewsForm({
 
   const handleSubmit = async () => {
     try {
-      const requiredFields = ["title", "category", "news_date", "location", "description"];
+      const requiredFields = [
+        "title",
+        "category",
+        "news_date",
+        "location",
+        "description",
+      ];
 
       const missingFields = requiredFields.filter(
         (field) =>
           !formData[field as keyof NewsDetailItem] ||
           (typeof formData[field as keyof NewsDetailItem] === "string" &&
-          (formData[field as keyof NewsDetailItem] as string).trim() === "")
+            (formData[field as keyof NewsDetailItem] as string).trim() === "")
       );
 
       if (missingFields.length > 0) {
@@ -128,9 +142,7 @@ export default function AdminNewsForm({
           className: "!text-red-500",
           description: (
             <span className="text-red-500">
-              Please fill all required fields: {[
-                ...missingFields,
-              ].join(", ")}
+              Please fill all required fields: {[...missingFields].join(", ")}
             </span>
           ),
         });
@@ -144,7 +156,6 @@ export default function AdminNewsForm({
 
       console.debug("Submitting news:", submissionData);
       onSubmit(submissionData);
-
     } catch (error) {
       console.error("Error submitting news:", error);
     }
@@ -156,20 +167,28 @@ export default function AdminNewsForm({
         <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 relative">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">News Information</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                News Information
+              </h2>
             </div>
           </div>
 
           {/* News image upload section */}
           <div className="mb-6 flex flex-col items-center">
             <div className="w-full mb-4">
-              <Label htmlFor="news-image" className="mb-2 block">News Image</Label>
+              <Label htmlFor="news-image" className="mb-2 block">
+                News Image
+              </Label>
               <div className="flex flex-col items-center gap-3">
                 {preview && (
                   <div className="w-full max-h-60 overflow-hidden rounded-lg mb-2">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={preview.startsWith('/') ? `${getBackendUrl()}${preview}` : preview}
+                      src={
+                        preview.startsWith("/")
+                          ? `${getBackendUrl()}${preview}`
+                          : preview
+                      }
                       alt="News preview"
                       className="w-full h-auto object-cover rounded-lg"
                     />
@@ -208,12 +227,19 @@ export default function AdminNewsForm({
                 <select
                   id="news-category"
                   value={formData.category}
-                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      category: e.target.value,
+                    }))
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select a category</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
                   ))}
                 </select>
                 <input
@@ -222,7 +248,10 @@ export default function AdminNewsForm({
                   className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   onChange={(e) => {
                     if (e.target.value) {
-                      setFormData(prev => ({ ...prev, category: e.target.value }));
+                      setFormData((prev) => ({
+                        ...prev,
+                        category: e.target.value,
+                      }));
                     }
                   }}
                 />
@@ -235,7 +264,7 @@ export default function AdminNewsForm({
               type="date"
               placeholder="Enter news date"
               className="cursor-pointer"
-              value={formData.news_date.split('T')[0]}
+              value={formData.news_date.split("T")[0]}
               onChange={handleInputChange}
               required
             />
@@ -246,12 +275,19 @@ export default function AdminNewsForm({
                 <select
                   id="news-location"
                   value={formData.location}
-                  onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      location: e.target.value,
+                    }))
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select a location</option>
-                  {locations.map(location => (
-                    <option key={location} value={location}>{location}</option>
+                  {locations.map((location) => (
+                    <option key={location} value={location}>
+                      {location}
+                    </option>
                   ))}
                 </select>
                 <input
@@ -260,7 +296,10 @@ export default function AdminNewsForm({
                   className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   onChange={(e) => {
                     if (e.target.value) {
-                      setFormData(prev => ({ ...prev, location: e.target.value }));
+                      setFormData((prev) => ({
+                        ...prev,
+                        location: e.target.value,
+                      }));
                     }
                   }}
                 />
@@ -274,11 +313,18 @@ export default function AdminNewsForm({
               placeholder="Enter startup ID if applicable"
               className="cursor-pointer"
               value={formData.startup_id ? formData.startup_id.toString() : ""}
-              onChange={(e) => setFormData(prev => ({ ...prev, startup_id: parseInt(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  startup_id: parseInt(e.target.value) || 0,
+                }))
+              }
             />
 
             <div className="md:col-span-2">
-              <Label htmlFor="news-description" className="mb-2 block">Description *</Label>
+              <Label htmlFor="news-description" className="mb-2 block">
+                Description *
+              </Label>
               <textarea
                 id="news-description"
                 placeholder="Enter news description"

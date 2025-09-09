@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
@@ -21,12 +21,12 @@ export default function AdminEventForm({
   const initialFormData: Event = {
     id: 0,
     name: "",
-    dates: new Date().toISOString().split('T')[0],
+    dates: new Date().toISOString().split("T")[0],
     location: "",
     description: "",
     event_type: "",
     target_audience: "",
-    pictureURL: ""
+    pictureURL: "",
   };
 
   const [formData, setFormData] = useState<Event>(
@@ -39,13 +39,23 @@ export default function AdminEventForm({
 
   const fetchOptions = async () => {
     try {
-      const result = (await api.get<Event[]>({endpoint: "/events/"}));
+      const result = await api.get<Event[]>({ endpoint: "/events/" });
       const eventsData = result.data;
 
       if (eventsData) {
-        const uniqueTypes = [...new Set(eventsData.map(event => event.event_type).filter(Boolean))];
-        const uniqueAudiences = [...new Set(eventsData.map(event => event.target_audience).filter(Boolean))];
-        const uniqueLocations = [...new Set(eventsData.map(event => event.location).filter(Boolean))];
+        const uniqueTypes = [
+          ...new Set(
+            eventsData.map((event) => event.event_type).filter(Boolean)
+          ),
+        ];
+        const uniqueAudiences = [
+          ...new Set(
+            eventsData.map((event) => event.target_audience).filter(Boolean)
+          ),
+        ];
+        const uniqueLocations = [
+          ...new Set(eventsData.map((event) => event.location).filter(Boolean)),
+        ];
 
         setEventTypes(uniqueTypes);
         setAudiences(uniqueAudiences);
@@ -61,7 +71,9 @@ export default function AdminEventForm({
     if (defaultData) {
       const formattedData = {
         ...defaultData,
-        dates: defaultData.dates ? defaultData.dates.split('T')[0] : new Date().toISOString().split('T')[0]
+        dates: defaultData.dates
+          ? defaultData.dates.split("T")[0]
+          : new Date().toISOString().split("T")[0],
       };
       setFormData(formattedData);
       if (defaultData.pictureURL) {
@@ -70,7 +82,9 @@ export default function AdminEventForm({
     }
   }, [defaultData]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { id, value } = e.target;
 
     const fieldMappings: Record<string, string> = {
@@ -79,7 +93,7 @@ export default function AdminEventForm({
       "event-location": "location",
       "event-type": "event_type",
       "event-audience": "target_audience",
-      "event-description": "description"
+      "event-description": "description",
     };
 
     const fieldName = fieldMappings[id] || id;
@@ -98,10 +112,12 @@ export default function AdminEventForm({
         reader.onloadend = async () => {
           const base64String = reader.result as string;
           try {
-            const res = await api.post<{ url: string }>("/media/upload/", { url: base64String });
+            const res = await api.post<{ url: string }>("/media/upload/", {
+              url: base64String,
+            });
             if (res && res.data && res.data.url) {
               const imageUrl = res.data.url;
-              setFormData(prev => ({ ...prev, pictureURL: imageUrl }));
+              setFormData((prev) => ({ ...prev, pictureURL: imageUrl }));
               toast.success("Image uploaded successfully");
             } else {
               throw new Error("API didn't return an image url");
@@ -121,13 +137,20 @@ export default function AdminEventForm({
 
   const handleSubmit = async () => {
     try {
-      const requiredFields = ["name", "dates", "location", "description", "event_type", "target_audience"];
+      const requiredFields = [
+        "name",
+        "dates",
+        "location",
+        "description",
+        "event_type",
+        "target_audience",
+      ];
 
       const missingFields = requiredFields.filter(
         (field) =>
           !formData[field as keyof Event] ||
           (typeof formData[field as keyof Event] === "string" &&
-          (formData[field as keyof Event] as string).trim() === "")
+            (formData[field as keyof Event] as string).trim() === "")
       );
 
       if (missingFields.length > 0) {
@@ -135,9 +158,7 @@ export default function AdminEventForm({
           className: "!text-red-500",
           description: (
             <span className="text-red-500">
-              Please fill all required fields: {[
-                ...missingFields,
-              ].join(", ")}
+              Please fill all required fields: {[...missingFields].join(", ")}
             </span>
           ),
         });
@@ -147,7 +168,6 @@ export default function AdminEventForm({
       const submissionData = { ...formData };
       console.debug("Submitting event:", submissionData);
       onSubmit(submissionData);
-
     } catch (error) {
       console.error("Error submitting event:", error);
     }
@@ -159,20 +179,28 @@ export default function AdminEventForm({
         <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 relative">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">Event Information</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Event Information
+              </h2>
             </div>
           </div>
 
           {/* Event image upload section */}
           <div className="mb-6 flex flex-col items-center">
             <div className="w-full mb-4">
-              <Label htmlFor="event-image" className="mb-2 block">Event Image</Label>
+              <Label htmlFor="event-image" className="mb-2 block">
+                Event Image
+              </Label>
               <div className="flex flex-col items-center gap-3">
                 {preview && (
                   <div className="w-full max-h-60 overflow-hidden rounded-lg mb-2">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={preview.startsWith('/') ? `${getBackendUrl()}${preview}` : preview}
+                      src={
+                        preview.startsWith("/")
+                          ? `${getBackendUrl()}${preview}`
+                          : preview
+                      }
                       alt="Event preview"
                       className="w-full h-auto object-cover rounded-lg"
                     />
@@ -211,7 +239,11 @@ export default function AdminEventForm({
               type="date"
               placeholder="Enter event date"
               className="cursor-pointer"
-              value={typeof formData.dates === 'string' ? formData.dates.split('T')[0] : formData.dates}
+              value={
+                typeof formData.dates === "string"
+                  ? formData.dates.split("T")[0]
+                  : formData.dates
+              }
               onChange={handleInputChange}
               required
             />
@@ -222,12 +254,19 @@ export default function AdminEventForm({
                 <select
                   id="event-location"
                   value={formData.location}
-                  onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      location: e.target.value,
+                    }))
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select a location</option>
-                  {locations.map(location => (
-                    <option key={location} value={location}>{location}</option>
+                  {locations.map((location) => (
+                    <option key={location} value={location}>
+                      {location}
+                    </option>
                   ))}
                 </select>
                 <input
@@ -236,7 +275,10 @@ export default function AdminEventForm({
                   className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   onChange={(e) => {
                     if (e.target.value) {
-                      setFormData(prev => ({ ...prev, location: e.target.value }));
+                      setFormData((prev) => ({
+                        ...prev,
+                        location: e.target.value,
+                      }));
                     }
                   }}
                 />
@@ -249,12 +291,19 @@ export default function AdminEventForm({
                 <select
                   id="event-type"
                   value={formData.event_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, event_type: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      event_type: e.target.value,
+                    }))
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select event type</option>
-                  {eventTypes.map(type => (
-                    <option key={type} value={type}>{type}</option>
+                  {eventTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
                   ))}
                 </select>
                 <input
@@ -263,7 +312,10 @@ export default function AdminEventForm({
                   className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   onChange={(e) => {
                     if (e.target.value) {
-                      setFormData(prev => ({ ...prev, event_type: e.target.value }));
+                      setFormData((prev) => ({
+                        ...prev,
+                        event_type: e.target.value,
+                      }));
                     }
                   }}
                 />
@@ -276,12 +328,19 @@ export default function AdminEventForm({
                 <select
                   id="event-audience"
                   value={formData.target_audience}
-                  onChange={(e) => setFormData(prev => ({ ...prev, target_audience: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      target_audience: e.target.value,
+                    }))
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select target audience</option>
-                  {audiences.map(audience => (
-                    <option key={audience} value={audience}>{audience}</option>
+                  {audiences.map((audience) => (
+                    <option key={audience} value={audience}>
+                      {audience}
+                    </option>
                   ))}
                 </select>
                 <input
@@ -290,7 +349,10 @@ export default function AdminEventForm({
                   className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   onChange={(e) => {
                     if (e.target.value) {
-                      setFormData(prev => ({ ...prev, target_audience: e.target.value }));
+                      setFormData((prev) => ({
+                        ...prev,
+                        target_audience: e.target.value,
+                      }));
                     }
                   }}
                 />
@@ -298,7 +360,9 @@ export default function AdminEventForm({
             </div>
 
             <div className="md:col-span-2">
-              <Label htmlFor="event-description" className="mb-2 block">Description *</Label>
+              <Label htmlFor="event-description" className="mb-2 block">
+                Description *
+              </Label>
               <textarea
                 id="event-description"
                 placeholder="Enter event description"

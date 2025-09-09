@@ -20,9 +20,16 @@ import {
   MessageSquare,
   Calendar,
   Newspaper,
-  FileText
+  FileText,
 } from "lucide-react";
-import { DashboardService, MonthlyStatsResponse, ProjectVisibilityItem, RecentAction, TotalCountResponse, UsersConnectedResponse } from "@/services/DashboardService";
+import {
+  DashboardService,
+  MonthlyStatsResponse,
+  ProjectVisibilityItem,
+  RecentAction,
+  TotalCountResponse,
+  UsersConnectedResponse,
+} from "@/services/DashboardService";
 
 // Helper function to format relative time
 const formatRelativeTime = (dateString: string) => {
@@ -45,12 +52,24 @@ const formatRelativeTime = (dateString: string) => {
 
 export default function AdminDashboard() {
   // State for dashboard data
-  const [totalUsers, setTotalUsers] = useState<TotalCountResponse>({ value: 0 });
-  const [totalStartups, setTotalStartups] = useState<TotalCountResponse>({ value: 0 });
-  const [totalEvents, setTotalEvents] = useState<TotalCountResponse>({ value: 0 });
-  const [newSignups, setNewSignups] = useState<TotalCountResponse>({ value: 0 });
-  const [projectVisibility, setProjectVisibility] = useState<ProjectVisibilityItem[]>([]);
-  const [usersConnected, setUsersConnected] = useState<UsersConnectedResponse>({ rate: 0 });
+  const [totalUsers, setTotalUsers] = useState<TotalCountResponse>({
+    value: 0,
+  });
+  const [totalStartups, setTotalStartups] = useState<TotalCountResponse>({
+    value: 0,
+  });
+  const [totalEvents, setTotalEvents] = useState<TotalCountResponse>({
+    value: 0,
+  });
+  const [newSignups, setNewSignups] = useState<TotalCountResponse>({
+    value: 0,
+  });
+  const [projectVisibility, setProjectVisibility] = useState<
+    ProjectVisibilityItem[]
+  >([]);
+  const [usersConnected, setUsersConnected] = useState<UsersConnectedResponse>({
+    rate: 0,
+  });
   const [recentActions, setRecentActions] = useState<RecentAction[]>([]);
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStatsResponse>({
     projectsLaunched: 0,
@@ -59,7 +78,7 @@ export default function AdminDashboard() {
     newSignups: 0,
     totalViews: 0,
     avgViewsPerProject: 0,
-    avgSessionDuration: '0m 0s',
+    avgSessionDuration: "0m 0s",
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,8 +109,8 @@ export default function AdminDashboard() {
         setRecentActions(recentActions || []);
         setError(null);
       } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-        setError('Failed to fetch dashboard data. Please try again.');
+        console.error("Error fetching dashboard data:", err);
+        setError("Failed to fetch dashboard data. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -165,7 +184,10 @@ export default function AdminDashboard() {
 
           {/* Error message */}
           {error && (
-            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+            <div
+              className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6"
+              role="alert"
+            >
               <p>{error}</p>
             </div>
           )}
@@ -249,7 +271,13 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* User Engagement Chart */}
           <ChartRadialText
-            data={[{ browser: "Online Users", rate: usersConnected.rate, fill: "#2563eb" }]}
+            data={[
+              {
+                browser: "Online Users",
+                rate: usersConnected.rate,
+                fill: "#2563eb",
+              },
+            ]}
             title="User Engagement"
             description="Online users vs total registered users"
             centerLabel="Users online"
@@ -259,9 +287,10 @@ export default function AdminDashboard() {
 
           {/* Project Visibility Chart */}
           <ChartBarLabel
-            data={projectVisibility.map(item => ({
-              month: item.month.length > 3 ? item.month.substring(0, 3) : item.month,
-              views: item.views
+            data={projectVisibility.map((item) => ({
+              month:
+                item.month.length > 3 ? item.month.substring(0, 3) : item.month,
+              views: item.views,
             }))}
             title="Project Visibility"
             description="Monthly project views across the platform"
@@ -287,38 +316,40 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {recentActions.length > 0 ? (
-                recentActions.slice(0, 5).map((action) => (
-                  <div
-                    key={action.id}
-                    className={`flex rounded-lg items-center justify-between p-3 ${getActionColor(action.type)} transition-colors hover:brightness-90 cursor-pointer`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`p-2 rounded-full ${getActionColor(
-                          action.type
-                        )}`}
-                      >
-                        {getActionIcon(action.type)}
+                  recentActions.slice(0, 5).map((action) => (
+                    <div
+                      key={action.id}
+                      className={`flex rounded-lg items-center justify-between p-3 ${getActionColor(
+                        action.type
+                      )} transition-colors hover:brightness-90 cursor-pointer`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div
+                          className={`p-2 rounded-full ${getActionColor(
+                            action.type
+                          )}`}
+                        >
+                          {getActionIcon(action.type)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {action.action}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            by {action.user}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {action.action}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          by {action.user}
-                        </p>
-                      </div>
+                      <Badge variant="secondary" className="text-xs">
+                        {formatRelativeTime(action.time)}
+                      </Badge>
                     </div>
-                    <Badge variant="secondary" className="text-xs">
-                      {formatRelativeTime(action.time)}
-                    </Badge>
+                  ))
+                ) : (
+                  <div className="text-center py-6">
+                    <p className="text-gray-500">No recent actions found</p>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-6">
-                  <p className="text-gray-500">No recent actions found</p>
-                </div>
-              )}
+                )}
               </div>
             </CardContent>
           </Card>
@@ -355,7 +386,9 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Avg. Views Per Project</span>
+                <span className="text-sm text-gray-600">
+                  Avg. Views Per Project
+                </span>
                 <span className="text-lg font-semibold">
                   {monthlyStats.avgViewsPerProject}
                 </span>

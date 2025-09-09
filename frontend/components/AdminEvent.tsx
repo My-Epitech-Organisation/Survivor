@@ -1,31 +1,57 @@
-"use client"
+"use client";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { FaTrashAlt } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Event } from "@/types/event";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogHeader,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import AdminEventForm from "@/components/AdminEventForm";
 
 interface AdminEventProps {
-  event: Event,
-  editCB: (eventId: number, data: Event, btnAction: HTMLButtonElement | null) => void
-  deleteCB: (eventId: number, btnAction: HTMLButtonElement | null) => void
+  event: Event;
+  editCB: (
+    eventId: number,
+    data: Event,
+    btnAction: HTMLButtonElement | null
+  ) => void;
+  deleteCB: (eventId: number, btnAction: HTMLButtonElement | null) => void;
 }
 
-export default function AdminEvent (props: AdminEventProps)
-{
+export default function AdminEvent(props: AdminEventProps) {
   const closeBtn = useRef<HTMLButtonElement>(null);
 
   return (
-    <TableRow key={props.event.id} className="hover:bg-gray-50 transition-colors">
-      <TableCell className="text-center border-r border-gray-200 align-middle text-app-text-secondary">{props.event.id}</TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle font-medium text-app-text-primary">{props.event.name}</TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.event.dates}</TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.event.location}</TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.event.event_type}</TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">{props.event.target_audience}</TableCell>
+    <TableRow
+      key={props.event.id}
+      className="hover:bg-gray-50 transition-colors"
+    >
+      <TableCell className="text-center border-r border-gray-200 align-middle text-app-text-secondary">
+        {props.event.id}
+      </TableCell>
+      <TableCell className="text-center border-l border-gray-200 align-middle font-medium text-app-text-primary">
+        {props.event.name}
+      </TableCell>
+      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+        {props.event.dates}
+      </TableCell>
+      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+        {props.event.location}
+      </TableCell>
+      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+        {props.event.event_type}
+      </TableCell>
+      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+        {props.event.target_audience}
+      </TableCell>
       <TableCell className="text-center border-l border-gray-200 align-middle">
         <Dialog>
           <DialogTrigger asChild>
@@ -45,7 +71,9 @@ export default function AdminEvent (props: AdminEventProps)
             </DialogHeader>
             <AdminEventForm
               defaultData={props.event}
-              onSubmit={(data) => props.editCB(props.event.id, data, closeBtn.current)}
+              onSubmit={(data) =>
+                props.editCB(props.event.id, data, closeBtn.current)
+              }
             />
           </DialogContent>
         </Dialog>
@@ -69,12 +97,20 @@ export default function AdminEvent (props: AdminEventProps)
             </DialogHeader>
             <div className="py-4 text-center text-app-text-primary">
               <p>
-                Are you sure you want to <span className="font-semibold text-red-600">delete</span> the event <span className="font-semibold">&ldquo;{props.event.name}&rdquo;</span> ?
+                Are you sure you want to{" "}
+                <span className="font-semibold text-red-600">delete</span> the
+                event{" "}
+                <span className="font-semibold">
+                  &ldquo;{props.event.name}&rdquo;
+                </span>{" "}
+                ?
               </p>
             </div>
             <DialogFooter className="flex justify-center gap-2 mt-2">
               <DialogClose asChild ref={closeBtn}>
-                <Button variant="outline" className="min-w-[90px]">Cancel</Button>
+                <Button variant="outline" className="min-w-[90px]">
+                  Cancel
+                </Button>
               </DialogClose>
               <Button
                 type="button"

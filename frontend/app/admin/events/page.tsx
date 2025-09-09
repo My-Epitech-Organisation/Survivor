@@ -1,20 +1,39 @@
-"use client"
+"use client";
 
 import AdminNavigation from "@/components/AdminNavigation";
 import { useState, useEffect } from "react";
 import { TbLoader3 } from "react-icons/tb";
 import { FaSortDown, FaSortUp, FaSort } from "react-icons/fa";
-import { Table, TableHeader, TableBody, TableRow, TableHead } from "@/components/ui/table";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+} from "@/components/ui/table";
 import { Event } from "@/types/event";
 import { CalendarIcon } from "lucide-react";
 import api from "@/lib/api";
 import { toast } from "sonner";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import AdminEvent from "@/components/AdminEvent";
 import AdminEventForm from "@/components/AdminEventForm";
 
-type SortColumn = 'id' | 'name' | 'dates' | 'location' | 'event_type' | 'target_audience' | null;
-type SortDirection = 'asc' | 'desc' | null;
+type SortColumn =
+  | "id"
+  | "name"
+  | "dates"
+  | "location"
+  | "event_type"
+  | "target_audience"
+  | null;
+type SortDirection = "asc" | "desc" | null;
 
 export default function AdminEvents() {
   const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
@@ -32,8 +51,12 @@ export default function AdminEvents() {
 
   useEffect(() => {
     if (eventsList) {
-      const uniqueTypes = [...new Set(eventsList.map(event => event.event_type))];
-      const uniqueLocations = [...new Set(eventsList.map(event => event.location))];
+      const uniqueTypes = [
+        ...new Set(eventsList.map((event) => event.event_type)),
+      ];
+      const uniqueLocations = [
+        ...new Set(eventsList.map((event) => event.location)),
+      ];
 
       setEventTypes(uniqueTypes);
       setLocations(uniqueLocations);
@@ -43,7 +66,7 @@ export default function AdminEvents() {
   const fetchEvents = async () => {
     setIsDataLoading(true);
     try {
-      const resp = (await api.get<Event[]>({endpoint: "/events/"})).data
+      const resp = (await api.get<Event[]>({ endpoint: "/events/" })).data;
       setEventsList(resp);
     } catch (error) {
       console.error(error);
@@ -60,14 +83,14 @@ export default function AdminEvents() {
   };
 
   const handleSort = (column: SortColumn) => {
-    let newDirection: SortDirection = 'asc';
+    let newDirection: SortDirection = "asc";
 
     // cycle through: null -> asc -> desc -> null
     if (sortColumn === column) {
       if (sortDirection === null) {
-        newDirection = 'asc';
-      } else if (sortDirection === 'asc') {
-        newDirection = 'desc';
+        newDirection = "asc";
+      } else if (sortDirection === "asc") {
+        newDirection = "desc";
       } else {
         newDirection = null;
         setSortColumn(null);
@@ -75,7 +98,7 @@ export default function AdminEvents() {
         return;
       }
     } else {
-      newDirection = 'asc';
+      newDirection = "asc";
     }
 
     setSortColumn(column);
@@ -83,7 +106,7 @@ export default function AdminEvents() {
   };
 
   const normalizeText = (text: string): string => {
-    if (typeof text !== 'string') return '';
+    if (typeof text !== "string") return "";
 
     return text
       .toLowerCase()
@@ -98,10 +121,14 @@ export default function AdminEvents() {
 
     let filteredList = [...eventsList];
     if (filterType) {
-      filteredList = filteredList.filter(event => event.event_type === filterType);
+      filteredList = filteredList.filter(
+        (event) => event.event_type === filterType
+      );
     }
     if (filterLocation) {
-      filteredList = filteredList.filter(event => event.location === filterLocation);
+      filteredList = filteredList.filter(
+        (event) => event.location === filterLocation
+      );
     }
 
     if (sortColumn && sortDirection) {
@@ -109,27 +136,27 @@ export default function AdminEvents() {
         let valueA, valueB;
 
         switch (sortColumn) {
-          case 'id':
+          case "id":
             valueA = a.id;
             valueB = b.id;
             break;
-          case 'name':
+          case "name":
             valueA = normalizeText(a.name);
             valueB = normalizeText(b.name);
             break;
-          case 'dates':
+          case "dates":
             valueA = normalizeText(a.dates);
             valueB = normalizeText(b.dates);
             break;
-          case 'location':
+          case "location":
             valueA = normalizeText(a.location);
             valueB = normalizeText(b.location);
             break;
-          case 'event_type':
+          case "event_type":
             valueA = normalizeText(a.event_type);
             valueB = normalizeText(b.event_type);
             break;
-          case 'target_audience':
+          case "target_audience":
             valueA = normalizeText(a.target_audience);
             valueB = normalizeText(b.target_audience);
             break;
@@ -137,7 +164,7 @@ export default function AdminEvents() {
             return 0;
         }
 
-        if (sortDirection === 'asc') {
+        if (sortDirection === "asc") {
           return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
         } else {
           return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
@@ -148,7 +175,11 @@ export default function AdminEvents() {
     return filteredList;
   };
 
-  const handleEditEventSubmit = (id: number, data: Event, btnAction: HTMLButtonElement | null) => {
+  const handleEditEventSubmit = (
+    id: number,
+    data: Event,
+    btnAction: HTMLButtonElement | null
+  ) => {
     const eventData = {
       ...data,
       image_url: data.pictureURL || undefined,
@@ -178,7 +209,10 @@ export default function AdminEvents() {
       });
   };
 
-  const handleDeleteEventSubmit = (eventId: number, btnAction: HTMLButtonElement | null) => {
+  const handleDeleteEventSubmit = (
+    eventId: number,
+    btnAction: HTMLButtonElement | null
+  ) => {
     api
       .delete(`/events/${eventId}/`)
       .then((response) => {
@@ -212,12 +246,12 @@ export default function AdminEvents() {
       description: data.description,
       event_type: data.event_type,
       target_audience: data.target_audience,
-      image: data.pictureURL
+      image: data.pictureURL,
     };
 
     console.debug("Sending event data to backend:", eventData);
     api
-      .post('/events/', eventData)
+      .post("/events/", eventData)
       .then((response) => {
         console.debug("Event created successfully:", response.data);
         fetchEvents();
@@ -246,9 +280,7 @@ export default function AdminEvents() {
         {isDataLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
             <TbLoader3 className="size-12 animate-spin text-blue-600 mb-4" />
-            <p className="text-app-text-secondary text-lg">
-              Loading events...
-            </p>
+            <p className="text-app-text-secondary text-lg">Loading events...</p>
           </div>
         ) : (
           <>
@@ -258,9 +290,7 @@ export default function AdminEvents() {
               </h1>
               <Dialog>
                 <DialogTrigger asChild>
-                  <button
-                    className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
-                  >
+                  <button className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer">
                     Add Event
                   </button>
                 </DialogTrigger>
@@ -280,7 +310,9 @@ export default function AdminEvents() {
             {/* Filters */}
             <div className="bg-white rounded-lg p-4 mb-6 flex flex-wrap gap-4">
               <div className="flex flex-col w-64">
-                <label className="text-sm font-medium mb-1 text-gray-700">Event Type</label>
+                <label className="text-sm font-medium mb-1 text-gray-700">
+                  Event Type
+                </label>
                 <select
                   className="border border-gray-300 rounded-md p-2"
                   value={filterType}
@@ -295,7 +327,9 @@ export default function AdminEvents() {
                 </select>
               </div>
               <div className="flex flex-col w-64">
-                <label className="text-sm font-medium mb-1 text-gray-700">Location</label>
+                <label className="text-sm font-medium mb-1 text-gray-700">
+                  Location
+                </label>
                 <select
                   className="border border-gray-300 rounded-md p-2"
                   value={filterLocation}
@@ -327,78 +361,112 @@ export default function AdminEvents() {
                   <TableRow>
                     <TableHead
                       className="text-center cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => handleSort('id')}
+                      onClick={() => handleSort("id")}
                     >
                       <div className="flex items-center justify-center gap-1">
                         ID
-                        {sortColumn === 'id' && (
-                          sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                        {sortColumn === "id" &&
+                          (sortDirection === "asc" ? (
+                            <FaSortUp />
+                          ) : sortDirection === "desc" ? (
+                            <FaSortDown />
+                          ) : null)}
+                        {sortColumn !== "id" && (
+                          <FaSort className="text-gray-300" />
                         )}
-                        {sortColumn !== 'id' && <FaSort className="text-gray-300" />}
                       </div>
                     </TableHead>
                     <TableHead
                       className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => handleSort('name')}
+                      onClick={() => handleSort("name")}
                     >
                       <div className="flex items-center justify-center gap-1">
                         Name
-                        {sortColumn === 'name' && (
-                          sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                        {sortColumn === "name" &&
+                          (sortDirection === "asc" ? (
+                            <FaSortUp />
+                          ) : sortDirection === "desc" ? (
+                            <FaSortDown />
+                          ) : null)}
+                        {sortColumn !== "name" && (
+                          <FaSort className="text-gray-300" />
                         )}
-                        {sortColumn !== 'name' && <FaSort className="text-gray-300" />}
                       </div>
                     </TableHead>
                     <TableHead
                       className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => handleSort('dates')}
+                      onClick={() => handleSort("dates")}
                     >
                       <div className="flex items-center justify-center gap-1">
                         Date
-                        {sortColumn === 'dates' && (
-                          sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                        {sortColumn === "dates" &&
+                          (sortDirection === "asc" ? (
+                            <FaSortUp />
+                          ) : sortDirection === "desc" ? (
+                            <FaSortDown />
+                          ) : null)}
+                        {sortColumn !== "dates" && (
+                          <FaSort className="text-gray-300" />
                         )}
-                        {sortColumn !== 'dates' && <FaSort className="text-gray-300" />}
                       </div>
                     </TableHead>
                     <TableHead
                       className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => handleSort('location')}
+                      onClick={() => handleSort("location")}
                     >
                       <div className="flex items-center justify-center gap-1">
                         Location
-                        {sortColumn === 'location' && (
-                          sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                        {sortColumn === "location" &&
+                          (sortDirection === "asc" ? (
+                            <FaSortUp />
+                          ) : sortDirection === "desc" ? (
+                            <FaSortDown />
+                          ) : null)}
+                        {sortColumn !== "location" && (
+                          <FaSort className="text-gray-300" />
                         )}
-                        {sortColumn !== 'location' && <FaSort className="text-gray-300" />}
                       </div>
                     </TableHead>
                     <TableHead
                       className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => handleSort('event_type')}
+                      onClick={() => handleSort("event_type")}
                     >
                       <div className="flex items-center justify-center gap-1">
                         Type
-                        {sortColumn === 'event_type' && (
-                          sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                        {sortColumn === "event_type" &&
+                          (sortDirection === "asc" ? (
+                            <FaSortUp />
+                          ) : sortDirection === "desc" ? (
+                            <FaSortDown />
+                          ) : null)}
+                        {sortColumn !== "event_type" && (
+                          <FaSort className="text-gray-300" />
                         )}
-                        {sortColumn !== 'event_type' && <FaSort className="text-gray-300" />}
                       </div>
                     </TableHead>
                     <TableHead
                       className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => handleSort('target_audience')}
+                      onClick={() => handleSort("target_audience")}
                     >
                       <div className="flex items-center justify-center gap-1">
                         Audience
-                        {sortColumn === 'target_audience' && (
-                          sortDirection === 'asc' ? <FaSortUp /> : sortDirection === 'desc' ? <FaSortDown /> : null
+                        {sortColumn === "target_audience" &&
+                          (sortDirection === "asc" ? (
+                            <FaSortUp />
+                          ) : sortDirection === "desc" ? (
+                            <FaSortDown />
+                          ) : null)}
+                        {sortColumn !== "target_audience" && (
+                          <FaSort className="text-gray-300" />
                         )}
-                        {sortColumn !== 'target_audience' && <FaSort className="text-gray-300" />}
                       </div>
                     </TableHead>
-                    <TableHead className="text-center border-l">Settings</TableHead>
-                    <TableHead className="text-center border-l">Delete</TableHead>
+                    <TableHead className="text-center border-l">
+                      Settings
+                    </TableHead>
+                    <TableHead className="text-center border-l">
+                      Delete
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -417,7 +485,9 @@ export default function AdminEvents() {
               {(!eventsList || eventsList.length === 0) && (
                 <div className="flex items-center justify-center py-12 gap-3">
                   <CalendarIcon className="w-8 h-8 text-gray-400" />
-                  <span className="text-gray-400 text-lg font-medium">No events found</span>
+                  <span className="text-gray-400 text-lg font-medium">
+                    No events found
+                  </span>
                 </div>
               )}
             </div>

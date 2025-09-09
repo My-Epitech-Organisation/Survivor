@@ -3,7 +3,11 @@ import AdminNavigation from "@/components/AdminNavigation";
 import ProjectOverviewAdmin from "@/components/ProjectOverviewAdmin";
 import ProjectFilters from "@/components/ProjectFilters";
 import { useCallback, useEffect, useState, useRef } from "react";
-import { FormProjectDetails, ProjectFiltersProps, ProjectOverviewProps } from "@/types/project";
+import {
+  FormProjectDetails,
+  ProjectFiltersProps,
+  ProjectOverviewProps,
+} from "@/types/project";
 import { api } from "@/lib/api";
 import { FaPlus } from "react-icons/fa";
 import {
@@ -50,7 +54,9 @@ export default function AdminProjects() {
   const fetchProjects = async () => {
     try {
       console.debug("Fetching projects from API");
-      const response = await api.get<ProjectOverviewProps[]>({endpoint: "/projects/"});
+      const response = await api.get<ProjectOverviewProps[]>({
+        endpoint: "/projects/",
+      });
       if (!response.data) {
         console.error("No project data found");
         return;
