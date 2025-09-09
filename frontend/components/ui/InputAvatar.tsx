@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import api from "@/lib/api"
 import { useState, useRef } from "react"
-import { getAPIUrl, getBackendUrl } from "@/lib/config"
+import { getBackendUrl } from "@/lib/config"
 import { Pencil } from 'lucide-react';
 
 interface InputAvatar {

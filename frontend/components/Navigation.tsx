@@ -29,6 +29,10 @@ export default function Navigation() {
     router.push("/startup/dashboard");
   };
 
+  const handleSwitchToInvestor = () => {
+    router.push("/investor/opportunities");
+  };
+
   const handleSwitchToAdmin = () => {
     router.push("/admin/dashboard");
   };
@@ -71,6 +75,14 @@ export default function Navigation() {
                     className="font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
                   >
                     Startup Area
+                  </button>
+                )}
+                {user?.role === "investor" && (
+                  <button
+                    onClick={handleSwitchToInvestor}
+                    className="font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
+                  >
+                    Investor Area
                   </button>
                 )}
                 {user?.role === "admin" && (
@@ -143,6 +155,17 @@ export default function Navigation() {
                         className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
                       >
                         Startup Area
+                      </button>
+                    )}
+                    {user?.role === "investor" && (
+                      <button
+                        onClick={() => {
+                          handleSwitchToInvestor();
+                          setIsMenuOpen(false);
+                        }}
+                        className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
+                      >
+                        Investor Area
                       </button>
                     )}
                     {user?.role === "admin" && (

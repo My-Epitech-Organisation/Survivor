@@ -1,9 +1,8 @@
 "use client"
 import { TableRow, TableCell } from "./ui/table";
-import { FaPlus, FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IoSettingsOutline } from "react-icons/io5";
-import { FaTrash } from "react-icons/fa";
 import AdminUserForm from "@/components/AdminUserForm";
 import { getBackendUrl } from "@/lib/config";
 import { FormUser, UserSimple } from "@/types/user";
