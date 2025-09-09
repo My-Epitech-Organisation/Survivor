@@ -32,18 +32,14 @@ class StartupDrivePermission(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        # Allow read permissions for authenticated users
         if request.method in permissions.SAFE_METHODS:
             return request.user.is_authenticated
-        # Write permissions are only allowed to authenticated users
         return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        # Check if the user is admin or staff
         if request.user.is_staff or request.user.is_superuser:
             return True
 
-        # Get the startup from the object
         startup = None
         if isinstance(obj, DriveFolder):
             startup = obj.startup
@@ -57,16 +53,12 @@ class StartupDrivePermission(permissions.BasePermission):
         elif isinstance(obj, StartupDetail):
             startup = obj
 
-        # If no startup is found, deny access
         if not startup:
             return False
 
-        # Check if the user is a founder of the startup
         if request.user.role == 'founder' and request.user.founder_id:
-            # Check if the user's founder_id is in the startup's founders
             return startup.founders.filter(id=request.user.founder_id).exists()
 
-        # Admin users can access any startup's drive
         return request.user.role == 'admin'
 
 
@@ -93,30 +85,25 @@ class DriveFolderViewSet(viewsets.ModelViewSet):
         """
         queryset = DriveFolder.objects.all()
 
-        # Filter by startup if specified
         startup_id = self.request.query_params.get('startup', None)
         if startup_id:
             queryset = queryset.filter(startup_id=startup_id)
 
-        # Filter by parent folder if specified
         parent_id = self.request.query_params.get('parent', None)
         if parent_id:
-            if parent_id == 'null':  # Root folders
+            if parent_id == 'null':
                 queryset = queryset.filter(parent__isnull=True)
             else:
                 queryset = queryset.filter(parent_id=parent_id)
 
-        # If user is not admin/staff, filter by startups they have access to
         user = self.request.user
         if not (user.is_staff or user.is_superuser):
             if user.role == 'founder' and user.founder_id:
-                # Get startups where user is a founder
                 accessible_startups = StartupDetail.objects.filter(
                     founders__id=user.founder_id
                 ).values_list('id', flat=True)
                 queryset = queryset.filter(startup_id__in=accessible_startups)
             else:
-                # No access to any startups
                 queryset = queryset.none()
 
         return queryset
@@ -127,7 +114,6 @@ class DriveFolderViewSet(viewsets.ModelViewSet):
         """
         folder = serializer.save(created_by=self.request.user)
 
-        # Log activity
         DriveActivity.objects.create(
             startup=folder.startup,
             user=self.request.user,
@@ -146,7 +132,6 @@ class DriveFolderViewSet(viewsets.ModelViewSet):
 
         folder = serializer.save()
 
-        # Log activity if name or parent changed
         details = {}
         action = None
 
@@ -177,7 +162,6 @@ class DriveFolderViewSet(viewsets.ModelViewSet):
         startup = instance.startup
         folder_name = instance.name
 
-        # Log activity before deletion
         DriveActivity.objects.create(
             startup=startup,
             user=self.request.user,
@@ -212,40 +196,33 @@ class DriveFileViewSet(viewsets.ModelViewSet):
         """
         queryset = DriveFile.objects.all()
 
-        # By default, don't show archived files unless specified
         show_archived = self.request.query_params.get('archived', 'false').lower() == 'true'
         if not show_archived:
             queryset = queryset.filter(is_archived=False)
 
-        # Filter by startup if specified
         startup_id = self.request.query_params.get('startup', None)
         if startup_id:
             queryset = queryset.filter(startup_id=startup_id)
 
-        # Filter by folder if specified
         folder_id = self.request.query_params.get('folder', None)
         if folder_id:
-            if folder_id == 'null':  # Root files
+            if folder_id == 'null':
                 queryset = queryset.filter(folder__isnull=True)
             else:
                 queryset = queryset.filter(folder_id=folder_id)
 
-        # Filter by file type if specified
         file_type = self.request.query_params.get('type', None)
         if file_type:
             queryset = queryset.filter(file_type__startswith=file_type)
 
-        # If user is not admin/staff, filter by startups they have access to
         user = self.request.user
         if not (user.is_staff or user.is_superuser):
             if user.role == 'founder' and user.founder_id:
-                # Get startups where user is a founder
                 accessible_startups = StartupDetail.objects.filter(
                     founders__id=user.founder_id
                 ).values_list('id', flat=True)
                 queryset = queryset.filter(startup_id__in=accessible_startups)
             else:
-                # No access to any startups
                 queryset = queryset.none()
 
         return queryset
@@ -257,7 +234,6 @@ class DriveFileViewSet(viewsets.ModelViewSet):
         """
         file_obj = self.get_object()
 
-        # Log download activity
         DriveActivity.objects.create(
             startup=file_obj.startup,
             user=request.user,
@@ -266,10 +242,8 @@ class DriveFileViewSet(viewsets.ModelViewSet):
             ip_address=request.META.get('REMOTE_ADDR')
         )
 
-        # Get the file path
         file_path = file_obj.file.path
 
-        # Prepare the response
         content_type, encoding = mimetypes.guess_type(file_path)
         content_type = content_type or 'application/octet-stream'
 
@@ -286,12 +260,10 @@ class DriveFileViewSet(viewsets.ModelViewSet):
         """
         serializer = FileUploadSerializer(data=request.data)
         if serializer.is_valid():
-            # Get the uploaded file
             uploaded_file = serializer.validated_data['file']
             folder = serializer.validated_data.get('folder', None)
             description = serializer.validated_data.get('description', '')
 
-            # Get startup ID from query parameters or folder
             startup_id = request.query_params.get('startup')
             if not startup_id and folder:
                 startup_id = folder.startup_id
@@ -302,7 +274,6 @@ class DriveFileViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-            # Check if the user has permission to upload to this startup
             startup = get_object_or_404(StartupDetail, id=startup_id)
             if not StartupDrivePermission().has_object_permission(request, self, startup):
                 return Response(
@@ -310,7 +281,6 @@ class DriveFileViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-            # Check if a file with the same name already exists in the same folder
             existing_file = DriveFile.objects.filter(
                 startup_id=startup_id,
                 folder=folder,
@@ -323,11 +293,9 @@ class DriveFileViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-            # Determine the file type (MIME type)
             content_type, encoding = mimetypes.guess_type(uploaded_file.name)
             content_type = content_type or 'application/octet-stream'
 
-            # Create the file object
             file_obj = DriveFile.objects.create(
                 startup_id=startup_id,
                 folder=folder,
@@ -339,7 +307,6 @@ class DriveFileViewSet(viewsets.ModelViewSet):
                 description=description
             )
 
-            # Log the upload activity
             DriveActivity.objects.create(
                 startup=file_obj.startup,
                 user=request.user,
@@ -349,7 +316,6 @@ class DriveFileViewSet(viewsets.ModelViewSet):
                 ip_address=request.META.get('REMOTE_ADDR')
             )
 
-            # Return the serialized file object
             return Response(
                 DriveFileSerializer(file_obj, context={'request': request}).data,
                 status=status.HTTP_201_CREATED
@@ -366,12 +332,11 @@ class DriveFileViewSet(viewsets.ModelViewSet):
         file_obj.is_archived = True
         file_obj.save()
 
-        # Log archive activity
         DriveActivity.objects.create(
             startup=file_obj.startup,
             user=request.user,
             file=file_obj,
-            action='delete',  # Using 'delete' since archiving is a soft delete
+            action='delete',
             details={'archived': True},
             ip_address=request.META.get('REMOTE_ADDR')
         )
@@ -387,7 +352,6 @@ class DriveFileViewSet(viewsets.ModelViewSet):
         file_obj.is_archived = False
         file_obj.save()
 
-        # Log restore activity
         DriveActivity.objects.create(
             startup=file_obj.startup,
             user=request.user,
@@ -407,7 +371,6 @@ class DriveFileViewSet(viewsets.ModelViewSet):
 
         file_obj = serializer.save()
 
-        # Log activity if name or folder changed
         details = {}
         action = None
 
@@ -438,7 +401,6 @@ class DriveFileViewSet(viewsets.ModelViewSet):
         startup = instance.startup
         file_name = instance.name
 
-        # Log activity before deletion
         DriveActivity.objects.create(
             startup=startup,
             user=self.request.user,
@@ -447,7 +409,6 @@ class DriveFileViewSet(viewsets.ModelViewSet):
             ip_address=self.request.META.get('REMOTE_ADDR')
         )
 
-        # Delete the actual file from storage
         instance.file.delete(save=False)
         instance.delete()
 
@@ -466,38 +427,31 @@ class DriveShareViewSet(viewsets.ModelViewSet):
         """
         queryset = DriveShare.objects.all()
 
-        # Filter by file if specified
         file_id = self.request.query_params.get('file', None)
         if file_id:
             queryset = queryset.filter(file_id=file_id)
 
-        # Filter by folder if specified
         folder_id = self.request.query_params.get('folder', None)
         if folder_id:
             queryset = queryset.filter(folder_id=folder_id)
 
-        # Filter by active status if specified
         active = self.request.query_params.get('active', None)
         if active is not None:
             is_active = active.lower() == 'true'
             queryset = queryset.filter(is_active=is_active)
 
-        # If user is not admin/staff, filter by shares they created
         user = self.request.user
         if not (user.is_staff or user.is_superuser):
             if user.role == 'founder' and user.founder_id:
-                # Get startups where user is a founder
                 accessible_startups = StartupDetail.objects.filter(
                     founders__id=user.founder_id
                 ).values_list('id', flat=True)
 
-                # Filter shares by file.startup or folder.startup in accessible_startups
                 queryset = queryset.filter(
                     Q(file__startup_id__in=accessible_startups) |
                     Q(folder__startup_id__in=accessible_startups)
                 )
             else:
-                # No access to any startups' shares
                 queryset = queryset.none()
 
         return queryset
@@ -506,7 +460,6 @@ class DriveShareViewSet(viewsets.ModelViewSet):
         """
         Create a new share and generate an access token.
         """
-        # Generate a random access token
         access_token = secrets.token_urlsafe(32)
 
         share = serializer.save(
@@ -514,7 +467,6 @@ class DriveShareViewSet(viewsets.ModelViewSet):
             access_token=access_token
         )
 
-        # Log sharing activity
         startup = None
         item_type = None
         item_id = None
@@ -547,10 +499,8 @@ class DriveShareViewSet(viewsets.ModelViewSet):
         """
         Update a share and log the activity.
         """
-        # Only allow updating expires_at and is_active fields
         share = serializer.save()
 
-        # Log unshare activity if the share was deactivated
         if 'is_active' in serializer.validated_data and not share.is_active:
             startup = None
             if share.file:
@@ -578,7 +528,6 @@ class DriveShareViewSet(viewsets.ModelViewSet):
         elif instance.folder:
             startup = instance.folder.startup
 
-        # Log unshare activity before deletion
         if startup:
             DriveActivity.objects.create(
                 startup=startup,
@@ -598,27 +547,24 @@ class SharedItemView(APIView):
     API endpoint for accessing shared items via token.
     No authentication required as this is accessed via a share token.
     """
-    permission_classes = []  # No authentication required
+    permission_classes = []
 
     def get(self, request, token):
         """
         Get details about a shared item and allow download if it's a file.
         """
-        # Find the share by token
         share = get_object_or_404(
             DriveShare,
             access_token=token,
             is_active=True
         )
 
-        # Check if the share has expired
         if share.expires_at and timezone.now() > share.expires_at:
             return Response(
                 {'error': 'This share has expired'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        # Return information about the shared item
         response_data = {
             'id': share.id,
             'shared_by': share.shared_by.name if share.shared_by else None,
@@ -635,7 +581,6 @@ class SharedItemView(APIView):
                 'file_type': share.file.file_type,
                 'uploaded_at': share.file.uploaded_at
             }
-            # Add download URL
             response_data['download_url'] = f'/api/drive/share/{token}/download/'
 
         elif share.folder:
@@ -646,7 +591,6 @@ class SharedItemView(APIView):
                 'created_at': share.folder.created_at
             }
 
-            # Get files in this folder
             files = DriveFile.objects.filter(
                 folder=share.folder,
                 is_archived=False
@@ -675,16 +619,13 @@ class SharedItemView(APIView):
             is_active=True
         )
 
-        # Check if the share has expired
         if share.expires_at and timezone.now() > share.expires_at:
             return None, 'expired'
 
         if share.file and not file_id:
-            # Direct file share
             return share.file, None
 
         if share.folder and file_id:
-            # Folder share, check if the file is in this folder
             try:
                 file = DriveFile.objects.get(
                     id=file_id,
@@ -731,10 +672,8 @@ class SharedFileDownloadView(SharedItemView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Get the file path
         file_path = file_obj.file.path
 
-        # Prepare the response
         content_type, encoding = mimetypes.guess_type(file_path)
         content_type = content_type or 'application/octet-stream'
 
@@ -742,7 +681,6 @@ class SharedFileDownloadView(SharedItemView):
         response['Content-Disposition'] = f'attachment; filename="{file_obj.name}"'
         response['Content-Length'] = os.path.getsize(file_path)
 
-        # Log anonymous download
         DriveActivity.objects.create(
             startup=file_obj.startup,
             file=file_obj,
@@ -772,22 +710,18 @@ class DriveActivityViewSet(viewsets.ReadOnlyModelViewSet):
         """
         queryset = DriveActivity.objects.all()
 
-        # Filter by startup if specified
         startup_id = self.request.query_params.get('startup', None)
         if startup_id:
             queryset = queryset.filter(startup_id=startup_id)
 
-        # Filter by user if specified
         user_id = self.request.query_params.get('user', None)
         if user_id:
             queryset = queryset.filter(user_id=user_id)
 
-        # Filter by action if specified
         action = self.request.query_params.get('action', None)
         if action:
             queryset = queryset.filter(action=action)
 
-        # Filter by date range if specified
         start_date = self.request.query_params.get('start_date', None)
         if start_date:
             queryset = queryset.filter(timestamp__gte=start_date)
@@ -796,17 +730,14 @@ class DriveActivityViewSet(viewsets.ReadOnlyModelViewSet):
         if end_date:
             queryset = queryset.filter(timestamp__lte=end_date)
 
-        # If user is not admin/staff, filter by startups they have access to
         user = self.request.user
         if not (user.is_staff or user.is_superuser):
             if user.role == 'founder' and user.founder_id:
-                # Get startups where user is a founder
                 accessible_startups = StartupDetail.objects.filter(
                     founders__id=user.founder_id
                 ).values_list('id', flat=True)
                 queryset = queryset.filter(startup_id__in=accessible_startups)
             else:
-                # No access to any startups
                 queryset = queryset.none()
 
         return queryset
@@ -824,20 +755,16 @@ class StartupStorageStatsView(APIView):
         """
         startup = get_object_or_404(StartupDetail, id=startup_id)
 
-        # Check permissions
         if not StartupDrivePermission().has_object_permission(request, self, startup):
             return Response(
                 {'error': 'You do not have permission to access this startup'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        # Get all files for the startup
         files = DriveFile.objects.filter(startup=startup)
 
-        # Calculate total storage used
         total_size = files.aggregate(total=Sum('size'))['total'] or 0
 
-        # Count files by type
         file_types = {}
         for file in files:
             main_type = file.file_type.split('/')[0]
@@ -850,7 +777,6 @@ class StartupStorageStatsView(APIView):
                     'size': file.size
                 }
 
-        # Calculate human-readable size
         human_size = total_size
         for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
             if human_size < 1024 or unit == 'TB':
@@ -858,13 +784,11 @@ class StartupStorageStatsView(APIView):
                 break
             human_size /= 1024
 
-        # Get counts
         total_files = files.count()
         active_files = files.filter(is_archived=False).count()
         archived_files = files.filter(is_archived=True).count()
         total_folders = DriveFolder.objects.filter(startup=startup).count()
 
-        # Get recent activities
         recent_activities = DriveActivity.objects.filter(
             startup=startup
         ).order_by('-timestamp')[:10]
