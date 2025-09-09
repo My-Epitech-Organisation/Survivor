@@ -33,10 +33,24 @@ class EventListView(APIView):
         """
         Create a new event, only for admins
         """
-        serializer = EventSerializer(data=request.data)
+        request_data = request.data.copy()
+        if "id" in request_data:
+            del request_data["id"]
+
+        try:
+            max_id = Event.objects.all().order_by("-id").first()
+            new_id = 1 if not max_id else max_id.id + 1
+        except Exception:
+            new_id = 1
+
+        request_data["id"] = new_id
+
+        serializer = EventSerializer(data=request_data)
         if serializer.is_valid():
             if "image" in request.FILES:
                 serializer.validated_data["image"] = request.FILES["image"]
+            elif "image" in request_data and isinstance(request_data["image"], str):
+                serializer.validated_data["image"] = request_data["image"]
 
             event = serializer.save()
 
@@ -68,7 +82,15 @@ class EventDetailView(APIView):
 
         serializer = EventSerializer(event, data=request.data, partial=True)
         if serializer.is_valid():
-            if "image" in request.FILES:
+            if request.data.get("image_url"):
+                image_path = request.data["image_url"]
+                from django.conf import settings
+
+                media_url = settings.MEDIA_URL.rstrip("/")
+                if image_path.startswith(media_url):
+                    image_path = image_path[len(media_url) :]
+                serializer.validated_data["image"] = image_path.lstrip("/")
+            elif "image" in request.FILES:
                 serializer.validated_data["image"] = request.FILES["image"]
 
             updated_event = serializer.save()

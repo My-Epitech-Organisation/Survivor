@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { getBackendUrl } from "@/lib/config";
-import { toast } from "sonner"
+import { toast } from "sonner";
 
 interface AdminProjectFormProps {
   defaultData?: FormProjectDetails;
@@ -53,7 +53,7 @@ function AddFoundersSection({
   const handleEditFounder = (founder: MinimalFounder, index: number) => {
     setEditFounder({
       index,
-      founder: { ...founder }
+      founder: { ...founder },
     });
   };
 
@@ -62,9 +62,7 @@ function AddFoundersSection({
       toast("Founder error", {
         className: "!text-red-500",
         description: (
-          <span className="text-red-500">
-            Please set a founder name
-          </span>
+          <span className="text-red-500">Please set a founder name</span>
         ),
       });
       return;
@@ -142,7 +140,9 @@ function AddFoundersSection({
                                     picture: `${res?.data?.url ?? ""}`,
                                   }));
                                 } else {
-                                  throw new Error("API didn't return an avatar url image");
+                                  throw new Error(
+                                    "API didn't return an avatar url image"
+                                  );
                                 }
                               };
                               reader.readAsDataURL(file);
@@ -186,7 +186,7 @@ function AddFoundersSection({
                           <span className="text-red-500">
                             Please set a founder name:
                           </span>
-                          ),
+                        ),
                       });
                       return;
                     }
@@ -254,7 +254,10 @@ function AddFoundersSection({
                             onChange={(e) =>
                               setEditFounder((prev) => ({
                                 ...prev,
-                                founder: { ...prev.founder, name: e.target.value }
+                                founder: {
+                                  ...prev.founder,
+                                  name: e.target.value,
+                                },
                               }))
                             }
                             required
@@ -266,7 +269,9 @@ function AddFoundersSection({
                             <div className="flex items-center space-x-4">
                               <Avatar className="w-16 h-16">
                                 <AvatarImage
-                                  src={`${getBackendUrl()}${editFounder.founder.picture}`}
+                                  src={`${getBackendUrl()}${
+                                    editFounder.founder.picture
+                                  }`}
                                 />
                                 <AvatarFallback>
                                   {editFounder.founder.name?.charAt(0) || "UK"}
@@ -285,28 +290,37 @@ function AddFoundersSection({
                                         try {
                                           const reader = new FileReader();
                                           reader.onloadend = async () => {
-                                            const base64String = reader.result as string;
+                                            const base64String =
+                                              reader.result as string;
 
-                                            const res = await api.post<{ url: string }>(
-                                              "/media/upload/",
-                                              { url: base64String }
-                                            );
+                                            const res = await api.post<{
+                                              url: string;
+                                            }>("/media/upload/", {
+                                              url: base64String,
+                                            });
 
                                             if (res.data) {
                                               setEditFounder((prev) => ({
                                                 ...prev,
                                                 founder: {
                                                   ...prev.founder,
-                                                  picture: `${res?.data?.url ?? ""}`
-                                                }
+                                                  picture: `${
+                                                    res?.data?.url ?? ""
+                                                  }`,
+                                                },
                                               }));
                                             } else {
-                                              throw new Error("API didn't return an avatar url image");
+                                              throw new Error(
+                                                "API didn't return an avatar url image"
+                                              );
                                             }
                                           };
                                           reader.readAsDataURL(file);
                                         } catch (error) {
-                                          console.error("Error uploading image:", error);
+                                          console.error(
+                                            "Error uploading image:",
+                                            error
+                                          );
                                         }
                                       }
                                     }}
@@ -314,7 +328,9 @@ function AddFoundersSection({
                                   <Button
                                     variant="outline"
                                     className="w-full"
-                                    onClick={() => editFileInputRef.current?.click()}
+                                    onClick={() =>
+                                      editFileInputRef.current?.click()
+                                    }
                                   >
                                     <FaUpload className="mr-2" />
                                     Upload Photo
@@ -335,7 +351,10 @@ function AddFoundersSection({
                             <Button onClick={handleSaveEdit}>
                               Save Changes
                             </Button>
-                            <DialogClose ref={editCloseRef} className="hidden" />
+                            <DialogClose
+                              ref={editCloseRef}
+                              className="hidden"
+                            />
                           </div>
                         </div>
                       </DialogContent>
@@ -354,11 +373,17 @@ function AddFoundersSection({
                   </div>
                   <div className="flex items-start space-x-4">
                     <Avatar className="w-12 h-12">
-                      <AvatarImage src={`${getBackendUrl()}${founder.picture}`} />
-                      <AvatarFallback>{founder.name?.charAt(0) || "U"}</AvatarFallback>
+                      <AvatarImage
+                        src={`${getBackendUrl()}${founder.picture}`}
+                      />
+                      <AvatarFallback>
+                        {founder.name?.charAt(0) || "U"}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <h4 className="font-medium text-gray-900">{founder.name}</h4>
+                      <h4 className="font-medium text-gray-900">
+                        {founder.name}
+                      </h4>
                     </div>
                   </div>
                 </div>
@@ -461,7 +486,8 @@ export default function AdminProjectForm({
         (field) =>
           !formData[field as keyof FormProjectDetails] ||
           (typeof formData[field as keyof FormProjectDetails] === "string" &&
-        (formData[field as keyof FormProjectDetails] as string).trim() === "")
+            (formData[field as keyof FormProjectDetails] as string).trim() ===
+              "")
       );
 
       const missingLocationFields: string[] = [];
@@ -473,12 +499,10 @@ export default function AdminProjectForm({
         toast("Save error", {
           className: "!text-red-500",
           description: (
-        <span className="text-red-500">
-          Please fill all required fields: {[
-            ...missingFields,
-            ...missingLocationFields,
-          ].join(", ")}
-        </span>
+            <span className="text-red-500">
+              Please fill all required fields:{" "}
+              {[...missingFields, ...missingLocationFields].join(", ")}
+            </span>
           ),
         });
         return;
@@ -492,9 +516,11 @@ export default function AdminProjectForm({
       if (updatedFormData.ProjectFounders.length == 0) {
         toast("Save error", {
           className: "!text-red-500",
-          description: <span className="text-red-500">You need to add founder(s)</span>,
+          description: (
+            <span className="text-red-500">You need to add founder(s)</span>
+          ),
         });
-        return
+        return;
       }
 
       console.debug("Submitting project:", updatedFormData);
@@ -688,8 +714,7 @@ export default function AdminProjectForm({
           <Button
             variant="outline"
             className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700"
-            onClick={() => {
-            }}
+            onClick={() => {}}
           >
             Cancel
           </Button>

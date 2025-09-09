@@ -1,25 +1,17 @@
-import { useState, useEffect, useRef } from "react";
-import { FaPlus, FaTrashAlt, FaUpload, FaEdit } from "react-icons/fa";
+import React from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { FormUser } from "@/types/user";
-import { Roles } from "@/types/role";
 import { api } from "@/lib/api";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { getBackendUrl } from "@/lib/config";
-import { toast } from "sonner"
+
+import { toast } from "sonner";
 import { SelectWithLabel } from "./ui/selectWithLabel";
 import { SelectItem, SelectLabel } from "@/components/ui/select";
 import InputAvatar from "./ui/InputAvatar";
 import { Label } from "./ui/label";
-import {Combobox} from "./ui/comboBox"
+import { Combobox } from "./ui/comboBox";
 import { Founder } from "@/types/founders";
 import { Investor } from "@/types/investor";
 
@@ -39,49 +31,48 @@ export default function AdminUserForm({
     founder: undefined,
     investor: undefined,
     userImage: undefined,
-    is_active: undefined
+    is_active: undefined,
   };
   const [formData, setFormData] = useState<FormUser>(
     defaultData || initialFormData
   );
 
-  const [foundersAvailable, setFoundersAvailable] = useState<Founder[] | null>();
-  const [investosrAvailable, setInvestorsAvailable] = useState<Investor[] | null>();
-  const [isLoadingFounder, setIsLoadingFounder] = useState<boolean>(true);
-  const [isLoadingInvestor, setIsLoadingInvestor] = useState<boolean>(true);
+  const [foundersAvailable, setFoundersAvailable] = useState<
+    Founder[] | null
+  >();
+  const [investosrAvailable, setInvestorsAvailable] = useState<
+    Investor[] | null
+  >();
 
-
-  const fetchAvailableFounders = async () => {
+  const fetchAvailableFounders = React.useCallback(async () => {
     try {
-      setIsLoadingFounder(true);
-      const result = (await api.get<Founder[]>({endpoint: `/founders/?founder_available=true`}));
+      const result = await api.get<Founder[]>({
+        endpoint: `/founders/?founder_available=true`,
+      });
       let available = Array.isArray(result.data) ? result.data : [];
       if (
         defaultData?.founder &&
         defaultData.founder.FounderID &&
-        !available.some(f => f.FounderID === defaultData.founder?.FounderID)
+        !available.some((f) => f.FounderID === defaultData.founder?.FounderID)
       ) {
         available = [...available, defaultData.founder];
       }
       setFoundersAvailable(available);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-    setIsLoadingFounder(false);
-  }
-
+  }, [defaultData]);
 
   const fetchAvailableInvestors = async () => {
     try {
-      setIsLoadingInvestor(true);
-      const result = (await api.get<Investor[]>({endpoint: `/investors/?investor_available=true`}));
+      const result = await api.get<Investor[]>({
+        endpoint: `/investors/?investor_available=true`,
+      });
       setInvestorsAvailable(result.data);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-    setIsLoadingInvestor(false);
-  }
-
+  };
 
   useEffect(() => {
     fetchAvailableFounders();
@@ -89,7 +80,7 @@ export default function AdminUserForm({
     if (defaultData) {
       setFormData(defaultData);
     }
-  }, [defaultData]);
+  }, [defaultData, fetchAvailableFounders]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -108,28 +99,22 @@ export default function AdminUserForm({
   };
   const handleSubmitProject = async () => {
     try {
-      const requiredFields = [
-        "name",
-        "email",
-        "role",
-      ];
+      const requiredFields = ["name", "email", "role"];
 
       const missingFields = requiredFields.filter(
         (field) =>
           !formData[field as keyof FormUser] ||
           (typeof formData[field as keyof FormUser] === "string" &&
-        (formData[field as keyof FormUser] as string).trim() === "")
+            (formData[field as keyof FormUser] as string).trim() === "")
       );
 
       if (missingFields.length > 0) {
         toast("Save error", {
           className: "!text-red-500",
           description: (
-        <span className="text-red-500">
-          Please fill all required fields: {[
-            ...missingFields,
-          ].join(", ")}
-        </span>
+            <span className="text-red-500">
+              Please fill all required fields: {[...missingFields].join(", ")}
+            </span>
           ),
         });
         return;
@@ -175,7 +160,9 @@ export default function AdminUserForm({
                 }
               />
               <div>
-                <h2 className="text-xl font-semibold text-gray-800">{formData.name || "User Information"}</h2>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {formData.name || "User Information"}
+                </h2>
                 <span className="text-xs text-gray-500">Profile picture</span>
               </div>
             </div>
@@ -202,16 +189,19 @@ export default function AdminUserForm({
             />
             <div className="flex flex-col md:col-span-1 gap-4">
               <Label htmlFor="user-active" className="mb-1 cursor-pointer">
-              Is active
+                Is active
               </Label>
               <input
-              type="checkbox"
-              id="user-active"
-              checked={!!formData.is_active}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, is_active: e.target.checked }))
-              }
-              className="h-5 w-5 accent-blue-600"
+                type="checkbox"
+                id="user-active"
+                checked={!!formData.is_active}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    is_active: e.target.checked,
+                  }))
+                }
+                className="h-5 w-5 accent-blue-600"
               />
             </div>
             <SelectWithLabel
@@ -220,7 +210,7 @@ export default function AdminUserForm({
               className="cursor-pointer"
               value={formData.role}
               onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, role: value }))
+                setFormData((prev) => ({ ...prev, role: value }))
               }
             >
               <SelectLabel>Role</SelectLabel>
@@ -250,13 +240,21 @@ export default function AdminUserForm({
                       setFormData((prev) => ({ ...prev, investor: undefined }));
                       if (value) {
                         try {
-                          const result = await api.get<Founder | null>({ endpoint: `/founders/${value}` });
-                          setFormData((prev) => ({ ...prev, founder: result.data ?? undefined }));
+                          const result = await api.get<Founder | null>({
+                            endpoint: `/founders/${value}`,
+                          });
+                          setFormData((prev) => ({
+                            ...prev,
+                            founder: result.data ?? undefined,
+                          }));
                         } catch (error) {
                           console.error(error);
                         }
                       } else {
-                        setFormData((prev) => ({ ...prev, founder: undefined }));
+                        setFormData((prev) => ({
+                          ...prev,
+                          founder: undefined,
+                        }));
                       }
                     }}
                   />
@@ -282,8 +280,13 @@ export default function AdminUserForm({
                     setFormData((prev) => ({ ...prev, founder: undefined }));
                     if (value) {
                       try {
-                        const result = await api.get<Investor | null>({ endpoint: `/investors/${value}` });
-                        setFormData((prev) => ({ ...prev, investor: result.data ?? undefined }));
+                        const result = await api.get<Investor | null>({
+                          endpoint: `/investors/${value}`,
+                        });
+                        setFormData((prev) => ({
+                          ...prev,
+                          investor: result.data ?? undefined,
+                        }));
                       } catch (error) {
                         console.error(error);
                       }
@@ -292,7 +295,7 @@ export default function AdminUserForm({
                     }
                   }}
                 />
-                </div>
+              </div>
             )}
           </div>
         </div>

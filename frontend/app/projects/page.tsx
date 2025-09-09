@@ -25,7 +25,9 @@ export default function Projects() {
     const fetchProjects = async () => {
       try {
         console.debug("Fetching projects from API");
-        const response = await api.get<ProjectOverviewProps[]>({endpoint: "/projects/"});
+        const response = await api.get<ProjectOverviewProps[]>({
+          endpoint: "/projects/",
+        });
         if (!response.data) {
           console.error("No project data found");
           return;
