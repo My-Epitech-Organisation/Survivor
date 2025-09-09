@@ -353,7 +353,7 @@ export default function StartupOpportunities() {
 
               <div
                 ref={partnersListRef}
-                className="space-y-4 overflow-y-auto flex-1"
+                className="space-y-4 overflow-y-auto flex-1 max-h-96"
               >
                 {filteredPartners.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
@@ -492,7 +492,7 @@ export default function StartupOpportunities() {
                 </div>
               </div>
 
-              <div ref={fundingListRef} className="space-y-4 overflow-y-auto flex-1">
+              <div ref={fundingListRef} className="space-y-4 overflow-y-auto flex-1 max-h-96">
                 {filteredInvestors.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
                     {investors.length === 0 ? "No funding opportunities available." : "No funding opportunities match your filters."}
