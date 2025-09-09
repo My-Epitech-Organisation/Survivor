@@ -1,27 +1,36 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import StartupNavigation from "@/components/StartupNavigation";
 import Footer from "@/components/Footer";
-import ChatComponent from "@/components/ChatComponent";
-import ChatSideBar from "@/components/ChatSideBar";
+import ChatComponent, { ChatComponentHandle } from "@/components/ChatComponent";
+import ChatSideBar, { ChatSideBarHandle } from "@/components/ChatSideBar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { TbLoader3 } from "react-icons/tb";
-import { Thread } from "@/types/chat"
+import { Thread } from "@/types/chat";
 
 export default function StartupMessaging() {
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeThread, setActiveThread] = useState<Thread | null>(null);
-
+  const [activeThread, setActiveThread] = useState<Thread | null>(
+    null
+  );
+  const chatRef = useRef<ChatComponentHandle>(null);
+  const sideBarRef = useRef<ChatSideBarHandle>(null);
 
   useEffect(() => {
-    // Simule un chargement
-    // setIsDataLoading(true);
-    // const t = setTimeout(() => setIsDataLoading(false), 400);
-    // return () => clearTimeout(t);
-  }, []);
+    if (activeThread) {
+      chatRef.current?.clearThreadsMessages();
+      chatRef.current?.refreshThreadMessages();
+    }
+  }, [activeThread]);
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
@@ -31,7 +40,9 @@ export default function StartupMessaging() {
         {isDataLoading ? (
           <div className="flex-1 flex flex-col items-center justify-center">
             <TbLoader3 className="size-12 animate-spin text-blue-600 mb-4" />
-            <p className="text-app-text-secondary text-lg">Loading messages...</p>
+            <p className="text-app-text-secondary text-lg">
+              Loading messages...
+            </p>
           </div>
         ) : (
           <div className="w-full max-w-7xl mx-auto flex-1">
@@ -40,12 +51,26 @@ export default function StartupMessaging() {
                 <div className="h-full grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)]">
                   {/* Sidebar desktop */}
                   <aside className="hidden lg:flex flex-col flex-1 min-h-0 h-full border-r">
-                    <ChatSideBar onSelect={(conv) => setActiveThread(conv)}/>
+                    <ChatSideBar
+                      ref={sideBarRef} 
+                      onSelect={(conv) => {
+                        console.log('Selected conversation:', conv); // Debug
+                        setActiveThread(conv);
+                      }} 
+                    />
                   </aside>
 
                   {/* Zone chat */}
                   <section className="min-w-0 flex">
-                    <ChatComponent conv={activeThread} onOpenConversations={() => setIsSidebarOpen(true)} />
+                    <ChatComponent
+                      ref={chatRef}
+                      onNewConv={(thread) => {
+                        console.log('New conversation:', thread); // Debug
+                        sideBarRef.current?.refreshThreads();
+                      }}
+                      conv={activeThread}
+                      onOpenConversations={() => setIsSidebarOpen(true)}
+                    />
                   </section>
                 </div>
               </CardContent>
@@ -58,14 +83,19 @@ export default function StartupMessaging() {
                   <SheetTitle>Conversations</SheetTitle>
                 </SheetHeader>
                 <div className="h-[calc(100dvh-56px)] overflow-y-auto">
-                  <ChatSideBar onSelect={() => setIsSidebarOpen(false)} />
+                  <ChatSideBar
+                    onSelect={(conv) => {
+                      console.log('Mobile selected conversation:', conv); // Debug
+                      setActiveThread(conv);
+                      setIsSidebarOpen(false);
+                    }}
+                  />
                 </div>
               </SheetContent>
             </Sheet>
           </div>
         )}
       </main>
-
     </div>
   );
 }

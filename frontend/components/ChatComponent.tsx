@@ -1,91 +1,76 @@
-import { useEffect, useCallback, useRef, useState } from "react";
+import { useEffect, useCallback, useRef, useState, useImperativeHandle, forwardRef } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Paperclip, ArrowLeft, SendHorizontal } from "lucide-react";
 import api from "@/lib/api";
-import { Thread } from "@/types/chat";
-
-interface Message {
-  id: string;
-  sender: string;
-  content: string;
-  timestamp: string;
-  isOwn: boolean;
-}
-
-const mockMessages: Message[] | null = [
-  {
-    id: "1",
-    sender: "Eliott Tesnier",
-    content:
-      "Pourquoi tu code du devrais prompter?",
-    timestamp: "10:30 AM",
-    isOwn: false,
-  },
-  {
-    id: "2",
-    sender: "You",
-    content:
-      "Mais nan tu as raison c'est une super mauvaise idée !",
-    timestamp: "10:32 AM",
-    isOwn: true,
-  },
-  {
-    id: "3",
-    sender: "Eliott Tesnier",
-    content: "Tu as générer ce design ?",
-    timestamp: "10:35 AM",
-    isOwn: false,
-  },
-  {
-    id: "4",
-    sender: "You",
-    content:
-      "On va dire que je ne l'ai pas fait seul néanmoins j'ai rajotuer des fonctionalité sympa et c'est moi qui vais faire les commnication avec le back",
-    timestamp: "10:37 AM",
-    isOwn: true,
-  },
-  {
-    id: "5",
-    sender: "Eliott Tesnier",
-    content:
-      "Ok",
-    timestamp: "10:40 AM",
-    isOwn: false,
-  },
-];
-
+import { Thread, Message, ThreadDetails, MessageReceive } from "@/types/chat";
+import { useAuth } from "@/contexts/AuthContext";
+import Router from "next/router";
+import { MessageCircleOff, MessageCircle } from 'lucide-react';
 
 interface ChatComponentProps {
   onOpenConversations?: () => void;
   conv: Thread | null;
+  onNewConv: (NewConv: Thread) => void;
 }
 
-export default function ChatComponent({ onOpenConversations, conv }: ChatComponentProps) {
+export interface ChatComponentHandle {
+  refreshThreadMessages: () => Promise<void>;
+  clearThreadsMessages: () => Promise<void>;
+}
+
+const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onOpenConversations, conv, onNewConv }, ref) =>  {
   const [messages, setMessages] = useState<Message[] | null>(null);
   const [isMessageLoading, setIsMessageLoading] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const {user, isLoading} = useAuth();
 
-
-  useEffect(() => {
-    const fetchMessages = async () => {
-      if (!conv)
-        return;
-      try {
-        setIsMessageLoading(true);
-        console.debug(`/threads/${conv.id}/`);
-        api.get({endpoint: `/threads/${conv.id}/`})
-      } catch (error) {
-        console.log(error)
-      } finally {
-        setIsMessageLoading(false);
+  const refreshThreadMessages = useCallback(async () => {
+    if (!conv || (conv.created == false)) return;
+    try {
+      setIsMessageLoading(true);
+      setMessages(null);
+      const response = await api.get<ThreadDetails>({
+        endpoint: `/threads/${conv.id}/`,
+      });
+      if (response.data && Array.isArray(response.data.messages)) {
+        console.log("MESSAGE FROM API", response.data.messages);
+        const formattedMessages: Message[] = response.data.messages.map((msg: MessageReceive) => ({
+          id: msg.id,
+          sender: msg.sender.name,
+          content: msg.body,
+          timestamp: new Date(msg.created_at).toLocaleString([], {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          userID: msg.sender.id,
+        }));
+        setMessages(formattedMessages.reverse());
       }
+    } catch (error) {
+      console.error("Failed to refresh messages:", error);
+    } finally {
+      setIsMessageLoading(false);
     }
-    fetchMessages();
-  }, [])
+  }, [conv]);
+
+  const clearThreadsMessages = useCallback(async () => {
+      try {
+        setMessages(null);
+      } catch (error) {
+        console.error("Failed to delete message:", error);
+      }
+    }, [conv]);
+
+  useImperativeHandle(ref, () => ({
+    refreshThreadMessages,
+    clearThreadsMessages,
+  }));
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -106,21 +91,53 @@ export default function ChatComponent({ onOpenConversations, conv }: ChatCompone
     autoResize();
   }, [inputValue, autoResize]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (inputValue.trim() === "") return;
-    setMessages((prev) => [
-      ...(prev ?? []),
-      {
+    if (!user) {
+      Router.push("/login");
+      return;
+    }
+    if (!conv)
+      return false;
+    const message : Message = {
         id: String(Date.now()),
-        sender: "You",
+        sender: user.name,
         content: inputValue,
         timestamp: new Date().toLocaleTimeString([], {
+          day: "2-digit",
+          month: "2-digit",
           hour: "2-digit",
           minute: "2-digit",
         }),
-        isOwn: true,
-      },
+        userID: user.id,
+      }
+    setMessages((prev) => [
+      ...(prev ?? []),
+      message,
     ]);
+    // Send the new message to other ! using le truc d'Eliott a la manière d'une socket
+    if (conv?.created == false) {
+      const participantIds = conv.participants.map(p => p.id);
+      const result = await api.post<Thread>("/threads/", { "participants": participantIds, "message": message.content });
+      if (result.data) {
+        onNewConv({
+          id: result.data.id,
+          participants: conv.participants,
+          created: conv.created,
+          created_at: result.data.created_at,
+          last_message_at: result.data.last_message_at,
+          last_message: result.data.last_message,
+          unread_count: result.data.unread_count
+        });
+      }
+    } else {
+      try {
+        const resp = await api.post<MessageReceive>(`/threads/${conv.id}/messages/`, {body: message.content});
+        console.log("MESSAGE IS POSTED with userID: ", resp.data, user.id);
+      } catch (error) {
+        console.error(error);
+      }
+    }
     setInputValue("");
     requestAnimationFrame(() => {
       textareaRef.current?.focus();
@@ -145,11 +162,11 @@ export default function ChatComponent({ onOpenConversations, conv }: ChatCompone
         {conv ? (
           <>
             <Avatar className="w-10 h-10">
-              <AvatarImage src="/placeholder-avatar.jpg" alt="Eliott Tesnier" />
-              <AvatarFallback>ET</AvatarFallback>
+              <AvatarImage src="/placeholder-avatar.jpg" alt={`${conv.participants.at(0)?.name} Logo`} />
+              <AvatarFallback>{conv.participants.at(0)?.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <div className="font-semibold text-base truncate">Eliott Tesnier</div>
+              <div className="font-semibold text-base truncate">{conv.participants.length == 1 ? conv.participants.at(0)?.name : conv.participants.map((user, index) => {return user.name + (index < conv.participants.length - 1 ? ", " : "")}).join("")}</div>
             </div>
           </>
         ) : (
@@ -172,52 +189,70 @@ export default function ChatComponent({ onOpenConversations, conv }: ChatCompone
         {conv && (
           <div className="flex items-center gap-3 justify-center py-2">
             <Avatar className="w-8 h-8">
-              <AvatarImage src="/placeholder-avatar.jpg" alt="Eliott Tesnier" />
-              <AvatarFallback>ET</AvatarFallback>
+              <AvatarImage src="/placeholder-avatar.jpg" alt={conv.participants.at(0)?.name} />
+              <AvatarFallback>{conv.participants.at(0)?.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
-              <span className="font-medium text-sm">Eliott Tesnier</span>
+              <span className="font-medium text-sm">{conv.participants.map((user, index) => {return user.name + (index < conv.participants.length - 1 ? ", " : "")}).join("")}</span>
               <span className="block text-xs text-muted-foreground">
-                Starting conversation with Eliott Tesnier
+                Starting conversation with {conv.participants.map((user, index) => {return user.name + (index < conv.participants.length - 1 ? ", " : "")}).join("")}
               </span>
             </div>
           </div>
         )}
 
         {/* Messages */}
-        <div className="space-y-3">
-          {messages && messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex items-end gap-2 ${
-                message.isOwn ? "justify-end" : "justify-start"
-              }`}
-            >
-              {!message.isOwn && (
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src="/placeholder-avatar.jpg" alt="Eliott Tesnier" />
-                  <AvatarFallback>ET</AvatarFallback>
-                </Avatar>
-              )}
-              <div
-                className={`rounded-2xl px-3 py-2 text-sm max-w-[85%] sm:max-w-[70%] lg:max-w-[60%] break-words whitespace-pre-wrap ${
-                  message.isOwn
-                    ? "bg-blue-600 text-primary-foreground rounded-br-none"
-                    : "bg-muted rounded-bl-none"
-                }`}
-              >
-                <p>{message.content}</p>
-                <p
-                  className={`text-[10px] opacity-70 mt-1 ${
-                    message.isOwn ? "text-right" : "text-left"
+          <div className="space-y-3">
+            {conv ? (
+              <>
+              {console.log("Messages: ", messages, "USER", user)}
+              {messages && messages.length > 0 ? (
+                messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex items-end gap-2 ${
+                  message.userID == user?.id ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {message.timestamp}
-                </p>
+                  {!(message.userID === user?.id) && (
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src="/placeholder-avatar.jpg" alt="Eliott Tesnier" />
+                    <AvatarFallback>ET</AvatarFallback>
+                  </Avatar>
+                  )}
+                  <div
+                  className={`rounded-2xl px-3 py-2 text-sm max-w-[85%] sm:max-w-[70%] lg:max-w-[60%] break-words whitespace-pre-wrap ${
+                    (message.userID === user?.id)
+                    ? "bg-blue-600 text-primary-foreground rounded-br-none"
+                    : "bg-muted rounded-bl-none"
+                  }`}
+                  >
+                  <p>{message.content}</p>
+                  <p
+                    className={`text-[10px] opacity-70 mt-1 ${
+                    (message.userID == user?.id) ? "text-right" : "text-left"
+                    }`}
+                  >
+                    {message.timestamp}
+                  </p>
+                  </div>
+                </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center text-muted-foreground py-12">
+                <MessageCircle className="w-10 h-10 mb-2" />
+                <span className="text-sm">No messages yet</span>
+                </div>
+              )}
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center text-muted-foreground py-12">
+              <MessageCircleOff className="w-10 h-10 mb-2" />
+              <span className="text-sm">No active thread </span>
               </div>
-            </div>
-          ))}
-        </div>
+            )}
+          </div>
+
       </div>
 
       {/* Composer */}
@@ -261,3 +296,6 @@ export default function ChatComponent({ onOpenConversations, conv }: ChatCompone
     </div>
   );
 }
+);
+
+export default ChatComponent;
