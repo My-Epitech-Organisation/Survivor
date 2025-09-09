@@ -12,12 +12,12 @@ import {
   Newspaper,
   Building,
   MapPin,
-  Clock,
   Users,
   TrendingUp,
   CheckCircle,
-  Target,
   Eye,
+  Calendar1,
+  TableProperties,
 } from "lucide-react";
 import { authenticatedFetch } from "@/lib/api";
 import {
@@ -390,44 +390,20 @@ export default function SearchPage() {
                     {selectedItem.type === "event" && isEvent(itemDetails) && (
                       <div className="space-y-6">
                         {/* Event Details */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="space-y-4">
-                            <div>
-                              <h3 className="text-sm font-semibold text-gray-700 mb-1">
-                                Date
-                              </h3>
-                              <p className="text-gray-900">
-                                {new Date(
-                                  itemDetails.dates
-                                ).toLocaleDateString()}
-                              </p>
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-semibold text-gray-700 mb-1">
-                                Location
-                              </h3>
-                              <p className="text-gray-900">
-                                {itemDetails.location}
-                              </p>
-                            </div>
+                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                          <div className="flex items-center gap-2">
+                            <Calendar1 className="w-4 h-4" />
+                            <span>
+                              {new Date(itemDetails.dates).toLocaleDateString()}
+                            </span>
                           </div>
-                          <div className="space-y-4">
-                            <div>
-                              <h3 className="text-sm font-semibold text-gray-700 mb-1">
-                                Type
-                              </h3>
-                              <p className="text-gray-900">
-                                {itemDetails.event_type}
-                              </p>
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-semibold text-gray-700 mb-1">
-                                Event Name
-                              </h3>
-                              <p className="text-gray-900">
-                                {itemDetails.name}
-                              </p>
-                            </div>
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4" />
+                            <span>{itemDetails.location}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <TableProperties className="w-4 h-4" />
+                            <span>{itemDetails.event_type}</span>
                           </div>
                         </div>
 
