@@ -11,7 +11,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Filter, Users, DollarSign, X, Building, MapPin, Mail, TrendingUp } from "lucide-react";
+import {
+  ChevronDown,
+  Filter,
+  Users,
+  DollarSign,
+  X,
+  Building,
+  MapPin,
+  Mail,
+  TrendingUp,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Dialog,
@@ -54,18 +64,14 @@ type InvestorMatch = {
 
 export default function StartupOpportunities() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<"opportunities" | "matches">(
-    "opportunities"
-  );
+  const [tab, setTab] = useState<"opportunities" | "matches">("opportunities");
   const [partners, setPartners] = useState<PartnerItem[]>([]);
   const [investors, setInvestors] = useState<InvestorItem[]>([]);
   const [matches, setMatches] = useState<InvestorMatch[]>([]);
   const [matchesLoading, setMatchesLoading] = useState(false);
   const [matchesError, setMatchesError] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisId, setAnalysisId] = useState<string | null>(null);
   const [analysisProgress, setAnalysisProgress] = useState(0);
-  const [analysisResults, setAnalysisResults] = useState<InvestorMatch[]>([]);
   const partnersCardRef = useRef<HTMLDivElement | null>(null);
   const partnersListRef = useRef<HTMLDivElement | null>(null);
   const fundingCardRef = useRef<HTMLDivElement | null>(null);
@@ -77,9 +83,15 @@ export default function StartupOpportunities() {
   const [partnerTypes, setPartnerTypes] = useState<string[]>([]);
   const [investorTypes, setInvestorTypes] = useState<string[]>([]);
   const [investmentFocuses, setInvestmentFocuses] = useState<string[]>([]);
-  const [selectedPartner, setSelectedPartner] = useState<PartnerItem | null>(null);
-  const [selectedInvestor, setSelectedInvestor] = useState<InvestorItem | null>(null);
-  const [selectedMatch, setSelectedMatch] = useState<InvestorMatch | null>(null);
+  const [selectedPartner, setSelectedPartner] = useState<PartnerItem | null>(
+    null
+  );
+  const [selectedInvestor, setSelectedInvestor] = useState<InvestorItem | null>(
+    null
+  );
+  const [selectedMatch, setSelectedMatch] = useState<InvestorMatch | null>(
+    null
+  );
 
   const [activePartnerFilters, setActivePartnerFilters] = useState({
     types: [] as string[],
@@ -92,11 +104,11 @@ export default function StartupOpportunities() {
 
   const parseMatchReason = (reason: string) => {
     const aiMatch = reason.match(/AI:\s*(.+)/);
-    const ruleReason = reason.replace(/,\s*AI:\s*.+/, '');
+    const ruleReason = reason.replace(/,\s*AI:\s*.+/, "");
     return {
       ruleReason: ruleReason.trim(),
       aiReason: aiMatch ? aiMatch[1].trim() : null,
-      hasAI: !!aiMatch
+      hasAI: !!aiMatch,
     };
   };
 
@@ -111,12 +123,13 @@ export default function StartupOpportunities() {
 
         const uniqueTypes = [
           ...new Set(
-            data.map((partner: PartnerItem) => partner.partnership_type).filter(Boolean)
+            data
+              .map((partner: PartnerItem) => partner.partnership_type)
+              .filter(Boolean)
           ),
         ];
         setPartnerTypes(uniqueTypes as string[]);
-      } catch {
-      }
+      } catch {}
     };
     fetchPartners();
   }, []);
@@ -132,28 +145,37 @@ export default function StartupOpportunities() {
 
         const uniqueTypes = [
           ...new Set(
-            data.map((investor: InvestorItem) => investor.investor_type).filter(Boolean)
+            data
+              .map((investor: InvestorItem) => investor.investor_type)
+              .filter(Boolean)
           ),
         ];
         const uniqueFocuses = [
           ...new Set(
-            data.map((investor: InvestorItem) => investor.investment_focus).filter(Boolean)
+            data
+              .map((investor: InvestorItem) => investor.investment_focus)
+              .filter(Boolean)
           ),
         ];
         setInvestorTypes(uniqueTypes as string[]);
         setInvestmentFocuses(uniqueFocuses as string[]);
-      } catch {
-      }
+      } catch {}
     };
     fetchInvestors();
   }, []);
 
   useEffect(() => {
-    const computeFor = (card: HTMLDivElement | null, list: HTMLDivElement | null) => {
+    const computeFor = (
+      card: HTMLDivElement | null,
+      list: HTMLDivElement | null
+    ) => {
       if (!list) return;
 
       setTimeout(() => {
-        const top = card && card !== list ? card.getBoundingClientRect().top : list.getBoundingClientRect().top;
+        const top =
+          card && card !== list
+            ? card.getBoundingClientRect().top
+            : list.getBoundingClientRect().top;
         const available = window.innerHeight - top - 80;
         const children = list.children;
 
@@ -199,18 +221,21 @@ export default function StartupOpportunities() {
       setTimeout(() => {
         if (matchContentRef.current) {
           const contentElement = matchContentRef.current;
-          const sections = contentElement.querySelectorAll('.space-y-6 > div');
+          const sections = contentElement.querySelectorAll(".space-y-6 > div");
 
           if (sections.length >= 2) {
             const firstSection = sections[0] as HTMLElement;
             const secondSection = sections[1] as HTMLElement;
             const firstHeight = firstSection.offsetHeight;
             const secondHeight = secondSection.offsetHeight;
-            const targetScroll = firstHeight + (secondHeight * 0.5);
+            const targetScroll = firstHeight + secondHeight * 0.5;
 
             contentElement.scrollTo({
-              top: Math.max(0, targetScroll - (contentElement.clientHeight * 0.3)),
-              behavior: 'smooth'
+              top: Math.max(
+                0,
+                targetScroll - contentElement.clientHeight * 0.3
+              ),
+              behavior: "smooth",
             });
           }
         }
@@ -230,7 +255,9 @@ export default function StartupOpportunities() {
 
       try {
         const apiBase = getAPIUrl();
-        const res = await fetch(`${apiBase}/opportunities/matches/?startup_id=${user.startupId}`);
+        const res = await fetch(
+          `${apiBase}/opportunities/matches/?startup_id=${user.startupId}`
+        );
 
         if (!res.ok) {
           if (res.status === 400) {
@@ -256,12 +283,12 @@ export default function StartupOpportunities() {
   }, [tab, user]);
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, []);
 
@@ -269,7 +296,10 @@ export default function StartupOpportunities() {
     setActivePartnerFilters(filters);
   };
 
-  const handleInvestorFiltersChange = (filters: { types: string[]; focuses: string[] }) => {
+  const handleInvestorFiltersChange = (filters: {
+    types: string[];
+    focuses: string[];
+  }) => {
     setActiveInvestorFilters(filters);
   };
 
@@ -314,27 +344,26 @@ export default function StartupOpportunities() {
 
     setIsAnalyzing(true);
     setAnalysisProgress(0);
-    setAnalysisId(null);
     setMatchesError(null);
 
     try {
       const apiBase = getAPIUrl();
       const response = await fetch(`${apiBase}/opportunities/ai-analysis/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          startup_id: user.startupId
-        })
+          startup_id: user.startupId,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to start AI analysis');
+        throw new Error("Failed to start AI analysis");
       }
 
       const data = await response.json();
-      setAnalysisId(data.analysis_id);
+      setAnalysisProgress(0);
 
       pollAnalysisStatus(data.analysis_id);
     } catch (error) {
@@ -348,26 +377,25 @@ export default function StartupOpportunities() {
     const poll = async () => {
       try {
         const apiBase = getAPIUrl();
-        const response = await fetch(`${apiBase}/opportunities/ai-analysis/${id}/`);
+        const response = await fetch(
+          `${apiBase}/opportunities/ai-analysis/${id}/`
+        );
 
         if (!response.ok) {
-          throw new Error('Failed to get analysis status');
+          throw new Error("Failed to get analysis status");
         }
 
         const data = await response.json();
 
         setAnalysisProgress(data.progress || 0);
 
-        if (data.status === 'completed') {
-          setAnalysisResults(data.results || []);
+        if (data.status === "completed") {
           setMatches(data.results || []);
           setIsAnalyzing(false);
-          setAnalysisId(null);
-        } else if (data.status === 'error') {
+        } else if (data.status === "error") {
           setMatchesError(data.error || "AI analysis failed");
           setIsAnalyzing(false);
-          setAnalysisId(null);
-        } else if (data.status === 'processing') {
+        } else if (data.status === "processing") {
           // Continue polling
           setTimeout(poll, 2000);
         }
@@ -375,7 +403,6 @@ export default function StartupOpportunities() {
         console.error("Analysis status error:", error);
         setMatchesError("Failed to check analysis status");
         setIsAnalyzing(false);
-        setAnalysisId(null);
       }
     };
 
@@ -395,8 +422,8 @@ export default function StartupOpportunities() {
             Opportunities
           </h1>
           <p className="text-lg text-app-text-secondary max-w-3xl mx-auto">
-            Discover calls for projects, funding opportunities and quick investor
-            matches tailored to startups. (Placeholders)
+            Discover calls for projects, funding opportunities and quick
+            investor matches tailored to startups. (Placeholders)
           </p>
         </div>
 
@@ -427,7 +454,10 @@ export default function StartupOpportunities() {
 
         {tab === "opportunities" ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div ref={partnersCardRef} className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col">
+            <div
+              ref={partnersCardRef}
+              className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col"
+            >
               <h3 className="text-2xl font-semibold text-app-text-primary mb-6">
                 Partners
               </h3>
@@ -436,17 +466,24 @@ export default function StartupOpportunities() {
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Filter className="h-5 w-5 text-app-text-secondary" />
-                  <span className="text-lg font-medium text-app-text-primary">Filters</span>
+                  <span className="text-lg font-medium text-app-text-primary">
+                    Filters
+                  </span>
                 </div>
                 <div className="flex flex-wrap gap-4">
                   <div className="flex-1 min-w-[200px]">
                     <div className="flex items-center gap-2 mb-2">
                       <Users className="h-4 w-4 text-app-blue-primary" />
-                      <span className="text-sm font-medium text-app-text-primary">Type</span>
+                      <span className="text-sm font-medium text-app-text-primary">
+                        Type
+                      </span>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors">
+                        <Button
+                          variant="outline"
+                          className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors"
+                        >
                           {activePartnerFilters.types.length === 0
                             ? "All types"
                             : activePartnerFilters.types.length === 1
@@ -466,7 +503,9 @@ export default function StartupOpportunities() {
                               handlePartnerFiltersChange({
                                 types: checked
                                   ? [...activePartnerFilters.types, type]
-                                  : activePartnerFilters.types.filter((t) => t !== type),
+                                  : activePartnerFilters.types.filter(
+                                      (t) => t !== type
+                                    ),
                               })
                             }
                             className="hover:bg-app-blue-primary/10 transition-colors cursor-pointer"
@@ -495,7 +534,9 @@ export default function StartupOpportunities() {
               >
                 {filteredPartners.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
-                    {partners.length === 0 ? "No partners available." : "No partners match your filters."}
+                    {partners.length === 0
+                      ? "No partners available."
+                      : "No partners match your filters."}
                   </div>
                 ) : (
                   filteredPartners.map((p) => (
@@ -513,7 +554,9 @@ export default function StartupOpportunities() {
                           </div>
                         </div>
                       </div>
-                      <p className="mt-3 text-app-text-secondary">{p.description}</p>
+                      <p className="mt-3 text-app-text-secondary">
+                        {p.description}
+                      </p>
                       <div className="mt-4 flex gap-2">
                         <button
                           onClick={() => handlePartnerView(p)}
@@ -528,7 +571,10 @@ export default function StartupOpportunities() {
               </div>
             </div>
 
-            <div ref={fundingCardRef} className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col">
+            <div
+              ref={fundingCardRef}
+              className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col"
+            >
               <h3 className="text-2xl font-semibold text-app-text-primary mb-6">
                 Funding opportunities
               </h3>
@@ -537,17 +583,24 @@ export default function StartupOpportunities() {
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Filter className="h-5 w-5 text-app-text-secondary" />
-                  <span className="text-lg font-medium text-app-text-primary">Filters</span>
+                  <span className="text-lg font-medium text-app-text-primary">
+                    Filters
+                  </span>
                 </div>
                 <div className="flex flex-wrap gap-4">
                   <div className="flex-1 min-w-[200px]">
                     <div className="flex items-center gap-2 mb-2">
                       <DollarSign className="h-4 w-4 text-app-green-primary" />
-                      <span className="text-sm font-medium text-app-text-primary">Type</span>
+                      <span className="text-sm font-medium text-app-text-primary">
+                        Type
+                      </span>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors">
+                        <Button
+                          variant="outline"
+                          className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors"
+                        >
                           {activeInvestorFilters.types.length === 0
                             ? "All types"
                             : activeInvestorFilters.types.length === 1
@@ -567,7 +620,9 @@ export default function StartupOpportunities() {
                               handleInvestorFiltersChange({
                                 types: checked
                                   ? [...activeInvestorFilters.types, type]
-                                  : activeInvestorFilters.types.filter((t) => t !== type),
+                                  : activeInvestorFilters.types.filter(
+                                      (t) => t !== type
+                                    ),
                                 focuses: activeInvestorFilters.focuses,
                               })
                             }
@@ -582,11 +637,16 @@ export default function StartupOpportunities() {
                   <div className="flex-1 min-w-[200px]">
                     <div className="flex items-center gap-2 mb-2">
                       <Users className="h-4 w-4 text-app-purple-primary" />
-                      <span className="text-sm font-medium text-app-text-primary">Focus</span>
+                      <span className="text-sm font-medium text-app-text-primary">
+                        Focus
+                      </span>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors">
+                        <Button
+                          variant="outline"
+                          className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors"
+                        >
                           {activeInvestorFilters.focuses.length === 0
                             ? "All focuses"
                             : activeInvestorFilters.focuses.length === 1
@@ -601,13 +661,17 @@ export default function StartupOpportunities() {
                         {investmentFocuses.map((focus) => (
                           <DropdownMenuCheckboxItem
                             key={focus}
-                            checked={activeInvestorFilters.focuses.includes(focus)}
+                            checked={activeInvestorFilters.focuses.includes(
+                              focus
+                            )}
                             onCheckedChange={(checked) =>
                               handleInvestorFiltersChange({
                                 types: activeInvestorFilters.types,
                                 focuses: checked
                                   ? [...activeInvestorFilters.focuses, focus]
-                                  : activeInvestorFilters.focuses.filter((f) => f !== focus),
+                                  : activeInvestorFilters.focuses.filter(
+                                      (f) => f !== focus
+                                    ),
                               })
                             }
                             className="hover:bg-app-blue-primary/10 transition-colors cursor-pointer"
@@ -622,7 +686,9 @@ export default function StartupOpportunities() {
                     <Button
                       variant="ghost"
                       className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap cursor-pointer"
-                      onClick={() => handleInvestorFiltersChange({ types: [], focuses: [] })}
+                      onClick={() =>
+                        handleInvestorFiltersChange({ types: [], focuses: [] })
+                      }
                     >
                       Clear
                     </Button>
@@ -630,10 +696,15 @@ export default function StartupOpportunities() {
                 </div>
               </div>
 
-              <div ref={fundingListRef} className="space-y-4 overflow-y-auto flex-1 max-h-96">
+              <div
+                ref={fundingListRef}
+                className="space-y-4 overflow-y-auto flex-1 max-h-96"
+              >
                 {filteredInvestors.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
-                    {investors.length === 0 ? "No funding opportunities available." : "No funding opportunities match your filters."}
+                    {investors.length === 0
+                      ? "No funding opportunities available."
+                      : "No funding opportunities match your filters."}
                   </div>
                 ) : (
                   filteredInvestors.map((inv) => (
@@ -646,11 +717,17 @@ export default function StartupOpportunities() {
                           <h4 className="text-lg font-medium text-app-text-primary">
                             {inv.name}
                           </h4>
-                          <div className="text-sm text-app-text-secondary">{inv.investment_focus}</div>
+                          <div className="text-sm text-app-text-secondary">
+                            {inv.investment_focus}
+                          </div>
                         </div>
-                        <div className="text-sm font-medium text-app-text-primary">{inv.investor_type}</div>
+                        <div className="text-sm font-medium text-app-text-primary">
+                          {inv.investor_type}
+                        </div>
                       </div>
-                      <p className="mt-3 text-app-text-secondary">{inv.description}</p>
+                      <p className="mt-3 text-app-text-secondary">
+                        {inv.description}
+                      </p>
                       <div className="mt-4 flex gap-2">
                         <button
                           onClick={() => handleInvestorView(inv)}
@@ -666,24 +743,29 @@ export default function StartupOpportunities() {
             </div>
           </div>
         ) : (
-          <div ref={matchesCardRef} className="bg-app-surface rounded-lg shadow-md p-8">
+          <div
+            ref={matchesCardRef}
+            className="bg-app-surface rounded-lg shadow-md p-8"
+          >
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-2xl font-semibold text-app-text-primary mb-2">
                   Investor matches
                 </h3>
                 <p className="text-app-text-secondary">
-                  Discover the investors best suited to your startup. The match score is calculated by combining algorithmic rules and advanced AI analysis for optimal compatibility.
+                  Discover the investors best suited to your startup. The match
+                  score is calculated by combining algorithmic rules and
+                  advanced AI analysis for optimal compatibility.
                 </p>
               </div>
               <div className="flex flex-col items-end gap-2">
-                                                <button
+                <button
                   onClick={startAIAnalysis}
                   disabled={isAnalyzing || !user?.startupId}
                   className={`px-4 py-2 rounded-lg font-bold transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
                     isAnalyzing
-                      ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                      : 'bg-blue-600 text-white hover:bg-blue-700 transform hover:scale-105'
+                      ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                      : "bg-blue-600 text-white hover:bg-blue-700 transform hover:scale-105"
                   }`}
                 >
                   {isAnalyzing ? (
@@ -711,8 +793,12 @@ export default function StartupOpportunities() {
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🎯</span>
                   <div>
-                    <h4 className="text-sm font-bold text-app-text-primary">Smart Matching</h4>
-                    <p className="text-xs text-app-text-secondary">Rules + AI = Better Matches</p>
+                    <h4 className="text-sm font-bold text-app-text-primary">
+                      Smart Matching
+                    </h4>
+                    <p className="text-xs text-app-text-secondary">
+                      Rules + AI = Better Matches
+                    </p>
                   </div>
                 </div>
                 <span className="px-3 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-700 text-xs font-bold rounded-full border border-purple-400/50">
@@ -723,14 +809,19 @@ export default function StartupOpportunities() {
 
             {matchesLoading ? (
               <div className="flex items-center justify-center h-32">
-                <div className="text-app-text-secondary">Loading matches...</div>
+                <div className="text-app-text-secondary">
+                  Loading matches...
+                </div>
               </div>
             ) : matchesError ? (
               <div className="flex items-center justify-center h-32">
                 <div className="text-center text-app-text-secondary">
                   <p className="mb-2">{matchesError}</p>
                   {matchesError.includes("startup") && (
-                    <p className="text-sm">Please contact the administrator to associate a startup with your account.</p>
+                    <p className="text-sm">
+                      Please contact the administrator to associate a startup
+                      with your account.
+                    </p>
                   )}
                 </div>
               </div>
@@ -744,12 +835,15 @@ export default function StartupOpportunities() {
                     disabled={isAnalyzing}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-bold shadow-lg disabled:opacity-50 cursor-pointer"
                   >
-                    {isAnalyzing ? '✨ Running...' : '✨ RUN AI ANALYSIS'}
+                    {isAnalyzing ? "✨ Running..." : "✨ RUN AI ANALYSIS"}
                   </button>
                 </div>
               </div>
             ) : (
-              <div ref={matchesListRef} className="space-y-4 overflow-y-auto max-h-96">
+              <div
+                ref={matchesListRef}
+                className="space-y-4 overflow-y-auto max-h-96"
+              >
                 {matches.map((m) => {
                   const { ruleReason, hasAI } = parseMatchReason(m.reason);
                   return (
@@ -759,15 +853,22 @@ export default function StartupOpportunities() {
                     >
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
-                          <h4 className="text-lg font-medium text-app-text-primary">{m.name}</h4>
+                          <h4 className="text-lg font-medium text-app-text-primary">
+                            {m.name}
+                          </h4>
                           <div className="text-right">
                             <div className="flex flex-col items-end gap-1">
-                              <div className={`text-4xl font-black ${
-                                m.score >= 70 ? 'text-green-600' :
-                                m.score >= 50 ? 'text-blue-600' :
-                                m.score >= 30 ? 'text-yellow-600' :
-                                'text-red-600'
-                              }`}>
+                              <div
+                                className={`text-4xl font-black ${
+                                  m.score >= 70
+                                    ? "text-green-600"
+                                    : m.score >= 50
+                                    ? "text-blue-600"
+                                    : m.score >= 30
+                                    ? "text-yellow-600"
+                                    : "text-red-600"
+                                }`}
+                              >
                                 {m.score}%
                               </div>
                               {hasAI && (
@@ -793,17 +894,21 @@ export default function StartupOpportunities() {
                         </div>
 
                         {m.description && (
-                          <p className="text-app-text-secondary text-sm mb-3 line-clamp-2">{m.description}</p>
+                          <p className="text-app-text-secondary text-sm mb-3 line-clamp-2">
+                            {m.description}
+                          </p>
                         )}
 
                         <div className="space-y-3">
                           <div className="flex items-center gap-4 text-sm text-app-text-secondary">
                             <span className="flex items-center gap-1">
-                              <span className="font-medium">📊 Rules:</span> {ruleReason}
+                              <span className="font-medium">📊 Rules:</span>{" "}
+                              {ruleReason}
                             </span>
                             {m.location && (
                               <span className="flex items-center gap-1">
-                                📍 {m.location.split(',')[1]?.trim() || m.location}
+                                📍{" "}
+                                {m.location.split(",")[1]?.trim() || m.location}
                               </span>
                             )}
                           </div>
@@ -814,14 +919,24 @@ export default function StartupOpportunities() {
                                   ✨ AI SCORE
                                 </span>
                                 <div className="text-right">
-                                  <div className="text-3xl font-black text-purple-700">{m.ai_score}%</div>
-                                  <div className="text-xs text-purple-600">AI compatibility</div>
+                                  <div className="text-3xl font-black text-purple-700">
+                                    {m.ai_score}%
+                                  </div>
+                                  <div className="text-xs text-purple-600">
+                                    AI compatibility
+                                  </div>
                                 </div>
                               </div>
                               <div className="flex items-center gap-4 text-sm">
-                                <span className="text-purple-700 font-semibold">Rules: {m.rule_score}%</span>
-                                <span className="text-purple-700 font-semibold">AI: {m.ai_score}%</span>
-                                <span className="text-green-700 font-bold">Combined: {m.score}%</span>
+                                <span className="text-purple-700 font-semibold">
+                                  Rules: {m.rule_score}%
+                                </span>
+                                <span className="text-purple-700 font-semibold">
+                                  AI: {m.ai_score}%
+                                </span>
+                                <span className="text-green-700 font-bold">
+                                  Combined: {m.score}%
+                                </span>
                               </div>
                             </div>
                           )}
@@ -909,7 +1024,8 @@ export default function StartupOpportunities() {
                       </h3>
                       <div className="prose prose-gray max-w-none">
                         <p className="text-gray-600 mb-3 leading-relaxed">
-                          {selectedPartner.description || "No description available."}
+                          {selectedPartner.description ||
+                            "No description available."}
                         </p>
                       </div>
                     </div>
@@ -1016,7 +1132,8 @@ export default function StartupOpportunities() {
                       </h3>
                       <div className="prose prose-gray max-w-none">
                         <p className="text-gray-600 mb-3 leading-relaxed">
-                          {selectedInvestor.description || "No description available."}
+                          {selectedInvestor.description ||
+                            "No description available."}
                         </p>
                       </div>
                     </div>
@@ -1085,11 +1202,15 @@ export default function StartupOpportunities() {
                     </span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">Match Score:</span>
-                      <div className={`text-xl font-bold px-2 py-1 rounded-full ${
-                        selectedMatch.score >= 40 ? 'bg-green-500/20 text-green-100 border border-green-400/30' :
-                        selectedMatch.score >= 25 ? 'bg-yellow-500/20 text-yellow-100 border border-yellow-400/30' :
-                        'bg-gray-500/20 text-gray-100 border border-gray-400/30'
-                      }`}>
+                      <div
+                        className={`text-xl font-bold px-2 py-1 rounded-full ${
+                          selectedMatch.score >= 40
+                            ? "bg-green-500/20 text-green-100 border border-green-400/30"
+                            : selectedMatch.score >= 25
+                            ? "bg-yellow-500/20 text-yellow-100 border border-yellow-400/30"
+                            : "bg-gray-500/20 text-gray-100 border border-gray-400/30"
+                        }`}
+                      >
                         {selectedMatch.score}%
                       </div>
                     </div>
@@ -1121,7 +1242,10 @@ export default function StartupOpportunities() {
                       {selectedMatch.location && (
                         <div className="flex items-center gap-2">
                           <MapPin className="w-4 h-4" />
-                          <span>{selectedMatch.location.split(',')[1]?.trim() || selectedMatch.location}</span>
+                          <span>
+                            {selectedMatch.location.split(",")[1]?.trim() ||
+                              selectedMatch.location}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -1135,7 +1259,9 @@ export default function StartupOpportunities() {
                       <div className="space-y-3">
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="text-sm font-medium text-blue-700">📋 Rule-based analysis:</span>
+                            <span className="text-sm font-medium text-blue-700">
+                              📋 Rule-based analysis:
+                            </span>
                           </div>
                           <p className="text-gray-700 leading-relaxed">
                             {parseMatchReason(selectedMatch.reason).ruleReason}
@@ -1171,34 +1297,55 @@ export default function StartupOpportunities() {
                       </h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Overall Compatibility</span>
+                          <span className="text-sm text-gray-600">
+                            Overall Compatibility
+                          </span>
                           <div className="flex items-center gap-2">
                             <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full ${
-                                  selectedMatch.score >= 40 ? 'bg-green-500' :
-                                  selectedMatch.score >= 25 ? 'bg-yellow-500' :
-                                  'bg-gray-500'
+                                  selectedMatch.score >= 40
+                                    ? "bg-green-500"
+                                    : selectedMatch.score >= 25
+                                    ? "bg-yellow-500"
+                                    : "bg-gray-500"
                                 }`}
                                 style={{ width: `${selectedMatch.score}%` }}
                               ></div>
                             </div>
-                            <span className={`text-sm font-medium ${
-                              selectedMatch.score >= 40 ? 'text-green-600' :
-                              selectedMatch.score >= 25 ? 'text-yellow-600' :
-                              'text-gray-600'
-                            }`}>
+                            <span
+                              className={`text-sm font-medium ${
+                                selectedMatch.score >= 40
+                                  ? "text-green-600"
+                                  : selectedMatch.score >= 25
+                                  ? "text-yellow-600"
+                                  : "text-gray-600"
+                              }`}
+                            >
                               {selectedMatch.score}%
                             </span>
                           </div>
                         </div>
                         <div className="text-xs text-gray-500 mt-2 space-y-1">
-                          <p>• <strong>Sector:</strong> Direct or thematic match</p>
-                          <p>• <strong>Maturity:</strong> Alignment between your development stage and investor type</p>
-                          <p>• <strong>Needs:</strong> Alignment with investor interest areas</p>
-                          <p>• <strong>Location:</strong> Geographic preference</p>
+                          <p>
+                            • <strong>Sector:</strong> Direct or thematic match
+                          </p>
+                          <p>
+                            • <strong>Maturity:</strong> Alignment between your
+                            development stage and investor type
+                          </p>
+                          <p>
+                            • <strong>Needs:</strong> Alignment with investor
+                            interest areas
+                          </p>
+                          <p>
+                            • <strong>Location:</strong> Geographic preference
+                          </p>
                           {parseMatchReason(selectedMatch.reason).hasAI && (
-                            <p>• <strong>🤖 AI:</strong> Advanced semantic analysis of descriptions (averaged with rules)</p>
+                            <p>
+                              • <strong>🤖 AI:</strong> Advanced semantic
+                              analysis of descriptions (averaged with rules)
+                            </p>
                           )}
                         </div>
                       </div>
@@ -1225,8 +1372,9 @@ export default function StartupOpportunities() {
                           Ready to Connect?
                         </h3>
                         <p className="text-gray-600 text-center mb-4">
-                          This investor has been matched with your startup based on compatibility analysis.
-                          Take the next step towards potential investment opportunities.
+                          This investor has been matched with your startup based
+                          on compatibility analysis. Take the next step towards
+                          potential investment opportunities.
                         </p>
                         <a
                           href={`mailto:?subject=Investment Interest in ${selectedMatch.name}&body=Dear ${selectedMatch.name},%0A%0AI am interested in discussing potential investment opportunities with your firm. Our startup has been matched with your investment criteria, and I would like to explore how we might work together.%0A%0ABest regards,%0A[Your Name]`}
