@@ -282,7 +282,7 @@ export default function StartupOpportunities() {
           <div className="inline-flex rounded-md shadow-sm" role="group">
             <button
               onClick={() => setTab("opportunities")}
-              className={`px-4 py-2 text-sm font-medium rounded-l-md focus:outline-none ${
+              className={`px-4 py-2 text-sm font-medium rounded-l-md focus:outline-none cursor-pointer ${
                 tab === "opportunities"
                   ? "bg-app-surface border border-app-border text-app-text-primary"
                   : "bg-white border border-app-border text-app-text-secondary"
@@ -292,7 +292,7 @@ export default function StartupOpportunities() {
             </button>
             <button
               onClick={() => setTab("matches")}
-              className={`px-4 py-2 text-sm font-medium rounded-r-md focus:outline-none ${
+              className={`px-4 py-2 text-sm font-medium rounded-r-md focus:outline-none cursor-pointer ${
                 tab === "matches"
                   ? "bg-app-surface border border-app-border text-app-text-primary"
                   : "bg-white border border-app-border text-app-text-secondary"
@@ -324,7 +324,7 @@ export default function StartupOpportunities() {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-full justify-between">
+                        <Button variant="outline" className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors">
                           {activePartnerFilters.types.length === 0
                             ? "All types"
                             : activePartnerFilters.types.length === 1
@@ -347,6 +347,7 @@ export default function StartupOpportunities() {
                                   : activePartnerFilters.types.filter((t) => t !== type),
                               })
                             }
+                            className="hover:bg-app-blue-primary/10 transition-colors cursor-pointer"
                           >
                             {type}
                           </DropdownMenuCheckboxItem>
@@ -357,7 +358,7 @@ export default function StartupOpportunities() {
                   <div className="flex-shrink-0">
                     <Button
                       variant="ghost"
-                      className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap"
+                      className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap cursor-pointer"
                       onClick={() => handlePartnerFiltersChange({ types: [] })}
                     >
                       Clear
@@ -393,11 +394,8 @@ export default function StartupOpportunities() {
                       </div>
                       <p className="mt-3 text-app-text-secondary">{p.description}</p>
                       <div className="mt-4 flex gap-2">
-                        <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm">
+                        <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm cursor-pointer">
                           View
-                        </button>
-                        <button className="px-3 py-1 rounded border border-app-border text-sm">
-                          Contact
                         </button>
                       </div>
                     </div>
@@ -425,7 +423,7 @@ export default function StartupOpportunities() {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-full justify-between">
+                        <Button variant="outline" className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors">
                           {activeInvestorFilters.types.length === 0
                             ? "All types"
                             : activeInvestorFilters.types.length === 1
@@ -449,6 +447,7 @@ export default function StartupOpportunities() {
                                 focuses: activeInvestorFilters.focuses,
                               })
                             }
+                            className="hover:bg-app-blue-primary/10 transition-colors cursor-pointer"
                           >
                             {type}
                           </DropdownMenuCheckboxItem>
@@ -463,7 +462,7 @@ export default function StartupOpportunities() {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-full justify-between">
+                        <Button variant="outline" className="w-full justify-between cursor-pointer hover:bg-app-surface/50 hover:border-app-blue-primary/50 transition-colors">
                           {activeInvestorFilters.focuses.length === 0
                             ? "All focuses"
                             : activeInvestorFilters.focuses.length === 1
@@ -487,6 +486,7 @@ export default function StartupOpportunities() {
                                   : activeInvestorFilters.focuses.filter((f) => f !== focus),
                               })
                             }
+                            className="hover:bg-app-blue-primary/10 transition-colors cursor-pointer"
                           >
                             {focus}
                           </DropdownMenuCheckboxItem>
@@ -497,7 +497,7 @@ export default function StartupOpportunities() {
                   <div className="flex-shrink-0">
                     <Button
                       variant="ghost"
-                      className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap"
+                      className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap cursor-pointer"
                       onClick={() => handleInvestorFiltersChange({ types: [], focuses: [] })}
                     >
                       Clear
@@ -528,11 +528,8 @@ export default function StartupOpportunities() {
                       </div>
                       <p className="mt-3 text-app-text-secondary">{inv.description}</p>
                       <div className="mt-4 flex gap-2">
-                        <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm">
+                        <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm cursor-pointer">
                           Details
-                        </button>
-                        <button className="px-3 py-1 rounded border border-app-border text-sm">
-                          Request info
                         </button>
                       </div>
                     </div>
@@ -635,11 +632,8 @@ export default function StartupOpportunities() {
                     </div>
 
                     <div className="ml-6 flex flex-col gap-2">
-                      <button className="px-4 py-2 rounded bg-app-blue-primary text-white text-sm font-medium hover:bg-app-blue-primary/90 transition-colors">
-                        Contact
-                      </button>
-                      <button className="px-4 py-2 rounded border border-app-border text-sm hover:bg-app-surface transition-colors">
-                        Save
+                      <button className="px-4 py-2 rounded bg-app-blue-primary text-white text-sm font-medium hover:bg-app-blue-primary/90 transition-colors cursor-pointer">
+                        Details
                       </button>
                     </div>
                   </div>
