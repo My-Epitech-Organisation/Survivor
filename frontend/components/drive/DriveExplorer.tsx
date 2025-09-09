@@ -281,7 +281,21 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 ))
               ) : (
                 <div className="col-span-full text-muted-foreground">
-                  {isLoading ? '' : 'No folders found in this location.'}
+                  {isLoading ? '' : (
+                    <div className="flex flex-col items-center py-6">
+                      <Folder className="h-12 w-12 text-muted-foreground/50 mb-2" />
+                      <p>No folders found in this location.</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-2"
+                        onClick={() => setNewFolderDialogOpen(true)}
+                      >
+                        <FolderPlus className="h-4 w-4 mr-2" />
+                        Create Folder
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -316,13 +330,51 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 ))
               ) : (
                 <div className="col-span-full text-muted-foreground">
-                  {isLoading ? '' : 'No files found in this location.'}
+                  {isLoading ? '' : (
+                    <div className="flex flex-col items-center py-6">
+                      <File className="h-12 w-12 text-muted-foreground/50 mb-2" />
+                      <p>No files found in this location.</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-2"
+                        onClick={() => setUploadDialogOpen(true)}
+                      >
+                        <UploadCloud className="h-4 w-4 mr-2" />
+                        Upload File
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
 
               {folders && folders.length === 0 && files && files.length === 0 && (
-                <div className="col-span-full text-center py-12 text-muted-foreground">
-                  No files or folders found in this location.
+                <div className="col-span-full text-center">
+                  <div className="flex flex-col items-center py-12">
+                    <div className="flex items-center mb-4">
+                      <Folder className="h-12 w-12 text-muted-foreground/50 mr-2" />
+                      <File className="h-12 w-12 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-muted-foreground mb-4">This location is empty.</p>
+                    <div className="flex gap-3 mt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setNewFolderDialogOpen(true)}
+                      >
+                        <FolderPlus className="h-4 w-4 mr-2" />
+                        Create Folder
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUploadDialogOpen(true)}
+                      >
+                        <UploadCloud className="h-4 w-4 mr-2" />
+                        Upload File
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
