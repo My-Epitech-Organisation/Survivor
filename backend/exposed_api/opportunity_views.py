@@ -1,14 +1,14 @@
+import os
+import time
+import uuid
+from threading import Thread
+
+from groq import Groq
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import os
-from groq import Groq
-from threading import Thread
-import time
-import uuid
 
 from admin_panel.models import Investor, StartupDetail
-
 
 ai_analysis_status = {}
 
@@ -52,10 +52,7 @@ Provide a score (0-100) and a brief reason for the match.
 Format: Score: X, Reason: explanation
 """
             response = client.chat.completions.create(
-                model="llama3-8b-8192",
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=150,
-                temperature=0.5
+                model="llama3-8b-8192", messages=[{"role": "user", "content": prompt}], max_tokens=150, temperature=0.5
             )
             content = response.choices[0].message.content.strip()
             if "Score:" in content and "Reason:" in content:
@@ -222,10 +219,7 @@ Provide a score (0-100) and a brief reason for the match.
 Format: Score: X, Reason: explanation
 """
             response = client.chat.completions.create(
-                model="llama3-8b-8192",
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=150,
-                temperature=0.5
+                model="llama3-8b-8192", messages=[{"role": "user", "content": prompt}], max_tokens=150, temperature=0.5
             )
             content = response.choices[0].message.content.strip()
             if "Score:" in content and "Reason:" in content:
@@ -267,7 +261,9 @@ Format: Score: X, Reason: explanation
             investors = Investor.objects.all()
             scored = []
             for inv in investors:
-                total_score, rule_score, ai_score, reason = self._score_investor_against_startup(inv, startup, include_ai)
+                total_score, rule_score, ai_score, reason = self._score_investor_against_startup(
+                    inv, startup, include_ai
+                )
                 if total_score > 0:
                     scored.append(
                         {
@@ -328,7 +324,16 @@ Format: Score: X, Reason: explanation
         for inv in investors:
             total_score, rule_score, ai_score, reason = self._score_investor_against_filters(inv, filters, include_ai)
             if total_score > 0:
-                scored.append({"investor_id": inv.id, "name": inv.name, "score": total_score, "rule_score": rule_score, "ai_score": ai_score, "reason": reason})
+                scored.append(
+                    {
+                        "investor_id": inv.id,
+                        "name": inv.name,
+                        "score": total_score,
+                        "rule_score": rule_score,
+                        "ai_score": ai_score,
+                        "reason": reason,
+                    }
+                )
 
         scored.sort(key=lambda x: x["score"], reverse=True)
         return Response({"matches": scored})
@@ -435,10 +440,7 @@ Provide a score (0-100) and a brief reason for the match.
 Format: Score: X, Reason: explanation
 """
             response = client.chat.completions.create(
-                model="llama3-8b-8192",
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=150,
-                temperature=0.5
+                model="llama3-8b-8192", messages=[{"role": "user", "content": prompt}], max_tokens=150, temperature=0.5
             )
             content = response.choices[0].message.content.strip()
             if "Score:" in content and "Reason:" in content:
@@ -457,11 +459,7 @@ Format: Score: X, Reason: explanation
     def _run_ai_analysis(self, analysis_id, startup_id):
         """Run AI analysis in background thread."""
         try:
-            ai_analysis_status[analysis_id] = {
-                "status": "processing",
-                "progress": 0,
-                "results": []
-            }
+            ai_analysis_status[analysis_id] = {"status": "processing", "progress": 0, "results": []}
 
             startup = StartupDetail.objects.get(id=int(startup_id))
             investors = Investor.objects.all()
@@ -484,18 +482,20 @@ Format: Score: X, Reason: explanation
                 if ai_score > 0:
                     final_reason += f", AI: {ai_reason}"
 
-                results.append({
-                    "investor_id": inv.id,
-                    "name": inv.name,
-                    "score": total_score,
-                    "rule_score": rule_score,
-                    "ai_score": ai_score,
-                    "reason": final_reason,
-                    "investor_type": inv.investor_type,
-                    "investment_focus": inv.investment_focus,
-                    "description": inv.description,
-                    "location": inv.address,
-                })
+                results.append(
+                    {
+                        "investor_id": inv.id,
+                        "name": inv.name,
+                        "score": total_score,
+                        "rule_score": rule_score,
+                        "ai_score": ai_score,
+                        "reason": final_reason,
+                        "investor_type": inv.investor_type,
+                        "investment_focus": inv.investment_focus,
+                        "description": inv.description,
+                        "location": inv.address,
+                    }
+                )
 
                 time.sleep(0.1)
 
@@ -503,19 +503,10 @@ Format: Score: X, Reason: explanation
 
             results = [match for match in results if match["score"] >= 5]
 
-            ai_analysis_status[analysis_id] = {
-                "status": "completed",
-                "progress": 100,
-                "results": results
-            }
+            ai_analysis_status[analysis_id] = {"status": "completed", "progress": 100, "results": results}
 
         except Exception as e:
-            ai_analysis_status[analysis_id] = {
-                "status": "error",
-                "progress": 0,
-                "error": str(e),
-                "results": []
-            }
+            ai_analysis_status[analysis_id] = {"status": "error", "progress": 0, "error": str(e), "results": []}
 
     def post(self, request):
         """Start AI analysis for a startup."""
@@ -534,11 +525,13 @@ Format: Score: X, Reason: explanation
         thread.daemon = True
         thread.start()
 
-        return Response({
-            "analysis_id": analysis_id,
-            "status": "started",
-            "message": "AI analysis started. Use GET /api/opportunities/ai-analysis/{analysis_id}/ to check status."
-        })
+        return Response(
+            {
+                "analysis_id": analysis_id,
+                "status": "started",
+                "message": "AI analysis started. Use GET /api/opportunities/ai-analysis/{analysis_id}/ to check status.",
+            }
+        )
 
     def get(self, request, analysis_id=None):
         """Get AI analysis status or results."""

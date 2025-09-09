@@ -19,7 +19,7 @@ from .kpi_views import (
     users_connected_ratio,
 )
 from .news_views import NewsDetailView, NewsListView
-from .opportunity_views import OpportunitiesMatchesView, AIAnalysisView
+from .opportunity_views import AIAnalysisView, OpportunitiesMatchesView
 from .partner_views import PartnerDetailView
 from .search_views import AdvancedSearchView
 from .user_views import AdminUserView
