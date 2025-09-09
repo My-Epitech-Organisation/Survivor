@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { DriveFile, DriveFolder, DriveFileFilters, DriveFolderFilters } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 
@@ -32,7 +32,7 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchFolderContents = async (folderId: number | null) => {
+  const fetchFolderContents = useCallback(async (folderId: number | null) => {
     if (!startupId) {
       setError("No startup selected");
       return;
@@ -92,7 +92,7 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [startupId, setCurrentFolder, setFolders, setFiles, setBreadcrumbs, setIsLoading, setError]);
 
   const navigateToFolder = async (folderId: number | null) => {
     await fetchFolderContents(folderId);
@@ -170,7 +170,7 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
       };
       loadRootFolder();
     }
-  }, [startupId]);
+  }, [startupId, fetchFolderContents]);
 
   useEffect(() => {
     console.log('DriveContext - Current files:', files);

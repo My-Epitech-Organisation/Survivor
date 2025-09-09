@@ -1,6 +1,6 @@
 import api from '../lib/api';
 import {
-  DriveFile, DriveFolder, DriveShare, DriveActivity, StorageStats,
+  DriveFile, DriveFolder, DriveShare, StorageStats,
   DriveFilesResponse, DriveFoldersResponse, DriveSharesResponse, DriveActivitiesResponse,
   DriveFileFilters, DriveFolderFilters, FileUpload
 } from '../types/drive';

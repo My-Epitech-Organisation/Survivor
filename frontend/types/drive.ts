@@ -52,7 +52,7 @@ export interface DriveActivity {
   item_type: 'file' | 'folder' | null;
   action: string;
   timestamp: string;
-  details: any | null;
+  details: Record<string, unknown> | null;
   startup: number;
 }
 

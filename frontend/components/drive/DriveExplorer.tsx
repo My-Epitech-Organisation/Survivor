@@ -66,7 +66,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
     if (startupId) {
       refreshCurrentFolder();
     }
-  }, [startupId]);
+  }, [startupId, refreshCurrentFolder]);
 
   React.useEffect(() => {
     console.log('DriveExplorer - Files:', files);
