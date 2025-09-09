@@ -103,7 +103,7 @@ export default function News() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
         <Navigation />
 
         <main className="flex-1 py-6">

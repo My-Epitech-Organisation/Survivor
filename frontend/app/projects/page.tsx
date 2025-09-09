@@ -104,7 +104,7 @@ export default function Projects() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
       <Navigation />
 
       <main className="flex-1 py-6">
@@ -119,32 +119,6 @@ export default function Projects() {
             <div className="lg:col-span-4">
               <ProjectFilters {...projectFilter} />
             </div>
-
-            {/* Export Section */}
-            {/* <div className="lg:col-span-1">
-              <Card className="h-fit bg-white border border-gray-200 shadow-sm">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-2">
-                    <Download className="h-5 w-5 text-gray-600" />
-                    <h3 className="text-lg font-semibold text-gray-900">Export</h3>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0 space-y-3">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2 hover:bg-blue-50 hover:border-blue-200"
-                  >
-                    <FileText className="h-4 w-4 text-blue-600" />
-                    Export as PDF
-                  </Button>
-                  <div className="pt-2 border-t border-gray-100">
-                    <p className="text-xs text-gray-400 text-center">
-                      {filteredProjects.length} projects to export
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>*/}
           </div>
 
           {/* Projects Grid */}

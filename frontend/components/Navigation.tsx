@@ -45,7 +45,7 @@ export default function Navigation() {
           <div className="flex items-center">
             <Link
               href="/"
-              className="text-3xl font-heading font-black italic text-app-blue-primary"
+              className="text-3xl font-heading font-black italic text-jeb-primary hover:text-jeb-hover transition-colors"
             >
               JEB
             </Link>
@@ -59,8 +59,8 @@ export default function Navigation() {
                 href={item.href}
                 className={`font-heading transition-colors ${
                   pathname === item.href
-                    ? "text-app-blue-primary font-semibold"
-                    : "text-app-text-secondary hover:text-app-blue-primary font-medium"
+                    ? "text-jeb-primary font-semibold"
+                    : "text-app-text-secondary hover:text-jeb-primary font-medium"
                 }`}
               >
                 {item.label}
@@ -75,7 +75,7 @@ export default function Navigation() {
                 {user?.role === "founder" && (
                   <button
                     onClick={handleSwitchToStartup}
-                    className="font-heading font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
+                    className="font-heading font-medium text-jeb-primary hover:text-jeb-hover transition-colors cursor-pointer"
                   >
                     Startup Area
                   </button>
@@ -83,7 +83,7 @@ export default function Navigation() {
                 {user?.role === "investor" && (
                   <button
                     onClick={handleSwitchToInvestor}
-                    className="font-heading font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
+                    className="font-heading font-medium text-jeb-primary hover:text-jeb-hover transition-colors cursor-pointer"
                   >
                     Investor Area
                   </button>
@@ -91,7 +91,7 @@ export default function Navigation() {
                 {user?.role === "admin" && (
                   <button
                     onClick={handleSwitchToAdmin}
-                    className="font-heading font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
+                    className="font-heading font-medium text-jeb-primary hover:text-jeb-hover transition-colors cursor-pointer"
                   >
                     Admin Area
                   </button>
@@ -106,7 +106,7 @@ export default function Navigation() {
             ) : (
               <Link
                 href="/login"
-                className="font-heading font-bold text-app-text-secondary hover:text-app-blue-primary"
+                className="font-heading font-bold text-app-text-secondary hover:text-jeb-primary"
               >
                 Login
               </Link>
@@ -117,7 +117,7 @@ export default function Navigation() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-app-text-secondary hover:text-app-blue-primary focus:outline-none focus:text-app-blue-primary transition-colors"
+              className="text-app-text-secondary hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -139,8 +139,8 @@ export default function Navigation() {
                   onClick={() => setIsMenuOpen(false)}
                   className={`font-heading block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     pathname === item.href
-                      ? "text-app-blue-primary bg-app-blue-light"
-                      : "text-app-text-secondary hover:text-app-blue-primary hover:bg-app-surface-hover"
+                      ? "text-jeb-primary bg-app-blue-light"
+                      : "text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover"
                   }`}
                 >
                   {item.label}
@@ -155,7 +155,7 @@ export default function Navigation() {
                           handleSwitchToStartup();
                           setIsMenuOpen(false);
                         }}
-                        className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
+                        className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-jeb-primary hover:text-jeb-hover hover:bg-app-blue-light transition-colors"
                       >
                         Startup Area
                       </button>
@@ -166,7 +166,7 @@ export default function Navigation() {
                           handleSwitchToInvestor();
                           setIsMenuOpen(false);
                         }}
-                        className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
+                        className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-jeb-primary hover:text-jeb-hover hover:bg-app-blue-light transition-colors"
                       >
                         Investor Area
                       </button>
@@ -177,7 +177,7 @@ export default function Navigation() {
                           handleSwitchToAdmin();
                           setIsMenuOpen(false);
                         }}
-                        className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
+                        className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-jeb-primary hover:text-jeb-hover hover:bg-app-blue-light transition-colors"
                       >
                         Admin Area
                       </button>
@@ -196,7 +196,7 @@ export default function Navigation() {
                   <Link
                     href="/login"
                     onClick={() => setIsMenuOpen(false)}
-                    className="font-heading block px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-blue-primary hover:bg-app-surface-hover transition-colors"
+                    className="font-heading block px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover transition-colors"
                   >
                     Login
                   </Link>

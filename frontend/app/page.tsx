@@ -7,14 +7,14 @@ import Footer from "@/components/Footer";
 export default function Home() {
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
       <Navigation />
 
       {/* Hero Section */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-16">
           <h1 className="font-heading text-5xl md:text-6xl font-bold text-app-text-primary mb-6">
-            Welcome to <span className="font-black italic text-app-blue-primary">JEB</span>
+            Welcome to <span className="font-black italic text-jeb-primary">JEB</span>
           </h1>
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
             Your comprehensive platform for managing projects, staying updated
@@ -173,13 +173,13 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/projects"
-                className="bg-app-blue-primary text-app-white px-6 py-3 rounded-lg font-medium hover:bg-app-blue-primary-hover transition-colors"
+                className="bg-jeb-primary text-app-white px-6 py-3 rounded-lg font-medium hover:bg-jeb-hover transition-colors"
               >
                 View Projects
               </Link>
               <Link
                 href="/search"
-                className="border border-app-blue-primary text-app-blue-primary px-6 py-3 rounded-lg font-medium hover:bg-app-blue-light transition-colors"
+                className="border border-jeb-primary text-jeb-primary px-6 py-3 rounded-lg font-medium hover:text-jeb-hover hover:bg-jeb-light transition-colors"
               >
                 Try Search
               </Link>

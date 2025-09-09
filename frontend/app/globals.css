@@ -70,6 +70,13 @@
   --color-app-yellow-light: var(--app-yellow-light);
 
   /* Custom  */
+  --color-jeb-primary: var(--color-jeb-eight);
+  --color-jeb-hover: var(--color-jeb-nine);
+  --color-jeb-light: var(--color-jeb-five);
+
+  --color-jeb-gradient-from: var(--color-app-white);
+  --color-jeb-gradient-to: var(--color-jeb-five);
+
   --color-jeb-one: var(--jeb-one);
   --color-jeb-two: var(--jeb-two);
   --color-jeb-three: var(--jeb-three);

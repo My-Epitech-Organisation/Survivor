@@ -176,7 +176,7 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
       <Navigation />
 
       <main className="flex-1 max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 w-full">
@@ -197,7 +197,7 @@ export default function SearchPage() {
                 name="search-bar"
                 id="search-bar"
                 placeholder="Search for any event, news or project"
-                className="rounded-lg border shadow py-2 px-6 w-full hover:border-app-text-muted transition-colors"
+                className="rounded-lg border shadow py-2 px-6 w-full hover:border-app-text-muted transition-colors active:border-jeb-primary"
               />
 
               <div className="flex gap-3 justify-end w-full sm:w-fit">

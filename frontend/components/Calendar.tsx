@@ -124,19 +124,19 @@ const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
             <div className="flex gap-2 w-full sm:w-auto">
               <button
                 onClick={goToPreviousMonth}
-                className="flex-1 sm:flex-none px-3 py-1 bg-app-blue-primary text-white rounded hover:bg-app-blue-primary-hover transition-colors text-sm sm:text-base cursor-pointer"
+                className="flex-1 sm:flex-none px-3 py-1 bg-jeb-seven text-white rounded hover:bg-jeb-eight transition-colors text-sm sm:text-base cursor-pointer"
               >
                 <ArrowLeft />
               </button>
               <button
                 onClick={goToToday}
-                className="flex-1 sm:flex-none px-3 py-1 bg-app-text-secondary text-white rounded hover:bg-app-indigo-primary transition-colors text-sm sm:text-base cursor-pointer"
+                className="flex-1 sm:flex-none px-3 py-1 bg-jeb-primary text-white rounded hover:bg-jeb-hover transition-colors font-bold text-sm sm:text-base cursor-pointer"
               >
                 Today
               </button>
               <button
                 onClick={goToNextMonth}
-                className="flex-1 sm:flex-none px-3 py-1 bg-app-blue-primary text-white rounded hover:bg-app-blue-primary-hover transition-colors text-sm sm:text-base cursor-pointer"
+                className="flex-1 sm:flex-none px-3 py-1 bg-jeb-seven text-white rounded hover:bg-jeb-eight transition-colors text-sm sm:text-base cursor-pointer"
               >
                 <ArrowRight />
               </button>

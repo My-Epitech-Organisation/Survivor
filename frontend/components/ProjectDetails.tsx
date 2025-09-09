@@ -18,7 +18,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
   return (
     <div className="max-w-none mx-auto space-y-6 sm:space-y-12 py-2 sm:py-4">
       {/* Hero Section */}
-      <div className="text-center space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8 bg-gradient-to-r from-blue-50 to-indigo-50 py-6 sm:py-8 md:py-10 lg:py-12 px-3 sm:px-4 md:px-6 lg:px-8 rounded-lg sm:rounded-xl lg:rounded-2xl">
+      <div className="text-center space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8 bg-gradient-to-r from-jeb-five/15 to-jeb-gradient-to/50 py-6 sm:py-8 md:py-10 lg:py-12 px-3 sm:px-4 md:px-6 lg:px-8 rounded-lg sm:rounded-xl lg:rounded-2xl">
         <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-900 tracking-tight">
           {props.ProjectName}
         </h1>
