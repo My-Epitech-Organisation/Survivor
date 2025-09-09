@@ -32,7 +32,6 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to fetch folder contents
   const fetchFolderContents = async (folderId: number | null) => {
     if (!startupId) {
       setError("No startup selected");
@@ -42,7 +41,6 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     setIsLoading(true);
     setError(null);
     try {
-      // Fetch folders in current directory
       const folderFilters: DriveFolderFilters = {
         startup: startupId,
         parent: folderId === null ? 'null' : folderId
@@ -50,7 +48,6 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
       const foldersResponse = await DriveService.getFolders(folderFilters);
       setFolders(foldersResponse.results);
 
-      // Fetch files in current directory
       const fileFilters: DriveFileFilters = {
         startup: startupId,
         folder: folderId === null ? 'null' : folderId
@@ -58,13 +55,11 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
       const filesResponse = await DriveService.getFiles(fileFilters);
       setFiles(filesResponse.results);
 
-      // If we're in a subfolder, fetch its details
       if (folderId !== null) {
         const folderDetails = await DriveService.getFolder(folderId);
         setCurrentFolder(folderDetails);
 
         if (folderDetails) {
-          // Build breadcrumbs
           const buildBreadcrumbs = async (folder: DriveFolder) => {
             const crumbs: DriveFolder[] = [folder];
             let currentParent = folder.parent;
@@ -88,7 +83,6 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
           setBreadcrumbs([]);
         }
       } else {
-        // Root folder
         setCurrentFolder(null);
         setBreadcrumbs([]);
       }
@@ -100,12 +94,10 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   };
 
-  // Navigate to a folder
   const navigateToFolder = async (folderId: number | null) => {
     await fetchFolderContents(folderId);
   };
 
-  // Create a new folder
   const createFolder = async (startupId: number, name: string, parentId: number | null) => {
     setIsLoading(true);
     setError(null);
@@ -120,7 +112,6 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   };
 
-  // Upload a file
   const uploadFile = async (startupId: number, file: File, folderId: number | null, description?: string) => {
     setIsLoading(true);
     setError(null);
@@ -139,7 +130,6 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   };
 
-  // Delete a file
   const deleteFile = async (fileId: number) => {
     setIsLoading(true);
     setError(null);
@@ -154,7 +144,6 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   };
 
-  // Delete a folder
   const deleteFolder = async (folderId: number) => {
     setIsLoading(true);
     setError(null);
@@ -169,24 +158,20 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   };
 
-  // Refresh current folder
   const refreshCurrentFolder = async () => {
     await fetchFolderContents(currentFolder?.id || null);
   };
 
-  // Effect to reload when startupId changes
   useEffect(() => {
     if (startupId) {
       console.log('DriveContext - StartupId changed, fetching root folder:', startupId);
-      // Need to use a local function here to avoid dependency on navigateToFolder
       const loadRootFolder = async () => {
         await fetchFolderContents(null);
       };
       loadRootFolder();
     }
-  }, [startupId]); // Only depend on startupId, not on navigateToFolder
+  }, [startupId]);
 
-  // Add debug logging to monitor state
   useEffect(() => {
     console.log('DriveContext - Current files:', files);
     console.log('DriveContext - Current startupId:', startupId);

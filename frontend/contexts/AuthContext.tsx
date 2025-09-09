@@ -14,13 +14,9 @@ interface AuthContextType {
   refreshUserInfo: () => Promise<User | null>;
 }
 
-// Maximum number of startup info retrieval attempts
 const MAX_STARTUP_INFO_RETRIES = 3;
-// Delay between retry attempts (in ms)
 const RETRY_DELAY = 2000;
-// Local storage key for enriched user data
 const USER_STORAGE_KEY = 'userDataEnriched';
-// Cache validity period (in ms) - 1 hour
 const CACHE_VALIDITY_PERIOD = 60 * 60 * 1000;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

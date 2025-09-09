@@ -10,7 +10,6 @@ import StartupNavigation from '@/components/StartupNavigation';
 export default function StartupDrivePage() {
   const { user, isLoading } = useAuth();
 
-  // Show loading state while authentication data is loading
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -25,7 +24,6 @@ export default function StartupDrivePage() {
     );
   }
 
-  // Show message if user is not associated with a startup
   if (!user?.startupId) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -42,7 +40,6 @@ export default function StartupDrivePage() {
     );
   }
 
-  // User has a startup, render the drive with the startup ID
   const startupId = user.startupId;
 
   return (
