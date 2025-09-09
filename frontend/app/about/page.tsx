@@ -8,19 +8,19 @@ export default function About() {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-3xl font-bold text-app-text-primary mb-8">
+          <h1 className="font-heading text-3xl font-bold text-app-text-primary mb-8">
             About
           </h1>
 
           {/* Mission & Vision Section */}
           <section className="mb-12">
             <div className="bg-app-surface rounded-lg shadow p-8">
-              <h2 className="text-2xl font-semibold text-app-text-primary mb-6">
+              <h2 className="font-heading text-2xl font-semibold text-app-text-primary mb-6">
                 Mission & Vision
               </h2>
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-medium text-app-text-primary mb-2">
+                  <h3 className="font-heading text-lg font-medium text-app-text-primary mb-2">
                     Our Mission
                   </h3>
                   <p className="text-app-text-secondary leading-relaxed">
@@ -31,7 +31,7 @@ export default function About() {
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-app-text-primary mb-2">
+                  <h3 className="font-heading text-lg font-medium text-app-text-primary mb-2">
                     Our Vision
                   </h3>
                   <p className="text-app-text-secondary leading-relaxed">
@@ -49,7 +49,7 @@ export default function About() {
           {/* Team Section */}
           <section className="mb-12">
             <div className="bg-app-surface rounded-lg shadow p-8">
-              <h2 className="text-2xl font-semibold text-app-text-primary mb-6">
+              <h2 className="font-heading text-2xl font-semibold text-app-text-primary mb-6">
                 Our Team
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -57,7 +57,7 @@ export default function About() {
                   <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                     <span className="text-white font-bold text-xl">JJ</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-app-text-primary">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary">
                     James Johnson
                   </h3>
                   <p className="text-app-text-secondary text-sm">
@@ -71,7 +71,7 @@ export default function About() {
                   <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-teal-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                     <span className="text-white font-bold text-xl">EE</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-app-text-primary">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary">
                     Emma Edwards
                   </h3>
                   <p className="text-app-text-secondary text-sm">
@@ -85,7 +85,7 @@ export default function About() {
                   <div className="w-24 h-24 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                     <span className="text-white font-bold text-xl">BB</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-app-text-primary">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary">
                     Benjamin Brown
                   </h3>
                   <p className="text-app-text-secondary text-sm">
@@ -102,7 +102,7 @@ export default function About() {
           {/* Partners Section */}
           <section className="mb-12">
             <div className="bg-app-surface rounded-lg shadow p-8">
-              <h2 className="text-2xl font-semibold text-app-text-primary mb-6">
+              <h2 className="font-heading text-2xl font-semibold text-app-text-primary mb-6">
                 Our Partners
               </h2>
               <p className="text-app-text-secondary mb-6">
@@ -149,12 +149,12 @@ export default function About() {
           {/* Contact Section */}
           <section className="mb-12">
             <div className="bg-app-surface rounded-lg shadow p-8">
-              <h2 className="text-2xl font-semibold text-app-text-primary mb-6">
+              <h2 className="font-heading text-2xl font-semibold text-app-text-primary mb-6">
                 Contact Us
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <h3 className="text-lg font-medium text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-medium text-app-text-primary mb-4">
                     Get in Touch
                   </h3>
                   <div className="space-y-3">
@@ -205,7 +205,7 @@ export default function About() {
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-medium text-app-text-primary mb-4">
                     Office Hours
                   </h3>
                   <div className="space-y-2">

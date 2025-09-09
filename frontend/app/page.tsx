@@ -13,8 +13,8 @@ export default function Home() {
       {/* Hero Section */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-app-text-primary mb-6">
-            Welcome to <span className="text-app-blue-primary">JEB</span>
+          <h1 className="font-heading text-5xl md:text-6xl font-bold text-app-text-primary mb-6">
+            Welcome to <span className="font-black italic text-app-blue-primary">JEB</span>
           </h1>
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
             Your comprehensive platform for managing projects, staying updated
@@ -42,7 +42,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-app-text-primary mb-2">
+              <h3 className="font-heading text-xl font-semibold text-app-text-primary mb-2">
                 Projects
               </h3>
               <p className="text-app-text-secondary">
@@ -69,7 +69,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-app-text-primary mb-2">
+              <h3 className="font-heading text-xl font-semibold text-app-text-primary mb-2">
                 News
               </h3>
               <p className="text-app-text-secondary">
@@ -96,7 +96,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-app-text-primary mb-2">
+              <h3 className="font-heading text-xl font-semibold text-app-text-primary mb-2">
                 Events
               </h3>
               <p className="text-app-text-secondary">
@@ -123,7 +123,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-app-text-primary mb-2">
+              <h3 className="font-heading text-xl font-semibold text-app-text-primary mb-2">
                 Advanced Search
               </h3>
               <p className="text-app-text-secondary">
@@ -150,7 +150,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-app-text-primary mb-2">
+              <h3 className="font-heading text-xl font-semibold text-app-text-primary mb-2">
                 About
               </h3>
               <p className="text-app-text-secondary">
@@ -164,7 +164,7 @@ export default function Home() {
         {/* Call to Action */}
         <div className="text-center">
           <div className="bg-app-surface rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold text-app-text-primary mb-4">
+            <h2 className="font-heading text-2xl font-bold text-app-text-primary mb-4">
               Ready to get started?
             </h2>
             <p className="text-app-text-secondary mb-6">
