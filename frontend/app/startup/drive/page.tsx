@@ -1,22 +1,17 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { DriveProvider } from '@/contexts/DriveContext';
+import { DriveExplorer } from '@/components/drive/DriveExplorer';
 import { TbLoader3 } from 'react-icons/tb';
 import StartupNavigation from '@/components/StartupNavigation';
 
 export default function StartupDrivePage() {
-  const router = useRouter();
   const { user, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (user?.startupId) {
-      router.push(`/startup/${user.startupId}/drive`);
-    }
-  }, [user, router]);
-
-  if (isLoading || !user) {
+  // Show loading state while authentication data is loading
+  if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <StartupNavigation />
@@ -30,7 +25,8 @@ export default function StartupDrivePage() {
     );
   }
 
-  if (!user.startupId) {
+  // Show message if user is not associated with a startup
+  if (!user?.startupId) {
     return (
       <div className="min-h-screen flex flex-col">
         <StartupNavigation />
@@ -46,15 +42,17 @@ export default function StartupDrivePage() {
     );
   }
 
+  // User has a startup, render the drive with the startup ID
+  const startupId = user.startupId;
+  
   return (
     <div className="min-h-screen flex flex-col">
       <StartupNavigation />
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <TbLoader3 className="size-12 animate-spin text-blue-600 mb-4" />
-          <p className="mt-4 text-gray-600">Redirecting to your startup&apos;s drive...</p>
+      <DriveProvider initialStartupId={startupId}>
+        <div className="flex-1 p-4">
+          <DriveExplorer startupId={startupId} />
         </div>
-      </div>
+      </DriveProvider>
     </div>
   );
 }

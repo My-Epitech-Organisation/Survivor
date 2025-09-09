@@ -177,14 +177,20 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
   // Effect to reload when startupId changes
   useEffect(() => {
     if (startupId) {
-      navigateToFolder(null);
+      console.log('DriveContext - StartupId changed, fetching root folder:', startupId);
+      // Need to use a local function here to avoid dependency on navigateToFolder
+      const loadRootFolder = async () => {
+        await fetchFolderContents(null);
+      };
+      loadRootFolder();
     }
-  }, [startupId]);
+  }, [startupId]); // Only depend on startupId, not on navigateToFolder
 
-  // Add debug logging to monitor files array
+  // Add debug logging to monitor state
   useEffect(() => {
     console.log('DriveContext - Current files:', files);
-  }, [files]);
+    console.log('DriveContext - Current startupId:', startupId);
+  }, [files, startupId]);
 
   const value = {
     currentFolder,

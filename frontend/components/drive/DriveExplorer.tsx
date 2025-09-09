@@ -65,6 +65,13 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
     }
   }, [startupId, setStartupId]);
 
+  // Separate effect to refresh data after startup ID is set
+  React.useEffect(() => {
+    if (startupId) {
+      refreshCurrentFolder();
+    }
+  }, [startupId]); // Only depend on startupId, not on refreshCurrentFolder
+
   // Debug state
   React.useEffect(() => {
     console.log('DriveExplorer - Files:', files);

@@ -22,6 +22,12 @@ export const DriveService = {
    * Get a list of files with optional filtering
    */
   getFiles: async (filters?: DriveFileFilters): Promise<DriveFilesResponse> => {
+    // Validation check for startup ID
+    if (!filters?.startup) {
+      console.warn('DriveService.getFiles: No startup ID provided');
+      return { count: 0, next: null, previous: null, results: [] };
+    }
+    
     const queryParams = new URLSearchParams();
     
     if (filters) {
@@ -35,23 +41,29 @@ export const DriveService = {
     }
     
     const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
-    const response = await api.get<DriveFile[] | DriveFilesResponse>({
-      endpoint: `${DRIVE_API.FILES}${query}`
-    });
     
-    // Handle both direct array response and paginated response
-    if (Array.isArray(response.data)) {
-      console.log('Files API returned direct array:', response.data);
-      // Transform direct array into paginated response format
-      return { 
-        count: response.data.length, 
-        next: null, 
-        previous: null, 
-        results: response.data 
-      };
+    try {
+      const response = await api.get<DriveFile[] | DriveFilesResponse>({
+        endpoint: `${DRIVE_API.FILES}${query}`
+      });
+      
+      // Handle both direct array response and paginated response
+      if (Array.isArray(response.data)) {
+        console.log('Files API returned direct array:', response.data);
+        // Transform direct array into paginated response format
+        return { 
+          count: response.data.length, 
+          next: null, 
+          previous: null, 
+          results: response.data 
+        };
+      }
+      
+      return response.data || { count: 0, next: null, previous: null, results: [] };
+    } catch (error) {
+      console.error('Error fetching files:', error);
+      return { count: 0, next: null, previous: null, results: [] };
     }
-    
-    return response.data || { count: 0, next: null, previous: null, results: [] };
   },
 
   /**
@@ -124,6 +136,12 @@ export const DriveService = {
    * Get a list of folders with optional filtering
    */
   getFolders: async (filters?: DriveFolderFilters): Promise<DriveFoldersResponse> => {
+    // Validation check for startup ID
+    if (!filters?.startup) {
+      console.warn('DriveService.getFolders: No startup ID provided');
+      return { count: 0, next: null, previous: null, results: [] };
+    }
+    
     const queryParams = new URLSearchParams();
     
     if (filters) {
@@ -135,23 +153,29 @@ export const DriveService = {
     }
     
     const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
-    const response = await api.get<DriveFolder[] | DriveFoldersResponse>({
-      endpoint: `${DRIVE_API.FOLDERS}${query}`
-    });
     
-    // Handle both direct array response and paginated response
-    if (Array.isArray(response.data)) {
-      console.log('Folders API returned direct array:', response.data);
-      // Transform direct array into paginated response format
-      return { 
-        count: response.data.length, 
-        next: null, 
-        previous: null, 
-        results: response.data 
-      };
+    try {
+      const response = await api.get<DriveFolder[] | DriveFoldersResponse>({
+        endpoint: `${DRIVE_API.FOLDERS}${query}`
+      });
+      
+      // Handle both direct array response and paginated response
+      if (Array.isArray(response.data)) {
+        console.log('Folders API returned direct array:', response.data);
+        // Transform direct array into paginated response format
+        return { 
+          count: response.data.length, 
+          next: null, 
+          previous: null, 
+          results: response.data 
+        };
+      }
+      
+      return response.data || { count: 0, next: null, previous: null, results: [] };
+    } catch (error) {
+      console.error('Error fetching folders:', error);
+      return { count: 0, next: null, previous: null, results: [] };
     }
-    
-    return response.data || { count: 0, next: null, previous: null, results: [] };
   },
 
   /**

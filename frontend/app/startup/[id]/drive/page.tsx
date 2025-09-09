@@ -1,39 +1,28 @@
 'use client';
 
-import React from 'react';
-import { DriveProvider } from '@/contexts/DriveContext';
-import { DriveExplorer } from '@/components/drive/DriveExplorer';
-import { useParams } from 'next/navigation';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
 import StartupNavigation from '@/components/StartupNavigation';
 
-export default function StartupDrivePage() {
-  const params = useParams();
-  const startupId = Number(params.id);
-
-  if (!startupId) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <StartupNavigation />
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="text-center space-y-4">
-            <h1 className="text-2xl font-bold">Startup ID Required</h1>
-            <p className="text-muted-foreground">
-              Please select a startup to view its drive.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+// This page will be deprecated in favor of /startup/drive
+export default function StartupIdDrivePage() {
+  const router = useRouter();
+  
+  // Redirect to the main drive page
+  useEffect(() => {
+    router.replace('/startup/drive');
+  }, [router]);
 
   return (
     <div className="min-h-screen flex flex-col">
       <StartupNavigation />
-      <DriveProvider initialStartupId={startupId}>
-        <div className="flex-1 p-4">
-          <DriveExplorer startupId={startupId} />
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <Spinner className="mb-4" />
+          <p className="text-muted-foreground">Redirecting to Drive...</p>
         </div>
-      </DriveProvider>
+      </div>
     </div>
   );
 }
