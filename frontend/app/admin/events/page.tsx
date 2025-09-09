@@ -149,8 +149,12 @@ export default function AdminEvents() {
   };
 
   const handleEditEventSubmit = (id: number, data: Event, btnAction: HTMLButtonElement | null) => {
+    const eventData = {
+      ...data,
+      image_url: data.pictureURL || undefined,
+    };
     api
-      .put(`/events/${id}/`, data)
+      .put(`/events/${id}/`, eventData)
       .then((response) => {
         console.debug("Event edited successfully:", response.data);
         if (btnAction) {
