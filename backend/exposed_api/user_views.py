@@ -157,6 +157,29 @@ def user_detail(request, user_id):
 
 
 class AdminUserView(APIView):
+    def post(self, request):
+        """
+        Create a new user (admin only).
+        """
+        data = request.data.copy()
+        founder = data.get("founder")
+        investor = data.get("investor")
+        if founder is None:
+            data["founder_id"] = None
+        elif isinstance(founder, dict) and founder.get("FounderID") is not None:
+            data["founder_id"] = founder["FounderID"]
+            data["investor_id"] = None
+        if investor is None:
+            data["investor_id"] = None
+        elif isinstance(investor, dict) and investor.get("id") is not None:
+            data["investor_id"] = investor["id"]
+            data["founder_id"] = None
+        serializer = AdminUserSerializer(data=data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(AdminUserSerializer(user).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     """
     API endpoint for administrative user management.
     """

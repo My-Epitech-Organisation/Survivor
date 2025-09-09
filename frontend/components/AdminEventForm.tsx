@@ -3,53 +3,62 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { NewsDetailItem } from "@/types/news";
+import { Event } from "@/types/event";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Label } from "./ui/label";
 import { getBackendUrl } from "@/lib/config";
 
-interface AdminNewsFormProps {
-  defaultData?: NewsDetailItem;
-  onSubmit: (data: NewsDetailItem) => void;
+interface AdminEventFormProps {
+  defaultData?: Event;
+  onSubmit: (data: Event) => void;
 }
 
-export default function AdminNewsForm({
+export default function AdminEventForm({
   defaultData,
   onSubmit,
-}: AdminNewsFormProps) {
-  const initialFormData: NewsDetailItem = {
+}: AdminEventFormProps) {
+  const initialFormData: Event = {
     id: 0,
-    title: "",
-    category: "",
-    news_date: new Date().toISOString().split("T")[0],
+    name: "",
+    dates: new Date().toISOString().split("T")[0],
     location: "",
-    startup_id: 0,
     description: "",
-    image_url: "",
+    event_type: "",
+    target_audience: "",
+    pictureURL: "",
   };
 
-  const [formData, setFormData] = useState<NewsDetailItem>(
+  const [formData, setFormData] = useState<Event>(
     defaultData || initialFormData
   );
-  const [categories, setCategories] = useState<string[]>([]);
+  const [eventTypes, setEventTypes] = useState<string[]>([]);
+  const [audiences, setAudiences] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
 
   const fetchOptions = async () => {
     try {
-      const result = await api.get<NewsDetailItem[]>({ endpoint: "/news/" });
-      const newsData = result.data;
+      const result = await api.get<Event[]>({ endpoint: "/events/" });
+      const eventsData = result.data;
 
-      if (newsData) {
-        const uniqueCategories = [
-          ...new Set(newsData.map((news) => news.category)),
+      if (eventsData) {
+        const uniqueTypes = [
+          ...new Set(
+            eventsData.map((event) => event.event_type).filter(Boolean)
+          ),
+        ];
+        const uniqueAudiences = [
+          ...new Set(
+            eventsData.map((event) => event.target_audience).filter(Boolean)
+          ),
         ];
         const uniqueLocations = [
-          ...new Set(newsData.map((news) => news.location)),
+          ...new Set(eventsData.map((event) => event.location).filter(Boolean)),
         ];
 
-        setCategories(uniqueCategories);
+        setEventTypes(uniqueTypes);
+        setAudiences(uniqueAudiences);
         setLocations(uniqueLocations);
       }
     } catch (error) {
@@ -60,9 +69,15 @@ export default function AdminNewsForm({
   useEffect(() => {
     fetchOptions();
     if (defaultData) {
-      setFormData(defaultData);
-      if (defaultData.image_url) {
-        setPreview(defaultData.image_url);
+      const formattedData = {
+        ...defaultData,
+        dates: defaultData.dates
+          ? defaultData.dates.split("T")[0]
+          : new Date().toISOString().split("T")[0],
+      };
+      setFormData(formattedData);
+      if (defaultData.pictureURL) {
+        setPreview(defaultData.pictureURL);
       }
     }
   }, [defaultData]);
@@ -73,12 +88,12 @@ export default function AdminNewsForm({
     const { id, value } = e.target;
 
     const fieldMappings: Record<string, string> = {
-      "news-title": "title",
-      "news-category": "category",
-      "news-date": "news_date",
-      "news-location": "location",
-      "news-startup-id": "startup_id",
-      "news-description": "description",
+      "event-name": "name",
+      "event-dates": "dates",
+      "event-location": "location",
+      "event-type": "event_type",
+      "event-audience": "target_audience",
+      "event-description": "description",
     };
 
     const fieldName = fieldMappings[id] || id;
@@ -102,7 +117,7 @@ export default function AdminNewsForm({
             });
             if (res && res.data && res.data.url) {
               const imageUrl = res.data.url;
-              setFormData((prev) => ({ ...prev, image_url: imageUrl }));
+              setFormData((prev) => ({ ...prev, pictureURL: imageUrl }));
               toast.success("Image uploaded successfully");
             } else {
               throw new Error("API didn't return an image url");
@@ -123,18 +138,19 @@ export default function AdminNewsForm({
   const handleSubmit = async () => {
     try {
       const requiredFields = [
-        "title",
-        "category",
-        "news_date",
+        "name",
+        "dates",
         "location",
         "description",
+        "event_type",
+        "target_audience",
       ];
 
       const missingFields = requiredFields.filter(
         (field) =>
-          !formData[field as keyof NewsDetailItem] ||
-          (typeof formData[field as keyof NewsDetailItem] === "string" &&
-            (formData[field as keyof NewsDetailItem] as string).trim() === "")
+          !formData[field as keyof Event] ||
+          (typeof formData[field as keyof Event] === "string" &&
+            (formData[field as keyof Event] as string).trim() === "")
       );
 
       if (missingFields.length > 0) {
@@ -150,14 +166,10 @@ export default function AdminNewsForm({
       }
 
       const submissionData = { ...formData };
-      if (!submissionData.startup_id) {
-        submissionData.startup_id = 0;
-      }
-
-      console.debug("Submitting news:", submissionData);
+      console.debug("Submitting event:", submissionData);
       onSubmit(submissionData);
     } catch (error) {
-      console.error("Error submitting news:", error);
+      console.error("Error submitting event:", error);
     }
   };
 
@@ -168,16 +180,16 @@ export default function AdminNewsForm({
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-xl font-semibold text-gray-800">
-                News Information
+                Event Information
               </h2>
             </div>
           </div>
 
-          {/* News image upload section */}
+          {/* Event image upload section */}
           <div className="mb-6 flex flex-col items-center">
             <div className="w-full mb-4">
-              <Label htmlFor="news-image" className="mb-2 block">
-                News Image
+              <Label htmlFor="event-image" className="mb-2 block">
+                Event Image
               </Label>
               <div className="flex flex-col items-center gap-3">
                 {preview && (
@@ -189,14 +201,14 @@ export default function AdminNewsForm({
                           ? `${getBackendUrl()}${preview}`
                           : preview
                       }
-                      alt="News preview"
+                      alt="Event preview"
                       className="w-full h-auto object-cover rounded-lg"
                     />
                   </div>
                 )}
                 <input
                   type="file"
-                  id="news-image"
+                  id="event-image"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="w-full text-sm text-slate-500
@@ -212,68 +224,35 @@ export default function AdminNewsForm({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             <InputWithLabel
-              label="Title"
-              id="news-title"
-              placeholder="Enter news title"
+              label="Name"
+              id="event-name"
+              placeholder="Enter event name"
               className="md:col-span-2 cursor-pointer"
-              value={formData.title}
+              value={formData.name}
               onChange={handleInputChange}
               required
             />
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="news-category">Category *</Label>
-              <div className="flex gap-2">
-                <select
-                  id="news-category"
-                  value={formData.category}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      category: e.target.value,
-                    }))
-                  }
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="">Select a category</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  placeholder="Or enter a new category"
-                  className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      setFormData((prev) => ({
-                        ...prev,
-                        category: e.target.value,
-                      }));
-                    }
-                  }}
-                />
-              </div>
-            </div>
 
             <InputWithLabel
               label="Date"
-              id="news-date"
+              id="event-dates"
               type="date"
-              placeholder="Enter news date"
+              placeholder="Enter event date"
               className="cursor-pointer"
-              value={formData.news_date.split("T")[0]}
+              value={
+                typeof formData.dates === "string"
+                  ? formData.dates.split("T")[0]
+                  : formData.dates
+              }
               onChange={handleInputChange}
               required
             />
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="news-location">Location *</Label>
+              <Label htmlFor="event-location">Location *</Label>
               <div className="flex gap-2">
                 <select
-                  id="news-location"
+                  id="event-location"
                   value={formData.location}
                   onChange={(e) =>
                     setFormData((prev) => ({
@@ -306,28 +285,87 @@ export default function AdminNewsForm({
               </div>
             </div>
 
-            <InputWithLabel
-              label="Startup ID (Optional)"
-              id="news-startup-id"
-              type="number"
-              placeholder="Enter startup ID if applicable"
-              className="cursor-pointer"
-              value={formData.startup_id ? formData.startup_id.toString() : ""}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  startup_id: parseInt(e.target.value) || 0,
-                }))
-              }
-            />
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="event-type">Event Type *</Label>
+              <div className="flex gap-2">
+                <select
+                  id="event-type"
+                  value={formData.event_type}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      event_type: e.target.value,
+                    }))
+                  }
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Select event type</option>
+                  {eventTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  placeholder="Or enter a new type"
+                  className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        event_type: e.target.value,
+                      }));
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="event-audience">Target Audience *</Label>
+              <div className="flex gap-2">
+                <select
+                  id="event-audience"
+                  value={formData.target_audience}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      target_audience: e.target.value,
+                    }))
+                  }
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Select target audience</option>
+                  {audiences.map((audience) => (
+                    <option key={audience} value={audience}>
+                      {audience}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  placeholder="Or enter a new audience"
+                  className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        target_audience: e.target.value,
+                      }));
+                    }
+                  }}
+                />
+              </div>
+            </div>
 
             <div className="md:col-span-2">
-              <Label htmlFor="news-description" className="mb-2 block">
+              <Label htmlFor="event-description" className="mb-2 block">
                 Description *
               </Label>
               <textarea
-                id="news-description"
-                placeholder="Enter news description"
+                id="event-description"
+                placeholder="Enter event description"
                 className="min-h-[150px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                 value={formData.description}
                 onChange={handleInputChange}

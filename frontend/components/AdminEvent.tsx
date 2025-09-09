@@ -2,7 +2,7 @@
 import { TableRow, TableCell } from "@/components/ui/table";
 import { FaTrashAlt } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
-import { NewsDetailItem } from "@/types/news";
+import { Event } from "@/types/event";
 import {
   Dialog,
   DialogTrigger,
@@ -14,52 +14,43 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
-import AdminNewsForm from "@/components/AdminNewsForm";
+import AdminEventForm from "@/components/AdminEventForm";
 
-interface AdminNewsProps {
-  news: NewsDetailItem;
+interface AdminEventProps {
+  event: Event;
   editCB: (
-    newsId: number,
-    data: NewsDetailItem,
+    eventId: number,
+    data: Event,
     btnAction: HTMLButtonElement | null
   ) => void;
-  deleteCB: (newsId: number, btnAction: HTMLButtonElement | null) => void;
+  deleteCB: (eventId: number, btnAction: HTMLButtonElement | null) => void;
 }
 
-export default function AdminNews(props: AdminNewsProps) {
+export default function AdminEvent(props: AdminEventProps) {
   const closeBtn = useRef<HTMLButtonElement>(null);
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return new Intl.DateTimeFormat("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format(date);
-  };
 
   return (
     <TableRow
-      key={props.news.id}
+      key={props.event.id}
       className="hover:bg-gray-50 transition-colors"
     >
       <TableCell className="text-center border-r border-gray-200 align-middle text-app-text-secondary">
-        {props.news.id}
+        {props.event.id}
       </TableCell>
       <TableCell className="text-center border-l border-gray-200 align-middle font-medium text-app-text-primary">
-        {props.news.title}
+        {props.event.name}
       </TableCell>
       <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
-        {props.news.category}
+        {props.event.dates}
       </TableCell>
       <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
-        {formatDate(props.news.news_date)}
+        {props.event.location}
       </TableCell>
       <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
-        {props.news.location}
+        {props.event.event_type}
       </TableCell>
       <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
-        {props.news.startup_id || "None"}
+        {props.event.target_audience}
       </TableCell>
       <TableCell className="text-center border-l border-gray-200 align-middle">
         <Dialog>
@@ -67,7 +58,7 @@ export default function AdminNews(props: AdminNewsProps) {
             <button
               className="p-2 rounded-full hover:bg-blue-50 transition-colors w-full flex items-center justify-center cursor-pointer"
               aria-label="Edit"
-              title={`Edit ${props.news.title}`}
+              title={`Edit ${props.event.name}`}
             >
               <IoSettingsOutline className="text-xl text-gray-500" />
             </button>
@@ -75,13 +66,13 @@ export default function AdminNews(props: AdminNewsProps) {
           <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw] max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                Edit News
+                Edit Event
               </DialogTitle>
             </DialogHeader>
-            <AdminNewsForm
-              defaultData={props.news}
+            <AdminEventForm
+              defaultData={props.event}
               onSubmit={(data) =>
-                props.editCB(props.news.id, data, closeBtn.current)
+                props.editCB(props.event.id, data, closeBtn.current)
               }
             />
           </DialogContent>
@@ -93,7 +84,7 @@ export default function AdminNews(props: AdminNewsProps) {
             <button
               className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
               aria-label="Delete"
-              title={`Delete ${props.news.title}`}
+              title={`Delete ${props.event.name}`}
             >
               <FaTrashAlt className="text-xl text-red-500" />
             </button>
@@ -101,16 +92,16 @@ export default function AdminNews(props: AdminNewsProps) {
           <DialogContent className="sm:max-w-[400px]">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                Delete News
+                Delete Event
               </DialogTitle>
             </DialogHeader>
             <div className="py-4 text-center text-app-text-primary">
               <p>
                 Are you sure you want to{" "}
                 <span className="font-semibold text-red-600">delete</span> the
-                news{" "}
+                event{" "}
                 <span className="font-semibold">
-                  &ldquo;{props.news.title}&rdquo;
+                  &ldquo;{props.event.name}&rdquo;
                 </span>{" "}
                 ?
               </p>
@@ -125,7 +116,7 @@ export default function AdminNews(props: AdminNewsProps) {
                 type="button"
                 variant="destructive"
                 className="min-w-[90px]"
-                onClick={() => props.deleteCB(props.news.id, closeBtn.current)}
+                onClick={() => props.deleteCB(props.event.id, closeBtn.current)}
               >
                 Delete
               </Button>
