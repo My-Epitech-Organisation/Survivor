@@ -148,7 +148,7 @@ export default function AdminProjects() {
               </h1>
               <Dialog>
                 <DialogTrigger
-                  className="inline-flex items-center justify-center gap-2 bg-app-blue-primary hover:bg-app-blue-primary-hover rounded-lg px-6 py-3 text-white font-medium shadow-md hover:shadow-lg transition-all duration-300 group"
+                  className="inline-flex items-center justify-center gap-2 bg-app-blue-primary hover:bg-app-blue-primary-hover rounded-lg px-6 py-3 text-white font-medium shadow-md hover:shadow-lg transition-all duration-300 group cursor-pointer"
                   onClick={(e) => {
                     const button = e.currentTarget;
                     button.classList.add("scale-95");
@@ -170,7 +170,7 @@ export default function AdminProjects() {
                     </DialogTitle>
                     <DialogClose asChild ref={closeDialogRef}>
                       <button
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors focus:outline-none"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors focus:outline-none cursor-pointer"
                         aria-label="Close"
                       >
                         <svg

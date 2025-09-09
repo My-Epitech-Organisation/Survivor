@@ -184,7 +184,7 @@ export default function ProjectFilters(data: ProjectFiltersProps) {
         <div className="flex-shrink-0">
           <Button
             variant="ghost"
-            className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap"
+            className="text-app-text-secondary hover:text-app-text-primary whitespace-nowrap cursor-pointer"
             onClick={() => {
               setSelectedLocations([]);
               setSelectedMaturities([]);

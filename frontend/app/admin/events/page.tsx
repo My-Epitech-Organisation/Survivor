@@ -177,7 +177,7 @@ export default function AdminEvents() {
               <Dialog>
                 <DialogTrigger asChild>
                   <button
-                    className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                    className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
                   >
                     Add Event
                   </button>
@@ -227,17 +227,15 @@ export default function AdminEvents() {
                   ))}
                 </select>
               </div>
-              {(filterType || filterLocation) && (
-                <button
-                  className="bg-gray-100 text-gray-700 font-medium px-4 py-2 rounded-md hover:bg-gray-200 transition-colors self-end"
-                  onClick={() => {
-                    setFilterType("");
-                    setFilterLocation("");
-                  }}
-                >
-                  Clear Filters
-                </button>
-              )}
+              <button
+                className="text-app-text-secondary hover:text-app-text-primary px-4 py-2 rounded-md transition-colors self-end cursor-pointer"
+                onClick={() => {
+                  setFilterType("");
+                  setFilterLocation("");
+                }}
+              >
+                Clear All Filters
+              </button>
             </div>
 
             {/* Events content */}
