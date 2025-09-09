@@ -18,6 +18,8 @@ import {
   Eye,
   Calendar1,
   TableProperties,
+  Filter,
+  ChevronDown,
 } from "lucide-react";
 import { authenticatedFetch } from "@/lib/api";
 import {
@@ -64,6 +66,7 @@ export default function SearchPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState<SearchItem | null>(null);
   const [itemDetails, setItemDetails] = useState<any>(null);
+  const [selectedType, setSelectedType] = useState<string>("");
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -111,6 +114,7 @@ export default function SearchPage() {
     if (inputField) {
       inputField.value = "";
     }
+    setSelectedType("");
   };
 
   const sendQuery = async (url?: string) => {
@@ -128,7 +132,15 @@ export default function SearchPage() {
       }
 
       const searchQuery = inputField.value.trim();
-      searchUrl = `/search/?search=${encodeURIComponent(searchQuery)}`;
+      const params = new URLSearchParams({
+        search: searchQuery,
+      });
+
+      if (selectedType) {
+        params.append("type", selectedType);
+      }
+
+      searchUrl = `/search/?${params.toString()}`;
     }
 
     setIsLoading(true);
@@ -194,21 +206,44 @@ export default function SearchPage() {
                 placeholder="Search for any event, news or project"
                 className="rounded-lg border shadow py-2 px-6 w-full hover:border-app-text-muted transition-colors"
               />
-              <div className="flex gap-2 justify-end w-full sm:w-fit">
-                <button
-                  type="button"
-                  className="rounded-full border shadow p-2 w-auto cursor-pointer text-app-text-secondary hover:border-app-text-muted transition-colors"
-                  onClick={clearInput}
-                >
-                  <X />
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="rounded-full border shadow p-2 w-auto cursor-pointer text-app-text-secondary disabled:opacity-50 disabled:cursor-not-allowed hover:border-app-text-muted transition-colors"
-                >
-                  <Search />
-                </button>
+
+              <div className="flex gap-3 justify-end w-full sm:w-fit">
+                <div className="relative w-full sm:w-fit">
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <Filter className="w-4 h-4 text-app-text-secondary" />
+                  </div>
+                  <select
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    className="rounded-lg border shadow py-2 pl-10 pr-10 hover:border-app-text-muted transition-colors text-app-text-muted cursor-pointer appearance-none leading-normal"
+                  >
+                    <option value="">All Types</option>
+                    <option value="project">Projects</option>
+                    <option value="event">Events</option>
+                    <option value="news">News</option>
+                  </select>
+                  <div className="absolute left-32 top-1/3 pointer-events-none">
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    className="rounded-full border shadow p-2 w-auto cursor-pointer text-app-text-secondary hover:border-app-text-muted transition-colors"
+                    onClick={clearInput}
+                  >
+                    <X />
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="rounded-full border shadow p-2 w-auto cursor-pointer text-app-text-secondary disabled:opacity-50 disabled:cursor-not-allowed hover:border-app-text-muted transition-colors"
+                  >
+                    <Search />
+                  </button>
+                </div>
               </div>
             </form>
           </div>
