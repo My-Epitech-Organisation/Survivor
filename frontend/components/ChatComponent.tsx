@@ -146,8 +146,14 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
     } catch (error) {
       console.error("Failed to refresh messages:", error);
     } finally {
-      setSSE();
       setIsMessageLoading(false);
+    }
+  }, [conv]);
+
+  // Separate useEffect for SSE setup - only when conv changes
+  useEffect(() => {
+    if (conv) {
+      setSSE();
     }
   }, [conv]);
 

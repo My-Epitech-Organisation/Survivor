@@ -38,21 +38,43 @@ logger = logging.getLogger(__name__)
 
 def authenticate_user_from_jwt(request):
     """
-    Authenticate user from JWT token in Authorization header
+    Authenticate user from JWT token in Authorization header or query parameter
     """
-    auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-    if not auth_header.startswith('Bearer '):
+    # First try to get token from query parameter (for SSE)
+    token = request.GET.get('token')
+    if token:
+        logger.debug(f"Authenticating with token from query parameter: {token[:20]}...")
+    else:
+        # Fallback to Authorization header
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+            logger.debug(f"Authenticating with token from Authorization header: {token[:20]}...")
+        else:
+            logger.warning("No token found in query parameter or Authorization header")
+            return None
+
+    if not token:
+        logger.warning("Token is empty or None")
         return None
 
-    token = auth_header.split(' ')[1]
     try:
         access_token = AccessToken(token)
         user_id = access_token['user_id']
+        logger.debug(f"Token validated, user_id: {user_id}")
         from django.contrib.auth import get_user_model
         User = get_user_model()
         user = User.objects.get(id=user_id)
+        logger.debug(f"User found: {user.email} (role: {user.role})")
         return user
-    except (InvalidToken, TokenError, User.DoesNotExist, KeyError):
+    except (InvalidToken, TokenError) as e:
+        logger.error(f"Token validation failed: {e}")
+        return None
+    except User.DoesNotExist as e:
+        logger.error(f"User not found: {e}")
+        return None
+    except KeyError as e:
+        logger.error(f"Token missing user_id: {e}")
         return None
 
 
@@ -368,6 +390,9 @@ def update_typing_status(request, thread_id):
         OpenApiParameter(
             name="last_event_id", description="Last event ID for resuming connection", required=False, type=str
         ),
+        OpenApiParameter(
+            name="token", description="JWT authentication token (query parameter)", required=True, type=str
+        ),
     ],
     responses={
         200: OpenApiResponse(description="Event stream established - returns text/event-stream"),
@@ -382,6 +407,10 @@ def thread_events(request, thread_id):
     Stream events from a thread using Server-Sent Events (SSE).
     Events: new messages, typing indicators, read receipts
     """
+    logger.info(f"🚀 Thread events SSE requested for thread {thread_id}")
+    logger.debug(f"📋 Query parameters: {dict(request.GET)}")
+    logger.debug(f"📋 Headers: {dict(request.META)}")
+    
     user = authenticate_user_from_jwt(request)
     logger.info(f"Thread events requested: thread_id={thread_id}, user={user.id if user else 'None'}")
 
