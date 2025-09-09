@@ -50,7 +50,6 @@ export default function StartupDashboard() {
       if (!isLoading && !user) {
         setIsDataLoading(false);
       }
-      return;
     }
 
     const fetchDataSequentially = async () => {

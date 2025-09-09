@@ -91,8 +91,9 @@ export default function StartupProfile() {
 
         const data: FounderResponse = await response.json();
 
-        return data.startup_id;
+        return data.FounderStartupID;
       } catch {
+        console.error("Error fetching startup ID");
         return null;
       }
     };
