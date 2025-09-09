@@ -1,19 +1,12 @@
-import { useState, useEffect, useRef } from "react";
-import { FaPlus, FaTrashAlt, FaUpload, FaEdit } from "react-icons/fa";
+import React from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { FormUser } from "@/types/user";
-import { Roles } from "@/types/role";
 import { api } from "@/lib/api";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { getBackendUrl } from "@/lib/config";
+
+
 import { toast } from "sonner"
 import { SelectWithLabel } from "./ui/selectWithLabel";
 import { SelectItem, SelectLabel } from "@/components/ui/select";
@@ -47,13 +40,10 @@ export default function AdminUserForm({
 
   const [foundersAvailable, setFoundersAvailable] = useState<Founder[] | null>();
   const [investosrAvailable, setInvestorsAvailable] = useState<Investor[] | null>();
-  const [isLoadingFounder, setIsLoadingFounder] = useState<boolean>(true);
-  const [isLoadingInvestor, setIsLoadingInvestor] = useState<boolean>(true);
 
 
-  const fetchAvailableFounders = async () => {
+  const fetchAvailableFounders = React.useCallback(async () => {
     try {
-      setIsLoadingFounder(true);
       const result = (await api.get<Founder[]>({endpoint: `/founders/?founder_available=true`}));
       let available = Array.isArray(result.data) ? result.data : [];
       if (
@@ -67,19 +57,16 @@ export default function AdminUserForm({
     } catch (error) {
       console.error(error)
     }
-    setIsLoadingFounder(false);
-  }
+  }, [defaultData]);
 
 
   const fetchAvailableInvestors = async () => {
     try {
-      setIsLoadingInvestor(true);
       const result = (await api.get<Investor[]>({endpoint: `/investors/?investor_available=true`}));
       setInvestorsAvailable(result.data);
     } catch (error) {
       console.error(error)
     }
-    setIsLoadingInvestor(false);
   }
 
 
@@ -89,7 +76,7 @@ export default function AdminUserForm({
     if (defaultData) {
       setFormData(defaultData);
     }
-  }, [defaultData]);
+  }, [defaultData, fetchAvailableFounders]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;

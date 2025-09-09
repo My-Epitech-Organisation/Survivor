@@ -34,7 +34,6 @@ export default function AdminNewsForm({
   );
   const [categories, setCategories] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
-  const [_file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
   const fetchOptions = async () => {
@@ -83,7 +82,6 @@ export default function AdminNewsForm({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
-      setFile(selectedFile);
 
       try {
         const objectUrl = URL.createObjectURL(selectedFile);

@@ -1,13 +1,10 @@
 "use client"
 
 import AdminNavigation from "@/components/AdminNavigation";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { TbLoader3 } from "react-icons/tb";
 import { FaSortDown, FaSortUp, FaSort } from "react-icons/fa";
-import { Dialog, DialogTrigger, DialogOverlay, DialogContent, DialogTitle, DialogClose } from "@radix-ui/react-dialog";
-import { Card,  CardContent,  CardDescription,  CardHeader,  CardTitle } from "@/components/ui/card";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Table, TableHeader, TableBody, TableRow, TableHead } from "@/components/ui/table";
 import { FormUser, UserSimple } from "@/types/user";
 import { User as UserIcon } from "lucide-react";
 import api from "@/lib/api";

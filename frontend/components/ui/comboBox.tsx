@@ -9,7 +9,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -18,10 +17,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ImCross } from "react-icons/im";
 
 import InputAvatar from "@/components/ui/InputAvatar";
-import { useEffect } from "react";
 
 interface ComboboxProps {
   elements: { value: string; label: string, url? : string }[];
