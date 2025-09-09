@@ -3,7 +3,15 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Search, X, ArrowRight, ArrowLeft } from "lucide-react";
+import {
+  Search,
+  X,
+  ArrowRight,
+  ArrowLeft,
+  Calendar,
+  Newspaper,
+  Building,
+} from "lucide-react";
 import { authenticatedFetch } from "@/lib/api";
 
 interface SearchItem {
@@ -27,6 +35,46 @@ export default function SearchPage() {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case "project":
+        return <Building className="w-4 h-4" />;
+      case "event":
+        return <Calendar className="w-4 h-4" />;
+      case "news":
+        return <Newspaper className="w-4 h-4" />;
+      default:
+        return <Building className="w-4 h-4" />;
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case "project":
+        return "Project";
+      case "event":
+        return "Event";
+      case "news":
+        return "News";
+      default:
+        return "Project";
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "project":
+        return "text-blue-600 bg-blue-100";
+      case "event":
+        return "text-green-600 bg-green-100";
+      case "news":
+        return "text-orange-600 bg-orange-100";
+      default:
+        return "text-blue-600 bg-blue-100";
+    }
+  };
+
   const clearInput = () => {
     const inputField = document.getElementById(
       "search-bar"
@@ -174,9 +222,24 @@ export default function SearchPage() {
               </div>
 
               <div className="flex flex-col gap-4">
-                {searchResults.results.map((item) => (
-                  <div className="rounded-lg shadow p-4 bg-app-surface">
-                    <h3 className="text-lg">{item.title}</h3>
+                {searchResults.results.map((item, index) => (
+                  <div
+                    key={index}
+                    className="rounded-lg shadow p-4 bg-app-surface"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(
+                          item.type
+                        )}`}
+                      >
+                        {getTypeIcon(item.type)}
+                        {getTypeLabel(item.type)}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-app-text-primary mb-2">
+                      {item.title}
+                    </h3>
                     <p className="text-sm text-app-text-secondary">
                       {item.description.substring(0, 300)}
                       {item.description.length > 300 && <span>...</span>}
