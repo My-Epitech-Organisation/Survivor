@@ -55,7 +55,7 @@ export default function StartupDashboard() {
     const fetchDataSequentially = async () => {
       try {
         const userProfileResponse = await authenticatedFetch(
-          `/user/${user.id}`
+          user && user.id ? `/user/${user.id}` : "/user/0"
         );
         if (!userProfileResponse.ok) {
           throw new Error("Failed to fetch user profile");
