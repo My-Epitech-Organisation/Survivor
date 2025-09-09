@@ -12,14 +12,6 @@ type PartnerItem = {
   contact_email?: string;
 };
 
-type Funding = {
-  id: string;
-  title: string;
-  source: string;
-  amount?: string;
-  description: string;
-};
-
 type InvestorMatch = {
   id: string;
   name: string;
@@ -28,25 +20,6 @@ type InvestorMatch = {
   score: number;
   description: string;
 };
-
-const MOCK_FUNDINGS: Funding[] = [
-  {
-    id: "f1",
-    title: "Subvention DeepTech Seed",
-    source: "Agence Nationale R&D",
-    amount: "Up to €50k",
-    description:
-      "Programme de subvention pour projets deeptech en phase seed. Critères : IP, équipe technique, roadmap.",
-  },
-  {
-    id: "f2",
-    title: "Prêt d'amorçage - GreenTech",
-    source: "GreenFund",
-    amount: "€20k - €100k",
-    description:
-      "Prêts à taux préférentiels pour startups travaillant sur la transition écologique.",
-  },
-];
 
 const MOCK_INVESTORS: InvestorMatch[] = [
   {
@@ -74,8 +47,11 @@ export default function StartupOpportunities() {
     "opportunities"
   );
   const [partners, setPartners] = useState<PartnerItem[]>([]);
+  const [investors, setInvestors] = useState<InvestorMatch[]>([]);
   const partnersCardRef = useRef<HTMLDivElement | null>(null);
   const partnersListRef = useRef<HTMLDivElement | null>(null);
+  const fundingCardRef = useRef<HTMLDivElement | null>(null);
+  const fundingListRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchPartners = async () => {
@@ -92,12 +68,24 @@ export default function StartupOpportunities() {
   }, []);
 
   useEffect(() => {
-    const compute = () => {
-      const card = partnersCardRef.current;
-      const list = partnersListRef.current;
+    const fetchInvestors = async () => {
+      try {
+        const apiBase = getAPIUrl();
+        const res = await fetch(`${apiBase}/investors/`);
+        if (!res.ok) return;
+        const data = await res.json();
+        setInvestors(data);
+      } catch {
+      }
+    };
+    fetchInvestors();
+  }, []);
+
+  useEffect(() => {
+    const computeFor = (card: HTMLDivElement | null, list: HTMLDivElement | null) => {
       if (!card || !list) return;
-  const top = card.getBoundingClientRect().top;
-  const available = window.innerHeight - top - 24;
+      const top = card.getBoundingClientRect().top;
+      const available = window.innerHeight - top - 24;
       const firstChild = list.firstElementChild as HTMLElement | null;
       let twoItemsHeight = 0;
       if (firstChild) {
@@ -117,6 +105,11 @@ export default function StartupOpportunities() {
       list.style.maxHeight = `${Math.min(available, desired)}px`;
     };
 
+    const compute = () => {
+      computeFor(partnersCardRef.current, partnersListRef.current);
+      computeFor(fundingCardRef.current, fundingListRef.current);
+    };
+
     compute();
     window.addEventListener("resize", compute);
     window.addEventListener("orientationchange", compute);
@@ -124,7 +117,7 @@ export default function StartupOpportunities() {
       window.removeEventListener("resize", compute);
       window.removeEventListener("orientationchange", compute);
     };
-  }, [partners]);
+  }, [partners, investors]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
@@ -212,36 +205,42 @@ export default function StartupOpportunities() {
               </div>
             </div>
 
-            <div className="bg-app-surface rounded-lg shadow-md p-8">
+            <div ref={fundingCardRef} className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col">
               <h3 className="text-2xl font-semibold text-app-text-primary mb-6">
                 Funding opportunities
               </h3>
-              <div className="space-y-4">
-                {MOCK_FUNDINGS.map((f) => (
-                  <div
-                    key={f.id}
-                    className="border border-app-border rounded-md p-4 bg-white"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="text-lg font-medium text-app-text-primary">
-                          {f.title}
-                        </h4>
-                        <div className="text-sm text-app-text-secondary">{f.source}</div>
-                      </div>
-                      <div className="text-sm font-medium text-app-text-primary">{f.amount}</div>
-                    </div>
-                    <p className="mt-3 text-app-text-secondary">{f.description}</p>
-                    <div className="mt-4 flex gap-2">
-                      <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm">
-                        Détails
-                      </button>
-                      <button className="px-3 py-1 rounded border border-app-border text-sm">
-                        Demander info
-                      </button>
-                    </div>
+              <div ref={fundingListRef} className="space-y-4 overflow-y-auto flex-1">
+                {investors.length === 0 ? (
+                  <div className="flex items-center justify-center h-full text-app-text-secondary">
+                    No funding opportunities available.
                   </div>
-                ))}
+                ) : (
+                  investors.map((inv) => (
+                    <div
+                      key={inv.id}
+                      className="border border-app-border rounded-md p-4 bg-white"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-lg font-medium text-app-text-primary">
+                            {inv.name}
+                          </h4>
+                          <div className="text-sm text-app-text-secondary">{inv.investment_focus}</div>
+                        </div>
+                        <div className="text-sm font-medium text-app-text-primary">{inv.investor_type}</div>
+                      </div>
+                      <p className="mt-3 text-app-text-secondary">{inv.description}</p>
+                      <div className="mt-4 flex gap-2">
+                        <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm">
+                          Détails
+                        </button>
+                        <button className="px-3 py-1 rounded border border-app-border text-sm">
+                          Demander info
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
