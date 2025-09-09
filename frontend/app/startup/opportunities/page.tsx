@@ -65,6 +65,8 @@ export default function StartupOpportunities() {
   const fundingCardRef = useRef<HTMLDivElement | null>(null);
   const fundingListRef = useRef<HTMLDivElement | null>(null);
   const matchContentRef = useRef<HTMLDivElement | null>(null);
+  const matchesListRef = useRef<HTMLDivElement | null>(null);
+  const matchesCardRef = useRef<HTMLDivElement | null>(null);
 
   const [partnerTypes, setPartnerTypes] = useState<string[]>([]);
   const [investorTypes, setInvestorTypes] = useState<string[]>([]);
@@ -132,11 +134,11 @@ export default function StartupOpportunities() {
 
   useEffect(() => {
     const computeFor = (card: HTMLDivElement | null, list: HTMLDivElement | null) => {
-      if (!card || !list) return;
+      if (!list) return;
 
       setTimeout(() => {
-        const top = card.getBoundingClientRect().top;
-        const available = window.innerHeight - top - 24;
+        const top = card && card !== list ? card.getBoundingClientRect().top : list.getBoundingClientRect().top;
+        const available = window.innerHeight - top - 80;
         const children = list.children;
 
         if (children.length >= 2) {
@@ -159,8 +161,12 @@ export default function StartupOpportunities() {
     };
 
     const compute = () => {
-      computeFor(partnersCardRef.current, partnersListRef.current);
-      computeFor(fundingCardRef.current, fundingListRef.current);
+      if (tab === "opportunities") {
+        computeFor(partnersCardRef.current, partnersListRef.current);
+        computeFor(fundingCardRef.current, fundingListRef.current);
+      } else if (tab === "matches") {
+        computeFor(matchesListRef.current, matchesListRef.current);
+      }
     };
 
     compute();
@@ -170,9 +176,8 @@ export default function StartupOpportunities() {
       window.removeEventListener("resize", compute);
       window.removeEventListener("orientationchange", compute);
     };
-  }, [partners, investors]);
+  }, [partners, investors, matches, tab]);
 
-  // Auto-scroll for match dialog
   useEffect(() => {
     if (selectedMatch && matchContentRef.current) {
       setTimeout(() => {
@@ -181,7 +186,6 @@ export default function StartupOpportunities() {
           const sections = contentElement.querySelectorAll('.space-y-6 > div');
 
           if (sections.length >= 2) {
-            // Calculate height for about 1.5 sections
             const firstSection = sections[0] as HTMLElement;
             const secondSection = sections[1] as HTMLElement;
             const firstHeight = firstSection.offsetHeight;
@@ -235,6 +239,16 @@ export default function StartupOpportunities() {
     }
   }, [tab, user]);
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
+
   const handlePartnerFiltersChange = (filters: { types: string[] }) => {
     setActivePartnerFilters(filters);
   };
@@ -280,7 +294,7 @@ export default function StartupOpportunities() {
   const filteredInvestors = getFilteredInvestors();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
+    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to overflow-hidden">
       <StartupNavigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -560,7 +574,7 @@ export default function StartupOpportunities() {
             </div>
           </div>
         ) : (
-          <div className="bg-app-surface rounded-lg shadow-md p-8">
+          <div ref={matchesCardRef} className="bg-app-surface rounded-lg shadow-md p-8">
             <h3 className="text-2xl font-semibold text-app-text-primary mb-4">
               Investor matches
             </h3>
@@ -602,7 +616,7 @@ export default function StartupOpportunities() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div ref={matchesListRef} className="space-y-4 overflow-y-auto max-h-96">
                 {matches.map((m) => (
                   <div
                     key={m.investor_id}
