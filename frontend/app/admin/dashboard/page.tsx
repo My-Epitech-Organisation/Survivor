@@ -167,7 +167,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50">
       <AdminNavigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -278,7 +278,7 @@ export default function AdminDashboard() {
               {
                 browser: "Online Users",
                 rate: usersConnected.rate,
-                fill: "#2563eb",
+                fill: "#cb90f1",
               },
             ]}
             title="User Engagement"
@@ -300,7 +300,7 @@ export default function AdminDashboard() {
             config={{
               views: {
                 label: "Views",
-                color: "#2563eb",
+                color: "#cb90f1",
               },
             }}
           />

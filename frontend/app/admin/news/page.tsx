@@ -263,13 +263,13 @@ export default function AdminNewsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50">
       <AdminNavigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {isDataLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <TbLoader3 className="size-12 animate-spin text-blue-600 mb-4" />
+            <TbLoader3 className="size-12 animate-spin text-jeb-primary mb-4" />
             <p className="text-app-text-secondary text-lg">Loading news...</p>
           </div>
         ) : (
@@ -280,7 +280,7 @@ export default function AdminNewsPage() {
               </h1>
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer">
+                  <button className="bg-jeb-primary text-white px-4 py-2 rounded-md hover:bg-jeb-hover font-bold transition-colors cursor-pointer">
                     Add News
                   </button>
                 </DialogTrigger>
