@@ -180,14 +180,6 @@ export default function SearchPage() {
           </div>
 
           {/* Search Results Section */}
-          {isLoading && (
-            <div className="p-6 w-full">
-              <div className="text-center text-app-text-secondary">
-                Loading search results...
-              </div>
-            </div>
-          )}
-
           {searchResults && (
             <div className="p-6 w-full">
               <div className="flex justify-between items-center mb-4 gap-6">
@@ -221,11 +213,18 @@ export default function SearchPage() {
                 )}
               </div>
 
+              {/* Loading placeholder under Search Results header */}
+              {isLoading && (
+                <div className="text-center text-app-text-secondary mb-4">
+                  Loading search results...
+                </div>
+              )}
+
               <div className="flex flex-col gap-4">
                 {searchResults.results.map((item, index) => (
                   <div
                     key={index}
-                    className="rounded-lg shadow p-4 bg-app-surface"
+                    className="rounded-lg shadow p-4 bg-app-surface hover:bg-app-surface-hover cursor-pointer"
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span
