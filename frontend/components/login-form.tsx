@@ -113,7 +113,7 @@ export function LoginForm({
                     <Label htmlFor="password">Password</Label>
                     <a
                       href="/reset-password"
-                      className="ml-auto text-sm underline-offset-2 hover:underline hover:text-app-blue-primary-hover"
+                      className="ml-auto text-sm underline-offset-2 hover:underline hover:text-jeb-hover"
                     >
                       Forgot your password?
                     </a>
@@ -130,20 +130,20 @@ export function LoginForm({
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-opacity duration-200"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-opacity duration-200 cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       <div className="relative w-5 h-5">
                         <LuEyeClosed
-                          className={`absolute transition-all duration-300 ${
+                          className={`absolute transition-all duration-300 left-1/10 top-1/10 ${
                             showPassword
                               ? "opacity-100 transform scale-100"
                               : "opacity-0 transform scale-75"
                           }`}
                         />
                         <LuEye
-                          className={`absolute transition-all duration-300 ${
+                          className={`absolute transition-all duration-300 left-1/10 top-1/10 ${
                             showPassword
                               ? "opacity-0 transform scale-75"
                               : "opacity-100 transform scale-100"
@@ -155,7 +155,7 @@ export function LoginForm({
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover"
+                  className="w-full bg-jeb-primary hover:bg-jeb-hover cursor-pointer font-bold"
                   disabled={isLoading}
                 >
                   {isLoading ? "Logging in..." : "Login"}
@@ -164,7 +164,7 @@ export function LoginForm({
               <div className="text-center text-sm">
                 <a
                   href="/signup"
-                  className="hover:underline underline-offset-2 hover:text-app-blue-primary-hover"
+                  className="hover:underline underline-offset-2 hover:text-jeb-hover"
                 >
                   Don&apos;t have an account?{" "}
                 </a>

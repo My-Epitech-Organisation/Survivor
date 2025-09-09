@@ -98,7 +98,7 @@ export function ResetPasswordForm({
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-app-blue-primary hover:bg-app-blue-primary-hover"
+                  className="w-full bg-jeb-primary hover:bg-jeb-hover font-bold cursor-pointer"
                   disabled={isLoading}
                 >
                   {isLoading ? "Sending..." : "Send Reset Link"}
