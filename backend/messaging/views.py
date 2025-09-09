@@ -19,6 +19,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
 from .models import Message, ReadReceipt, Thread, TypingIndicator
 from .permissions import IsMessagingEligibleUser
@@ -32,6 +34,26 @@ from .serializers import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def authenticate_user_from_jwt(request):
+    """
+    Authenticate user from JWT token in Authorization header
+    """
+    auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+    if not auth_header.startswith('Bearer '):
+        return None
+
+    token = auth_header.split(' ')[1]
+    try:
+        access_token = AccessToken(token)
+        user_id = access_token['user_id']
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        user = User.objects.get(id=user_id)
+        return user
+    except (InvalidToken, TokenError, User.DoesNotExist, KeyError):
+        return None
 
 
 @extend_schema_view(
@@ -238,6 +260,8 @@ class MessageListView(APIView):
             thread.last_message_at = timezone.now()
             thread.save()
 
+            logger.info(f"Message created: ID={message.id}, Thread={thread_id}, Sender={request.user.id}")
+
             return Response(MessageSerializer(message).data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -358,20 +382,27 @@ def thread_events(request, thread_id):
     Stream events from a thread using Server-Sent Events (SSE).
     Events: new messages, typing indicators, read receipts
     """
-    user = request.user
-    if not user.is_authenticated:
+    user = authenticate_user_from_jwt(request)
+    logger.info(f"Thread events requested: thread_id={thread_id}, user={user.id if user else 'None'}")
+
+    if not user:
+        logger.warning("Thread events: Authentication failed")
         return HttpResponseForbidden("Authentication required")
     if user.role not in ["admin", "founder", "investor"]:
+        logger.warning(f"Thread events: User role {user.role} not allowed")
         return HttpResponseForbidden("Access denied. Only admin, founder, and investor roles can access messaging.")
 
     try:
         thread = Thread.objects.get(id=thread_id)
         if user not in thread.participants.all():
+            logger.warning(f"Thread events: User {user.id} not participant in thread {thread_id}")
             return HttpResponseForbidden("You are not a participant in this thread")
     except Thread.DoesNotExist:
+        logger.warning(f"Thread events: Thread {thread_id} not found")
         return HttpResponseForbidden("Thread not found")
 
     last_event_id = request.META.get("HTTP_LAST_EVENT_ID") or request.GET.get("last_event_id")
+    logger.info(f"Thread events: Starting SSE stream for thread {thread_id}, last_event_id={last_event_id}")
 
     # Function to generate SSE events
     def event_stream():
@@ -386,7 +417,9 @@ def thread_events(request, thread_id):
                 event_type, event_id = last_event_id.split(":", 1)
                 if event_type == "message":
                     last_message_id = int(event_id)
+                    logger.info(f"Thread events: Resuming from message ID {last_message_id}")
             except (ValueError, TypeError):
+                logger.warning(f"Thread events: Invalid last_event_id format: {last_event_id}")
                 pass
 
         while True:
@@ -400,6 +433,7 @@ def thread_events(request, thread_id):
             messages_found = False
             for message in new_messages:
                 messages_found = True
+                logger.info(f"Thread events: Sending message event: ID={message.id}, sender={message.sender.id}")
                 data = {
                     "type": "message",
                     "id": message.id,
@@ -425,6 +459,7 @@ def thread_events(request, thread_id):
             ).exclude(user=user)
 
             if typing_indicators.exists():
+                logger.debug(f"Thread events: Sending typing event for {typing_indicators.count()} users")
                 typing_users = [
                     {"id": indicator.user.id, "name": indicator.user.name} for indicator in typing_indicators
                 ]
@@ -446,6 +481,7 @@ def thread_events(request, thread_id):
                 ).exclude(user=user)
 
                 if read_receipts.exists():
+                    logger.debug(f"Thread events: Sending read receipt event for {read_receipts.count()} receipts")
                     receipt_data = [
                         {
                             "user_id": receipt.user.id,
@@ -467,6 +503,7 @@ def thread_events(request, thread_id):
                 last_read_check = timezone.now()
 
             if not messages_found and cycle_count % 4 == 0:
+                logger.debug("Thread events: Sending heartbeat")
                 yield ": heartbeat\n\n"
 
             cycle_count = (cycle_count + 1) % 100
