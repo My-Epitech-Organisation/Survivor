@@ -11,16 +11,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Filter, Users, DollarSign } from "lucide-react";
+import { ChevronDown, Filter, Users, DollarSign, X, Building, MapPin, Mail } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type PartnerItem = {
   id: string;
   name: string;
   partnership_type?: string;
   address?: string;
+  email?: string;
   description: string;
-  contact_email?: string;
 };
 
 type InvestorItem = {
@@ -60,6 +67,7 @@ export default function StartupOpportunities() {
   const [partnerTypes, setPartnerTypes] = useState<string[]>([]);
   const [investorTypes, setInvestorTypes] = useState<string[]>([]);
   const [investmentFocuses, setInvestmentFocuses] = useState<string[]>([]);
+  const [selectedPartner, setSelectedPartner] = useState<PartnerItem | null>(null);
 
   const [activePartnerFilters, setActivePartnerFilters] = useState({
     types: [] as string[],
@@ -121,63 +129,29 @@ export default function StartupOpportunities() {
   useEffect(() => {
     const computeFor = (card: HTMLDivElement | null, list: HTMLDivElement | null) => {
       if (!card || !list) return;
-      const top = card.getBoundingClientRect().top;
-      const available = window.innerHeight - top - 24;
-      const firstChild = list.firstElementChild as HTMLElement | null;
-      let twoItemsHeight = 0;
-      if (firstChild) {
-        const itemH = firstChild.getBoundingClientRect().height;
-        let gap = 16;
-        if (list.children.length > 1) {
-          const second = list.children[1] as HTMLElement;
+
+      setTimeout(() => {
+        const top = card.getBoundingClientRect().top;
+        const available = window.innerHeight - top - 24;
+        const children = list.children;
+
+        if (children.length >= 2) {
+          const firstChild = children[0] as HTMLElement;
+          const secondChild = children[1] as HTMLElement;
+
           const firstRect = firstChild.getBoundingClientRect();
-          const secondRect = second.getBoundingClientRect();
-          gap = Math.max(0, secondRect.top - (firstRect.top + firstRect.height));
+          const secondRect = secondChild.getBoundingClientRect();
+
+          const twoItemsHeight = secondRect.bottom - firstRect.top;
+
+          const maxHeight = Math.max(120, twoItemsHeight);
+          list.style.maxHeight = `${Math.min(available, maxHeight)}px`;
+        } else if (children.length === 1) {
+          const firstChild = children[0] as HTMLElement;
+          const itemHeight = firstChild.getBoundingClientRect().height;
+          list.style.maxHeight = `${Math.max(120, itemHeight + 16)}px`;
         }
-        twoItemsHeight = itemH * 2 + gap;
-      }
-
-      const min = 120;
-      const desired = twoItemsHeight > 0 ? Math.max(min, twoItemsHeight) : Math.max(min, available);
-      list.style.maxHeight = `${Math.min(available, desired)}px`;
-    };
-
-    const compute = () => {
-      computeFor(partnersCardRef.current, partnersListRef.current);
-      computeFor(fundingCardRef.current, fundingListRef.current);
-    };
-
-    compute();
-    window.addEventListener("resize", compute);
-    window.addEventListener("orientationchange", compute);
-    return () => {
-      window.removeEventListener("resize", compute);
-      window.removeEventListener("orientationchange", compute);
-    };
-  }, [partners, investors]);
-
-  useEffect(() => {
-    const computeFor = (card: HTMLDivElement | null, list: HTMLDivElement | null) => {
-      if (!card || !list) return;
-      const top = card.getBoundingClientRect().top;
-      const available = window.innerHeight - top - 24;
-      const firstChild = list.firstElementChild as HTMLElement | null;
-      let twoItemsHeight = 0;
-      if (firstChild) {
-        const itemH = firstChild.getBoundingClientRect().height;
-        let gap = 16;
-        if (list.children.length > 1) {
-          const second = list.children[1] as HTMLElement;
-          const firstRect = firstChild.getBoundingClientRect();
-          const secondRect = second.getBoundingClientRect();
-          gap = Math.max(0, secondRect.top - (firstRect.top + firstRect.height));
-        }
-        twoItemsHeight = itemH * 2 + gap;
-      }
-
-      const min = 120;
-      const desired = twoItemsHeight > 0 ? Math.max(min, twoItemsHeight) : Math.max(min, available);
-      list.style.maxHeight = `${Math.min(available, desired)}px`;
+      }, 100);
     };
 
     const compute = () => {
@@ -246,6 +220,10 @@ export default function StartupOpportunities() {
         activePartnerFilters.types.includes(partner.partnership_type || "");
       return typeMatch;
     });
+  };
+
+  const handlePartnerView = (partner: PartnerItem) => {
+    setSelectedPartner(partner);
   };
 
   const getFilteredInvestors = () => {
@@ -369,7 +347,7 @@ export default function StartupOpportunities() {
 
               <div
                 ref={partnersListRef}
-                className="space-y-4 overflow-y-auto flex-1 max-h-90"
+                className="space-y-4 overflow-y-auto flex-1"
               >
                 {filteredPartners.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
@@ -390,11 +368,13 @@ export default function StartupOpportunities() {
                             {p.partnership_type} • {p.address}
                           </div>
                         </div>
-                        <div className="text-sm text-app-text-secondary">{p.contact_email}</div>
                       </div>
                       <p className="mt-3 text-app-text-secondary">{p.description}</p>
                       <div className="mt-4 flex gap-2">
-                        <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm cursor-pointer">
+                        <button
+                          onClick={() => handlePartnerView(p)}
+                          className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm cursor-pointer hover:bg-app-blue-primary/90 transition-colors"
+                        >
                           View
                         </button>
                       </div>
@@ -506,7 +486,7 @@ export default function StartupOpportunities() {
                 </div>
               </div>
 
-              <div ref={fundingListRef} className="space-y-4 overflow-y-auto flex-1 max-h-90">
+              <div ref={fundingListRef} className="space-y-4 overflow-y-auto flex-1">
                 {filteredInvestors.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-app-text-secondary">
                     {investors.length === 0 ? "No funding opportunities available." : "No funding opportunities match your filters."}
@@ -643,6 +623,113 @@ export default function StartupOpportunities() {
           </div>
         )}
       </main>
+
+      {/* Partner Details Dialog */}
+      <Dialog
+        open={selectedPartner !== null}
+        onOpenChange={() => setSelectedPartner(null)}
+      >
+        <DialogContent
+          showCloseButton={false}
+          className="max-w-4xl w-full max-h-[90vh] overflow-hidden p-0"
+        >
+          {/* Custom Close Button */}
+          <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
+            <X className="h-6 w-6" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
+          {selectedPartner && (
+            <div className="flex flex-col h-full max-h-[90vh]">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+                <DialogHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-white">
+                      <Building className="w-4 h-4" />
+                      <span className="capitalize">Partner</span>
+                    </span>
+                  </div>
+                  <DialogTitle className="text-2xl font-bold leading-tight pr-8">
+                    {selectedPartner.name}
+                  </DialogTitle>
+                </DialogHeader>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto">
+                <div className="p-6">
+                  <div className="space-y-6">
+                    {/* Partner Details */}
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      {selectedPartner.partnership_type && (
+                        <div className="flex items-center gap-2">
+                          <Building className="w-4 h-4" />
+                          <span>{selectedPartner.partnership_type}</span>
+                        </div>
+                      )}
+                      {selectedPartner.address && (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4" />
+                          <span>{selectedPartner.address}</span>
+                        </div>
+                      )}
+                      {selectedPartner.email && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="w-4 h-4" />
+                          <span>{selectedPartner.email}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Partner Description */}
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Description
+                      </h3>
+                      <div className="prose prose-gray max-w-none">
+                        <p className="text-gray-600 mb-3 leading-relaxed">
+                          {selectedPartner.description || "No description available."}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Contact Section */}
+                    {selectedPartner.email ? (
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                          Contact
+                        </h3>
+                        <div className="flex items-center gap-4">
+                          <a
+                            href={`mailto:${selectedPartner.email}`}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-app-blue-primary text-white rounded-lg hover:bg-app-blue-primary/90 transition-colors"
+                          >
+                            <Mail className="w-4 h-4" />
+                            Send Email
+                          </a>
+                          <span className="text-sm text-gray-600">
+                            {selectedPartner.email}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                          Contact
+                        </h3>
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <Mail className="w-4 h-4" />
+                          <span>Unknown</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
