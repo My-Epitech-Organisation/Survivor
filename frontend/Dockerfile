@@ -33,6 +33,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/app/favicon.ico ./app/favicon.ico
 
 RUN mkdir -p /home/nextjs/.cache/puppeteer && \
     chown -R nextjs:nodejs /home/nextjs/.cache && \
