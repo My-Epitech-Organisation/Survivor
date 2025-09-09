@@ -1,6 +1,9 @@
 "use client"
 
 import AdminNavigation from "@/components/AdminNavigation";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import AdminUserForm from "@/components/AdminUserForm";
 import { useState, useEffect } from "react";
 import { TbLoader3 } from "react-icons/tb";
 import { FaSortDown, FaSortUp, FaSort } from "react-icons/fa";
@@ -152,6 +155,32 @@ export default function AdminUsers() {
         });
     };
 
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+
+  const handleAddUserSubmit = (data: FormUser) => {
+    api
+      .post("/users/", data)
+      .then(() => {
+        toast("User created", {
+          className: "!text-green-500",
+          description: (
+            <span className="text-green-500">User created successfully!</span>
+          ),
+        });
+        setOpenAddDialog(false);
+        fetchUsers();
+      })
+      .catch((error) => {
+        toast("Create error", {
+          className: "!text-red-500",
+          description: (
+            <span className="text-red-500">An error occurred during user creation: {String(error)}</span>
+          ),
+        });
+        console.error("Error creating user:", error);
+      });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
       <AdminNavigation />
@@ -170,6 +199,29 @@ export default function AdminUsers() {
               <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
                 Users Management
               </h1>
+              {/* Bouton Add User + Dialog */}
+              <div>
+                <Dialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
+                  <DialogTrigger asChild>
+                    <button
+                      className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer ml-4"
+                      onClick={() => setOpenAddDialog(true)}
+                    >
+                      Add User
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw] max-h-[85vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2">
+                        Add User
+                      </DialogTitle>
+                    </DialogHeader>
+                    <AdminUserForm
+                      onSubmit={handleAddUserSubmit}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
 
             {/* Users content placeholder */}
