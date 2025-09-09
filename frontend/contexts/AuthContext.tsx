@@ -164,8 +164,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     checkAuth();
-    // Les dépendances getUserStartupInfo et refreshUserInfo sont intentionnellement
-    // omises pour éviter des boucles infinies
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
