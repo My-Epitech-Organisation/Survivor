@@ -18,7 +18,7 @@ type PartnerItem = {
   id: string;
   name: string;
   partnership_type?: string;
-  location?: string;
+  address?: string;
   description: string;
   contact_email?: string;
 };
@@ -386,7 +386,7 @@ export default function StartupOpportunities() {
                             {p.name}
                           </h4>
                           <div className="text-sm text-app-text-secondary">
-                            {p.partnership_type} • {p.location}
+                            {p.partnership_type} • {p.address}
                           </div>
                         </div>
                         <div className="text-sm text-app-text-secondary">{p.contact_email}</div>
