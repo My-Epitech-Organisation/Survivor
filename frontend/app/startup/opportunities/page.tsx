@@ -35,6 +35,7 @@ type InvestorItem = {
   name: string;
   investor_type?: string;
   investment_focus?: string;
+  email?: string;
   description: string;
 };
 
@@ -68,6 +69,7 @@ export default function StartupOpportunities() {
   const [investorTypes, setInvestorTypes] = useState<string[]>([]);
   const [investmentFocuses, setInvestmentFocuses] = useState<string[]>([]);
   const [selectedPartner, setSelectedPartner] = useState<PartnerItem | null>(null);
+  const [selectedInvestor, setSelectedInvestor] = useState<InvestorItem | null>(null);
 
   const [activePartnerFilters, setActivePartnerFilters] = useState({
     types: [] as string[],
@@ -224,6 +226,10 @@ export default function StartupOpportunities() {
 
   const handlePartnerView = (partner: PartnerItem) => {
     setSelectedPartner(partner);
+  };
+
+  const handleInvestorView = (investor: InvestorItem) => {
+    setSelectedInvestor(investor);
   };
 
   const getFilteredInvestors = () => {
@@ -508,7 +514,10 @@ export default function StartupOpportunities() {
                       </div>
                       <p className="mt-3 text-app-text-secondary">{inv.description}</p>
                       <div className="mt-4 flex gap-2">
-                        <button className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm cursor-pointer">
+                        <button
+                          onClick={() => handleInvestorView(inv)}
+                          className="px-3 py-1 rounded bg-app-blue-primary text-white text-sm cursor-pointer hover:bg-app-blue-primary/90 transition-colors"
+                        >
                           Details
                         </button>
                       </div>
@@ -709,6 +718,113 @@ export default function StartupOpportunities() {
                           </a>
                           <span className="text-sm text-gray-600">
                             {selectedPartner.email}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                          Contact
+                        </h3>
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <Mail className="w-4 h-4" />
+                          <span>Unknown</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Investor Details Dialog */}
+      <Dialog
+        open={selectedInvestor !== null}
+        onOpenChange={() => setSelectedInvestor(null)}
+      >
+        <DialogContent
+          showCloseButton={false}
+          className="max-w-4xl w-full max-h-[90vh] overflow-hidden p-0"
+        >
+          {/* Custom Close Button */}
+          <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
+            <X className="h-6 w-6" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
+          {selectedInvestor && (
+            <div className="flex flex-col h-full max-h-[90vh]">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+                <DialogHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-white">
+                      <DollarSign className="w-4 h-4" />
+                      <span className="capitalize">Investor</span>
+                    </span>
+                  </div>
+                  <DialogTitle className="text-2xl font-bold leading-tight pr-8">
+                    {selectedInvestor.name}
+                  </DialogTitle>
+                </DialogHeader>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto">
+                <div className="p-6">
+                  <div className="space-y-6">
+                    {/* Investor Details */}
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      {selectedInvestor.investor_type && (
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-4 h-4" />
+                          <span>{selectedInvestor.investor_type}</span>
+                        </div>
+                      )}
+                      {selectedInvestor.investment_focus && (
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4" />
+                          <span>{selectedInvestor.investment_focus}</span>
+                        </div>
+                      )}
+                      {selectedInvestor.email && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="w-4 h-4" />
+                          <span>{selectedInvestor.email}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Investor Description */}
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Description
+                      </h3>
+                      <div className="prose prose-gray max-w-none">
+                        <p className="text-gray-600 mb-3 leading-relaxed">
+                          {selectedInvestor.description || "No description available."}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Contact Section */}
+                    {selectedInvestor.email ? (
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                          Contact
+                        </h3>
+                        <div className="flex items-center gap-4">
+                          <a
+                            href={`mailto:${selectedInvestor.email}`}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-app-blue-primary text-white rounded-lg hover:bg-app-blue-primary/90 transition-colors"
+                          >
+                            <Mail className="w-4 h-4" />
+                            Send Email
+                          </a>
+                          <span className="text-sm text-gray-600">
+                            {selectedInvestor.email}
                           </span>
                         </div>
                       </div>
