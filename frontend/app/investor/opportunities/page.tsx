@@ -11,7 +11,7 @@ export default function InvestorOpportunities() {
             Investment Opportunities
           </h1>
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
-            Discover promising startups, innovative projects, and growth 
+            Discover promising startups, innovative projects, and growth
             opportunities for your investment portfolio.
           </p>
         </div>
@@ -23,7 +23,7 @@ export default function InvestorOpportunities() {
               Startup Opportunities
             </h3>
             <p className="text-app-text-secondary mb-6">
-              Browse promising startups seeking investment in various stages of 
+              Browse promising startups seeking investment in various stages of
               development, from seed to growth phase.
             </p>
             <div className="space-y-4">
@@ -51,7 +51,7 @@ export default function InvestorOpportunities() {
               Industry Sectors
             </h3>
             <p className="text-app-text-secondary mb-6">
-              Explore investment opportunities across different industry sectors 
+              Explore investment opportunities across different industry sectors
               and technology domains.
             </p>
             <div className="space-y-4">
