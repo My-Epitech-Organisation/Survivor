@@ -27,9 +27,9 @@ export const DriveService = {
       console.warn('DriveService.getFiles: No startup ID provided');
       return { count: 0, next: null, previous: null, results: [] };
     }
-    
+
     const queryParams = new URLSearchParams();
-    
+
     if (filters) {
       if (filters.startup) queryParams.append('startup', filters.startup.toString());
       if (filters.folder) queryParams.append('folder', filters.folder.toString());
@@ -39,26 +39,26 @@ export const DriveService = {
       if (filters.page) queryParams.append('page', filters.page.toString());
       if (filters.page_size) queryParams.append('page_size', filters.page_size.toString());
     }
-    
+
     const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
-    
+
     try {
       const response = await api.get<DriveFile[] | DriveFilesResponse>({
         endpoint: `${DRIVE_API.FILES}${query}`
       });
-      
+
       // Handle both direct array response and paginated response
       if (Array.isArray(response.data)) {
         console.log('Files API returned direct array:', response.data);
         // Transform direct array into paginated response format
-        return { 
-          count: response.data.length, 
-          next: null, 
-          previous: null, 
-          results: response.data 
+        return {
+          count: response.data.length,
+          next: null,
+          previous: null,
+          results: response.data
         };
       }
-      
+
       return response.data || { count: 0, next: null, previous: null, results: [] };
     } catch (error) {
       console.error('Error fetching files:', error);
@@ -82,15 +82,15 @@ export const DriveService = {
   uploadFile: async (startupId: number, fileData: FileUpload): Promise<DriveFile> => {
     const formData = new FormData();
     formData.append('file', fileData.file);
-    
+
     if (fileData.folder !== undefined) {
       formData.append('folder', fileData.folder ? fileData.folder.toString() : '');
     }
-    
+
     if (fileData.description) {
       formData.append('description', fileData.description);
     }
-    
+
     // Use the upload endpoint with the startup ID as a query parameter
     return api.postFormData<DriveFile>(`${DRIVE_API.FILES}upload/?startup=${startupId}`, formData);
   },
@@ -141,9 +141,9 @@ export const DriveService = {
       console.warn('DriveService.getFolders: No startup ID provided');
       return { count: 0, next: null, previous: null, results: [] };
     }
-    
+
     const queryParams = new URLSearchParams();
-    
+
     if (filters) {
       if (filters.startup) queryParams.append('startup', filters.startup.toString());
       if (filters.parent) queryParams.append('parent', filters.parent.toString());
@@ -151,26 +151,26 @@ export const DriveService = {
       if (filters.page) queryParams.append('page', filters.page.toString());
       if (filters.page_size) queryParams.append('page_size', filters.page_size.toString());
     }
-    
+
     const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
-    
+
     try {
       const response = await api.get<DriveFolder[] | DriveFoldersResponse>({
         endpoint: `${DRIVE_API.FOLDERS}${query}`
       });
-      
+
       // Handle both direct array response and paginated response
       if (Array.isArray(response.data)) {
         console.log('Folders API returned direct array:', response.data);
         // Transform direct array into paginated response format
-        return { 
-          count: response.data.length, 
-          next: null, 
-          previous: null, 
-          results: response.data 
+        return {
+          count: response.data.length,
+          next: null,
+          previous: null,
+          results: response.data
         };
       }
-      
+
       return response.data || { count: 0, next: null, previous: null, results: [] };
     } catch (error) {
       console.error('Error fetching folders:', error);
@@ -249,10 +249,10 @@ export const DriveService = {
    */
   getShares: async (fileId?: number, folderId?: number): Promise<DriveSharesResponse> => {
     const queryParams = new URLSearchParams();
-    
+
     if (fileId) queryParams.append('file', fileId.toString());
     if (folderId) queryParams.append('folder', folderId.toString());
-    
+
     const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
     const response = await api.get<DriveSharesResponse>({
       endpoint: `${DRIVE_API.SHARES}${query}`

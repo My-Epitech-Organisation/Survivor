@@ -8,7 +8,7 @@ import StartupNavigation from '@/components/StartupNavigation';
 // This page will be deprecated in favor of /startup/drive
 export default function StartupIdDrivePage() {
   const router = useRouter();
-  
+
   // Redirect to the main drive page
   useEffect(() => {
     router.replace('/startup/drive');

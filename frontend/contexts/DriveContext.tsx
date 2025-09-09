@@ -62,13 +62,13 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
       if (folderId !== null) {
         const folderDetails = await DriveService.getFolder(folderId);
         setCurrentFolder(folderDetails);
-        
+
         if (folderDetails) {
           // Build breadcrumbs
           const buildBreadcrumbs = async (folder: DriveFolder) => {
             const crumbs: DriveFolder[] = [folder];
             let currentParent = folder.parent;
-            
+
             while (currentParent) {
               const parentFolder = await DriveService.getFolder(currentParent);
               if (parentFolder) {
@@ -78,10 +78,10 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
                 break;
               }
             }
-            
+
             return crumbs;
           };
-          
+
           const crumbs = await buildBreadcrumbs(folderDetails);
           setBreadcrumbs(crumbs);
         } else {

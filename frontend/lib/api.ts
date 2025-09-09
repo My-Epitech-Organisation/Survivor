@@ -166,7 +166,7 @@ export const api = {
       return { data: null as T | null };
     }
   },
-  
+
   patch: async <T = unknown>(
     endpoint: string,
     data?: unknown
@@ -183,7 +183,7 @@ export const api = {
       return { data: null as T | null };
     }
   },
-  
+
   postFormData: async <T = unknown>(
     endpoint: string,
     formData: FormData
@@ -192,22 +192,22 @@ export const api = {
       const apiUrl = getAPIUrl();
       const url = endpoint.startsWith("http") ? endpoint : `${apiUrl}${endpoint}`;
       const token = getToken();
-      
+
       const headers: HeadersInit = {};
       if (token) {
         headers["Authorization"] = `Bearer ${token}`;
       }
-      
+
       const response = await fetch(url, {
         method: "POST",
         headers,
         body: formData
       });
-      
+
       if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`);
       }
-      
+
       const responseData = await response.json();
       return responseData;
     } catch (error) {

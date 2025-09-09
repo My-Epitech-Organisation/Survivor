@@ -5,15 +5,15 @@ import { DriveFile } from '@/types/drive';
 import { useDrive } from '@/contexts/DriveContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Folder, File, ChevronRight, UploadCloud, FolderPlus, 
+import {
+  Folder, File, ChevronRight, UploadCloud, FolderPlus,
   Trash2, Download, MoreVertical, RefreshCw, ArrowLeft
 } from 'lucide-react';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,12 +32,12 @@ interface DriveExplorerProps {
 }
 
 export function DriveExplorer({ startupId }: DriveExplorerProps) {
-  const { 
-    currentFolder, 
-    folders, 
-    files, 
+  const {
+    currentFolder,
+    folders,
+    files,
     breadcrumbs,
-    isLoading, 
+    isLoading,
     error,
     navigateToFolder,
     createFolder,
@@ -117,7 +117,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
   const renderFileIcon = (file: DriveFile) => {
     // Extract file extension
     const extension = file.name.split('.').pop()?.toLowerCase();
-    
+
     // Simple mapping of common file types to icons
     switch (extension) {
       case 'pdf':
@@ -183,11 +183,11 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="description">Description (optional)</Label>
-                      <Input 
-                        id="description" 
-                        value={fileDescription} 
-                        onChange={(e) => setFileDescription(e.target.value)} 
-                        placeholder="Enter file description" 
+                      <Input
+                        id="description"
+                        value={fileDescription}
+                        onChange={(e) => setFileDescription(e.target.value)}
+                        placeholder="Enter file description"
                       />
                     </div>
                   </div>
@@ -213,11 +213,11 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
                       <Label htmlFor="folderName">Folder Name</Label>
-                      <Input 
-                        id="folderName" 
-                        value={newFolderName} 
-                        onChange={(e) => setNewFolderName(e.target.value)} 
-                        placeholder="Enter folder name" 
+                      <Input
+                        id="folderName"
+                        value={newFolderName}
+                        onChange={(e) => setNewFolderName(e.target.value)}
+                        placeholder="Enter folder name"
                       />
                     </div>
                   </div>
@@ -239,8 +239,8 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
               </Button>
             )}
             <div className="flex items-center">
-              <span 
-                className="hover:text-primary cursor-pointer" 
+              <span
+                className="hover:text-primary cursor-pointer"
                 onClick={() => navigateToFolder(null)}
               >
                 Root
@@ -248,7 +248,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
               {breadcrumbs && breadcrumbs.map((folder) => (
                 <React.Fragment key={folder.id}>
                   <ChevronRight className="h-4 w-4 mx-1" />
-                  <span 
+                  <span
                     className="hover:text-primary cursor-pointer"
                     onClick={() => navigateToFolder(folder.id)}
                   >
@@ -268,8 +268,8 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 folders.map((folder) => (
                   <Card key={folder.id} className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4 flex justify-between items-center">
-                      <div 
-                        className="flex items-center space-x-2 flex-1" 
+                      <div
+                        className="flex items-center space-x-2 flex-1"
                         onClick={() => navigateToFolder(folder.id)}
                       >
                         <Folder className="h-5 w-5 text-yellow-500" />

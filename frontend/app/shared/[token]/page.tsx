@@ -25,13 +25,13 @@ export default function SharedFilePage() {
         setLoading(true);
         // This endpoint would need to be implemented on the backend
         const response = await fetch(`/api/drive/shares/access/${token}`);
-        
+
         if (!response.ok) {
           throw new Error('This shared link is invalid or has expired');
         }
-        
+
         const data = await response.json();
-        
+
         if (data.file) {
           setShared({
             file: data.file,
@@ -53,7 +53,7 @@ export default function SharedFilePage() {
         setLoading(false);
       }
     };
-    
+
     if (token) {
       fetchSharedItem();
     }
@@ -62,7 +62,7 @@ export default function SharedFilePage() {
   const renderFileIcon = (fileName: string) => {
     // Extract file extension
     const extension = fileName.split('.').pop()?.toLowerCase();
-    
+
     // Simple mapping of common file types to colors
     const extensionColors: {[key: string]: string} = {
       'pdf': 'text-red-500',
@@ -77,9 +77,9 @@ export default function SharedFilePage() {
       'png': 'text-purple-500',
       'gif': 'text-purple-500',
     };
-    
+
     const color = extension ? extensionColors[extension] || 'text-gray-500' : 'text-gray-500';
-    
+
     return <File className={`h-16 w-16 ${color}`} />;
   };
 
@@ -126,20 +126,20 @@ export default function SharedFilePage() {
           <p className="text-gray-500 mb-6">
             {shared.type === 'file' ? 'Shared file' : 'Shared folder'}
           </p>
-          
+
           {shared.type === 'file' && shared.file && (
-            <Button 
-              className="w-full" 
+            <Button
+              className="w-full"
               onClick={() => window.open(shared.file?.download_url, '_blank')}
             >
               <Download className="h-4 w-4 mr-2" />
               Download File
             </Button>
           )}
-          
+
           {shared.type === 'folder' && shared.folder && (
-            <Button 
-              className="w-full" 
+            <Button
+              className="w-full"
               onClick={() => window.location.href = `/drive/folder/${shared.folder?.id}`}
             >
               <ExternalLink className="h-4 w-4 mr-2" />

@@ -44,7 +44,7 @@ export default function StartupDrivePage() {
 
   // User has a startup, render the drive with the startup ID
   const startupId = user.startupId;
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <StartupNavigation />
