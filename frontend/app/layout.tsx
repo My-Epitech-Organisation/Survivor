@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${montserrat.variable} ${openSans.variable} antialiased`}
+        className={`${montserrat.variable} ${openSans.variable} antialiased font-sans`}
       >
         <AuthProvider>{children}</AuthProvider>
         <Toaster />

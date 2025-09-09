@@ -24,9 +24,9 @@ export default function Custom404() {
       >
         <div className="text-center">
           <h1
-            className={`text-[120px] md:text-[180px] font-bold text-app-blue-primary mb-1 ${montserrat.className}`}
+            className={`text-[120px] md:text-[180px] font-black text-app-blue-primary mb-1 ${montserrat.className}`}
           >
-            404
+            <em>404</em>
           </h1>
           <p className={`text-xl ${openSans.className} text-app-blue-primary`}>
             Page not found
