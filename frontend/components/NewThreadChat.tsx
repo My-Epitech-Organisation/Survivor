@@ -30,6 +30,7 @@ import { toast } from "sonner"
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 
 interface NewThreadChatProps {
+  variante: "investors" | "founders"
   onSumbit: (investors: User[]) => void;
 }
 
@@ -44,7 +45,7 @@ export default function NewThreadChat(props: NewThreadChatProps) {
       try {
         setIsLoading(true);
         const res = await api.get<User[] | null>({
-          endpoint: "/users/investors/",
+          endpoint: `/users/${props.variante}/`,
         });
         console.log("USERLIST: ", res.data);
         setUsersList(res.data);
@@ -79,17 +80,17 @@ export default function NewThreadChat(props: NewThreadChatProps) {
               utilisateur.
             </DialogDescription>
           </DialogHeader>
-          <Label htmlFor="investor-list">Select Investor(s)</Label>
+          <Label htmlFor="investor-list">Select {props.variante === "founders" ? "founder" : "inventor"}(s)</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button id="investor-list" variant="outline">
                 {!selectedInvestors || selectedInvestors.length === 0
-                  ? "Select investor"
+                  ? `Select ${props.variante === "founders" ? "founder(s)" : "inventor(s)"}`
                   : selectedInvestors.length === 1
                   ? usersList?.find(
                       (inv) => inv.id === selectedInvestors.at(0)
                     )?.name
-                  : `${selectedInvestors.length} investors selected`}
+                  : `${selectedInvestors.length} ${props.variante === "founders" ? "founders" : "inventors"} selected`}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">

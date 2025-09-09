@@ -1,6 +1,7 @@
 import { getAPIUrl } from "./config";
 
-const getToken = (): string | null => {
+
+export const getToken = (): string | null => {
   if (typeof window !== "undefined") {
     const cookies = document.cookie.split(";");
     const tokenCookie = cookies.find((cookie) =>

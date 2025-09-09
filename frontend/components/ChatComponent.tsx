@@ -8,6 +8,8 @@ import { Thread, Message, ThreadDetails, MessageReceive } from "@/types/chat";
 import { useAuth } from "@/contexts/AuthContext";
 import Router from "next/router";
 import { MessageCircleOff, MessageCircle } from 'lucide-react';
+import { getBackendUrl } from "@/lib/config";
+import { getToken } from "@/lib/api";
 
 interface ChatComponentProps {
   onOpenConversations?: () => void;
@@ -27,6 +29,95 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const {user, isLoading} = useAuth();
+
+  const setSSE = () => {
+    if (!conv) return;
+    const eventSource = new EventSource(`http://localhost:3002/api/threads/${conv.id}/events/?token=${getToken()}`);
+    console.log("🔄 Setting up SSE connection for thread:", conv.id);
+    console.log("📡 SSE URL:", `http://localhost:3002/api/threads/${conv.id}/events/?token=${getToken()}`);
+
+    eventSource.onopen = () => {
+      console.log("🔗 SSE connection opened successfully");
+    };
+
+    eventSource.onmessage = (event) => {
+      console.log("📨 Generic SSE message received:", event);
+      console.log("📨 Event data:", event.data);
+      console.log("📨 Event type:", event.type);
+      console.log("📨 Event lastEventId:", event.lastEventId);
+    };
+
+    eventSource.addEventListener("message", (event) => {
+      console.log("📨 SSE Message event received:", event);
+      console.log("📨 Message data:", event.data);
+      try {
+        const data = JSON.parse(event.data);
+        console.log("📨 Parsed message data:", data);
+        // Uncomment when ready to process messages
+        // const newMessage: Message = {
+        //   id: String(data.id),
+        //   sender: data.sender_id,
+        //   content: data.body,
+        //   timestamp: new Date(data.created_at).toLocaleString([], {
+        //     day: "2-digit",
+        //     month: "2-digit",
+        //     hour: "2-digit",
+        //     minute: "2-digit",
+        //   }),
+        //   userID: data.sender_id,
+        // };
+        // setMessages((prev) => [...(prev ?? []), newMessage]);
+      } catch (error) {
+        console.error("❌ Error parsing message data:", error);
+      }
+    });
+
+    eventSource.addEventListener("connected", (event) => {
+      console.log("🔗 SSE Connected event received:", event);
+      console.log("🔗 Connection data:", event.data);
+      try {
+        const data = JSON.parse(event.data);
+        console.log("🔗 Parsed connection data:", data);
+        console.log("🔗 Connection confirmed for user", data.user_id, "in thread", data.thread_id);
+      } catch (error) {
+        console.error("❌ Error parsing connection data:", error);
+      }
+    });
+
+    eventSource.addEventListener("typing", (event) => {
+      console.log("⌨️ SSE Typing event received:", event);
+      console.log("⌨️ Typing data:", event.data);
+      try {
+        const data = JSON.parse(event.data);
+        console.log("⌨️ Parsed typing data:", data);
+      } catch (error) {
+        console.error("❌ Error parsing typing data:", error);
+      }
+    });
+
+    eventSource.addEventListener("read_receipt", (event) => {
+      console.log("👁️ SSE Read receipt event received:", event);
+      console.log("👁️ Read receipt data:", event.data);
+      try {
+        const data = JSON.parse(event.data);
+        console.log("👁️ Parsed read receipt data:", data);
+      } catch (error) {
+        console.error("❌ Error parsing read receipt data:", error);
+      }
+    });
+
+    eventSource.onerror = (err) => {
+      console.error("❌ SSE connection error:", err);
+      console.error("❌ Error target:", err.target);
+      console.error("❌ Error type:", err.type);
+      eventSource.close();
+    };
+
+    return () => {
+      console.log("🔌 Closing SSE connection");
+      eventSource.close();
+    };
+  }
 
   const refreshThreadMessages = useCallback(async () => {
     if (!conv || (conv.created == false)) return;
@@ -55,6 +146,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
     } catch (error) {
       console.error("Failed to refresh messages:", error);
     } finally {
+      setSSE();
       setIsMessageLoading(false);
     }
   }, [conv]);
@@ -78,6 +170,13 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
         messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Trigger message refresh when conv or token changes
+  useEffect(() => {
+    if (conv) {
+      refreshThreadMessages();
+    }
+  }, [conv, refreshThreadMessages]);
 
   const autoResize = useCallback(() => {
     const el = textareaRef.current;
@@ -133,7 +232,6 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
     } else {
       try {
         const resp = await api.post<MessageReceive>(`/threads/${conv.id}/messages/`, {body: message.content});
-        console.log("MESSAGE IS POSTED with userID: ", resp.data, user.id);
       } catch (error) {
         console.error(error);
       }
@@ -205,7 +303,6 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
           <div className="space-y-3">
             {conv ? (
               <>
-              {console.log("Messages: ", messages, "USER", user)}
               {messages && messages.length > 0 ? (
                 messages.map((message) => (
                 <div

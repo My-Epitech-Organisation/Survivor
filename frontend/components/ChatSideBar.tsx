@@ -8,11 +8,11 @@ import { Thread } from "@/types/chat";
 import { getBackendUrl } from "@/lib/config";
 import { MessageCircleOff } from "lucide-react";
 import NewThreadChat from "./NewThreadChat";
-import { Investor } from "@/types/investor";
 import { User } from "@/types/user";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface ChatSideBarProps {
+  variante: "investors" | "founders"
   onSelect: (conv: Thread ) => void
 }
 export interface ChatSideBarHandle {
@@ -20,7 +20,7 @@ export interface ChatSideBarHandle {
 }
 
 const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
-  ({ onSelect }, ref) => {
+  ({ onSelect, variante }, ref) => {
     const [isThreadLoading, setIsThreadLoading] = useState<boolean>(false);
     const [listThreads, setListThreads] = useState<Thread[] | null>(null);
     const {user, isLoading} = useAuth();
@@ -84,7 +84,7 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Conversations</h2>
-            <NewThreadChat onSumbit={handleNewThread} />
+            <NewThreadChat variante={variante} onSumbit={handleNewThread} />
           </div>
         </div>
 
