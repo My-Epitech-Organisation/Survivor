@@ -122,7 +122,7 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
                         {thread.participants.map((user, index) => {return user.name + (index < thread.participants.length - 1 ? ", " : "")}).join("")}
                       </p>
                       <span className="text-xs text-muted-foreground shrink-0">
-                        {new Date(thread.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}SO datetime
+                        {new Date(thread.last_message_at).toLocaleTimeString([], { day:'2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground truncate">
