@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { CalendarEvent, CalendarProps } from "@/types/event";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -117,27 +118,27 @@ const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 lg:items-start">
         <div className="flex-shrink-0 w-full lg:w-[50%] xl:w-[60%]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-app-text-primary">
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-app-text-primary">
               {monthName} {year}
             </h2>
             <div className="flex gap-2 w-full sm:w-auto">
               <button
                 onClick={goToPreviousMonth}
-                className="flex-1 sm:flex-none px-3 py-1 bg-app-blue-primary text-white rounded hover:bg-app-blue-primary-hover transition-colors text-sm sm:text-base"
+                className="flex-1 sm:flex-none px-3 py-1 bg-app-blue-primary text-white rounded hover:bg-app-blue-primary-hover transition-colors text-sm sm:text-base cursor-pointer"
               >
-                ←
+                <ArrowLeft />
               </button>
               <button
                 onClick={goToToday}
-                className="flex-1 sm:flex-none px-3 py-1 bg-app-text-secondary text-white rounded hover:bg-app-indigo-primary transition-colors text-sm sm:text-base"
+                className="flex-1 sm:flex-none px-3 py-1 bg-app-text-secondary text-white rounded hover:bg-app-indigo-primary transition-colors text-sm sm:text-base cursor-pointer"
               >
                 Today
               </button>
               <button
                 onClick={goToNextMonth}
-                className="flex-1 sm:flex-none px-3 py-1 bg-app-blue-primary text-white rounded hover:bg-app-blue-primary-hover transition-colors text-sm sm:text-base"
+                className="flex-1 sm:flex-none px-3 py-1 bg-app-blue-primary text-white rounded hover:bg-app-blue-primary-hover transition-colors text-sm sm:text-base cursor-pointer"
               >
-                →
+                <ArrowRight />
               </button>
             </div>
           </div>
@@ -223,7 +224,7 @@ const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
 
         {/* Events List for Selected Month */}
         <div className="w-full lg:flex-1 lg:min-w-[30%] lg:max-w-[50%] xl:max-w-[40%] max-h-150 flex flex-col">
-          <h3 className="text-base sm:text-lg font-semibold text-app-text-primary mb-4">
+          <h3 className="font-heading text-base sm:text-lg font-semibold text-app-text-primary mb-4">
             Events in {monthName} {year}
           </h3>
           <div className="space-y-3 flex-1 overflow-y-auto">

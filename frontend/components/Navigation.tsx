@@ -43,7 +43,10 @@ export default function Navigation() {
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-app-blue-primary">
+            <Link
+              href="/"
+              className="text-3xl font-heading font-black italic text-app-blue-primary"
+            >
               JEB
             </Link>
           </div>
@@ -54,10 +57,10 @@ export default function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`transition-colors ${
+                className={`font-heading transition-colors ${
                   pathname === item.href
-                    ? "text-app-blue-primary font-medium"
-                    : "text-app-text-secondary hover:text-app-blue-primary"
+                    ? "text-app-blue-primary font-semibold"
+                    : "text-app-text-secondary hover:text-app-blue-primary font-medium"
                 }`}
               >
                 {item.label}
@@ -72,7 +75,7 @@ export default function Navigation() {
                 {user?.role === "founder" && (
                   <button
                     onClick={handleSwitchToStartup}
-                    className="font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
+                    className="font-heading font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
                   >
                     Startup Area
                   </button>
@@ -80,7 +83,7 @@ export default function Navigation() {
                 {user?.role === "investor" && (
                   <button
                     onClick={handleSwitchToInvestor}
-                    className="font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
+                    className="font-heading font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
                   >
                     Investor Area
                   </button>
@@ -88,14 +91,14 @@ export default function Navigation() {
                 {user?.role === "admin" && (
                   <button
                     onClick={handleSwitchToAdmin}
-                    className="font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
+                    className="font-heading font-medium text-app-blue-primary hover:text-app-blue-primary-hover transition-colors cursor-pointer"
                   >
                     Admin Area
                   </button>
                 )}
                 <button
                   onClick={handleLogout}
-                  className="font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
+                  className="font-heading font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
                 >
                   Logout
                 </button>
@@ -103,7 +106,7 @@ export default function Navigation() {
             ) : (
               <Link
                 href="/login"
-                className="font-bold text-app-text-secondary hover:text-app-blue-primary"
+                className="font-heading font-bold text-app-text-secondary hover:text-app-blue-primary"
               >
                 Login
               </Link>
@@ -152,7 +155,7 @@ export default function Navigation() {
                           handleSwitchToStartup();
                           setIsMenuOpen(false);
                         }}
-                        className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
+                        className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
                       >
                         Startup Area
                       </button>
@@ -163,7 +166,7 @@ export default function Navigation() {
                           handleSwitchToInvestor();
                           setIsMenuOpen(false);
                         }}
-                        className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
+                        className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
                       >
                         Investor Area
                       </button>
@@ -174,7 +177,7 @@ export default function Navigation() {
                           handleSwitchToAdmin();
                           setIsMenuOpen(false);
                         }}
-                        className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
+                        className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-blue-primary hover:text-app-blue-primary-hover hover:bg-app-blue-light transition-colors"
                       >
                         Admin Area
                       </button>
@@ -184,7 +187,7 @@ export default function Navigation() {
                         handleLogout();
                         setIsMenuOpen(false);
                       }}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-red-primary hover:bg-app-surface-hover transition-colors"
+                      className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-red-primary hover:bg-app-surface-hover transition-colors"
                     >
                       Logout
                     </button>
@@ -193,7 +196,7 @@ export default function Navigation() {
                   <Link
                     href="/login"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-blue-primary hover:bg-app-surface-hover transition-colors"
+                    className="font-heading block px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-blue-primary hover:bg-app-surface-hover transition-colors"
                   >
                     Login
                   </Link>

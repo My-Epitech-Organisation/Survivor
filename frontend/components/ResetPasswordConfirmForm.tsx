@@ -96,7 +96,7 @@ export function ResetPasswordConfirmForm({
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome</CardTitle>
+          <CardTitle className="font-heading text-xl">Welcome</CardTitle>
           <CardDescription>
             Reset your password to access your account
           </CardDescription>

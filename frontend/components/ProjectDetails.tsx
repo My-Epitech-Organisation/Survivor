@@ -19,7 +19,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
     <div className="max-w-none mx-auto space-y-6 sm:space-y-12 py-2 sm:py-4">
       {/* Hero Section */}
       <div className="text-center space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8 bg-gradient-to-r from-blue-50 to-indigo-50 py-6 sm:py-8 md:py-10 lg:py-12 px-3 sm:px-4 md:px-6 lg:px-8 rounded-lg sm:rounded-xl lg:rounded-2xl">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-900 tracking-tight">
+        <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-900 tracking-tight">
           {props.ProjectName}
         </h1>
         {props.ProjectDescription && (
@@ -59,7 +59,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
         {/* Project Information */}
         <div className="space-y-6 sm:space-y-8">
           <div className="bg-white rounded-lg md:rounded-xl p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 shadow-sm border">
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-4 sm:mb-6 md:mb-8 flex items-center gap-1.5 sm:gap-2 md:gap-3">
+            <h2 className="font-heading text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-4 sm:mb-6 md:mb-8 flex items-center gap-1.5 sm:gap-2 md:gap-3">
               <div className="w-1 sm:w-1.5 md:w-2 h-5 sm:h-6 md:h-8 bg-blue-500 rounded-full"></div>
               Project Info
             </h2>
@@ -108,7 +108,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
           {/* Current Needs */}
           {props.ProjectNeeds && (
             <div className="bg-white rounded-lg md:rounded-xl p-4 md:p-6 lg:p-8 xl:p-10 shadow-sm border">
-              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 md:gap-3">
+              <h2 className="font-heading text-xl md:text-2xl font-semibold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 md:gap-3">
                 <div className="w-1.5 md:w-2 h-6 md:h-8 bg-red-500 rounded-full"></div>
                 Current Needs
               </h2>
@@ -124,7 +124,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
         {/* Contact Information */}
         <div className="space-y-8">
           <div className="bg-white rounded-lg md:rounded-xl p-4 md:p-6 lg:p-8 xl:p-10 shadow-sm border">
-            <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6 md:mb-8 flex items-center gap-2 md:gap-3">
+            <h2 className="font-heading text-xl md:text-2xl font-semibold text-gray-900 mb-6 md:mb-8 flex items-center gap-2 md:gap-3">
               <div className="w-1.5 md:w-2 h-6 md:h-8 bg-emerald-500 rounded-full"></div>
               Contact
             </h2>
@@ -233,7 +233,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
         {/* Team */}
         <div className="space-y-8">
           <div className="bg-white rounded-lg md:rounded-xl p-4 md:p-6 lg:p-8 xl:p-10 shadow-sm border">
-            <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6 md:mb-8 flex items-center gap-2 md:gap-3">
+            <h2 className="font-heading text-xl md:text-2xl font-semibold text-gray-900 mb-6 md:mb-8 flex items-center gap-2 md:gap-3">
               <div className="w-1.5 md:w-2 h-6 md:h-8 bg-purple-500 rounded-full"></div>
               Team
             </h2>

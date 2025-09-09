@@ -49,7 +49,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
   return (
     <Card className="w-full hover:shadow-xl transition-all duration-300 border border-app-border-light bg-app-surface overflow-hidden flex flex-col h-full">
       <CardHeader className="pb-4">
-        <CardTitle className="text-center text-lg font-bold text-app-text-primary mb-2">
+        <CardTitle className="font-heading text-center text-lg font-bold text-app-text-primary mb-2">
           {props.ProjectName}
         </CardTitle>
         {props.ProjectDescription && (
@@ -68,7 +68,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <Building className="h-4 w-4 text-app-blue-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Sector
                   </h4>
                 </div>
@@ -88,7 +88,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <MapPin className="h-4 w-4 text-app-green-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Location
                   </h4>
                 </div>
@@ -107,7 +107,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <TrendingUp className="h-4 w-4 text-app-purple-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Maturity
                   </h4>
                 </div>
@@ -127,7 +127,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle className="h-4 w-4 text-app-green-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Status
                   </h4>
                 </div>
@@ -146,7 +146,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="space-y-3">
                 <div className="flex items-center justify-center gap-2">
                   <Target className="h-4 w-4 text-app-orange-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Project Needs
                   </h4>
                 </div>
@@ -176,7 +176,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <DialogHeader className="border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100/50 px-6 sm:px-8 py-6 sm:py-8 pr-16 sm:pr-20">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <DialogTitle className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 truncate">
+                    <DialogTitle className="font-heading text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 truncate">
                       {props.ProjectName}
                     </DialogTitle>
                     <p className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">
