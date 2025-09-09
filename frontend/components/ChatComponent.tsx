@@ -32,9 +32,9 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
 
   const setSSE = () => {
     if (!conv) return;
-    const eventSource = new EventSource(`http://localhost:3002/api/threads/${conv.id}/events/?token=${getToken()}`);
+    const eventSource = new EventSource(`${getBackendUrl()}/api/threads/${conv.id}/events/?token=${getToken()}`);
     console.log("🔄 Setting up SSE connection for thread:", conv.id);
-    console.log("📡 SSE URL:", `http://localhost:3002/api/threads/${conv.id}/events/?token=${getToken()}`);
+    console.log("📡 SSE URL:", `${getBackendUrl()}/api/threads/${conv.id}/events/?token=${getToken()}`);
 
     eventSource.onopen = () => {
       console.log("🔗 SSE connection opened successfully");
