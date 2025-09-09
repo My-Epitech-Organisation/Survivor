@@ -167,7 +167,7 @@ export default function AdminNewsForm({
         <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 relative">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="font-heading text-xl font-semibold text-gray-800">
                 News Information
               </h2>
             </div>
@@ -204,7 +204,7 @@ export default function AdminNewsForm({
                     file:rounded-md file:border-0
                     file:text-sm file:font-semibold
                     file:bg-app-blue-primary file:text-white
-                    hover:file:bg-app-blue-primary-hover"
+                    hover:file:bg-app-blue-primary-hover cursor-pointer"
                 />
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function AdminNewsForm({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             <InputWithLabel
-              label="Title"
+              label="Title *"
               id="news-title"
               placeholder="Enter news title"
               className="md:col-span-2 cursor-pointer"
@@ -342,13 +342,13 @@ export default function AdminNewsForm({
         <DialogClose asChild>
           <Button
             variant="outline"
-            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg"
+            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg cursor-pointer"
           >
             Cancel
           </Button>
         </DialogClose>
         <Button
-          className="w-full sm:w-auto px-6 py-2 bg-app-blue-primary hover:bg-app-blue-primary-hover text-white rounded-lg font-semibold shadow"
+          className="w-full sm:w-auto px-6 py-2 bg-app-blue-primary hover:bg-app-blue-primary-hover text-white rounded-lg font-semibold shadow cursor-pointer"
           onClick={handleSubmit}
         >
           Save

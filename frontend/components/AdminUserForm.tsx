@@ -160,7 +160,7 @@ export default function AdminUserForm({
                 }
               />
               <div>
-                <h2 className="text-xl font-semibold text-gray-800">
+                <h2 className="font-heading text-xl font-semibold text-gray-800">
                   {formData.name || "User Information"}
                 </h2>
                 <span className="text-xs text-gray-500">Profile picture</span>
@@ -304,13 +304,13 @@ export default function AdminUserForm({
         <DialogClose asChild>
           <Button
             variant="outline"
-            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg"
+            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg cursor-pointer"
           >
             Cancel
           </Button>
         </DialogClose>
         <Button
-          className="w-full sm:w-auto px-6 py-2 bg-app-blue-primary hover:bg-app-blue-primary-hover text-white rounded-lg font-semibold shadow"
+          className="w-full sm:w-auto px-6 py-2 bg-app-blue-primary hover:bg-app-blue-primary-hover text-white rounded-lg font-semibold shadow cursor-pointer"
           onClick={handleSubmitProject}
         >
           Save

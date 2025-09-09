@@ -37,7 +37,7 @@ export default function AdminNavigation() {
           <div className="flex items-center">
             <Link
               href="/admin/dashboard"
-              className="text-2xl font-bold text-blue-600"
+              className="font-heading text-2xl font-black text-app-blue-primary"
             >
               JEB <span className="text-sm text-gray-500">Admin</span>
             </Link>
@@ -49,10 +49,10 @@ export default function AdminNavigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`transition-colors ${
+                className={`font-heading transition-colors ${
                   pathname === item.href
-                    ? "text-blue-600 font-medium"
-                    : "text-gray-600 hover:text-blue-600"
+                    ? "text-app-blue-primary font-semibold"
+                    : "text-app-text-secondary hover:text-app-blue-primary font-medium"
                 }`}
               >
                 {item.label}
@@ -64,13 +64,13 @@ export default function AdminNavigation() {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={handleSwitchToPublic}
-              className="text-gray-600 hover:text-blue-600 transition-colors cursor-pointer"
+              className="font-heading text-gray-600 hover:text-app-blue-primary transition-colors cursor-pointer"
             >
               Public Area
             </button>
             <button
               onClick={handleLogout}
-              className="font-bold text-gray-600 hover:text-red-600 transition-colors cursor-pointer"
+              className="font-heading font-bold text-gray-600 hover:text-red-600 transition-colors cursor-pointer"
             >
               Logout
             </button>
@@ -80,7 +80,7 @@ export default function AdminNavigation() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-blue-600 focus:outline-none focus:text-blue-600 transition-colors"
+              className="text-gray-600 hover:text-app-blue-primary focus:outline-none focus:text-app-blue-primary transition-colors"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -100,10 +100,10 @@ export default function AdminNavigation() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  className={`font-heading block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     pathname === item.href
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                      ? "text-app-blue-primary bg-blue-50"
+                      : "text-gray-600 hover:text-app-blue-primary hover:bg-gray-50"
                   }`}
                 >
                   {item.label}
@@ -115,7 +115,7 @@ export default function AdminNavigation() {
                     handleSwitchToPublic();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-app-blue-primary hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Public Area
                 </button>

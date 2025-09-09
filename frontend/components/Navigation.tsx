@@ -137,7 +137,7 @@ export default function Navigation() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  className={`font-heading block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     pathname === item.href
                       ? "text-app-blue-primary bg-app-blue-light"
                       : "text-app-text-secondary hover:text-app-blue-primary hover:bg-app-surface-hover"

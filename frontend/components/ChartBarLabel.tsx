@@ -45,7 +45,7 @@ export function ChartBarLabel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="font-heading">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="py-16">
