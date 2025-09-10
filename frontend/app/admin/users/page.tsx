@@ -222,7 +222,7 @@ export default function AdminUsers() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {isDataLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <TbLoader3 className="size-12 animate-spin text-app-blue-primary mb-4" />
+            <TbLoader3 className="size-12 animate-spin text-jeb-primary mb-4" />
             <p className="text-app-text-secondary text-lg">Loading users...</p>
           </div>
         ) : (
@@ -236,7 +236,7 @@ export default function AdminUsers() {
                 <Dialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
                   <DialogTrigger asChild>
                     <button
-                      className="bg-app-blue-primary text-white px-4 py-2 rounded-md hover:bg-app-blue-hover transition-colors font-bold cursor-pointer ml-4"
+                      className="bg-jeb-primary text-white px-4 py-2 rounded-md hover:bg-jeb-hover transition-colors font-bold cursor-pointer ml-4"
                       onClick={() => setOpenAddDialog(true)}
                     >
                       Add User
