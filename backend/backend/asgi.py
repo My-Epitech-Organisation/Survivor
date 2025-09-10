@@ -120,18 +120,25 @@ async def send_message(sid, data):
             await sio.emit("error", {"message": "Not a participant"}, room=sid)
             return
         
-        # Create the message
-        message = await sync_to_async(Message.objects.create)(
-            thread=thread,
-            sender=user,
-            body=body
-        )
+        # Récupérer le dernier message créé par cet utilisateur dans ce thread
+        # (qui vient d'être créé via l'API REST par le frontend)
+        message = await sync_to_async(
+            lambda: Message.objects.filter(
+                thread=thread, 
+                sender=user, 
+                body=body
+            ).order_by('-created_at').first()
+        )()
+        
+        if not message:
+            await sio.emit("error", {"message": "Message not found"}, room=sid)
+            return
         
         # Update thread's last_message_at
         thread.last_message_at = message.created_at
         await sync_to_async(thread.save)()
         
-        # Broadcast to all in the thread
+        # Broadcast to all in the thread (sauf l'expéditeur)
         message_data = {
             "id": message.id,
             "sender_id": user.id,
@@ -140,8 +147,8 @@ async def send_message(sid, data):
             "created_at": message.created_at.isoformat(),
         }
         
-        await sio.emit("new_message", message_data, room=f"thread_{thread_id}")
-        print(f"📤 [SOCKET.IO] Message sent in thread {thread_id} by user {user.id}")
+        await sio.emit("new_message", message_data, room=f"thread_{thread_id}", skip_sid=sid)
+        print(f"📤 [SOCKET.IO] Message broadcasted in thread {thread_id} by user {user.id}")
         
     except Thread.DoesNotExist:
         await sio.emit("error", {"message": "Thread not found"}, room=sid)
