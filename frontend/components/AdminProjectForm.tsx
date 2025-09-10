@@ -241,7 +241,7 @@ function AddFoundersSection({
                     <Dialog>
                       <DialogTrigger asChild>
                         <button
-                          className="opacity-0 group-hover:opacity-100 bg-app-blue-primary hover:bg-app-blue-primary/80 text-app-white p-1.5 rounded-full transition-all cursor-pointer"
+                          className="opacity-0 group-hover:opacity-100 bg-jeb-five hover:bg-jeb-six text-jeb-nine p-1.5 rounded-full transition-all cursor-pointer"
                           onClick={() => handleEditFounder(founder, id)}
                         >
                           <FaEdit size={14} />
