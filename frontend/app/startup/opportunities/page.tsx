@@ -30,6 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Footer from "@/components/Footer";
 
 type PartnerItem = {
   id: string;
@@ -282,16 +283,6 @@ export default function StartupOpportunities() {
     }
   }, [tab, user]);
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, []);
-
   const handlePartnerFiltersChange = (filters: { types: string[] }) => {
     setActivePartnerFilters(filters);
   };
@@ -413,10 +404,10 @@ export default function StartupOpportunities() {
   const filteredInvestors = getFilteredInvestors();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
       <StartupNavigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1">
         <div className="text-center mb-8">
           <h1 className="font-heading text-4xl md:text-5xl font-bold text-app-text-primary mb-4">
             Opportunities
@@ -431,20 +422,20 @@ export default function StartupOpportunities() {
           <div className="inline-flex rounded-md shadow-sm" role="group">
             <button
               onClick={() => setTab("opportunities")}
-              className={`px-4 py-2 text-sm font-medium rounded-l-md focus:outline-none cursor-pointer ${
+              className={`px-4 py-2 text-sm transition-all rounded-l-md focus:outline-none cursor-pointer ${
                 tab === "opportunities"
-                  ? "bg-jeb-primary text-app-white border border-jeb-primary"
-                  : "bg-app-surface border border-app-border text-app-text-secondary hover:bg-jeb-light"
+                  ? "bg-jeb-primary text-app-white border border-jeb-primary font-bold"
+                  : "bg-app-surface border border-app-border text-app-text-secondary hover:bg-jeb-light font-medium"
               }`}
             >
               Opportunities
             </button>
             <button
               onClick={() => setTab("matches")}
-              className={`px-4 py-2 text-sm font-medium rounded-r-md focus:outline-none cursor-pointer ${
+              className={`px-4 py-2 text-sm transition-all rounded-r-md focus:outline-none cursor-pointer ${
                 tab === "matches"
-                  ? "bg-jeb-primary text-app-white border border-jeb-primary"
-                  : "bg-app-surface border border-app-border text-app-text-secondary hover:bg-jeb-light"
+                  ? "bg-jeb-primary text-app-white border border-jeb-primary font-bold"
+                  : "bg-app-surface border border-app-border text-app-text-secondary hover:bg-jeb-light font-medium"
               }`}
             >
               Matches
@@ -456,7 +447,7 @@ export default function StartupOpportunities() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div
               ref={partnersCardRef}
-              className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col"
+              className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col h-fit"
             >
               <h3 className="font-heading text-2xl font-semibold text-app-text-primary mb-6">
                 Partners
@@ -470,9 +461,9 @@ export default function StartupOpportunities() {
                     Filters
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 items-end">
                   <div className="flex-1 min-w-[200px]">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-1 ml-2">
                       <Users className="h-4 w-4 text-app-blue-primary" />
                       <span className="text-sm font-medium text-app-text-primary">
                         Type
@@ -518,7 +509,7 @@ export default function StartupOpportunities() {
                   </div>
                   <div className="flex-shrink-0">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       className="text-app-text-secondary hover:text-jeb-primary whitespace-nowrap cursor-pointer"
                       onClick={() => handlePartnerFiltersChange({ types: [] })}
                     >
@@ -546,7 +537,7 @@ export default function StartupOpportunities() {
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="text-lg font-medium text-app-text-primary">
+                          <h4 className="font-heading text-lg font-medium text-app-text-primary">
                             {p.name}
                           </h4>
                           <div className="text-sm text-app-text-secondary">
@@ -573,7 +564,7 @@ export default function StartupOpportunities() {
 
             <div
               ref={fundingCardRef}
-              className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col"
+              className="bg-app-surface rounded-lg shadow-md p-8 flex flex-col h-fit"
             >
               <h3 className="font-heading text-2xl font-semibold text-app-text-primary mb-6">
                 Funding opportunities
@@ -587,9 +578,9 @@ export default function StartupOpportunities() {
                     Filters
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 items-end">
                   <div className="flex-1 min-w-[200px]">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-1 ml-2">
                       <DollarSign className="h-4 w-4 text-app-green-primary" />
                       <span className="text-sm font-medium text-app-text-primary">
                         Type
@@ -635,7 +626,7 @@ export default function StartupOpportunities() {
                     </DropdownMenu>
                   </div>
                   <div className="flex-1 min-w-[200px]">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-1 ml-2">
                       <Users className="h-4 w-4 text-app-purple-primary" />
                       <span className="text-sm font-medium text-app-text-primary">
                         Focus
@@ -684,7 +675,7 @@ export default function StartupOpportunities() {
                   </div>
                   <div className="flex-shrink-0">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       className="text-app-text-secondary hover:text-jeb-primary whitespace-nowrap cursor-pointer"
                       onClick={() =>
                         handleInvestorFiltersChange({ types: [], focuses: [] })
@@ -714,7 +705,7 @@ export default function StartupOpportunities() {
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="text-lg font-medium text-app-text-primary">
+                          <h4 className="font-heading text-lg font-medium text-app-text-primary">
                             {inv.name}
                           </h4>
                           <div className="text-sm text-app-text-secondary">
@@ -747,7 +738,7 @@ export default function StartupOpportunities() {
             ref={matchesCardRef}
             className="bg-app-surface rounded-lg shadow-md p-8"
           >
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between gap-6 items-center mb-4">
               <div>
                 <h3 className="font-heading text-2xl font-semibold text-app-text-primary mb-2">
                   Investor matches
@@ -758,40 +749,36 @@ export default function StartupOpportunities() {
                   advanced AI analysis for optimal compatibility.
                 </p>
               </div>
-              <div className="flex flex-col items-end gap-2">
-                <button
-                  onClick={startAIAnalysis}
-                  disabled={isAnalyzing || !user?.startupId}
-                  className={`px-4 py-2 rounded-lg font-bold transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
-                    isAnalyzing
-                      ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                      : "bg-jeb-primary text-app-white hover:bg-jeb-hover transform hover:scale-105"
-                  }`}
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>AI Running...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-xl">✨</span>
-                      <span className="text-sm font-bold">RUN AI ANALYSIS</span>
-                    </>
-                  )}
-                </button>
-                {isAnalyzing && (
-                  <div className="text-sm text-app-text-secondary">
-                    Progress: {analysisProgress}%
-                  </div>
+              <button
+                onClick={startAIAnalysis}
+                disabled={isAnalyzing || !user?.startupId}
+                className={`px-4 py-2 rounded-lg font-bold transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
+                  isAnalyzing
+                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                    : "bg-jeb-primary text-app-white hover:bg-jeb-hover "
+                }`}
+              >
+                {isAnalyzing ? (
+                  <>
+                    <div className="w-5 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span className="ml-2 text-sm">AI Running...</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-sm font-bold">Run AI Analysis</span>
+                  </>
                 )}
-              </div>
+              </button>
+              {isAnalyzing && (
+                <div className="text-sm text-app-text-secondary">
+                  Progress: {analysisProgress}%
+                </div>
+              )}
             </div>
 
             <div className="bg-app-blue-primary/5 border border-app-blue-primary/20 rounded-lg p-4 mb-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">🎯</span>
                   <div>
                     <h4 className="text-sm font-bold text-app-text-primary">
                       Smart Matching
@@ -801,9 +788,10 @@ export default function StartupOpportunities() {
                     </p>
                   </div>
                 </div>
-                <span className="px-3 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-700 text-xs font-bold rounded-full border border-purple-400/50">
-                  🤖 AI POWERED
-                </span>
+                <div className="px-3 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-700 text-xs font-bold rounded-full border border-purple-400/50 flex items-center">
+                  <span className="mr-2">🤖</span>
+                  AI POWERED
+                </div>
               </div>
             </div>
 
@@ -853,7 +841,7 @@ export default function StartupOpportunities() {
                     >
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
-                          <h4 className="text-lg font-medium text-app-text-primary">
+                          <h4 className="font-heading text-lg font-medium text-app-text-primary">
                             {m.name}
                           </h4>
                           <div className="text-right">
@@ -958,441 +946,452 @@ export default function StartupOpportunities() {
             )}
           </div>
         )}
-      </main>
 
-      {/* Partner Details Dialog */}
-      <Dialog
-        open={selectedPartner !== null}
-        onOpenChange={() => setSelectedPartner(null)}
-      >
-        <DialogContent
-          showCloseButton={false}
-          className="max-w-4xl w-full max-h-[90vh] overflow-hidden p-0"
+        {/* Partner Details Dialog */}
+        <Dialog
+          open={selectedPartner !== null}
+          onOpenChange={() => setSelectedPartner(null)}
         >
-          {/* Custom Close Button */}
-          <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
-            <X className="h-6 w-6" />
-            <span className="sr-only">Close</span>
-          </DialogClose>
-          {selectedPartner && (
-            <div className="flex flex-col h-full max-h-[90vh]">
-              {/* Header */}
-              <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white p-6">
-                <DialogHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-app-white">
-                      <Building className="w-4 h-4" />
-                      <span className="capitalize">Partner</span>
-                    </span>
-                  </div>
-                  <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-8">
-                    {selectedPartner.name}
-                  </DialogTitle>
-                </DialogHeader>
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 overflow-y-auto">
-                <div className="p-6">
-                  <div className="space-y-6">
-                    {/* Partner Details */}
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      {selectedPartner.partnership_type && (
-                        <div className="flex items-center gap-2">
-                          <Building className="w-4 h-4" />
-                          <span>{selectedPartner.partnership_type}</span>
-                        </div>
-                      )}
-                      {selectedPartner.address && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          <span>{selectedPartner.address}</span>
-                        </div>
-                      )}
-                      {selectedPartner.email && (
-                        <div className="flex items-center gap-2">
-                          <Mail className="w-4 h-4" />
-                          <span>{selectedPartner.email}</span>
-                        </div>
-                      )}
+          <DialogContent
+            showCloseButton={false}
+            className="max-w-4xl w-full max-h-[90vh] overflow-hidden p-0"
+          >
+            {/* Custom Close Button */}
+            <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
+              <X className="h-6 w-6" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+            {selectedPartner && (
+              <div className="flex flex-col h-full max-h-[90vh]">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white p-6">
+                  <DialogHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-app-white">
+                        <Building className="w-4 h-4" />
+                        <span className="capitalize">Partner</span>
+                      </span>
                     </div>
-
-                    {/* Partner Description */}
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        Description
-                      </h3>
-                      <div className="prose prose-gray max-w-none">
-                        <p className="text-gray-600 mb-3 leading-relaxed">
-                          {selectedPartner.description ||
-                            "No description available."}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Contact Section */}
-                    {selectedPartner.email ? (
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          Contact
-                        </h3>
-                        <div className="flex items-center gap-4">
-                          <a
-                            href={`mailto:${selectedPartner.email}`}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover transition-colors"
-                          >
-                            <Mail className="w-4 h-4" />
-                            Send Email
-                          </a>
-                          <span className="text-sm text-gray-600">
-                            {selectedPartner.email}
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          Contact
-                        </h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Mail className="w-4 h-4" />
-                          <span>Unknown</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                    <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-8">
+                      {selectedPartner.name}
+                    </DialogTitle>
+                  </DialogHeader>
                 </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
 
-      {/* Investor Details Dialog */}
-      <Dialog
-        open={selectedInvestor !== null}
-        onOpenChange={() => setSelectedInvestor(null)}
-      >
-        <DialogContent
-          showCloseButton={false}
-          className="max-w-4xl w-full max-h-[90vh] overflow-hidden p-0"
-        >
-          {/* Custom Close Button */}
-          <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
-            <X className="h-6 w-6" />
-            <span className="sr-only">Close</span>
-          </DialogClose>
-          {selectedInvestor && (
-            <div className="flex flex-col h-full max-h-[90vh]">
-              {/* Header */}
-              <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white p-6">
-                <DialogHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-app-white">
-                      <DollarSign className="w-4 h-4" />
-                      <span className="capitalize">Investor</span>
-                    </span>
-                  </div>
-                  <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-8">
-                    {selectedInvestor.name}
-                  </DialogTitle>
-                </DialogHeader>
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 overflow-y-auto">
-                <div className="p-6">
-                  <div className="space-y-6">
-                    {/* Investor Details */}
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      {selectedInvestor.investor_type && (
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="w-4 h-4" />
-                          <span>{selectedInvestor.investor_type}</span>
-                        </div>
-                      )}
-                      {selectedInvestor.investment_focus && (
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4" />
-                          <span>{selectedInvestor.investment_focus}</span>
-                        </div>
-                      )}
-                      {selectedInvestor.email && (
-                        <div className="flex items-center gap-2">
-                          <Mail className="w-4 h-4" />
-                          <span>{selectedInvestor.email}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Investor Description */}
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        Description
-                      </h3>
-                      <div className="prose prose-gray max-w-none">
-                        <p className="text-gray-600 mb-3 leading-relaxed">
-                          {selectedInvestor.description ||
-                            "No description available."}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Contact Section */}
-                    {selectedInvestor.email ? (
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          Contact
-                        </h3>
-                        <div className="flex items-center gap-4">
-                          <a
-                            href={`mailto:${selectedInvestor.email}`}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover transition-colors"
-                          >
-                            <Mail className="w-4 h-4" />
-                            Send Email
-                          </a>
-                          <span className="text-sm text-gray-600">
-                            {selectedInvestor.email}
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          Contact
-                        </h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Mail className="w-4 h-4" />
-                          <span>Unknown</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Match Details Dialog */}
-      <Dialog
-        open={selectedMatch !== null}
-        onOpenChange={() => setSelectedMatch(null)}
-      >
-        <DialogContent
-          showCloseButton={false}
-          className="max-w-4xl w-full max-h-[90vh] overflow-hidden p-0"
-        >
-          {/* Custom Close Button */}
-          <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
-            <X className="h-6 w-6" />
-            <span className="sr-only">Close</span>
-          </DialogClose>
-          {selectedMatch && (
-            <div className="flex flex-col h-full max-h-[90vh]">
-              {/* Header */}
-              <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white p-6">
-                <DialogHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-app-white">
-                      <DollarSign className="w-4 h-4" />
-                      <span className="capitalize">Match</span>
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">Match Score:</span>
-                      <div
-                        className={`text-xl font-bold px-2 py-1 rounded-full ${
-                          selectedMatch.score >= 40
-                            ? "bg-green-500/20 text-green-100 border border-green-400/30"
-                            : selectedMatch.score >= 25
-                            ? "bg-yellow-500/20 text-yellow-100 border border-yellow-400/30"
-                            : "bg-gray-500/20 text-gray-100 border border-gray-400/30"
-                        }`}
-                      >
-                        {selectedMatch.score}%
-                      </div>
-                    </div>
-                  </div>
-                  <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-16">
-                    {selectedMatch.name}
-                  </DialogTitle>
-                </DialogHeader>
-              </div>
-
-              {/* Content */}
-              <div ref={matchContentRef} className="flex-1 overflow-y-auto">
-                <div className="p-6">
-                  <div className="space-y-6">
-                    {/* Match Details */}
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      {selectedMatch.investor_type && (
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="w-4 h-4" />
-                          <span>{selectedMatch.investor_type}</span>
-                        </div>
-                      )}
-                      {selectedMatch.investment_focus && (
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4" />
-                          <span>{selectedMatch.investment_focus}</span>
-                        </div>
-                      )}
-                      {selectedMatch.location && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          <span>
-                            {selectedMatch.location.split(",")[1]?.trim() ||
-                              selectedMatch.location}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Why this match */}
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-blue-500" />
-                        Why this match?
-                      </h3>
-                      <div className="space-y-3">
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-sm font-medium text-blue-700">
-                              📋 Rule-based analysis:
-                            </span>
-                          </div>
-                          <p className="text-gray-700 leading-relaxed">
-                            {parseMatchReason(selectedMatch.reason).ruleReason}
-                          </p>
-                        </div>
-                        {parseMatchReason(selectedMatch.reason).hasAI && (
-                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-sm font-medium text-purple-700 flex items-center gap-1">
-                                🤖 AI Analysis:
-                              </span>
-                              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
-                                Groq Llama 3.1
-                              </span>
-                            </div>
-                            <p className="text-gray-700 leading-relaxed">
-                              {parseMatchReason(selectedMatch.reason).aiReason}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Match Score Explanation */}
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        Match Score Breakdown
-                        {parseMatchReason(selectedMatch.reason).hasAI && (
-                          <span className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-700 text-xs font-medium rounded-full border border-purple-300/30">
-                            🤖 AI Included
-                          </span>
-                        )}
-                      </h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">
-                            Overall Compatibility
-                          </span>
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto">
+                  <div className="p-6">
+                    <div className="space-y-6">
+                      {/* Partner Details */}
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                        {selectedPartner.partnership_type && (
                           <div className="flex items-center gap-2">
-                            <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full rounded-full ${
-                                  selectedMatch.score >= 40
-                                    ? "bg-green-500"
-                                    : selectedMatch.score >= 25
-                                    ? "bg-yellow-500"
-                                    : "bg-gray-500"
-                                }`}
-                                style={{ width: `${selectedMatch.score}%` }}
-                              ></div>
-                            </div>
-                            <span
-                              className={`text-sm font-medium ${
-                                selectedMatch.score >= 40
-                                  ? "text-green-600"
-                                  : selectedMatch.score >= 25
-                                  ? "text-yellow-600"
-                                  : "text-gray-600"
-                              }`}
-                            >
-                              {selectedMatch.score}%
-                            </span>
+                            <Building className="w-4 h-4" />
+                            <span>{selectedPartner.partnership_type}</span>
                           </div>
-                        </div>
-                        <div className="text-xs text-gray-500 mt-2 space-y-1">
-                          <p>
-                            • <strong>Sector:</strong> Direct or thematic match
-                          </p>
-                          <p>
-                            • <strong>Maturity:</strong> Alignment between your
-                            development stage and investor type
-                          </p>
-                          <p>
-                            • <strong>Needs:</strong> Alignment with investor
-                            interest areas
-                          </p>
-                          <p>
-                            • <strong>Location:</strong> Geographic preference
-                          </p>
-                          {parseMatchReason(selectedMatch.reason).hasAI && (
-                            <p>
-                              • <strong>🤖 AI:</strong> Advanced semantic
-                              analysis of descriptions (averaged with rules)
-                            </p>
-                          )}
-                        </div>
+                        )}
+                        {selectedPartner.address && (
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4" />
+                            <span>{selectedPartner.address}</span>
+                          </div>
+                        )}
+                        {selectedPartner.email && (
+                          <div className="flex items-center gap-2">
+                            <Mail className="w-4 h-4" />
+                            <span>{selectedPartner.email}</span>
+                          </div>
+                        )}
                       </div>
-                    </div>
 
-                    {/* Investor Description */}
-                    {selectedMatch.description && (
+                      {/* Partner Description */}
                       <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          About this Investor
+                        <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                          Description
                         </h3>
                         <div className="prose prose-gray max-w-none">
                           <p className="text-gray-600 mb-3 leading-relaxed">
-                            {selectedMatch.description}
+                            {selectedPartner.description ||
+                              "No description available."}
                           </p>
                         </div>
                       </div>
-                    )}
 
-                    {/* Contact Section */}
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <div className="flex flex-col items-center gap-4">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Ready to Connect?
+                      {/* Contact Section */}
+                      {selectedPartner.email ? (
+                        <div className="mt-6 pt-6 border-t border-gray-200">
+                          <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                            Contact
+                          </h3>
+                          <div className="flex items-center gap-4">
+                            <a
+                              href={`mailto:${selectedPartner.email}`}
+                              className="inline-flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover transition-colors"
+                            >
+                              <Mail className="w-4 h-4" />
+                              Send Email
+                            </a>
+                            <span className="text-sm text-gray-600">
+                              {selectedPartner.email}
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-6 pt-6 border-t border-gray-200">
+                          <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                            Contact
+                          </h3>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Mail className="w-4 h-4" />
+                            <span>Unknown</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Investor Details Dialog */}
+        <Dialog
+          open={selectedInvestor !== null}
+          onOpenChange={() => setSelectedInvestor(null)}
+        >
+          <DialogContent
+            showCloseButton={false}
+            className="max-w-4xl w-full max-h-[90vh] overflow-hidden p-0"
+          >
+            {/* Custom Close Button */}
+            <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
+              <X className="h-6 w-6" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+            {selectedInvestor && (
+              <div className="flex flex-col h-full max-h-[90vh]">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white p-6">
+                  <DialogHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-app-white">
+                        <DollarSign className="w-4 h-4" />
+                        <span className="capitalize">Investor</span>
+                      </span>
+                    </div>
+                    <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-8">
+                      {selectedInvestor.name}
+                    </DialogTitle>
+                  </DialogHeader>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto">
+                  <div className="p-6">
+                    <div className="space-y-6">
+                      {/* Investor Details */}
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                        {selectedInvestor.investor_type && (
+                          <div className="flex items-center gap-2">
+                            <DollarSign className="w-4 h-4" />
+                            <span>{selectedInvestor.investor_type}</span>
+                          </div>
+                        )}
+                        {selectedInvestor.investment_focus && (
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4" />
+                            <span>{selectedInvestor.investment_focus}</span>
+                          </div>
+                        )}
+                        {selectedInvestor.email && (
+                          <div className="flex items-center gap-2">
+                            <Mail className="w-4 h-4" />
+                            <span>{selectedInvestor.email}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Investor Description */}
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                          Description
                         </h3>
-                        <p className="text-gray-600 text-center mb-4">
-                          This investor has been matched with your startup based
-                          on compatibility analysis. Take the next step towards
-                          potential investment opportunities.
-                        </p>
-                        <a
-                          href={`mailto:?subject=Investment Interest in ${selectedMatch.name}&body=Dear ${selectedMatch.name},%0A%0AI am interested in discussing potential investment opportunities with your firm. Our startup has been matched with your investment criteria, and I would like to explore how we might work together.%0A%0ABest regards,%0A[Your Name]`}
-                          className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white font-semibold rounded-lg hover:from-jeb-two hover:to-jeb-eight transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                        <div className="prose prose-gray max-w-none">
+                          <p className="text-gray-600 mb-3 leading-relaxed">
+                            {selectedInvestor.description ||
+                              "No description available."}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Contact Section */}
+                      {selectedInvestor.email ? (
+                        <div className="mt-6 pt-6 border-t border-gray-200">
+                          <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                            Contact
+                          </h3>
+                          <div className="flex items-center gap-4">
+                            <a
+                              href={`mailto:${selectedInvestor.email}`}
+                              className="inline-flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover transition-colors"
+                            >
+                              <Mail className="w-4 h-4" />
+                              Send Email
+                            </a>
+                            <span className="text-sm text-gray-600">
+                              {selectedInvestor.email}
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-6 pt-6 border-t border-gray-200">
+                          <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                            Contact
+                          </h3>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Mail className="w-4 h-4" />
+                            <span>Unknown</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Match Details Dialog */}
+        <Dialog
+          open={selectedMatch !== null}
+          onOpenChange={() => setSelectedMatch(null)}
+        >
+          <DialogContent
+            showCloseButton={false}
+            className="max-w-4xl w-full max-h-[90vh] overflow-hidden p-0"
+          >
+            {/* Custom Close Button */}
+            <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
+              <X className="h-6 w-6" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+            {selectedMatch && (
+              <div className="flex flex-col h-full max-h-[90vh]">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white p-6">
+                  <DialogHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 border border-white/30 text-app-white">
+                        <DollarSign className="w-4 h-4" />
+                        <span className="capitalize">Match</span>
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">
+                          Match Score:
+                        </span>
+                        <div
+                          className={`text-xl font-bold px-2 py-1 rounded-full ${
+                            selectedMatch.score >= 40
+                              ? "bg-green-500/20 text-green-100 border border-green-400/30"
+                              : selectedMatch.score >= 25
+                              ? "bg-yellow-500/20 text-yellow-100 border border-yellow-400/30"
+                              : "bg-gray-500/20 text-gray-100 border border-gray-400/30"
+                          }`}
                         >
-                          <Mail className="w-5 h-5" />
-                          Express Interest
-                          <TrendingUp className="w-4 h-4" />
-                        </a>
+                          {selectedMatch.score}%
+                        </div>
+                      </div>
+                    </div>
+                    <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-16">
+                      {selectedMatch.name}
+                    </DialogTitle>
+                  </DialogHeader>
+                </div>
+
+                {/* Content */}
+                <div ref={matchContentRef} className="flex-1 overflow-y-auto">
+                  <div className="p-6">
+                    <div className="space-y-6">
+                      {/* Match Details */}
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                        {selectedMatch.investor_type && (
+                          <div className="flex items-center gap-2">
+                            <DollarSign className="w-4 h-4" />
+                            <span>{selectedMatch.investor_type}</span>
+                          </div>
+                        )}
+                        {selectedMatch.investment_focus && (
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4" />
+                            <span>{selectedMatch.investment_focus}</span>
+                          </div>
+                        )}
+                        {selectedMatch.location && (
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4" />
+                            <span>
+                              {selectedMatch.location.split(",")[1]?.trim() ||
+                                selectedMatch.location}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Why this match */}
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <TrendingUp className="w-5 h-5 text-blue-500" />
+                          Why this match?
+                        </h3>
+                        <div className="space-y-3">
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-sm font-medium text-blue-700">
+                                📋 Rule-based analysis:
+                              </span>
+                            </div>
+                            <p className="text-gray-700 leading-relaxed">
+                              {
+                                parseMatchReason(selectedMatch.reason)
+                                  .ruleReason
+                              }
+                            </p>
+                          </div>
+                          {parseMatchReason(selectedMatch.reason).hasAI && (
+                            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-sm font-medium text-purple-700 flex items-center gap-1">
+                                  🤖 AI Analysis:
+                                </span>
+                                <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
+                                  Groq Llama 3.1
+                                </span>
+                              </div>
+                              <p className="text-gray-700 leading-relaxed">
+                                {
+                                  parseMatchReason(selectedMatch.reason)
+                                    .aiReason
+                                }
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Match Score Explanation */}
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          Match Score Breakdown
+                          {parseMatchReason(selectedMatch.reason).hasAI && (
+                            <span className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-700 text-xs font-medium rounded-full border border-purple-300/30">
+                              🤖 AI Included
+                            </span>
+                          )}
+                        </h3>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">
+                              Overall Compatibility
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full ${
+                                    selectedMatch.score >= 40
+                                      ? "bg-green-500"
+                                      : selectedMatch.score >= 25
+                                      ? "bg-yellow-500"
+                                      : "bg-gray-500"
+                                  }`}
+                                  style={{ width: `${selectedMatch.score}%` }}
+                                ></div>
+                              </div>
+                              <span
+                                className={`text-sm font-medium ${
+                                  selectedMatch.score >= 40
+                                    ? "text-green-600"
+                                    : selectedMatch.score >= 25
+                                    ? "text-yellow-600"
+                                    : "text-gray-600"
+                                }`}
+                              >
+                                {selectedMatch.score}%
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-2 space-y-1">
+                            <p>
+                              • <strong>Sector:</strong> Direct or thematic
+                              match
+                            </p>
+                            <p>
+                              • <strong>Maturity:</strong> Alignment between
+                              your development stage and investor type
+                            </p>
+                            <p>
+                              • <strong>Needs:</strong> Alignment with investor
+                              interest areas
+                            </p>
+                            <p>
+                              • <strong>Location:</strong> Geographic preference
+                            </p>
+                            {parseMatchReason(selectedMatch.reason).hasAI && (
+                              <p>
+                                • <strong>🤖 AI:</strong> Advanced semantic
+                                analysis of descriptions (averaged with rules)
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Investor Description */}
+                      {selectedMatch.description && (
+                        <div className="mt-6 pt-6 border-t border-gray-200">
+                          <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                            About this Investor
+                          </h3>
+                          <div className="prose prose-gray max-w-none">
+                            <p className="text-gray-600 mb-3 leading-relaxed">
+                              {selectedMatch.description}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Contact Section */}
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <div className="flex flex-col items-center gap-4">
+                          <h3 className="font-heading text-lg font-semibold text-gray-900">
+                            Ready to Connect?
+                          </h3>
+                          <p className="text-gray-600 text-center mb-4">
+                            This investor has been matched with your startup
+                            based on compatibility analysis. Take the next step
+                            towards potential investment opportunities.
+                          </p>
+                          <a
+                            href={`mailto:?subject=Investment Interest in ${selectedMatch.name}&body=Dear ${selectedMatch.name},%0A%0AI am interested in discussing potential investment opportunities with your firm. Our startup has been matched with your investment criteria, and I would like to explore how we might work together.%0A%0ABest regards,%0A[Your Name]`}
+                            className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-jeb-one to-jeb-nine text-app-white font-semibold rounded-lg hover:from-jeb-two hover:to-jeb-eight transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                          >
+                            <Mail className="w-5 h-5" />
+                            Express Interest
+                            <TrendingUp className="w-4 h-4" />
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+            )}
+          </DialogContent>
+        </Dialog>
+      </main>
+
+      <Footer />
     </div>
   );
 }
