@@ -67,7 +67,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
       console.log('✅ Successfully joined thread:', data.thread_id);
     });
 
-    socket.on('new_message', (data) => {
+    socket.on('new_message', async (data) => {
       console.log('📨 New message received:', data);
       const newMessage: Message = {
         id: String(data.id),
@@ -81,6 +81,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
         }),
         userID: data.sender_id,
       };
+      await api.post(`/threads/${conv.id}/read/`);
       setMessages((prev) => [...(prev ?? []), newMessage]);
     });
 
@@ -124,6 +125,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
           }),
           userID: msg.sender.id,
         }));
+        await api.post(`/threads/${conv.id}/read/`);
         setMessages(formattedMessages.reverse());
       }
     } catch (error) {
