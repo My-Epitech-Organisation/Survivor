@@ -69,5 +69,5 @@ jobs:
 
       - name: Run backend tests
         run: |
-          ../scripts/run_backend_tests.sh
+          cd .. && ./scripts/run_backend_tests.sh
         continue-on-error: false
