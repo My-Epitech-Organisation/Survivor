@@ -108,13 +108,13 @@ export default function StartupPDFExportPage() {
     }];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8" data-testid="startup-dashboard">
+        <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 p-8" data-testid="startup-dashboard">
             {/* Header */}
             <div className="text-center mb-12">
-                <h1 className="text-5xl font-bold text-gray-900 mb-4">
+                <h1 className="font-heading text-5xl font-bold text-app-text-primary mb-4">
                     Startup Dashboard Report
                 </h1>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                <p className="text-xl text-app-text-secondary max-w-3xl mx-auto">
                     Comprehensive analytics and insights for startup performance monitoring
                 </p>
                 <div className="flex justify-center mt-6">
@@ -223,10 +223,10 @@ export default function StartupPDFExportPage() {
 
             {/* Footer */}
             <div className="text-center py-8 border-t-2 border-gray-200">
-                <p className="text-gray-500 text-lg">
+                <p className="text-app-text-secondary text-lg">
                     This report was automatically generated for startup performance tracking and analysis.
                 </p>
-                <p className="text-gray-400">
+                <p className="text-app-text-muted">
                     © {new Date().getFullYear()} Startup Dashboard - All rights reserved
                 </p>
             </div>

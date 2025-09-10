@@ -49,7 +49,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
   return (
     <Card className="w-full hover:shadow-xl transition-all duration-300 border border-app-border-light bg-app-surface overflow-hidden flex flex-col h-full">
       <CardHeader className="pb-4">
-        <CardTitle className="text-center text-lg font-bold text-app-text-primary mb-2">
+        <CardTitle className="font-heading text-center text-lg font-bold text-app-text-primary mb-2">
           {props.ProjectName}
         </CardTitle>
         {props.ProjectDescription && (
@@ -68,7 +68,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <Building className="h-4 w-4 text-app-blue-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Sector
                   </h4>
                 </div>
@@ -88,7 +88,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <MapPin className="h-4 w-4 text-app-green-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Location
                   </h4>
                 </div>
@@ -107,7 +107,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <TrendingUp className="h-4 w-4 text-app-purple-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Maturity
                   </h4>
                 </div>
@@ -127,7 +127,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle className="h-4 w-4 text-app-green-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Status
                   </h4>
                 </div>
@@ -146,7 +146,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               <div className="space-y-3">
                 <div className="flex items-center justify-center gap-2">
                   <Target className="h-4 w-4 text-app-orange-primary" />
-                  <h4 className="font-medium text-app-text-primary text-sm">
+                  <h4 className="font-heading font-medium text-app-text-primary text-sm">
                     Project Needs
                   </h4>
                 </div>
@@ -166,32 +166,23 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
             <DialogTrigger asChild>
               <Button
                 onClick={() => fetchProject()}
-                className="w-full text-app-white hover:text-app-white bg-app-blue-primary hover:bg-app-blue-primary-hover cursor-pointer"
+                className="w-full font-bold text-app-white hover:text-app-white bg-jeb-primary hover:bg-jeb-hover cursor-pointer flex items-center"
               >
-                <Info className="h-4 w-4 mr-2" />
-                More Information
+                <Info className="h-6 w-6 mr-2" />
+                <span>More Information</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[100vw] sm:max-w-[98vw] w-[100vw] sm:w-[98vw] min-h-[100vh] sm:min-h-[80dvh] max-h-[100vh] sm:max-h-[98vh] overflow-y-auto p-0 rounded-none sm:rounded-lg">
-              <DialogHeader className="border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100/50 px-6 sm:px-8 py-6 sm:py-8 pr-16 sm:pr-20">
+              <DialogHeader className="border-b border-gray-200 bg-gradient-to-r from-jeb-five/15 to-jeb-gradient-to/50 px-6 sm:px-8 py-6 sm:py-8 pr-16 sm:pr-20">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <DialogTitle className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 truncate">
+                    <DialogTitle className="font-heading text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 truncate">
                       {props.ProjectName}
                     </DialogTitle>
                     <p className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">
                       Project Details & Information
                     </p>
                   </div>
-                  {/* Export project */}
-                  {/*
-                  <div className="flex-shrink-0">
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-6 py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-3 font-medium">
-                        <Download className="h-5 w-5" />
-                        <span className="hidden sm:inline">Export Project</span>
-                    </Button>
-                  </div>
-                  */}
                 </div>
               </DialogHeader>
               <div className="px-6 sm:px-8 py-6 sm:py-8 bg-gray-50/30">

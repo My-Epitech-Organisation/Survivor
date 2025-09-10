@@ -30,6 +30,7 @@ import {
   TotalCountResponse,
   UsersConnectedResponse,
 } from "@/services/DashboardService";
+import Footer from "@/components/Footer";
 
 // Helper function to format relative time
 const formatRelativeTime = (dateString: string) => {
@@ -47,8 +48,6 @@ const formatRelativeTime = (dateString: string) => {
   if (diffDay < 30) return `${diffDay} days ago`;
   return date.toLocaleDateString();
 };
-
-// We'll replace the mock data with API data
 
 export default function AdminDashboard() {
   // State for dashboard data
@@ -168,12 +167,12 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50">
       <AdminNavigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-app-text-primary mb-6">
             Admin Dashboard
           </h1>
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
@@ -204,7 +203,9 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+              <CardTitle className="font-heading text-sm font-medium">
+                Total Users
+              </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -219,7 +220,7 @@ export default function AdminDashboard() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="font-heading text-sm font-medium">
                 Total Startups
               </CardTitle>
               <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -236,7 +237,7 @@ export default function AdminDashboard() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="font-heading text-sm font-medium">
                 Total Events
               </CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -253,7 +254,9 @@ export default function AdminDashboard() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">New Signups</CardTitle>
+              <CardTitle className="font-heading text-sm font-medium">
+                New Signups
+              </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -275,7 +278,7 @@ export default function AdminDashboard() {
               {
                 browser: "Online Users",
                 rate: usersConnected.rate,
-                fill: "#2563eb",
+                fill: "#cb90f1",
               },
             ]}
             title="User Engagement"
@@ -297,7 +300,7 @@ export default function AdminDashboard() {
             config={{
               views: {
                 label: "Views",
-                color: "#2563eb",
+                color: "#cb90f1",
               },
             }}
           />
@@ -308,7 +311,7 @@ export default function AdminDashboard() {
           {/* Recent Actions */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle>Recent Actions</CardTitle>
+              <CardTitle className="font-heading">Recent Actions</CardTitle>
               <CardDescription>
                 Latest platform activities and user interactions
               </CardDescription>
@@ -357,7 +360,7 @@ export default function AdminDashboard() {
           {/* Additional Stats */}
           <Card>
             <CardHeader>
-              <CardTitle>This Month</CardTitle>
+              <CardTitle className="font-heading">This Month</CardTitle>
               <CardDescription>Key metrics for current period</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -405,6 +408,7 @@ export default function AdminDashboard() {
           </Card>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

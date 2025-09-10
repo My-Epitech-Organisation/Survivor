@@ -176,12 +176,12 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
       <Navigation />
 
       <main className="flex-1 max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 w-full">
         <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-3xl font-bold text-app-text-primary mb-8">
+          <h1 className="font-heading text-3xl font-bold text-app-text-primary mb-8">
             Advanced Search
           </h1>
           <div className="p-6 w-full">
@@ -197,7 +197,7 @@ export default function SearchPage() {
                 name="search-bar"
                 id="search-bar"
                 placeholder="Search for any event, news or project"
-                className="rounded-lg border shadow py-2 px-6 w-full hover:border-app-text-muted transition-colors"
+                className="rounded-lg border shadow py-2 px-6 w-full hover:border-app-text-muted transition-colors active:border-jeb-primary"
               />
 
               <div className="flex gap-3 justify-end w-full sm:w-fit">
@@ -245,7 +245,7 @@ export default function SearchPage() {
           {searchResults && (
             <div className="p-6 w-full">
               <div className="flex justify-between items-center mb-4 gap-6">
-                <h2 className="text-xl font-semibold text-app-text-primary">
+                <h2 className="font-heading text-xl font-semibold text-app-text-primary">
                   Search Results ({searchResults.count} results)
                 </h2>
 
@@ -287,7 +287,7 @@ export default function SearchPage() {
                   <div
                     key={index}
                     onClick={() => handleItemClick(item)}
-                    className="rounded-lg shadow p-4 bg-app-surface hover:bg-app-surface-hover cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
+                    className="rounded-lg shadow p-4 bg-app-surface hover:bg-app-surface-hover cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:shadow-lg"
                   >
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <span
@@ -303,7 +303,7 @@ export default function SearchPage() {
                         View Details
                       </button>
                     </div>
-                    <h3 className="text-lg font-semibold text-app-text-primary mb-2">
+                    <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-2">
                       {item.title}
                     </h3>
                     <p className="text-sm text-app-text-secondary">
@@ -383,7 +383,7 @@ export default function SearchPage() {
                       </span>
                     </span>
                   </div>
-                  <DialogTitle className="text-2xl font-bold leading-tight pr-8">
+                  <DialogTitle className="font-heading text-2xl font-bold leading-tight pr-8">
                     {selectedItem.title}
                   </DialogTitle>
                 </DialogHeader>
@@ -415,7 +415,7 @@ export default function SearchPage() {
 
                         {/* Event Description */}
                         <div className="mt-6 pt-6 border-t border-gray-200">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                          <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
                             Description
                           </h3>
                           <div className="prose prose-gray max-w-none">
@@ -498,7 +498,7 @@ export default function SearchPage() {
 
                           {/* News Description */}
                           <div className="mt-6 pt-6 border-t border-gray-200">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                            <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
                               Article Content
                             </h3>
                             <div className="prose prose-gray max-w-none">
@@ -589,7 +589,7 @@ export default function SearchPage() {
                             <div className="space-y-4">
                               {itemDetails.address && (
                                 <div>
-                                  <h3 className="text-sm font-semibold text-gray-700 mb-1">
+                                  <h3 className="font-heading text-sm font-semibold text-gray-700 mb-1">
                                     Address
                                   </h3>
                                   <p className="text-gray-900">
@@ -599,7 +599,7 @@ export default function SearchPage() {
                               )}
                               {itemDetails.name && (
                                 <div>
-                                  <h3 className="text-sm font-semibold text-gray-700 mb-1">
+                                  <h3 className="font-heading text-sm font-semibold text-gray-700 mb-1">
                                     Project Name
                                   </h3>
                                   <p className="text-gray-900">
@@ -611,7 +611,7 @@ export default function SearchPage() {
                             <div className="space-y-4">
                               {itemDetails.website_url && (
                                 <div>
-                                  <h3 className="text-sm font-semibold text-gray-700 mb-1">
+                                  <h3 className="font-heading text-sm font-semibold text-gray-700 mb-1">
                                     Website
                                   </h3>
                                   <a
@@ -630,7 +630,7 @@ export default function SearchPage() {
                           {/* Project Description */}
                           {itemDetails.description && (
                             <div className="mt-6 pt-6 border-t border-gray-200">
-                              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                              <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
                                 Description
                               </h3>
                               <div className="prose prose-gray max-w-none">
@@ -688,7 +688,7 @@ export default function SearchPage() {
                           {itemDetails.founders &&
                             itemDetails.founders.length > 0 && (
                               <div className="mt-6 pt-6 border-t border-gray-200">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                                   <Users className="w-5 h-5 text-blue-500" />
                                   Team Members
                                 </h3>

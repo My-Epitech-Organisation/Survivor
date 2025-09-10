@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FaEdit, FaEye, FaThumbsUp, FaShare, FaUsers } from "react-icons/fa";
+import { FaEdit, FaEye, FaThumbsUp, FaThumbsDown, FaShare } from "react-icons/fa";
 import { FounderResponse } from "@/types/founders";
 import { ProjectDetails, ProjectProfileFormData } from "@/types/project";
 import { Founder } from "@/types/founders";
@@ -61,13 +61,12 @@ export default function StartupProfile() {
   const [isFounder, setIsFounder] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { user, isLoading } = useAuth();
-
-  const visibilityStats = {
-    profileViews: 0,
+  const [profileViews, setProfileViews] = useState<number | null>(null);
+  const [engagementStats, setEngagementStats] = useState({
     likes: 0,
+    dislikes: 0,
     shares: 0,
-    followers: 0,
-  };
+  });
 
   const getFormValue = (value: string | null): string => value || "";
 
@@ -91,8 +90,9 @@ export default function StartupProfile() {
 
         const data: FounderResponse = await response.json();
 
-        return data.startup_id;
+        return data.FounderStartupID;
       } catch {
+        console.error("Error fetching startup ID");
         return null;
       }
     };
@@ -137,6 +137,46 @@ export default function StartupProfile() {
           if (data) {
             setFormData(data);
             setOriginalFormData(data);
+
+            if (data.id) {
+              authenticatedFetch(`/kpi/project-views/${data.id}`)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Failed to fetch project views");
+                  }
+                  return response.json();
+                })
+                .then((viewsData) => {
+                  setProfileViews(viewsData.total_views);
+                })
+                .catch((err) => {
+                  console.error("Error fetching project views: ", err);
+                  setProfileViews(0);
+                });
+
+              authenticatedFetch(`/projects/${data.id}/engagement-count/`)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Failed to fetch engagement stats");
+                  }
+                  return response.json();
+                })
+                .then((engagementData) => {
+                  setEngagementStats({
+                    likes: engagementData.total_likes,
+                    dislikes: engagementData.total_dislikes,
+                    shares: engagementData.total_shares,
+                  });
+                })
+                .catch((err) => {
+                  console.error("Error fetching engagement stats: ", err);
+                  setEngagementStats({
+                    likes: 0,
+                    dislikes: 0,
+                    shares: 0,
+                  });
+                });
+            }
           }
         });
       });
@@ -198,12 +238,12 @@ export default function StartupProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-app-gradient-from to-app-gradient-to flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
       <StartupNavigation />
 
       <main className="px-4 sm:px-6 lg:px-8 py-12 flex-1 transition-all">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-app-text-primary mb-6 transition-all">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-app-text-primary mb-6 transition-all">
             Startup Profile Management
           </h1>
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
@@ -232,7 +272,7 @@ export default function StartupProfile() {
             {/* Visibility Stats */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl text-app-text-primary flex items-center gap-2">
+                <CardTitle className="font-heading text-2xl text-app-text-primary flex items-center gap-2">
                   <FaEye className="text-blue-500" />
                   Visibility Statistics
                 </CardTitle>
@@ -242,30 +282,30 @@ export default function StartupProfile() {
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
                     <FaEye className="text-3xl text-blue-500 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-blue-600">
-                      {visibilityStats.profileViews.toLocaleString()}
+                      {(profileViews || 0).toLocaleString()}
                     </div>
                     <div className="text-sm text-gray-600">Profile Views</div>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <FaThumbsUp className="text-3xl text-green-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-green-600">
-                      {visibilityStats.likes}
-                    </div>
-                    <div className="text-sm text-gray-600">Likes</div>
                   </div>
                   <div className="text-center p-4 bg-purple-50 rounded-lg">
                     <FaShare className="text-3xl text-purple-500 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-purple-600">
-                      {visibilityStats.shares}
+                      {engagementStats.shares}
                     </div>
                     <div className="text-sm text-gray-600">Shares</div>
                   </div>
-                  <div className="text-center p-4 bg-orange-50 rounded-lg">
-                    <FaUsers className="text-3xl text-orange-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-orange-600">
-                      {visibilityStats.followers}
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <FaThumbsUp className="text-3xl text-green-500 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-green-600">
+                      {engagementStats.likes}
                     </div>
-                    <div className="text-sm text-gray-600">Followers</div>
+                    <div className="text-sm text-gray-600">Likes</div>
+                  </div>
+                  <div className="text-center p-4 bg-red-50 rounded-lg">
+                    <FaThumbsDown className="text-3xl text-red-500 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-red-600">
+                      {engagementStats.dislikes}
+                    </div>
+                    <div className="text-sm text-gray-600">Dislikes</div>
                   </div>
                 </div>
               </CardContent>
@@ -274,7 +314,7 @@ export default function StartupProfile() {
             {/* Profile Form */}
             <Card>
               <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                <CardTitle className="text-2xl text-app-text-primary">
+                <CardTitle className="font-heading text-2xl text-app-text-primary">
                   Company Profile
                 </CardTitle>
                 <div className="flex gap-2 flex-col sm:flex-row">
@@ -283,14 +323,14 @@ export default function StartupProfile() {
                       <Button
                         onClick={handleSave}
                         variant="default"
-                        className="cursor-pointer"
+                        className="bg-jeb-primary text-white font-bold px-4 py-2 rounded-md hover:bg-jeb-hover transition-colors cursor-pointer"
                       >
                         Save Changes
                       </Button>
                       <Button
                         onClick={handleCancel}
                         variant="outline"
-                        className="cursor-pointer"
+                        className="border-jeb-primary text-jeb-primary hover:text-jeb-hover hover:bg-jeb-light cursor-pointer font-bold"
                       >
                         Cancel
                       </Button>
@@ -298,8 +338,8 @@ export default function StartupProfile() {
                   ) : (
                     <Button
                       onClick={handleStartEditing}
-                      variant="outline"
-                      className="cursor-pointer"
+                      variant="default"
+                      className="bg-jeb-primary text-white font-bold px-4 py-2 rounded-md hover:bg-jeb-hover transition-colors cursor-pointer"
                     >
                       <FaEdit className="mr-2" />
                       Edit Profile
@@ -310,7 +350,7 @@ export default function StartupProfile() {
               <CardContent className="space-y-6">
                 {/* Basic Information */}
                 <div>
-                  <h3 className="text-lg font-semibold text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                     Basic Information
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -368,7 +408,7 @@ export default function StartupProfile() {
 
                 {/* Contact Information */}
                 <div>
-                  <h3 className="text-lg font-semibold text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                     Contact Information
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -434,7 +474,7 @@ export default function StartupProfile() {
 
                 {/* Online Presence */}
                 <div>
-                  <h3 className="text-lg font-semibold text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                     Online Presence
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -471,7 +511,7 @@ export default function StartupProfile() {
 
                 {/* Project Details */}
                 <div>
-                  <h3 className="text-lg font-semibold text-app-text-primary mb-4">
+                  <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                     Project Details
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">

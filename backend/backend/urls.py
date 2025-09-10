@@ -34,6 +34,7 @@ urlpatterns = [
     path("api/admin/", include("admin_panel.urls")),  # Custom admin
     path("api/auth/", include("authentication.urls")),  # Authentication endpoints
     path("api/threads/", include("messaging.urls")),  # Messaging endpoints
+    path("api/drive/", include("drive.urls")),  # Drive endpoints
     # OpenAPI schema endpoints
     path("api/schema/", SpectacularAPIView.as_view(permission_classes=[]), name="schema"),
     path(

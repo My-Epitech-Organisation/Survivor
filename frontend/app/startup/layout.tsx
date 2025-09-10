@@ -14,8 +14,8 @@ export default function StartupLayout({
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <TbLoader3 className="size-12 animate-spin text-blue-600 mb-4" />
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <TbLoader3 className="size-12 animate-spin text-jeb-primary mb-4" />
+          <p className="mt-4 text-app-text-secondary">Loading...</p>
         </div>
       </div>
     );

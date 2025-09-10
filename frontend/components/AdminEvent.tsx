@@ -65,7 +65,7 @@ export default function AdminEvent(props: AdminEventProps) {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw] max-h-[85vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
+              <DialogTitle className="font-heading flex items-center gap-2">
                 Edit Event
               </DialogTitle>
             </DialogHeader>
@@ -108,14 +108,14 @@ export default function AdminEvent(props: AdminEventProps) {
             </div>
             <DialogFooter className="flex justify-center gap-2 mt-2">
               <DialogClose asChild ref={closeBtn}>
-                <Button variant="outline" className="min-w-[90px]">
+                <Button variant="outline" className="min-w-[90px] cursor-pointer">
                   Cancel
                 </Button>
               </DialogClose>
               <Button
                 type="button"
                 variant="destructive"
-                className="min-w-[90px]"
+                className="min-w-[90px] cursor-pointer"
                 onClick={() => props.deleteCB(props.event.id, closeBtn.current)}
               >
                 Delete
