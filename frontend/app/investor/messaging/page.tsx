@@ -34,7 +34,7 @@ export default function StartupMessaging() {
   }, [activeThread]);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50">
       <InvestorNavigation />
 
       <main className="flex-1 flex items-center px-2 sm:px-4 lg:px-6 py-2">
