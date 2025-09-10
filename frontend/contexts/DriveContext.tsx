@@ -1,8 +1,20 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { DriveFile, DriveFolder, DriveFileFilters, DriveFolderFilters } from '@/types/drive';
-import { DriveService } from '@/services/DriveService';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+} from "react";
+import {
+  DriveFile,
+  DriveFolder,
+  DriveFileFilters,
+  DriveFolderFilters,
+} from "@/types/drive";
+import { DriveService } from "@/services/DriveService";
 
 interface DriveContextType {
   currentFolder: DriveFolder | null;
@@ -12,10 +24,20 @@ interface DriveContextType {
   isLoading: boolean;
   error: string | null;
   navigateToFolder: (folderId: number | null) => Promise<void>;
-  createFolder: (startupId: number, name: string, parentId: number | null) => Promise<void>;
-  uploadFile: (startupId: number, file: File, folderId: number | null, description?: string) => Promise<void>;
+  createFolder: (
+    startupId: number,
+    name: string,
+    parentId: number | null
+  ) => Promise<void>;
+  uploadFile: (
+    startupId: number,
+    file: File,
+    folderId: number | null,
+    description?: string
+  ) => Promise<void>;
   deleteFile: (fileId: number) => Promise<void>;
   deleteFolder: (folderId: number) => Promise<void>;
+  downloadFolder: (folderId: number, folderName: string) => Promise<void>;
   refreshCurrentFolder: () => Promise<void>;
   startupId: number | null;
   setStartupId: (id: number) => void;
@@ -23,8 +45,13 @@ interface DriveContextType {
 
 const DriveContext = createContext<DriveContextType | undefined>(undefined);
 
-export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: number }> = ({ children, initialStartupId }) => {
-  const [startupId, setStartupId] = useState<number | null>(initialStartupId || null);
+export const DriveProvider: React.FC<{
+  children: ReactNode;
+  initialStartupId?: number;
+}> = ({ children, initialStartupId }) => {
+  const [startupId, setStartupId] = useState<number | null>(
+    initialStartupId || null
+  );
   const [currentFolder, setCurrentFolder] = useState<DriveFolder | null>(null);
   const [folders, setFolders] = useState<DriveFolder[]>([]);
   const [files, setFiles] = useState<DriveFile[]>([]);
@@ -32,73 +59,90 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchFolderContents = useCallback(async (folderId: number | null) => {
-    if (!startupId) {
-      setError("No startup selected");
-      return;
-    }
+  const fetchFolderContents = useCallback(
+    async (folderId: number | null) => {
+      if (!startupId) {
+        setError("No startup selected");
+        return;
+      }
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const folderFilters: DriveFolderFilters = {
-        startup: startupId,
-        parent: folderId === null ? 'null' : folderId
-      };
-      const foldersResponse = await DriveService.getFolders(folderFilters);
-      setFolders(foldersResponse.results);
+      setIsLoading(true);
+      setError(null);
+      try {
+        const folderFilters: DriveFolderFilters = {
+          startup: startupId,
+          parent: folderId === null ? "null" : folderId,
+        };
+        const foldersResponse = await DriveService.getFolders(folderFilters);
+        setFolders(foldersResponse.results);
 
-      const fileFilters: DriveFileFilters = {
-        startup: startupId,
-        folder: folderId === null ? 'null' : folderId
-      };
-      const filesResponse = await DriveService.getFiles(fileFilters);
-      setFiles(filesResponse.results);
+        const fileFilters: DriveFileFilters = {
+          startup: startupId,
+          folder: folderId === null ? "null" : folderId,
+        };
+        const filesResponse = await DriveService.getFiles(fileFilters);
+        setFiles(filesResponse.results);
 
-      if (folderId !== null) {
-        const folderDetails = await DriveService.getFolder(folderId);
-        setCurrentFolder(folderDetails);
+        if (folderId !== null) {
+          const folderDetails = await DriveService.getFolder(folderId);
+          setCurrentFolder(folderDetails);
 
-        if (folderDetails) {
-          const buildBreadcrumbs = async (folder: DriveFolder) => {
-            const crumbs: DriveFolder[] = [folder];
-            let currentParent = folder.parent;
+          if (folderDetails) {
+            const buildBreadcrumbs = async (folder: DriveFolder) => {
+              const crumbs: DriveFolder[] = [folder];
+              let currentParent = folder.parent;
 
-            while (currentParent) {
-              const parentFolder = await DriveService.getFolder(currentParent);
-              if (parentFolder) {
-                crumbs.unshift(parentFolder);
-                currentParent = parentFolder.parent;
-              } else {
-                break;
+              while (currentParent) {
+                const parentFolder = await DriveService.getFolder(
+                  currentParent
+                );
+                if (parentFolder) {
+                  crumbs.unshift(parentFolder);
+                  currentParent = parentFolder.parent;
+                } else {
+                  break;
+                }
               }
-            }
 
-            return crumbs;
-          };
+              return crumbs;
+            };
 
-          const crumbs = await buildBreadcrumbs(folderDetails);
-          setBreadcrumbs(crumbs);
+            const crumbs = await buildBreadcrumbs(folderDetails);
+            setBreadcrumbs(crumbs);
+          } else {
+            setBreadcrumbs([]);
+          }
         } else {
+          setCurrentFolder(null);
           setBreadcrumbs([]);
         }
-      } else {
-        setCurrentFolder(null);
-        setBreadcrumbs([]);
+      } catch (err) {
+        setError("Failed to fetch drive contents");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      setError("Failed to fetch drive contents");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [startupId, setCurrentFolder, setFolders, setFiles, setBreadcrumbs, setIsLoading, setError]);
+    },
+    [
+      startupId,
+      setCurrentFolder,
+      setFolders,
+      setFiles,
+      setBreadcrumbs,
+      setIsLoading,
+      setError,
+    ]
+  );
 
   const navigateToFolder = async (folderId: number | null) => {
     await fetchFolderContents(folderId);
   };
 
-  const createFolder = async (startupId: number, name: string, parentId: number | null) => {
+  const createFolder = async (
+    startupId: number,
+    name: string,
+    parentId: number | null
+  ) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -112,14 +156,19 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   };
 
-  const uploadFile = async (startupId: number, file: File, folderId: number | null, description?: string) => {
+  const uploadFile = async (
+    startupId: number,
+    file: File,
+    folderId: number | null,
+    description?: string
+  ) => {
     setIsLoading(true);
     setError(null);
     try {
       await DriveService.uploadFile(startupId, {
         file,
         folder: folderId,
-        description
+        description,
       });
       await fetchFolderContents(folderId);
     } catch (err) {
@@ -158,13 +207,29 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   };
 
+  const downloadFolder = async (folderId: number, folderName: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await DriveService.downloadFolder(folderId, folderName);
+    } catch (err) {
+      setError("Failed to download folder");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const refreshCurrentFolder = useCallback(async () => {
     await fetchFolderContents(currentFolder?.id || null);
   }, [fetchFolderContents, currentFolder]);
 
   useEffect(() => {
     if (startupId) {
-      console.log('DriveContext - StartupId changed, fetching root folder:', startupId);
+      console.log(
+        "DriveContext - StartupId changed, fetching root folder:",
+        startupId
+      );
       const loadRootFolder = async () => {
         await fetchFolderContents(null);
       };
@@ -191,18 +256,21 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     uploadFile,
     deleteFile,
     deleteFolder,
+    downloadFolder,
     refreshCurrentFolder,
     startupId,
-    setStartupId
+    setStartupId,
   };
 
-  return <DriveContext.Provider value={value}>{children}</DriveContext.Provider>;
+  return (
+    <DriveContext.Provider value={value}>{children}</DriveContext.Provider>
+  );
 };
 
 export const useDrive = (): DriveContextType => {
   const context = useContext(DriveContext);
   if (context === undefined) {
-    throw new Error('useDrive must be used within a DriveProvider');
+    throw new Error("useDrive must be used within a DriveProvider");
   }
   return context;
 };

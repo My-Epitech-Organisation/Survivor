@@ -25,6 +25,7 @@ export interface DriveFolder {
   files_count: number;
   startup: number;
   path: string;
+  download_url: string;
 }
 
 export interface DriveShare {
