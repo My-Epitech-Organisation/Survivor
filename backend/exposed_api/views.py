@@ -265,7 +265,7 @@ def project_engagement(request, user_id):
 
 
 @api_view(["POST", "DELETE"])
-@permission_classes([IsAuthenticatedNotRegularUser])
+@permission_classes([IsAuthenticated])
 def project_like(request, project_id):
     """
     API endpoint to like or unlike a project.
