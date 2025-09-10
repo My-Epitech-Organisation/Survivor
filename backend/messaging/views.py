@@ -332,7 +332,7 @@ def mark_thread_read(request, thread_id):
     else:
         message = get_object_or_404(Message, id=message_id, thread=thread)
 
-    read_receipt, created = ReadReceipt.objects.update_or_create(
+    read_receipt, _ = ReadReceipt.objects.update_or_create(
         thread=thread, user=request.user, defaults={"last_read_message": message}
     )
 
@@ -376,7 +376,7 @@ def update_typing_status(request, thread_id):
         return Response({"detail": "You are not a participant in this thread."}, status=status.HTTP_403_FORBIDDEN)
 
     is_typing = request.data.get("is_typing", True)
-    typing_indicator, created = TypingIndicator.objects.update_or_create(
+    _, _ = TypingIndicator.objects.update_or_create(
         thread=thread, user=request.user, defaults={"is_typing": is_typing}
     )
 
