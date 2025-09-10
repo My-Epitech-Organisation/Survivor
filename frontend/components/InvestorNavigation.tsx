@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
+import { ThemeToggle } from "./ui/theme-toggle";
 
 export default function InvestorNavigation() {
   const pathname = usePathname();
@@ -63,6 +64,7 @@ export default function InvestorNavigation() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
+            <ThemeToggle />
             <button
               onClick={handleSwitchToPublic}
               className="font-heading font-medium text-gray-600 hover:text-jeb-primary transition-colors cursor-pointer"
@@ -111,6 +113,9 @@ export default function InvestorNavigation() {
                 </Link>
               ))}
               <div className="border-t border-gray-200 pt-2 space-y-1">
+                <div className="px-3 py-2">
+                  <ThemeToggle />
+                </div>
                 <button
                   onClick={() => {
                     handleSwitchToPublic();
