@@ -82,11 +82,11 @@ export default function AdminEvent(props: AdminEventProps) {
         <Dialog>
           <DialogTrigger asChild>
             <button
-              className="p-2 rounded-full hover:bg-app-purple-primary/10 transition-colors w-full flex items-center justify-center cursor-pointer"
+              className="p-2 rounded-full hover:bg-jeb-primary/10 transition-colors w-full flex items-center justify-center cursor-pointer"
               aria-label="Delete"
               title={`Delete ${props.event.name}`}
             >
-              <FaTrashAlt className="text-xl text-app-purple-primary" />
+              <FaTrashAlt className="text-xl text-jeb-primary" />
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[400px]">

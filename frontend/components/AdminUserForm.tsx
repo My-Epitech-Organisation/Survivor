@@ -310,7 +310,7 @@ export default function AdminUserForm({
           </Button>
         </DialogClose>
         <Button
-          className="w-full sm:w-auto px-6 py-2 bg-app-blue-primary hover:bg-app-blue-hover text-white rounded-lg font-bold shadow cursor-pointer"
+          className="w-full sm:w-auto px-6 py-2 bg-jeb-primary hover:bg-jeb-hover text-white rounded-lg font-bold shadow cursor-pointer"
           onClick={handleSubmitProject}
         >
           Save
