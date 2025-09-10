@@ -309,13 +309,13 @@ export default function AdminEvents() {
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-lg p-4 mb-6 flex flex-wrap gap-4">
+            <div className="bg-app-surface rounded-lg p-4 mb-6 flex flex-wrap gap-4">
               <div className="flex flex-col w-64">
-                <label className="text-sm font-medium mb-1 text-gray-700">
+                <label className="text-sm font-medium mb-1 text-app-text-secondary">
                   Event Type
                 </label>
                 <select
-                  className="border border-gray-300 rounded-md p-2"
+                  className="border border-app-border rounded-md p-2 bg-app-surface hover:border-app-text-muted transition-colors"
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
                 >
@@ -328,11 +328,11 @@ export default function AdminEvents() {
                 </select>
               </div>
               <div className="flex flex-col w-64">
-                <label className="text-sm font-medium mb-1 text-gray-700">
+                <label className="text-sm font-medium mb-1 text-app-text-secondary">
                   Location
                 </label>
                 <select
-                  className="border border-gray-300 rounded-md p-2"
+                  className="border border-app-border rounded-md p-2 bg-app-surface hover:border-app-text-muted transition-colors"
                   value={filterLocation}
                   onChange={(e) => setFilterLocation(e.target.value)}
                 >
@@ -356,12 +356,12 @@ export default function AdminEvents() {
             </div>
 
             {/* Events content */}
-            <div className="max-w-7xl mx-auto bg-white rounded-2xl p-5">
+            <div className="max-w-7xl mx-auto bg-app-surface rounded-2xl p-5">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead
-                      className="text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("id")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -378,7 +378,7 @@ export default function AdminEvents() {
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("name")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -390,12 +390,12 @@ export default function AdminEvents() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "name" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-muted" />
                         )}
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("dates")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -407,12 +407,12 @@ export default function AdminEvents() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "dates" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-muted" />
                         )}
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("location")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -424,12 +424,12 @@ export default function AdminEvents() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "location" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-muted" />
                         )}
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("event_type")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -441,12 +441,12 @@ export default function AdminEvents() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "event_type" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-muted" />
                         )}
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("target_audience")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -458,7 +458,7 @@ export default function AdminEvents() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "target_audience" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-muted" />
                         )}
                       </div>
                     </TableHead>
@@ -485,8 +485,8 @@ export default function AdminEvents() {
               </Table>
               {(!eventsList || eventsList.length === 0) && (
                 <div className="flex items-center justify-center py-12 gap-3">
-                  <CalendarIcon className="w-8 h-8 text-gray-400" />
-                  <span className="text-gray-400 text-lg font-medium">
+                  <CalendarIcon className="w-8 h-8 text-app-text-muted" />
+                  <span className="text-app-text-muted text-lg font-medium">
                     No events found
                   </span>
                 </div>

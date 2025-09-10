@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
+import { ThemeToggle } from "./ui/theme-toggle";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -113,6 +114,7 @@ export default function Navigation() {
                 Login
               </Link>
             )}
+            <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
@@ -203,6 +205,9 @@ export default function Navigation() {
                     Login
                   </Link>
                 )}
+                <div className="px-3 py-2">
+                  <ThemeToggle />
+                </div>
               </div>
             </div>
           </div>

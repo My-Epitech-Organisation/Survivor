@@ -81,7 +81,7 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
             )}
 
             {props.ProjectSector && props.ProjectLocation && (
-              <div className="w-px h-12 bg-gray-300"></div>
+              <div className="w-px h-12 bg-app-border-light"></div>
             )}
 
             {props.ProjectLocation && (
@@ -150,8 +150,8 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
                     Project Needs
                   </h4>
                 </div>
-                <div className="rounded-lg p-3">
-                  <p className="text-sm text-gray-700 text-center">
+                <div className="rounded-lg p-3 bg-app-surface-hover">
+                  <p className="text-sm text-app-text-secondary text-center">
                     {props.ProjectNeeds}
                   </p>
                 </div>
@@ -173,19 +173,19 @@ export default function ProjectOverview(props: ProjectOverviewProps) {
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[100vw] sm:max-w-[98vw] w-[100vw] sm:w-[98vw] min-h-[100vh] sm:min-h-[80dvh] max-h-[100vh] sm:max-h-[98vh] overflow-y-auto p-0 rounded-none sm:rounded-lg">
-              <DialogHeader className="border-b border-gray-200 bg-gradient-to-r from-jeb-five/15 to-jeb-gradient-to/50 px-6 sm:px-8 py-6 sm:py-8 pr-16 sm:pr-20">
+              <DialogHeader className="border-b border-app-border-light bg-gradient-to-r from-jeb-five/15 to-jeb-gradient-to/50 px-6 sm:px-8 py-6 sm:py-8 pr-16 sm:pr-20">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <DialogTitle className="font-heading text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 truncate">
+                    <DialogTitle className="font-heading text-lg sm:text-xl md:text-3xl font-bold text-app-text-primary mb-1 sm:mb-2 truncate">
                       {props.ProjectName}
                     </DialogTitle>
-                    <p className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">
+                    <p className="text-xs sm:text-sm md:text-base text-app-text-secondary font-medium">
                       Project Details & Information
                     </p>
                   </div>
                 </div>
               </DialogHeader>
-              <div className="px-6 sm:px-8 py-6 sm:py-8 bg-gray-50/30">
+              <div className="px-6 sm:px-8 py-6 sm:py-8 bg-app-surface-hover/30">
                 {projectDetails && <ProjectDetails {...projectDetails} />}
               </div>
             </DialogContent>

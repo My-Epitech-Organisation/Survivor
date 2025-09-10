@@ -267,7 +267,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
             variant="ghost"
             size="icon"
             onClick={onOpenConversations}
-            className="lg:hidden shrink-0"
+            className="lg:hidden shrink-0 cursor-pointer"
             aria-label="Ouvrir la liste des conversations"
           >
             <ArrowLeft className="w-5 h-5" />
