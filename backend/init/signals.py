@@ -19,6 +19,9 @@ from exposed_api.models import SiteStatistics
 
 from .utils import *
 
+# Check if signals should be disabled (for tests)
+DISABLE_SIGNALS = os.environ.get('DISABLE_SIGNALS', 'False').lower() == 'true'
+
 # Flag to track if handlers have already run
 _handlers_executed = {
     "create_superuser": False,
@@ -74,6 +77,9 @@ def create_superuser(sender, **kwargs):
     Note: This handler is primarily here as a fallback.
     The superuser is mainly created by fetch_users to ensure correct order.
     """
+    if DISABLE_SIGNALS:
+        return
+
     # Skip if already executed or if fetch_users has already run
     if _handlers_executed["create_superuser"] or _handlers_executed["fetch_users"]:
         return
@@ -89,6 +95,8 @@ def fetch_news(sender, **kwargs):
     Fetch and create new news from JEB API
     Only runs once during server startup
     """
+    if DISABLE_SIGNALS:
+        return
 
     if _handlers_executed["fetch_news"]:
         return
@@ -109,6 +117,8 @@ def fetch_events(sender, **kwargs):
     Fetch and create new events from JEB API
     Only runs once during server startup
     """
+    if DISABLE_SIGNALS:
+        return
 
     if _handlers_executed["fetch_events"]:
         return
@@ -129,6 +139,8 @@ def fetch_startups(sender, **kwargs):
     Fetch and create new startups from JEB API
     Only runs once during server startup
     """
+    if DISABLE_SIGNALS:
+        return
 
     if _handlers_executed["fetch_startups"]:
         return
@@ -150,6 +162,8 @@ def fetch_users(sender, **kwargs):
     Only runs once during server startup
     This will also create the superuser with ID=0 after fetching all users
     """
+    if DISABLE_SIGNALS:
+        return
 
     if _handlers_executed["fetch_users"]:
         return
@@ -172,6 +186,8 @@ def fetch_investors(sender, **kwargs):
     Fetch and create new investors from JEB API
     Only runs once during server startup
     """
+    if DISABLE_SIGNALS:
+        return
 
     if _handlers_executed["fetch_investors"]:
         return
@@ -192,6 +208,8 @@ def fetch_partners(sender, **kwargs):
     Fetch and create new partners from JEB API
     Only runs once during server startup
     """
+    if DISABLE_SIGNALS:
+        return
 
     if _handlers_executed["fetch_partners"]:
         return
