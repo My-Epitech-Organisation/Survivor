@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { DriveFile, DriveFolder } from "@/types/drive";
 import { useDrive } from "@/contexts/DriveContext";
 import { downloadFile } from "@/lib/downloadUtils";
+import { isTextFile } from "@/lib/fileUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +18,8 @@ import {
   MoreVertical,
   RefreshCw,
   ArrowLeft,
+  Eye,
+  Edit,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -35,6 +38,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
+import { FilePreview } from "./FilePreview";
+import { FileEditor } from "./FileEditor";
 
 interface DriveExplorerProps {
   startupId: number;
@@ -64,6 +69,10 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [fileDescription, setFileDescription] = useState("");
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+
+  // Preview and Edit states
+  const [previewFile, setPreviewFile] = useState<DriveFile | null>(null);
+  const [editFile, setEditFile] = useState<DriveFile | null>(null);
 
   const [folderMenuOpen, setFolderMenuOpen] = useState<{
     [key: number]: boolean;
@@ -159,6 +168,38 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
 
   const handleFileDownload = async (file: DriveFile) => {
     await downloadFile(file.id, file.name);
+  };
+
+  // Preview and Edit handlers
+  const handleFilePreview = (file: DriveFile) => {
+    if (isTextFile(file)) {
+      setPreviewFile(file);
+    } else {
+      handleFileDownload(file);
+    }
+  };
+
+  const handleClosePreview = () => {
+    setPreviewFile(null);
+  };
+
+  const handleEditRequest = (file: DriveFile) => {
+    setPreviewFile(null);
+    setEditFile(file);
+  };
+
+  const handleCloseEditor = () => {
+    setEditFile(null);
+  };
+
+  const handleSaveFile = async () => {
+    await refreshCurrentFolder();
+    setEditFile(null);
+  };
+
+  const handlePreviewRequest = (file: DriveFile) => {
+    setEditFile(null);
+    setPreviewFile(file);
   };
 
   const handleFolderDownload = async (folder: DriveFolder) => {
@@ -430,8 +471,9 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 files.map((file) => (
                   <Card
                     key={file.id}
-                    className="hover:shadow-md transition-shadow"
+                    className="hover:shadow-md transition-shadow cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
                     onContextMenu={(e) => handleContextMenu(e, undefined, file)}
+                    onClick={() => handleFilePreview(file)}
                   >
                     <CardContent className="p-4 flex justify-between items-center">
                       <div className="flex items-center space-x-2 flex-1 truncate">
@@ -445,11 +487,27 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                         }
                       >
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+                          {isTextFile(file) && (
+                            <>
+                              <DropdownMenuItem
+                                onClick={() => handleFilePreview(file)}
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                Preview
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleEditRequest(file)}
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                            </>
+                          )}
                           <DropdownMenuItem
                             onClick={() => handleFileDownload(file)}
                           >
@@ -487,6 +545,39 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 </div>
               )}
             </div>
+          )}
+
+          {/* File Preview Dialog */}
+          {previewFile && (
+            <Dialog open={!!previewFile} onOpenChange={() => setPreviewFile(null)}>
+              <DialogContent className="max-w-4xl">
+                <DialogHeader>
+                  <DialogTitle>Preview File</DialogTitle>
+                </DialogHeader>
+                <FilePreview 
+                  file={previewFile} 
+                  onClose={handleClosePreview}
+                  onEditRequest={handleEditRequest}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
+
+          {/* File Editor Dialog */}
+          {editFile && (
+            <Dialog open={!!editFile} onOpenChange={() => setEditFile(null)}>
+              <DialogContent className="max-w-4xl">
+                <DialogHeader>
+                  <DialogTitle>Edit File</DialogTitle>
+                </DialogHeader>
+                <FileEditor 
+                  file={editFile} 
+                  onClose={handleCloseEditor}
+                  onSave={handleSaveFile}
+                  onPreviewRequest={handlePreviewRequest}
+                />
+              </DialogContent>
+            </Dialog>
           )}
         </>
       )}

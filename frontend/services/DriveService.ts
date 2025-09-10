@@ -243,5 +243,34 @@ export const DriveService = {
 
   deleteShare: async (shareId: number): Promise<void> => {
     await api.delete(`${DRIVE_API.SHARES}${shareId}/`);
+  },
+
+  // Text file preview and edit methods
+  previewTextFile: async (fileId: number): Promise<string> => {
+    try {
+      const response = await api.get<{content: string}>({
+        endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
+      });
+      
+      if (response.data && response.data.content !== undefined) {
+        return response.data.content;
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error previewing text file:', error);
+      throw error;
+    }
+  },
+
+  updateTextFileContent: async (fileId: number, content: string): Promise<void> => {
+    try {
+      await api.put(`${DRIVE_API.FILES}${fileId}/update_content/`, {
+        content
+      });
+    } catch (error) {
+      console.error('Error updating text file content:', error);
+      throw error;
+    }
   }
 };

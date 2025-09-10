@@ -1,4 +1,5 @@
 import mimetypes
+from django.core.files.base import ContentFile
 import os
 import secrets
 import uuid
@@ -30,6 +31,8 @@ from .serializers import (
     DriveShareSerializer,
     FileUploadSerializer,
 )
+from .text_serializers import TextFileContentSerializer, TextFileUpdateSerializer
+from .utils import is_text_file
 
 
 class StartupDrivePermission(permissions.BasePermission):
@@ -472,6 +475,83 @@ class DriveFileViewSet(viewsets.ModelViewSet):
 
         instance.file.delete(save=False)
         instance.delete()
+
+    @action(detail=True, methods=["get"])
+    def preview(self, request, pk=None):
+        """
+        Preview a text file's content.
+        """
+        file_obj = self.get_object()
+        
+        if not is_text_file(file_obj.name, file_obj.file_type):
+            return Response(
+                {"error": "This file type is not supported for preview"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            content = file_obj.file.read().decode('utf-8')
+            
+            # Log preview activity
+            DriveActivity.objects.create(
+                startup=file_obj.startup,
+                user=request.user,
+                file=file_obj,
+                action="preview",
+                ip_address=request.META.get("REMOTE_ADDR"),
+            )
+            
+            serializer = TextFileContentSerializer({"content": content})
+            return Response(serializer.data)
+        except UnicodeDecodeError:
+            return Response(
+                {"error": "This file uses an encoding that is not supported for preview"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    @action(detail=True, methods=["put"])
+    def update_content(self, request, pk=None):
+        """
+        Update the content of a text file.
+        """
+        file_obj = self.get_object()
+        
+        if not is_text_file(file_obj.name, file_obj.file_type):
+            return Response(
+                {"error": "This file type is not supported for editing"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        serializer = TextFileUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                content = serializer.validated_data['content']
+                
+                # Save the new content to the file
+                file_obj.file.save(file_obj.name, ContentFile(content.encode('utf-8')), save=False)
+                
+                # Update file size
+                file_obj.size = file_obj.file.size
+                file_obj.save()
+                
+                # Log edit activity
+                DriveActivity.objects.create(
+                    startup=file_obj.startup,
+                    user=request.user,
+                    file=file_obj,
+                    action="edit",
+                    details={"old_size": file_obj.size, "new_size": file_obj.file.size},
+                    ip_address=request.META.get("REMOTE_ADDR"),
+                )
+                
+                return Response({"status": "File content updated successfully"})
+            except Exception as e:
+                return Response(
+                    {"error": f"Failed to update file content: {str(e)}"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DriveShareViewSet(viewsets.ModelViewSet):
