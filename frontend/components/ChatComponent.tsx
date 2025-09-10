@@ -154,7 +154,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
       } catch (error) {
         console.error("Failed to delete message:", error);
       }
-    }, [conv]);
+    }, []);
 
   useImperativeHandle(ref, () => ({
     refreshThreadMessages,
@@ -336,7 +336,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
                   <div
                   className={`rounded-2xl px-3 py-2 text-sm max-w-[85%] sm:max-w-[70%] lg:max-w-[60%] break-words whitespace-pre-wrap ${
                     (message.userID === user?.id)
-                    ? "bg-blue-600 text-primary-foreground rounded-br-none"
+                    ? "bg-jeb-primary hover:bg-jeb-hover text-primary-foreground rounded-br-none"
                     : "bg-muted rounded-bl-none"
                   }`}
                   >
@@ -396,7 +396,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
                 type="button"
                 size="icon"
                 aria-label="Envoyer"
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-[36px] w-[36px] p-0 rounded-full !bg-blue-600 text-white shadow-md group transition-transform duration-200 disabled:opacity-60 disabled:cursor-none cursor-pointer"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-[36px] w-[36px] p-0 rounded-full !bg-jeb-primary hover:bg-jeb-hover text-white shadow-md group transition-transform duration-200 disabled:opacity-60 disabled:cursor-none cursor-pointer"
                 onClick={handleSend}
                 disabled={!inputValue.trim()}
               >

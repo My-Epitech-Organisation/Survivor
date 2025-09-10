@@ -1,4 +1,3 @@
-import { Investor } from "./investor";
 import { User } from "./user";
 
 

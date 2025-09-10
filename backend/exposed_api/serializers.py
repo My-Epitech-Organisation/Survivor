@@ -436,6 +436,7 @@ class InvestorUserSerializer(serializers.ModelSerializer):
             return f"{settings.MEDIA_URL.rstrip('/')}/{image_path}"
         return None
 
+
 class ProjectViewsSerializer(serializers.Serializer):
     """
     Serializer for the project views endpoint.

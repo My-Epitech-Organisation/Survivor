@@ -11,8 +11,7 @@ from rest_framework.views import APIView
 from admin_panel.models import Founder
 
 from .founder_serializers import FounderDetailSerializer
-from .serializers import UserSerializer
-from .serializers import InvestorUserSerializer
+from .serializers import InvestorUserSerializer, UserSerializer
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):
@@ -241,7 +240,6 @@ class AdminUserView(APIView):
 
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 
 class InvestorUsersView(APIView):

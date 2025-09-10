@@ -26,9 +26,7 @@ from .news_views import NewsDetailView, NewsListView
 from .opportunity_views import AIAnalysisView, OpportunitiesMatchesView
 from .partner_views import PartnerDetailView
 from .search_views import AdvancedSearchView
-from .user_views import AdminUserView
-from .user_views import InvestorUsersView
-from .user_views import FounderUsersView
+from .user_views import AdminUserView, FounderUsersView, InvestorUsersView
 
 app_name = "exposed_api"
 

@@ -3,7 +3,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import StartupNavigation from "@/components/StartupNavigation";
-import Footer from "@/components/Footer";
 import ChatComponent, { ChatComponentHandle } from "@/components/ChatComponent";
 import ChatSideBar, { ChatSideBarHandle } from "@/components/ChatSideBar";
 import { Card, CardContent } from "@/components/ui/card";

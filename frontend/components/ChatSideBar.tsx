@@ -2,7 +2,6 @@
 
 import { useEffect, useState, forwardRef, useCallback, useImperativeHandle } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Badge } from "./ui/badge";
 import api from "@/lib/api";
 import { Thread } from "@/types/chat";
 import { getBackendUrl } from "@/lib/config";
@@ -25,7 +24,7 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
     const [listThreads, setListThreads] = useState<Thread[] | null>(null);
     const {user, isLoading} = useAuth();
 
-    const fetchThreads = async () => {
+    const fetchThreads = useCallback(async () => {
       try {
         setIsThreadLoading(true);
         const res = await api.get<Thread[] | null>({ endpoint: "/threads/" });
@@ -40,7 +39,7 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
       } finally {
         setIsThreadLoading(false);
       }
-    };
+    }, [user?.id]);
 
     const handleNewThread = async (users: User[]) => {
       try {
@@ -69,7 +68,7 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
 
     const refreshThreads = useCallback(async () => {
       await fetchThreads();
-    }, []);
+    }, [fetchThreads]);
 
     useImperativeHandle(ref, () => ({
       refreshThreads,
@@ -77,7 +76,7 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
 
     useEffect(() => {
       fetchThreads();
-    }, []);
+    }, [fetchThreads]);
 
     return (
       <div className="h-full flex flex-col">

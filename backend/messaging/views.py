@@ -20,8 +20,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.tokens import AccessToken
 
 from .models import Message, ReadReceipt, Thread, TypingIndicator
 from .permissions import IsMessagingEligibleUser
@@ -42,14 +42,14 @@ def authenticate_user_from_jwt(request):
     Authenticate user from JWT token in Authorization header or query parameter
     """
     # First try to get token from query parameter (for SSE)
-    token = request.GET.get('token')
+    token = request.GET.get("token")
     if token:
         logger.debug(f"Authenticating with token from query parameter: {token[:20]}...")
     else:
         # Fallback to Authorization header
-        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-        if auth_header.startswith('Bearer '):
-            token = auth_header.split(' ')[1]
+        auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+        if auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
             logger.debug(f"Authenticating with token from Authorization header: {token[:20]}...")
         else:
             logger.warning("No token found in query parameter or Authorization header")
@@ -61,9 +61,10 @@ def authenticate_user_from_jwt(request):
 
     try:
         access_token = AccessToken(token)
-        user_id = access_token['user_id']
+        user_id = access_token["user_id"]
         logger.debug(f"Token validated, user_id: {user_id}")
         from django.contrib.auth import get_user_model
+
         User = get_user_model()
         user = User.objects.get(id=user_id)
         logger.debug(f"User found: {user.email} (role: {user.role})")
@@ -401,7 +402,6 @@ def update_typing_status(request, thread_id):
         404: OpenApiResponse(description="Thread not found"),
     },
 )
-
 @require_GET
 @csrf_exempt
 def thread_events(request, thread_id):

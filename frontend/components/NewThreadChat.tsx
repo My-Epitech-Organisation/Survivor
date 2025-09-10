@@ -18,11 +18,9 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import api from "@/lib/api";
-import { Investor } from "@/types/investor";
 import { User } from "@/types/user";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner"
@@ -56,7 +54,7 @@ export default function NewThreadChat(props: NewThreadChatProps) {
       }
     };
     fetchInvestisor();
-  }, []);
+  }, [props.variante]);
   return (
     <>
       <Dialog>
