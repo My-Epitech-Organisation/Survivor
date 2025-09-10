@@ -1,3 +1,4 @@
+import random
 from datetime import timedelta
 
 from auditlog.models import AuditLog
@@ -10,7 +11,6 @@ from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-import random
 
 from admin_panel.models import Event, StartupDetail
 
