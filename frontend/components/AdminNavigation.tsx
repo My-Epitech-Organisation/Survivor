@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { JEBLogo } from "./svg/JEBLogo";
 
 export default function AdminNavigation() {
   const pathname = usePathname();
@@ -37,9 +38,13 @@ export default function AdminNavigation() {
           <div className="flex items-center">
             <Link
               href="/admin/dashboard"
-              className="font-heading text-2xl font-black italic text-jeb-primary"
+              className="group flex items-end text-3xl font-heading font-black italic text-jeb-primary hover:text-jeb-hover transition-colors"
             >
-              JEB <span className="text-sm text-gray-500 not-italic">Admin</span>
+              <div className="flex items-center">
+                <JEBLogo className="w-15 h-auto" color="currentColor" />
+                JEB
+              </div>
+              <span className="ml-2 text-sm text-gray-500 group-hover:text-jeb-hover not-italic mb-1 transition-colors">Admin</span>
             </Link>
           </div>
 
