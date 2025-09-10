@@ -309,6 +309,9 @@ SPECTACULAR_SETTINGS = {
         "tryItOutEnabled": True,
     },
     "COMPONENT_SPLIT_REQUEST": True,
+    "TAGS": [
+        {"name": "messages", "description": "Messaging API endpoints for user communication"},
+    ],
     "SCHEMA_PATH_PREFIX": r"/api",
     "SERVE_PERMISSIONS": [],
     "SERVE_AUTHENTICATION": None,

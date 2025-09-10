@@ -1,5 +1,5 @@
 from authentication.models import CustomUser
-from authentication.permissions import IsAdmin
+from authentication.permissions import IsAdmin, IsNotRegularUser
 from django.conf import settings
 from django.http import JsonResponse
 from rest_framework import serializers, status
@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from admin_panel.models import Founder
 
 from .founder_serializers import FounderDetailSerializer
-from .serializers import UserSerializer
+from .serializers import InvestorUserSerializer, UserSerializer
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):
@@ -194,7 +194,6 @@ class AdminUserView(APIView):
             users = CustomUser.objects.all()
             serializer = AdminUserSerializer(users, many=True)
             return Response(serializer.data)
-
         try:
             user = CustomUser.objects.get(id=user_id)
             serializer = AdminUserSerializer(user)
@@ -241,3 +240,29 @@ class AdminUserView(APIView):
 
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class InvestorUsersView(APIView):
+    """
+    Returns all users that are linked to an investor (investor_id is not null).
+    """
+
+    permission_classes = [IsNotRegularUser]
+
+    def get(self, request):
+        users = CustomUser.objects.filter(investor_id__isnull=False)
+        serializer = InvestorUserSerializer(users, many=True)
+        return Response(serializer.data)
+
+
+class FounderUsersView(APIView):
+    """
+    Returns all users that are linked to a founder (founder_id is not null).
+    """
+
+    permission_classes = [IsNotRegularUser]
+
+    def get(self, request):
+        users = CustomUser.objects.filter(founder_id__isnull=False)
+        serializer = InvestorUserSerializer(users, many=True)
+        return Response(serializer.data)
