@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import InputAvatar from "@/components/ui/InputAvatar";
+import { InputAvatar } from "@/components/ui/InputAvatar";
 
 interface ComboboxProps {
   elements: { value: string; label: string, url? : string }[];

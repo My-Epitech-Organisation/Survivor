@@ -62,6 +62,7 @@ urlpatterns = [
     # User endpoints
     path("user/", user_views.get_current_user, name="current_user"),
     path("user/<int:user_id>/", user_views.user_detail, name="user_detail"),
+    path("users/chat_img_name/<int:user_id>/", user_views.user_chat_img_name, name="user_chat_img_name"),
     # Admin user management
     path("users/", AdminUserView.as_view(), name="admin_user_list"),
     path("users/<int:user_id>/", AdminUserView.as_view(), name="admin_user_detail"),
