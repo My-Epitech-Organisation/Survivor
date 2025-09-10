@@ -1,0 +1,288 @@
+"use client";
+
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { useEffect, useState, useRef } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { TbLoader3 } from "react-icons/tb";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { InputAvatar } from "@/components/ui/InputAvatar";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { getBackendUrl } from "@/lib/config";
+import { Mail, UserRound, Shield, Pencil, Check, X, Lock } from "lucide-react";
+import api from "@/lib/api";
+import { User } from "@/types/user";
+
+export default function ProfilePage() {
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+  const [userData, setUserData] = useState<User | undefined>();
+  const [editingName, setEditingName] = useState(false);
+  const [editingEmail, setEditingEmail] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [editedEmail, setEditedEmail] = useState("");
+  const [editedAvatar, setEditedAvatar] = useState("");
+  const isInitializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!user && !isLoading) {
+      router.push("/");
+    }
+    if (user) {
+      setUserData(user);
+      isInitializedRef.current = true;
+    }
+  }, [user, isLoading, router, useAuth]);
+
+  const editAndFetchMe = async (dataToSend?: User) => {
+    try {
+      const data = dataToSend || userData;
+      if (!data) return;
+
+      let res = await api.put<User>("/user/", data);
+      if (res.data) {
+        console.log("DATASEND:", data);
+        console.log("Modify: ", res.data);
+        setUserData(res.data)
+      }
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  const handleAvatarChange = (newUrl: string) => {
+    if (userData) {
+      const updatedData = { ...userData, userImage: newUrl };
+      setUserData(updatedData);
+      editAndFetchMe(updatedData);
+    }
+  };
+
+  const startEditingName = () => {
+    if (user) {
+      setEditedName(user.name);
+      setEditingName(true);
+    }
+  };
+
+  const startEditingEmail = () => {
+    if (user) {
+      setEditedEmail(user.email);
+      setEditingEmail(true);
+    }
+  };
+
+  const saveName = () => {
+    console.log("Saving name:", editedName);
+    if (userData) {
+      const updatedData = { ...userData, name: editedName };
+      setUserData(updatedData);
+      editAndFetchMe(updatedData);
+    }
+    setEditingName(false);
+  };
+
+  const saveEmail = () => {
+    console.log("Saving email:", editedEmail);
+    if (userData) {
+      const updatedData = { ...userData, email: editedEmail };
+      setUserData(updatedData);
+      editAndFetchMe(updatedData);
+    }
+    setEditingEmail(false);
+  };
+
+  const cancelNameEdit = () => {
+    setEditingName(false);
+    setEditedName("");
+  };
+
+  const cancelEmailEdit = () => {
+    setEditingEmail(false);
+    setEditedEmail("");
+  };
+
+  if (isLoading || !user)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <TbLoader3 className="size-12 animate-spin text-jeb-primary mb-4" />
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+
+  return (
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
+        <Navigation />
+
+        <main className="flex-1 py-6 flex items-center justify-center">
+          <div className="max-w-4xl w-full px-4 sm:px-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Profile Avatar Card with Welcome */}
+              <Card className="md:col-span-1 place-self-center">
+                <CardContent className="p-6 flex flex-col items-center gap-6">
+                  <h1 className="font-heading text-4xl font-bold text-app-text-primary text-center">
+                    Welcome {userData?.name ?? "NONE"}
+                  </h1>
+                  <InputAvatar
+                    url={userData?.userImage}
+                    defaultChar={user.name.charAt(0)}
+                    size={20}
+                    variente="modifiable"
+                    onChange={handleAvatarChange}
+                  />
+                  <p className="text-sm text-app-text-secondary text-center">Click to change avatar</p>
+                </CardContent>
+              </Card>
+
+              {/* User Info Cards */}
+              <div className="space-y-4">
+                {/* Name Card */}
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-app-green-light rounded-lg">
+                        <UserRound className="h-6 w-6 text-app-green-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-app-text-secondary">
+                          Name
+                        </p>
+                        {editingName ? (
+                          <div className="flex items-center gap-2 mt-1">
+                            <Input
+                              value={editedName}
+                              onChange={(e) => setEditedName(e.target.value)}
+                              className="flex-1"
+                              placeholder="Enter your name"
+                            />
+                            <Button
+                              size="sm"
+                              onClick={saveName}
+                              className="p-2 h-8 w-8"
+                              variant="ghost"
+                            >
+                              <Check className="h-4 w-4 text-green-600" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={cancelNameEdit}
+                              className="p-2 h-8 w-8"
+                              variant="ghost"
+                            >
+                              <X className="h-4 w-4 text-red-600" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between">
+                            <p className="text-lg font-bold text-app-text-primary">
+                              {userData?.name ?? "NONE"}
+                            </p>
+                            <Button
+                              size="sm"
+                              onClick={startEditingName}
+                              className="p-2 h-8 w-8"
+                              variant="ghost"
+                            >
+                              <Pencil className="h-4 w-4 text-app-text-secondary" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Email Card */}
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-app-blue-light rounded-lg">
+                        <Mail className="h-6 w-6 text-app-blue-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-app-text-secondary">
+                          Email
+                        </p>
+                        {editingEmail ? (
+                          <div className="flex items-center gap-2 mt-1">
+                            <Input
+                              value={editedEmail}
+                              onChange={(e) => setEditedEmail(e.target.value)}
+                              className="flex-1"
+                              placeholder="Enter your email"
+                              type="email"
+                            />
+                            <Button
+                              size="sm"
+                              onClick={saveEmail}
+                              className="p-2 h-8 w-8"
+                              variant="ghost"
+                            >
+                              <Check className="h-4 w-4 text-green-600" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={cancelEmailEdit}
+                              className="p-2 h-8 w-8"
+                              variant="ghost"
+                            >
+                              <X className="h-4 w-4 text-red-600" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between">
+                            <p className="text-lg font-bold text-app-text-primary">
+                              {userData?.email ?? "NONE" }
+                            </p>
+                            <Button
+                              size="sm"
+                              onClick={startEditingEmail}
+                              className="p-2 h-8 w-8"
+                              variant="ghost"
+                            >
+                              <Pencil className="h-4 w-4 text-app-text-secondary" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Role Card */}
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-app-purple-light rounded-lg">
+                        <Shield className="h-6 w-6 text-app-purple-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-app-text-secondary">
+                          Role
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-lg font-bold text-app-text-primary capitalize">
+                            {userData?.role ?? "NONE"}
+                          </p>
+                          <Lock className="h-4 w-4 text-app-text-secondary" />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <Footer />
+      </div>
+    </>
+  );
+}

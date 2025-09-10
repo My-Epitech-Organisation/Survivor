@@ -32,7 +32,6 @@ export function IDAvatar(props: IDAvatarProps)
       try {
         const res = await api.get<{name : string, userImage : string}>({endpoint: `/users/chat_img_name/${props.id}`});
         if (res.data && res.data.userImage) {
-          console.log("img_user:" , res.data.userImage);
           setImg(res.data.userImage);
         }
         if (res.data && res.data.name) {
@@ -56,6 +55,12 @@ export function IDAvatar(props: IDAvatarProps)
 export function InputAvatar(props: InputAvatar) {
   const [img, setImgUrl] = useState<string>(props.url ?? "");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (props.url !== undefined && props.url !== null && props.url !== "NONE") {
+      setImgUrl(props.url);
+    }
+  }, [props.url]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
