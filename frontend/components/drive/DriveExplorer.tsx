@@ -57,6 +57,32 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
   const [fileDescription, setFileDescription] = useState('');
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
+  const [folderMenuOpen, setFolderMenuOpen] = useState<{ [key: number]: boolean }>({});
+  const [fileMenuOpen, setFileMenuOpen] = useState<{ [key: number]: boolean }>({});
+
+  const handleContextMenu = (e: React.MouseEvent, folder?: DriveFolder, file?: DriveFile) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Close any open menus first
+    setFolderMenuOpen({});
+    setFileMenuOpen({});
+
+    if (folder) {
+      setFolderMenuOpen({ [folder.id]: true });
+    } else if (file) {
+      setFileMenuOpen({ [file.id]: true });
+    }
+  };
+
+  const handleFolderMenuOpenChange = (folderId: number, open: boolean) => {
+    setFolderMenuOpen({ [folderId]: open });
+  };
+
+  const handleFileMenuOpenChange = (fileId: number, open: boolean) => {
+    setFileMenuOpen({ [fileId]: open });
+  };
+
   React.useEffect(() => {
     if (startupId) {
       setStartupId(startupId);
@@ -268,7 +294,11 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
               {/* Folders */}
               {folders && folders.length > 0 ? (
                 folders.map((folder) => (
-                  <Card key={folder.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                  <Card
+                    key={folder.id}
+                    className="hover:shadow-md transition-shadow cursor-pointer"
+                    onContextMenu={(e) => handleContextMenu(e, folder)}
+                  >
                     <CardContent className="p-4 flex justify-between items-center">
                       <div
                         className="flex items-center space-x-2 flex-1"
@@ -277,7 +307,10 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                         <Folder className="h-5 w-5 text-yellow-500" />
                         <span className="truncate">{folder.name}</span>
                       </div>
-                      <DropdownMenu>
+                      <DropdownMenu
+                        open={folderMenuOpen[folder.id] || false}
+                        onOpenChange={(open) => handleFolderMenuOpenChange(folder.id, open)}
+                      >
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
                             <MoreVertical className="h-4 w-4" />
@@ -320,13 +353,20 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
               {/* Files */}
               {files && files.length > 0 ? (
                 files.map((file) => (
-                  <Card key={file.id} className="hover:shadow-md transition-shadow">
+                  <Card
+                    key={file.id}
+                    className="hover:shadow-md transition-shadow"
+                    onContextMenu={(e) => handleContextMenu(e, undefined, file)}
+                  >
                     <CardContent className="p-4 flex justify-between items-center">
                       <div className="flex items-center space-x-2 flex-1 truncate">
                         {renderFileIcon(file)}
                         <span className="truncate">{file.name}</span>
                       </div>
-                      <DropdownMenu>
+                      <DropdownMenu
+                        open={fileMenuOpen[file.id] || false}
+                        onOpenChange={(open) => handleFileMenuOpenChange(file.id, open)}
+                      >
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
                             <MoreVertical className="h-4 w-4" />
