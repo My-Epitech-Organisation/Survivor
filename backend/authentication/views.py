@@ -45,7 +45,7 @@ def register_user(request):
         user = serializer.save()
 
         today = timezone.now().date()
-        stats, created = SiteStatistics.objects.get_or_create(date=today)
+        stats, _ = SiteStatistics.objects.get_or_create(date=today)
         stats.new_signups += 1
         stats.save()
 

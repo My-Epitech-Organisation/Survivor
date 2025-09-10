@@ -58,7 +58,7 @@ def new_signups(request):
     This endpoint requires admin privileges.
     """
     today = timezone.now().date()
-    stats, created = SiteStatistics.objects.get_or_create(date=today)
+    stats, _ = SiteStatistics.objects.get_or_create(date=today)
     return JsonResponse({"value": stats.new_signups})
 
 

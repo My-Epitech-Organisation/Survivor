@@ -263,7 +263,7 @@ def fetch_startup_detail(startup_id, headers):
                     logging.warning(f"Missing founder name for ID {founder_id}, using default: {founder_name}")
 
                 try:
-                    founder, created = Founder.objects.get_or_create(
+                    founder, _ = Founder.objects.get_or_create(
                         id=founder_id, defaults={"name": founder_name, "startup_id": startup_id}
                     )
 

@@ -310,7 +310,7 @@ class DriveFileViewSet(viewsets.ModelViewSet):
 
         file_path = file_obj.file.path
 
-        content_type, encoding = mimetypes.guess_type(file_path)
+        content_type, _ = mimetypes.guess_type(file_path)
         content_type = content_type or "application/octet-stream"
 
         with open(file_path, "rb") as file:
@@ -355,7 +355,7 @@ class DriveFileViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            content_type, encoding = mimetypes.guess_type(uploaded_file.name)
+            content_type, _ = mimetypes.guess_type(uploaded_file.name)
             content_type = content_type or "application/octet-stream"
 
             file_obj = DriveFile.objects.create(
@@ -703,7 +703,7 @@ class SharedFileDownloadView(SharedItemView):
 
         file_path = file_obj.file.path
 
-        content_type, encoding = mimetypes.guess_type(file_path)
+        content_type, _ = mimetypes.guess_type(file_path)
         content_type = content_type or "application/octet-stream"
 
         with open(file_path, "rb") as file:
