@@ -5,12 +5,10 @@ import Footer from "@/components/Footer";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { TbLoader3 } from "react-icons/tb";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
 import { InputAvatar } from "@/components/ui/InputAvatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getBackendUrl } from "@/lib/config";
 import { Mail, UserRound, Shield, Pencil, Check, X, Lock } from "lucide-react";
 import api from "@/lib/api";
 import { User } from "@/types/user";
@@ -51,14 +49,14 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!user && !isLoading)
       router.push("/");
-  }, [user])
+  }, [user, isLoading, router])
 
   const editAndFetchMe = async (dataToSend?: User) => {
     try {
       const data = dataToSend || userData;
       if (!data) return;
 
-      let res = await api.put<User>("/user/", data);
+      const res = await api.put<User>("/user/", data);
       if (res.data) {
         console.log("DATASEND:", data);
         console.log("Modify: ", res.data);

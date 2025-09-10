@@ -53,6 +53,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
     """
     Serializer for updating user profile (name, email, userImage only)
     """
+
     userImage = serializers.CharField(source="image", required=False, allow_blank=True, allow_null=True)
 
     class Meta:
@@ -162,7 +163,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
         return None
 
 
-@api_view(["GET", "PUT"])
+@api_view(["GET", "PUT"])  # noqa: RET503
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
     """
@@ -172,7 +173,7 @@ def get_current_user(request):
     if request.method == "GET":
         serializer = CurrentUserSerializer(request.user)
         return Response(serializer.data)
-    elif request.method == "PUT":
+    if request.method == "PUT":
         serializer = UserProfileUpdateSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             user = serializer.save()

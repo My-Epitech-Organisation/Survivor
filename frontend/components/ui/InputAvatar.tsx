@@ -6,7 +6,6 @@ import api from "@/lib/api"
 import { useState, useRef, useEffect } from "react"
 import { getBackendUrl } from "@/lib/config"
 import { Pencil } from 'lucide-react';
-import { User } from "@/types/user"
 
 interface InputAvatar {
   url?: string

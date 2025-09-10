@@ -87,7 +87,7 @@ export default function StartupNavigation() {
               onClick={handleLogout}
               className="font-heading font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
             >
-              <LogOut>
+              <LogOut/>
             </button>
           </div>
 
