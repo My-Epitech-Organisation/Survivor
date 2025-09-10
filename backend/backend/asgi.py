@@ -127,8 +127,6 @@ async def send_message(sid, data):
             await sio.emit("error", {"message": "Not a participant"}, room=sid)
             return
 
-        # Récupérer le dernier message créé par cet utilisateur dans ce thread
-        # (qui vient d'être créé via l'API REST par le frontend)
         message = await sync_to_async(
             lambda: Message.objects.filter(thread=thread, sender=user, body=body).order_by("-created_at").first()
         )()
@@ -137,11 +135,9 @@ async def send_message(sid, data):
             await sio.emit("error", {"message": "Message not found"}, room=sid)
             return
 
-        # Update thread's last_message_at
         thread.last_message_at = message.created_at
         await sync_to_async(thread.save)()
 
-        # Broadcast to all in the thread (sauf l'expéditeur)
         message_data = {
             "id": message.id,
             "sender_id": user.id,
@@ -171,7 +167,6 @@ async def typing_start(sid, data):
 
     typing_data = {"user_id": user.id, "user_name": user.name, "is_typing": True}
 
-    # Broadcast to others in the thread
     await sio.emit("typing", typing_data, room=f"thread_{thread_id}", skip_sid=sid)
 
 
@@ -186,7 +181,6 @@ async def typing_stop(sid, data):
 
     typing_data = {"user_id": user.id, "user_name": user.name, "is_typing": False}
 
-    # Broadcast to others in the thread
     await sio.emit("typing", typing_data, room=f"thread_{thread_id}", skip_sid=sid)
 
 

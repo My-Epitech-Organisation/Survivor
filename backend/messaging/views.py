@@ -41,12 +41,10 @@ def authenticate_user_from_jwt(request):
     """
     Authenticate user from JWT token in Authorization header or query parameter
     """
-    # First try to get token from query parameter (for SSE)
     token = request.GET.get("token")
     if token:
         logger.debug(f"Authenticating with token from query parameter: {token[:20]}...")
     else:
-        # Fallback to Authorization header
         auth_header = request.META.get("HTTP_AUTHORIZATION", "")
         if auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
@@ -130,7 +128,6 @@ class ThreadListView(APIView):
         user_threads = Thread.objects.filter(participants=request.user)
         for thread in user_threads:
             thread_participants = set(thread.participants.values_list("id", flat=True))
-            # Thread exists
             if thread_participants == set(participants_ids):
                 message = Message.objects.create(thread=thread, sender=request.user, body=message_body)
 
@@ -145,7 +142,6 @@ class ThreadListView(APIView):
                     status=status.HTTP_201_CREATED,
                 )
 
-        # No thread found, create a new one
         with transaction.atomic():
             thread = Thread.objects.create()
             for user_id in participants_ids:
@@ -448,18 +444,15 @@ def thread_events(request, thread_id):
         last_read_check = None
         cycle_count = 0
 
-        # Initial retry config for SSE client
         yield "retry: 1000\n\n"
 
         while True:
             try:
                 messages_found = False
 
-                # --- Messages ---
                 if last_message_id:
                     new_messages = thread.messages.filter(id__gt=last_message_id).order_by("id")
                 else:
-                    # First connection, take last 5 messages
                     new_messages = thread.messages.order_by("-id")[:5]
                     new_messages = list(reversed(new_messages))
 
@@ -467,7 +460,7 @@ def thread_events(request, thread_id):
                     logger.info(f"Thread {thread.id}: Found {len(new_messages)} new messages to send")
                 for message in new_messages:
                     messages_found = True
-                    last_message_id = message.id  # update so we don't resend
+                    last_message_id = message.id
 
                     data = {
                         "type": "message",
@@ -485,7 +478,6 @@ def thread_events(request, thread_id):
                     )
                     yield event_data
 
-                # --- Typing indicators ---
                 typing_indicators = TypingIndicator.objects.filter(
                     thread=thread,
                     is_typing=True,
@@ -502,7 +494,6 @@ def thread_events(request, thread_id):
                     )
                     yield event_data
 
-                # --- Read receipts (every ~1s = every 10 cycles at 0.1s loop) ---
                 if not last_read_check or cycle_count % 10 == 0:
                     read_receipts = ReadReceipt.objects.filter(
                         thread=thread,
@@ -529,7 +520,6 @@ def thread_events(request, thread_id):
 
                     last_read_check = timezone.now()
 
-                # --- Heartbeat (every ~15s) ---
                 if not messages_found and cycle_count % 150 == 0:
                     yield ": heartbeat\n\n"
 
