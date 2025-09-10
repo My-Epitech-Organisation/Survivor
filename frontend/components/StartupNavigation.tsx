@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { JEBLogo } from "./svg/JEBLogo";
 
 export default function StartupNavigation() {
   const pathname = usePathname();
@@ -30,16 +31,20 @@ export default function StartupNavigation() {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b">
+    <nav className="bg-app-surface shadow-sm border-b border-app-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link
               href="/startup/dashboard"
-              className="text-3xl font-heading font-black italic text-jeb-primary hover:text-jeb-hover transition-colors"
+              className="group flex items-end text-3xl font-heading font-black italic text-jeb-primary hover:text-jeb-hover transition-colors"
             >
-              JEB <span className="text-sm text-gray-500 not-italic">Startup</span>
+              <div className="flex items-center">
+                <JEBLogo className="w-15 h-auto" color="currentColor" />
+                JEB
+              </div>
+              <span className="ml-2 text-sm text-app-text-secondary group-hover:text-jeb-hover not-italic mb-1 transition-colors">Startup</span>
             </Link>
           </div>
 
@@ -64,13 +69,13 @@ export default function StartupNavigation() {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={handleSwitchToPublic}
-              className="font-heading font-medium text-gray-600 hover:text-jeb-primary transition-colors cursor-pointer"
+              className="font-heading font-medium text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
             >
               Public Area
             </button>
             <button
               onClick={handleLogout}
-              className="font-heading font-bold text-gray-600 hover:text-red-600 transition-colors cursor-pointer"
+              className="font-heading font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
             >
               Logout
             </button>
@@ -80,7 +85,7 @@ export default function StartupNavigation() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
+              className="text-app-text-secondary hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -93,7 +98,7 @@ export default function StartupNavigation() {
 
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
+          <div className="md:hidden border-t border-app-border bg-app-surface">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link
@@ -102,20 +107,20 @@ export default function StartupNavigation() {
                   onClick={() => setIsMenuOpen(false)}
                   className={`font-heading block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     pathname === item.href
-                      ? "text-jeb-primary bg-blue-50"
-                      : "text-gray-600 hover:text-jeb-primary hover:bg-gray-50"
+                      ? "text-jeb-primary bg-app-blue-light"
+                      : "text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover"
                   }`}
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="border-t border-gray-200 pt-2 space-y-1">
+              <div className="border-t border-app-border pt-2 space-y-1">
                 <button
                   onClick={() => {
                     handleSwitchToPublic();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-jeb-primary hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
                 >
                   Public Area
                 </button>
@@ -124,7 +129,7 @@ export default function StartupNavigation() {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-red-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-red-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
                 >
                   Logout
                 </button>

@@ -150,9 +150,9 @@ export default function AdminUsers() {
       })
       .catch((error) => {
         toast("Edit error", {
-          className: "!text-red-500",
+          className: "!text-app-purple-primary",
           description: (
-            <span className="text-red-500">
+            <span className="text-app-purple-primary">
               An error occurred during edit user: {String(error)}
             </span>
           ),
@@ -176,9 +176,9 @@ export default function AdminUsers() {
       })
       .catch((error) => {
         toast("Delete error", {
-          className: "!text-red-500",
+          className: "!text-app-purple-primary",
           description: (
-            <span className="text-red-500">
+            <span className="text-app-purple-primary">
               An error occurred during delete user: {String(error)}
             </span>
           ),
@@ -194,9 +194,9 @@ export default function AdminUsers() {
       .post("/users/", data)
       .then(() => {
         toast("User created", {
-          className: "!text-green-500",
+          className: "!text-app-green-primary",
           description: (
-            <span className="text-green-500">User created successfully!</span>
+            <span className="text-app-green-primary">User created successfully!</span>
           ),
         });
         setOpenAddDialog(false);
@@ -204,9 +204,9 @@ export default function AdminUsers() {
       })
       .catch((error) => {
         toast("Create error", {
-          className: "!text-red-500",
+          className: "!text-app-purple-primary",
           description: (
-            <span className="text-red-500">
+            <span className="text-app-purple-primary">
               An error occurred during user creation: {String(error)}
             </span>
           ),
@@ -255,12 +255,12 @@ export default function AdminUsers() {
             </div>
 
             {/* Users content placeholder */}
-            <div className="max-w-7xl mx-auto bg-white rounded-2xl p-5">
+            <div className="max-w-7xl mx-auto bg-app-surface rounded-2xl p-5">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead
-                      className="text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("id")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -272,12 +272,12 @@ export default function AdminUsers() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "id" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-tertiary" />
                         )}
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("name")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -289,12 +289,12 @@ export default function AdminUsers() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "name" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-tertiary" />
                         )}
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("role")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -306,12 +306,12 @@ export default function AdminUsers() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "role" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-tertiary" />
                         )}
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("email")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -323,12 +323,12 @@ export default function AdminUsers() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "email" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-tertiary" />
                         )}
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("founderID")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -340,12 +340,12 @@ export default function AdminUsers() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "founderID" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-tertiary" />
                         )}
                       </div>
                     </TableHead>
                     <TableHead
-                      className="text-center border-l cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="text-center border-l cursor-pointer hover:bg-app-surface-hover transition-colors"
                       onClick={() => handleSort("investorID")}
                     >
                       <div className="flex items-center justify-center gap-1">
@@ -357,7 +357,7 @@ export default function AdminUsers() {
                             <FaSortDown />
                           ) : null)}
                         {sortColumn !== "investorID" && (
-                          <FaSort className="text-gray-300" />
+                          <FaSort className="text-app-text-tertiary" />
                         )}
                       </div>
                     </TableHead>
@@ -385,8 +385,8 @@ export default function AdminUsers() {
               </Table>
               {(!UserList || UserList.length === 0) && (
                 <div className="flex items-center justify-center py-12 gap-3">
-                  <UserIcon className="w-8 h-8 text-gray-400" />
-                  <span className="text-gray-400 text-lg font-medium">
+                  <UserIcon className="w-8 h-8 text-app-text-tertiary" />
+                  <span className="text-app-text-tertiary text-lg font-medium">
                     No user
                   </span>
                 </div>

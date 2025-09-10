@@ -218,7 +218,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
                   </h4>
                 </div>
                 <div className="rounded-lg p-3">
-                  <p className="text-sm text-gray-700 text-center">
+                  <p className="text-sm text-app-text-secondary text-center">
                     {props.ProjectNeeds}
                   </p>
                 </div>
@@ -240,13 +240,13 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
               </div>
             </DialogTrigger>
             <DialogOverlay className="fixed inset-0 bg-black/50 z-40" />
-            <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-0 min-w-[62%] max-h-[85vh] shadow-lg z-50 flex flex-col">
-              <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-lg">
+            <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-app-surface rounded-lg p-0 min-w-[62%] max-h-[85vh] shadow-lg z-50 flex flex-col">
+              <div className="flex justify-between items-center p-4 border-b border-app-border sticky top-0 bg-app-surface z-10 rounded-t-lg">
                 <DialogTitle className="font-heading text-xl font-bold">
                   Edit Project
                 </DialogTitle>
                 <DialogClose
-                  className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center cursor-pointer"
+                  className="h-6 w-6 rounded-full hover:bg-app-surface-hover flex items-center justify-center cursor-pointer"
                   ref={closeDialogRef}
                 >
                   <span className="sr-only">Close</span>
@@ -277,7 +277,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
 
           <Dialog>
             <DialogTrigger
-              className="rounded-md w-full text-app-white hover:text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer"
+              className="rounded-md w-full text-app-white hover:text-app-white bg-app-purple-primary hover:bg-app-purple-primary/80 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer"
               onClick={() => fetchProject()}
             >
               <div className="flex items-center justify-center gap-2 font-bold">
@@ -289,13 +289,13 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
               </div>
             </DialogTrigger>
             <DialogOverlay className="fixed inset-0 bg-black/50 z-40" />
-            <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-0 min-w-[15%] max-h-[85vh] shadow-lg z-50 flex flex-col">
-              <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-lg">
+            <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-app-surface rounded-lg p-0 min-w-[15%] max-h-[85vh] shadow-lg z-50 flex flex-col">
+              <div className="flex justify-between items-center p-4 border-b border-app-border sticky top-0 bg-app-surface z-10 rounded-t-lg">
                 <DialogTitle className="text-xl font-bold">
                   Delete Project
                 </DialogTitle>
                 <DialogClose
-                  className="h-6 w-6 rounded-full hover:bg-gray-200 flex items-center justify-center"
+                  className="h-6 w-6 rounded-full hover:bg-app-surface-hover flex items-center justify-center"
                   ref={closeDialogRef}
                 >
                   <span className="sr-only">Close</span>
@@ -320,7 +320,7 @@ export default function ProjectOverviewAdmin(props: ProjectOverviewProps) {
                 cannot be undone.
                 <div className="mt-4">
                   <Button
-                    className="w-full text-app-white bg-red-600 hover:bg-red-700 transition-all duration-300"
+                    className="w-full text-app-white bg-app-purple-primary hover:bg-app-purple-primary/80 transition-all duration-300"
                     onClick={handleDeleteProject}
                   >
                     Delete

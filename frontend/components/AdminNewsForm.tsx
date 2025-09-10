@@ -164,10 +164,10 @@ export default function AdminNewsForm({
   return (
     <>
       <div className="space-y-8">
-        <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 relative">
+        <div className="p-6 bg-app-surface rounded-xl shadow-sm border border-app-border relative">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="font-heading text-xl font-semibold text-gray-800">
+              <h2 className="font-heading text-xl font-semibold text-app-text-primary">
                 News Information
               </h2>
             </div>
@@ -342,7 +342,7 @@ export default function AdminNewsForm({
         <DialogClose asChild>
           <Button
             variant="outline"
-            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg cursor-pointer font-bold"
+            className="w-full sm:w-auto px-6 py-2 border border-app-border text-app-text-secondary rounded-lg cursor-pointer font-bold hover:bg-app-surface-hover"
           >
             Cancel
           </Button>

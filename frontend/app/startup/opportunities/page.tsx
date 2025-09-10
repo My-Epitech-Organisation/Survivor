@@ -404,7 +404,7 @@ export default function StartupOpportunities() {
   const filteredInvestors = getFilteredInvestors();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
+    <div className="min-h-screen bg-app-surface flex flex-col">
       <StartupNavigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1">
@@ -533,7 +533,7 @@ export default function StartupOpportunities() {
                   filteredPartners.map((p) => (
                     <div
                       key={p.id}
-                      className="border border-app-border rounded-md p-4 bg-white"
+                      className="border border-app-border rounded-md p-4 bg-app-surface"
                     >
                       <div className="flex justify-between items-start">
                         <div>
@@ -701,7 +701,7 @@ export default function StartupOpportunities() {
                   filteredInvestors.map((inv) => (
                     <div
                       key={inv.id}
-                      className="border border-app-border rounded-md p-4 bg-white"
+                      className="border border-app-border rounded-md p-4 bg-app-surface"
                     >
                       <div className="flex justify-between items-start">
                         <div>
@@ -754,7 +754,7 @@ export default function StartupOpportunities() {
                 disabled={isAnalyzing || !user?.startupId}
                 className={`px-4 py-2 rounded-lg font-bold transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
                   isAnalyzing
-                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                    ? "bg-app-border text-app-text-secondary cursor-not-allowed"
                     : "bg-jeb-primary text-app-white hover:bg-jeb-hover "
                 }`}
               >
@@ -837,7 +837,7 @@ export default function StartupOpportunities() {
                   return (
                     <div
                       key={m.investor_id}
-                      className="border border-app-border rounded-md p-6 bg-white flex justify-between items-start"
+                      className="border border-app-border rounded-md p-6 bg-app-surface flex justify-between items-start"
                     >
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
@@ -849,12 +849,12 @@ export default function StartupOpportunities() {
                               <div
                                 className={`text-4xl font-black ${
                                   m.score >= 70
-                                    ? "text-green-600"
+                                    ? "text-app-green-primary"
                                     : m.score >= 50
-                                    ? "text-blue-600"
+                                    ? "text-app-blue-primary"
                                     : m.score >= 30
-                                    ? "text-yellow-600"
-                                    : "text-red-600"
+                                    ? "text-app-orange-primary"
+                                    : "text-app-red-primary"
                                 }`}
                               >
                                 {m.score}%
@@ -870,12 +870,12 @@ export default function StartupOpportunities() {
 
                         <div className="flex flex-wrap gap-2 mb-3">
                           {m.investor_type && (
-                            <span className="px-3 py-1 bg-gradient-to-r from-app-blue-primary/10 to-app-blue-primary/20 text-app-blue-primary text-xs font-medium rounded-full border border-app-blue-primary/20">
+                            <span className="px-3 py-1 bg-app-blue-light text-app-blue-primary text-xs font-medium rounded-full border border-app-blue-primary/20">
                               {m.investor_type}
                             </span>
                           )}
                           {m.investment_focus && (
-                            <span className="px-3 py-1 bg-gradient-to-r from-app-purple-primary/10 to-app-purple-primary/20 text-app-purple-primary text-xs font-medium rounded-full border border-app-purple-primary/20">
+                            <span className="px-3 py-1 bg-app-purple-light text-app-purple-primary text-xs font-medium rounded-full border border-app-purple-primary/20">
                               {m.investment_focus}
                             </span>
                           )}
@@ -983,7 +983,7 @@ export default function StartupOpportunities() {
                   <div className="p-6">
                     <div className="space-y-6">
                       {/* Partner Details */}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      <div className="flex flex-wrap gap-4 text-sm text-app-text-secondary">
                         {selectedPartner.partnership_type && (
                           <div className="flex items-center gap-2">
                             <Building className="w-4 h-4" />
@@ -1005,12 +1005,12 @@ export default function StartupOpportunities() {
                       </div>
 
                       {/* Partner Description */}
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                      <div className="mt-6 pt-6 border-t border-app-border">
+                        <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                           Description
                         </h3>
                         <div className="prose prose-gray max-w-none">
-                          <p className="text-gray-600 mb-3 leading-relaxed">
+                          <p className="text-app-text-secondary mb-3 leading-relaxed">
                             {selectedPartner.description ||
                               "No description available."}
                           </p>
@@ -1019,7 +1019,7 @@ export default function StartupOpportunities() {
 
                       {/* Contact Section */}
                       {selectedPartner.email ? (
-                        <div className="mt-6 pt-6 border-t border-gray-200">
+                        <div className="mt-6 pt-6 border-t border-app-border">
                           <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
                             Contact
                           </h3>
@@ -1091,7 +1091,7 @@ export default function StartupOpportunities() {
                   <div className="p-6">
                     <div className="space-y-6">
                       {/* Investor Details */}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      <div className="flex flex-wrap gap-4 text-sm text-app-text-secondary">
                         {selectedInvestor.investor_type && (
                           <div className="flex items-center gap-2">
                             <DollarSign className="w-4 h-4" />
@@ -1114,11 +1114,11 @@ export default function StartupOpportunities() {
 
                       {/* Investor Description */}
                       <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                        <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                           Description
                         </h3>
                         <div className="prose prose-gray max-w-none">
-                          <p className="text-gray-600 mb-3 leading-relaxed">
+                          <p className="text-app-text-secondary mb-3 leading-relaxed">
                             {selectedInvestor.description ||
                               "No description available."}
                           </p>
@@ -1194,10 +1194,10 @@ export default function StartupOpportunities() {
                         <div
                           className={`text-xl font-bold px-2 py-1 rounded-full ${
                             selectedMatch.score >= 40
-                              ? "bg-green-500/20 text-green-100 border border-green-400/30"
+                              ? "bg-app-green-light text-app-green-primary border border-app-green-primary/20"
                               : selectedMatch.score >= 25
-                              ? "bg-yellow-500/20 text-yellow-100 border border-yellow-400/30"
-                              : "bg-gray-500/20 text-gray-100 border border-gray-400/30"
+                              ? "bg-app-orange-light text-app-orange-primary border border-app-orange-primary/20"
+                              : "bg-app-gray-light text-app-text-secondary border border-app-border"
                           }`}
                         >
                           {selectedMatch.score}%
@@ -1215,7 +1215,7 @@ export default function StartupOpportunities() {
                   <div className="p-6">
                     <div className="space-y-6">
                       {/* Match Details */}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      <div className="flex flex-wrap gap-4 text-sm text-app-text-secondary">
                         {selectedMatch.investor_type && (
                           <div className="flex items-center gap-2">
                             <DollarSign className="w-4 h-4" />
@@ -1240,19 +1240,19 @@ export default function StartupOpportunities() {
                       </div>
 
                       {/* Why this match */}
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                          <TrendingUp className="w-5 h-5 text-blue-500" />
+                      <div className="mt-6 pt-6 border-t border-app-border">
+                        <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4 flex items-center gap-2">
+                          <TrendingUp className="w-5 h-5 text-app-blue-primary" />
                           Why this match?
                         </h3>
                         <div className="space-y-3">
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <div className="bg-app-blue-light border border-app-blue-primary/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-sm font-medium text-blue-700">
+                              <span className="text-sm font-medium text-app-blue-primary">
                                 📋 Rule-based analysis:
                               </span>
                             </div>
-                            <p className="text-gray-700 leading-relaxed">
+                            <p className="text-app-text-secondary leading-relaxed">
                               {
                                 parseMatchReason(selectedMatch.reason)
                                   .ruleReason
@@ -1260,16 +1260,16 @@ export default function StartupOpportunities() {
                             </p>
                           </div>
                           {parseMatchReason(selectedMatch.reason).hasAI && (
-                            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <div className="bg-app-purple-light border border-app-purple-primary/20 rounded-lg p-4">
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="text-sm font-medium text-purple-700 flex items-center gap-1">
+                                <span className="text-sm font-medium text-app-purple-primary flex items-center gap-1">
                                   🤖 AI Analysis:
                                 </span>
-                                <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
+                                <span className="px-2 py-1 bg-app-purple-light text-app-purple-primary text-xs font-medium rounded-full">
                                   Groq Llama 3.1
                                 </span>
                               </div>
-                              <p className="text-gray-700 leading-relaxed">
+                              <p className="text-app-text-secondary leading-relaxed">
                                 {
                                   parseMatchReason(selectedMatch.reason)
                                     .aiReason
@@ -1281,18 +1281,18 @@ export default function StartupOpportunities() {
                       </div>
 
                       {/* Match Score Explanation */}
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <div className="mt-6 pt-6 border-t border-app-border">
+                        <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4 flex items-center gap-2">
                           Match Score Breakdown
                           {parseMatchReason(selectedMatch.reason).hasAI && (
-                            <span className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-700 text-xs font-medium rounded-full border border-purple-300/30">
+                            <span className="px-2 py-1 bg-app-purple-light text-app-purple-primary text-xs font-medium rounded-full border border-app-purple-primary/20">
                               🤖 AI Included
                             </span>
                           )}
                         </h3>
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600">
+                            <span className="text-sm text-app-text-secondary">
                               Overall Compatibility
                             </span>
                             <div className="flex items-center gap-2">
@@ -1300,10 +1300,10 @@ export default function StartupOpportunities() {
                                 <div
                                   className={`h-full rounded-full ${
                                     selectedMatch.score >= 40
-                                      ? "bg-green-500"
+                                      ? "bg-app-green-primary"
                                       : selectedMatch.score >= 25
-                                      ? "bg-yellow-500"
-                                      : "bg-gray-500"
+                                      ? "bg-app-orange-primary"
+                                      : "bg-app-border"
                                   }`}
                                   style={{ width: `${selectedMatch.score}%` }}
                                 ></div>
@@ -1311,17 +1311,17 @@ export default function StartupOpportunities() {
                               <span
                                 className={`text-sm font-medium ${
                                   selectedMatch.score >= 40
-                                    ? "text-green-600"
+                                    ? "text-app-green-primary"
                                     : selectedMatch.score >= 25
-                                    ? "text-yellow-600"
-                                    : "text-gray-600"
+                                    ? "text-app-orange-primary"
+                                    : "text-app-text-secondary"
                                 }`}
                               >
                                 {selectedMatch.score}%
                               </span>
                             </div>
                           </div>
-                          <div className="text-xs text-gray-500 mt-2 space-y-1">
+                          <div className="text-xs text-app-text-secondary mt-2 space-y-1">
                             <p>
                               • <strong>Sector:</strong> Direct or thematic
                               match
@@ -1349,12 +1349,12 @@ export default function StartupOpportunities() {
 
                       {/* Investor Description */}
                       {selectedMatch.description && (
-                        <div className="mt-6 pt-6 border-t border-gray-200">
-                          <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                        <div className="mt-6 pt-6 border-t border-app-border">
+                          <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                             About this Investor
                           </h3>
                           <div className="prose prose-gray max-w-none">
-                            <p className="text-gray-600 mb-3 leading-relaxed">
+                            <p className="text-app-text-secondary mb-3 leading-relaxed">
                               {selectedMatch.description}
                             </p>
                           </div>
@@ -1362,12 +1362,12 @@ export default function StartupOpportunities() {
                       )}
 
                       {/* Contact Section */}
-                      <div className="mt-6 pt-6 border-t border-gray-200">
+                      <div className="mt-6 pt-6 border-t border-app-border">
                         <div className="flex flex-col items-center gap-4">
-                          <h3 className="font-heading text-lg font-semibold text-gray-900">
+                          <h3 className="font-heading text-lg font-semibold text-app-text-primary">
                             Ready to Connect?
                           </h3>
-                          <p className="text-gray-600 text-center mb-4">
+                          <p className="text-app-text-secondary text-center mb-4">
                             This investor has been matched with your startup
                             based on compatibility analysis. Take the next step
                             towards potential investment opportunities.

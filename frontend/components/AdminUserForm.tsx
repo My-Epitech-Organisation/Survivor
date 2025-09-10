@@ -9,7 +9,7 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { SelectWithLabel } from "./ui/selectWithLabel";
 import { SelectItem, SelectLabel } from "@/components/ui/select";
-import InputAvatar from "./ui/InputAvatar";
+import { InputAvatar } from "./ui/InputAvatar";
 import { Label } from "./ui/label";
 import { Combobox } from "./ui/comboBox";
 import { Founder } from "@/types/founders";
@@ -110,9 +110,9 @@ export default function AdminUserForm({
 
       if (missingFields.length > 0) {
         toast("Save error", {
-          className: "!text-red-500",
+          className: "!text-app-purple-primary",
           description: (
-            <span className="text-red-500">
+            <span className="text-app-purple-primary">
               Please fill all required fields: {[...missingFields].join(", ")}
             </span>
           ),
@@ -147,7 +147,7 @@ export default function AdminUserForm({
     <>
       <div className="space-y-8">
         {/* User Information */}
-        <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 relative">
+        <div className="p-6 bg-app-surface rounded-xl shadow-sm border border-app-border relative">
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-4">
               <InputAvatar
@@ -160,10 +160,10 @@ export default function AdminUserForm({
                 }
               />
               <div>
-                <h2 className="font-heading text-xl font-semibold text-gray-800">
+                <h2 className="font-heading text-xl font-semibold text-app-text-primary">
                   {formData.name || "User Information"}
                 </h2>
-                <span className="text-xs text-gray-500">Profile picture</span>
+                <span className="text-xs text-app-text-secondary">Profile picture</span>
               </div>
             </div>
           </div>
@@ -201,7 +201,7 @@ export default function AdminUserForm({
                     is_active: e.target.checked,
                   }))
                 }
-                className="h-5 w-5 accent-blue-600"
+                className="h-5 w-5 accent-app-blue-primary"
               />
             </div>
             <SelectWithLabel
@@ -304,7 +304,7 @@ export default function AdminUserForm({
         <DialogClose asChild>
           <Button
             variant="outline"
-            className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-lg cursor-pointer font-bold"
+            className="w-full sm:w-auto px-6 py-2 border border-app-border text-app-text-secondary rounded-lg cursor-pointer font-bold"
           >
             Cancel
           </Button>

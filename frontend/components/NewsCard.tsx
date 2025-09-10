@@ -36,11 +36,11 @@ function getCategoryIcon(cat: string) {
 
 function getCategoryColor(cat: string) {
   const colors: Record<string, string> = {
-    award: "text-orange-600 bg-orange-50 border-orange-200",
-    launch: "text-red-600 bg-red-50 border-red-200",
-    partnership: "text-green-600 bg-green-50 border-green-200",
-    funding: "text-yellow-600 bg-yellow-50 border-yellow-200",
-    default: "text-gray-600 bg-gray-50 border-gray-200",
+    award: "text-app-orange-primary bg-app-orange-light border-app-orange-light",
+    launch: "text-app-red-primary bg-app-red-primary/10 border-app-red-primary/20",
+    partnership: "text-app-green-primary bg-app-green-light border-app-green-light",
+    funding: "text-app-yellow-primary bg-app-yellow-light border-app-yellow-light",
+    default: "text-app-text-secondary bg-app-surface-hover border-app-border-light",
   };
   return colors[cat.toLowerCase()] || colors.default;
 }
@@ -72,7 +72,7 @@ export default function NewsCard({ item }: NewsCardProps) {
     <>
       <div
         onClick={() => selectItem(item)}
-        className="group bg-white rounded-xl shadow-sm hover:shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 flex flex-col h-full"
+        className="group bg-app-surface rounded-xl shadow-sm hover:shadow-lg border border-app-border-light overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 flex flex-col h-full"
       >
         {/* Category Badge */}
         <div className="p-4 pb-0">
@@ -88,12 +88,12 @@ export default function NewsCard({ item }: NewsCardProps) {
 
         {/* Content */}
         <div className="p-4 pt-3 flex-1 flex flex-col">
-          <h3 className="font-semibold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-jeb-hover transition-colors flex-1">
+          <h3 className="font-semibold text-lg text-app-text-primary mb-3 line-clamp-2 group-hover:text-jeb-hover transition-colors flex-1">
             {item.title}
           </h3>
 
           {/* Metadata */}
-          <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
+          <div className="flex items-center justify-between text-sm text-app-text-secondary mt-auto">
             <div className="flex items-center gap-1.5">
               <MapPin className="w-4 h-4" />
               <span>{item.location}</span>
@@ -119,7 +119,7 @@ export default function NewsCard({ item }: NewsCardProps) {
         >
           <div className="flex flex-col h-full max-h-[90vh]">
             {/* Custom Close Button */}
-            <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
+            <DialogClose className="absolute top-4 right-4 z-50 rounded-full p-2 text-app-text-secondary hover:text-app-text-primary hover:bg-app-surface-hover transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-app-ring focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer backdrop-blur-sm">
               <X className="h-6 w-6" />
               <span className="sr-only">Close</span>
             </DialogClose>
@@ -161,7 +161,7 @@ export default function NewsCard({ item }: NewsCardProps) {
             {/* Content area */}
             <div className="flex-1 overflow-y-auto">
               {selectedNews?.image_url && (
-                <div className="relative h-64 sm:h-80 bg-gray-100">
+                <div className="relative h-64 sm:h-80 bg-app-surface-hover">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`${getBackendUrl()}${selectedNews.image_url}`}
@@ -174,7 +174,7 @@ export default function NewsCard({ item }: NewsCardProps) {
 
               {/* Description */}
               <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-app-text-primary mb-4 flex items-center gap-2">
                   <Newspaper className="w-5 h-5 text-jeb-primary" />
                   Article Details
                 </h3>
@@ -182,45 +182,45 @@ export default function NewsCard({ item }: NewsCardProps) {
                   <ReactMarkdown
                     components={{
                       h1: ({ children }) => (
-                        <h1 className="text-xl font-bold text-gray-900 mb-3">
+                        <h1 className="text-xl font-bold text-app-text-primary mb-3">
                           {children}
                         </h1>
                       ),
                       h2: ({ children }) => (
-                        <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                        <h2 className="text-lg font-semibold text-app-text-primary mb-2">
                           {children}
                         </h2>
                       ),
                       h3: ({ children }) => (
-                        <h3 className="text-base font-medium text-gray-700 mb-2">
+                        <h3 className="text-base font-medium text-app-text-primary mb-2">
                           {children}
                         </h3>
                       ),
                       p: ({ children }) => (
-                        <p className="text-gray-600 mb-3 leading-relaxed">
+                        <p className="text-app-text-secondary mb-3 leading-relaxed">
                           {children}
                         </p>
                       ),
                       ul: ({ children }) => (
-                        <ul className="list-disc list-inside mb-3 text-gray-600 space-y-1">
+                        <ul className="list-disc list-inside mb-3 text-app-text-secondary space-y-1">
                           {children}
                         </ul>
                       ),
                       ol: ({ children }) => (
-                        <ol className="list-decimal list-inside mb-3 text-gray-600 space-y-1">
+                        <ol className="list-decimal list-inside mb-3 text-app-text-secondary space-y-1">
                           {children}
                         </ol>
                       ),
                       strong: ({ children }) => (
-                        <strong className="font-semibold text-gray-800">
+                        <strong className="font-semibold text-app-text-primary">
                           {children}
                         </strong>
                       ),
                       em: ({ children }) => (
-                        <em className="italic text-gray-700">{children}</em>
+                        <em className="italic text-app-text-primary">{children}</em>
                       ),
                       code: ({ children }) => (
-                        <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800">
+                        <code className="bg-app-surface-hover px-1.5 py-0.5 rounded text-sm font-mono text-app-text-primary">
                           {children}
                         </code>
                       ),
@@ -234,10 +234,10 @@ export default function NewsCard({ item }: NewsCardProps) {
 
             {/* Loading state */}
             {loading && (
-              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex justify-center items-center">
+              <div className="absolute inset-0 bg-app-surface/80 backdrop-blur-sm flex justify-center items-center">
                 <div className="flex flex-col items-center gap-3">
-                  <div className="animate-spin rounded-full h-10 w-10 border-3 border-blue-600 border-t-transparent"></div>
-                  <p className="text-sm text-gray-600">
+                  <div className="animate-spin rounded-full h-10 w-10 border-3 border-jeb-primary border-t-transparent"></div>
+                  <p className="text-sm text-app-text-secondary">
                     Loading article details...
                   </p>
                 </div>

@@ -3,9 +3,10 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import api from "@/lib/api"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { getBackendUrl } from "@/lib/config"
 import { Pencil } from 'lucide-react';
+import { User } from "@/types/user"
 
 interface InputAvatar {
   url?: string
@@ -15,7 +16,44 @@ interface InputAvatar {
   onChange?: (url: string) => void
 }
 
-export default function InputAvatar(props: InputAvatar) {
+interface IDAvatarProps {
+  id : number
+  size?: number
+  className?: string
+}
+
+export function IDAvatar(props: IDAvatarProps)
+{
+  const [img, setImg] = useState<string>("");
+  const [name, setName] = useState<string>("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await api.get<{name : string, userImage : string}>({endpoint: `/users/chat_img_name/${props.id}`});
+        if (res.data && res.data.userImage) {
+          console.log("img_user:" , res.data.userImage);
+          setImg(res.data.userImage);
+        }
+        if (res.data && res.data.name) {
+          setName(res.data.name);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+    fetchUser();
+  }, [props.id]);
+
+  return (
+    <Avatar className={`h-${props.size} w-${props.size} ${props.className}`}>
+      <AvatarImage src={img ? `${getBackendUrl()}${img}` : undefined} />
+      <AvatarFallback>{name.charAt(0).toUpperCase()}</AvatarFallback>
+    </Avatar>
+  );
+}
+
+export function InputAvatar(props: InputAvatar) {
   const [img, setImgUrl] = useState<string>(props.url ?? "");
   const fileInputRef = useRef<HTMLInputElement>(null);
 

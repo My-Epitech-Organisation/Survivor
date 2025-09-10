@@ -159,14 +159,14 @@ export default function AdminProjects() {
                   </button>
                 </DialogTrigger>
                 <DialogOverlay className="fixed inset-0 bg-black/50 z-40" />
-                <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-0 w-[95%] max-w-[1200px] max-h-[85vh] shadow-lg z-50 flex flex-col">
-                  <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-lg">
+                <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-app-surface rounded-lg p-0 w-[95%] max-w-[1200px] max-h-[85vh] shadow-lg z-50 flex flex-col">
+                  <div className="flex justify-between items-center p-4 border-b border-app-border sticky top-0 bg-app-surface z-10 rounded-t-lg">
                     <DialogTitle className="font-heading text-xl font-bold">
                       Add new Project
                     </DialogTitle>
                     <DialogClose asChild ref={closeDialogRef}>
                       <button
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors focus:outline-none cursor-pointer"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-app-text-secondary hover:bg-app-surface-hover hover:text-app-text-primary transition-colors focus:outline-none cursor-pointer"
                         aria-label="Close"
                       >
                         <svg

@@ -41,35 +41,35 @@ export default function AdminNews(props: AdminNewsProps) {
   return (
     <TableRow
       key={props.news.id}
-      className="hover:bg-gray-50 transition-colors"
+      className="hover:bg-app-surface-hover transition-colors"
     >
-      <TableCell className="text-center border-r border-gray-200 align-middle text-app-text-secondary">
+      <TableCell className="text-center border-r border-app-border align-middle text-app-text-secondary">
         {props.news.id}
       </TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle font-medium text-app-text-primary">
+      <TableCell className="text-center border-l border-app-border align-middle font-medium text-app-text-primary">
         {props.news.title}
       </TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+      <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
         {props.news.category}
       </TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+      <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
         {formatDate(props.news.news_date)}
       </TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+      <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
         {props.news.location}
       </TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+      <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
         {props.news.startup_id || "None"}
       </TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle">
+      <TableCell className="text-center border-l border-app-border align-middle">
         <Dialog>
           <DialogTrigger asChild>
             <button
-              className="p-2 rounded-full hover:bg-blue-50 transition-colors w-full flex items-center justify-center cursor-pointer"
+              className="p-2 rounded-full hover:bg-app-blue-primary/10 transition-colors w-full flex items-center justify-center cursor-pointer"
               aria-label="Edit"
               title={`Edit ${props.news.title}`}
             >
-              <IoSettingsOutline className="text-xl text-gray-500" />
+              <IoSettingsOutline className="text-xl text-app-text-secondary" />
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw] max-h-[85vh] overflow-y-auto">
@@ -87,15 +87,15 @@ export default function AdminNews(props: AdminNewsProps) {
           </DialogContent>
         </Dialog>
       </TableCell>
-      <TableCell className="text-center border-l border-gray-200 align-middle">
+      <TableCell className="text-center border-l border-app-border align-middle">
         <Dialog>
           <DialogTrigger asChild>
             <button
-              className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
+              className="p-2 rounded-full hover:bg-jeb-primary/10 transition-colors w-full flex items-center justify-center cursor-pointer"
               aria-label="Delete"
               title={`Delete ${props.news.title}`}
             >
-              <FaTrashAlt className="text-xl text-red-500" />
+              <FaTrashAlt className="text-xl text-jeb-primary" />
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[400px]">
@@ -107,7 +107,7 @@ export default function AdminNews(props: AdminNewsProps) {
             <div className="py-4 text-center text-app-text-primary">
               <p>
                 Are you sure you want to{" "}
-                <span className="font-semibold text-red-600">delete</span> the
+                <span className="font-semibold text-app-purple-primary">delete</span> the
                 news{" "}
                 <span className="font-semibold">
                   &ldquo;{props.news.title}&rdquo;
@@ -124,7 +124,7 @@ export default function AdminNews(props: AdminNewsProps) {
               <Button
                 type="button"
                 variant="destructive"
-                className="min-w-[90px] cursor-pointer"
+                className="min-w-[90px] cursor-pointer bg-app-purple-primary hover:bg-app-purple-primary/80"
                 onClick={() => props.deleteCB(props.news.id, closeBtn.current)}
               >
                 Delete

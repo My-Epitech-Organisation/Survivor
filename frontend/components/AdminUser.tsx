@@ -34,8 +34,8 @@ export default function AdminUser(props: AdminUserProps) {
 
   return (
     <>
-      <TableRow key={props.id} className="hover:bg-gray-50 transition-colors">
-        <TableCell className="text-center border-r border-gray-200 align-middle text-app-text-secondary">
+      <TableRow key={props.id} className="hover:bg-app-surface-hover transition-colors">
+        <TableCell className="text-center border-r border-app-border align-middle text-app-text-secondary">
           {props.user.id}
         </TableCell>
         <TableCell className="border-none">
@@ -51,47 +51,47 @@ export default function AdminUser(props: AdminUserProps) {
             </span>
           </div>
         </TableCell>
-        <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+        <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
           {props.user.role}
         </TableCell>
-        <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+        <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
           {props.user.email}
         </TableCell>
         {props.user.founder ? (
           <>
-            <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+            <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
               {props.user.founder.FounderID}
             </TableCell>
           </>
         ) : (
           <>
-            <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+            <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
               none
             </TableCell>
           </>
         )}
         {props.user.investor ? (
           <>
-            <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+            <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
               {props.user.investor.id}
             </TableCell>
           </>
         ) : (
           <>
-            <TableCell className="text-center border-l border-gray-200 align-middle text-app-text-secondary">
+            <TableCell className="text-center border-l border-app-border align-middle text-app-text-secondary">
               none
             </TableCell>
           </>
         )}
-        <TableCell className="text-center border-l border-gray-200 align-middle">
+        <TableCell className="text-center border-l border-app-border align-middle">
           <Dialog>
             <DialogTrigger asChild>
               <button
-                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
+                className="p-2 rounded-full hover:bg-app-blue-primary/10 transition-colors w-full flex items-center justify-center cursor-pointer"
                 aria-label="Edit"
                 title={`Edit ${props.user.name}`}
               >
-                <IoSettingsOutline className="text-xl text-gray-500" />
+                <IoSettingsOutline className="text-xl text-app-text-secondary" />
               </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[400px] md:max-w-[60dvw]">
@@ -118,15 +118,15 @@ export default function AdminUser(props: AdminUserProps) {
             </DialogContent>
           </Dialog>
         </TableCell>
-        <TableCell className="text-center border-l border-gray-200 align-middle">
+        <TableCell className="text-center border-l border-app-border align-middle">
           <Dialog>
             <DialogTrigger asChild>
               <button
-                className="p-2 rounded-full hover:bg-red-50 transition-colors w-full flex items-center justify-center cursor-pointer"
+                className="p-2 rounded-full hover:bg-jeb-primary/10 transition-colors w-full flex items-center justify-center cursor-pointer"
                 aria-label="Delete"
                 title={`Delete ${props.user.name}`}
               >
-                <FaTrashAlt className="text-xl text-red-500" />
+                <FaTrashAlt className="text-xl text-jeb-primary" />
               </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[400px]">
@@ -138,7 +138,7 @@ export default function AdminUser(props: AdminUserProps) {
               <div className="py-4 text-center text-app-text-primary">
                 <p>
                   Are you sure you want to{" "}
-                  <span className="font-semibold text-red-600">delete</span>{" "}
+                  <span className="font-semibold text-app-purple-primary">delete</span>{" "}
                   user <span className="font-semibold">{props.user.name}</span>{" "}
                   ?
                 </p>

@@ -174,16 +174,12 @@ const Calendar: React.FC<CalendarProps> = ({ events, onEventClick }) => {
                 <div
                   key={`day-${index}`}
                   className={`p-1 sm:p-2 h-16 sm:h-20 lg:h-24 border border-app-border-light rounded transition-colors hover:bg-app-surface-hover ${
-                    isTodayDay
-                      ? "bg-app-blue-light border-app-blue-primary"
-                      : "bg-app-surface"
+                    isTodayDay ? "bg-jeb-light/50" : "bg-app-surface"
                   }`}
                 >
                   <div
                     className={`font-medium text-xs sm:text-sm mb-1 ${
-                      isTodayDay
-                        ? "text-app-blue-primary"
-                        : "text-app-text-primary"
+                      isTodayDay ? "text-jeb-primary" : "text-app-text-primary"
                     }`}
                   >
                     {day}

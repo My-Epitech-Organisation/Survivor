@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FaEdit, FaEye, FaThumbsUp, FaShare, FaUsers } from "react-icons/fa";
+import { FaEdit, FaEye, FaThumbsUp, FaThumbsDown, FaShare } from "react-icons/fa";
 import { FounderResponse } from "@/types/founders";
 import { ProjectDetails, ProjectProfileFormData } from "@/types/project";
 import { Founder } from "@/types/founders";
@@ -61,13 +61,12 @@ export default function StartupProfile() {
   const [isFounder, setIsFounder] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { user, isLoading } = useAuth();
-
-  const visibilityStats = {
-    profileViews: 0,
+  const [profileViews, setProfileViews] = useState<number | null>(null);
+  const [engagementStats, setEngagementStats] = useState({
     likes: 0,
+    dislikes: 0,
     shares: 0,
-    followers: 0,
-  };
+  });
 
   const getFormValue = (value: string | null): string => value || "";
 
@@ -138,6 +137,46 @@ export default function StartupProfile() {
           if (data) {
             setFormData(data);
             setOriginalFormData(data);
+
+            if (data.id) {
+              authenticatedFetch(`/kpi/project-views/${data.id}`)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Failed to fetch project views");
+                  }
+                  return response.json();
+                })
+                .then((viewsData) => {
+                  setProfileViews(viewsData.total_views);
+                })
+                .catch((err) => {
+                  console.error("Error fetching project views: ", err);
+                  setProfileViews(0);
+                });
+
+              authenticatedFetch(`/projects/${data.id}/engagement-count/`)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Failed to fetch engagement stats");
+                  }
+                  return response.json();
+                })
+                .then((engagementData) => {
+                  setEngagementStats({
+                    likes: engagementData.total_likes,
+                    dislikes: engagementData.total_dislikes,
+                    shares: engagementData.total_shares,
+                  });
+                })
+                .catch((err) => {
+                  console.error("Error fetching engagement stats: ", err);
+                  setEngagementStats({
+                    likes: 0,
+                    dislikes: 0,
+                    shares: 0,
+                  });
+                });
+            }
           }
         });
       });
@@ -199,7 +238,7 @@ export default function StartupProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
+    <div className="min-h-screen bg-app-surface flex flex-col">
       <StartupNavigation />
 
       <main className="px-4 sm:px-6 lg:px-8 py-12 flex-1 transition-all">
@@ -234,39 +273,39 @@ export default function StartupProfile() {
             <Card>
               <CardHeader>
                 <CardTitle className="font-heading text-2xl text-app-text-primary flex items-center gap-2">
-                  <FaEye className="text-blue-500" />
+                  <FaEye className="text-app-blue-primary" />
                   Visibility Statistics
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <FaEye className="text-3xl text-blue-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-blue-600">
-                      {visibilityStats.profileViews.toLocaleString()}
+                    <div className="text-center p-4 bg-app-purple-light rounded-lg">
+                    <FaEye className="text-3xl text-app-blue-primary mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-app-blue-primary">
+                      {(profileViews || 0).toLocaleString()}
                     </div>
-                    <div className="text-sm text-gray-600">Profile Views</div>
+                    <div className="text-sm text-app-text-secondary">Profile Views</div>
+                    </div>
+                  <div className="text-center p-4 bg-app-purple-light rounded-lg">
+                    <FaShare className="text-3xl text-app-purple-primary mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-app-purple-primary">
+                      {engagementStats.shares}
+                    </div>
+                    <div className="text-sm text-app-text-secondary">Shares</div>
                   </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <FaThumbsUp className="text-3xl text-green-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-green-600">
-                      {visibilityStats.likes}
+                  <div className="text-center p-4 bg-app-purple-light rounded-lg">
+                    <FaThumbsUp className="text-3xl text-app-green-primary mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-app-green-primary">
+                      {engagementStats.likes}
                     </div>
-                    <div className="text-sm text-gray-600">Likes</div>
+                    <div className="text-sm text-app-text-secondary">Likes</div>
                   </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
-                    <FaShare className="text-3xl text-purple-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-purple-600">
-                      {visibilityStats.shares}
+                  <div className="text-center p-4 bg-app-purple-light rounded-lg">
+                    <FaThumbsDown className="text-3xl text-app-red-primary mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-app-red-primary">
+                      {engagementStats.dislikes}
                     </div>
-                    <div className="text-sm text-gray-600">Shares</div>
-                  </div>
-                  <div className="text-center p-4 bg-orange-50 rounded-lg">
-                    <FaUsers className="text-3xl text-orange-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-orange-600">
-                      {visibilityStats.followers}
-                    </div>
-                    <div className="text-sm text-gray-600">Followers</div>
+                    <div className="text-sm text-app-text-secondary">Dislikes</div>
                   </div>
                 </div>
               </CardContent>
@@ -423,7 +462,7 @@ export default function StartupProfile() {
                   </Label>
                   <textarea
                     id="description"
-                    className="w-full min-h-[120px] p-3 border border-gray-300 rounded-md resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full min-h-[120px] p-3 border border-app-border rounded-md resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                     value={getFormValue(formData.description)}
                     onChange={(e) =>
                       handleInputChange("description", e.target.value)

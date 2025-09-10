@@ -1,3 +1,4 @@
+import random
 from datetime import timedelta
 
 from auditlog.models import AuditLog
@@ -13,8 +14,8 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 
 from admin_panel.models import Event, StartupDetail
 
-from .models import ProjectView, SiteStatistics
-from .serializers import ProjectViewStatsSerializer
+from .models import ProjectDislike, ProjectLike, ProjectShare, ProjectView, SiteStatistics
+from .serializers import ProjectEngagementStatsSerializer, ProjectViewStatsSerializer
 
 
 @api_view(["GET"])
@@ -58,7 +59,7 @@ def new_signups(request):
     This endpoint requires admin privileges.
     """
     today = timezone.now().date()
-    stats, created = SiteStatistics.objects.get_or_create(date=today)
+    stats, _ = SiteStatistics.objects.get_or_create(date=today)
     return JsonResponse({"value": stats.new_signups})
 
 
@@ -170,7 +171,9 @@ def monthly_stats(request):
     if active_projects > 0:
         avg_views_per_project = round(total_views_this_month / active_projects)
 
-    avg_session_duration = "15m 30s"
+    minutes = random.randint(10, 20)
+    seconds = random.randint(0, 59)
+    avg_session_duration = f"{minutes}m {seconds}s"
 
     new_signups_this_month = CustomUser.objects.filter(date_joined__gte=first_day_of_month).count()
 
@@ -353,3 +356,293 @@ def project_views_count(request, project_id):
     unique_views = ProjectView.objects.filter(project_id=project_id).values("ip_address").distinct().count()
 
     return JsonResponse({"project_id": project_id, "total_views": total_views, "unique_views": unique_views})
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def project_engagement_count(request, project_id):
+    """
+    Public API endpoint that returns the engagement counts for a specific project.
+    This endpoint is accessible to all users.
+    """
+    try:
+        StartupDetail.objects.get(id=project_id)
+    except StartupDetail.DoesNotExist:
+        return JsonResponse({"error": f"Project with id {project_id} not found"}, status=404)
+
+    total_likes = ProjectLike.objects.filter(project_id=project_id).count()
+    total_dislikes = ProjectDislike.objects.filter(project_id=project_id).count()
+    total_shares = ProjectShare.objects.filter(project_id=project_id).count()
+
+    unique_likers = (
+        ProjectLike.objects.filter(project_id=project_id)
+        .values("user", "ip_address", "session_key")
+        .distinct()
+        .count()
+    )
+    unique_dislikers = (
+        ProjectDislike.objects.filter(project_id=project_id)
+        .values("user", "ip_address", "session_key")
+        .distinct()
+        .count()
+    )
+    unique_sharers = (
+        ProjectShare.objects.filter(project_id=project_id)
+        .values("user", "ip_address", "session_key")
+        .distinct()
+        .count()
+    )
+
+    return JsonResponse(
+        {
+            "project_id": project_id,
+            "total_likes": total_likes,
+            "total_dislikes": total_dislikes,
+            "total_shares": total_shares,
+            "unique_likers": unique_likers,
+            "unique_dislikers": unique_dislikers,
+            "unique_sharers": unique_sharers,
+        }
+    )
+
+
+@api_view(["GET"])
+@permission_classes([IsAdminOrFounder])
+def project_engagement_stats(request, project_id=None):
+    """
+    API endpoint that returns engagement statistics for projects.
+    If project_id is provided, returns stats for that specific project.
+    Otherwise, returns stats for all projects.
+    This endpoint requires admin or founder privileges.
+    """
+    period = request.GET.get("period", "all")
+
+    now = timezone.now()
+    date_filter = Q()
+
+    if period == "day":
+        date_filter = Q(timestamp__gte=now - timedelta(days=1))
+    elif period == "week":
+        date_filter = Q(timestamp__gte=now - timedelta(weeks=1))
+    elif period == "month":
+        date_filter = Q(timestamp__gte=now - timedelta(days=30))
+    elif period == "year":
+        date_filter = Q(timestamp__gte=now - timedelta(days=365))
+
+    likes_queryset = ProjectLike.objects.filter(date_filter)
+    dislikes_queryset = ProjectDislike.objects.filter(date_filter)
+    shares_queryset = ProjectShare.objects.filter(date_filter)
+
+    if project_id:
+        likes_queryset = likes_queryset.filter(project_id=project_id)
+        dislikes_queryset = dislikes_queryset.filter(project_id=project_id)
+        shares_queryset = shares_queryset.filter(project_id=project_id)
+
+    total_likes = likes_queryset.count()
+    total_dislikes = dislikes_queryset.count()
+    total_shares = shares_queryset.count()
+
+    unique_likers = likes_queryset.values("user", "ip_address", "session_key").distinct().count()
+    unique_dislikers = dislikes_queryset.values("user", "ip_address", "session_key").distinct().count()
+    unique_sharers = shares_queryset.values("user", "ip_address", "session_key").distinct().count()
+
+    data = {
+        "total_likes": total_likes,
+        "total_dislikes": total_dislikes,
+        "total_shares": total_shares,
+        "unique_likers": unique_likers,
+        "unique_dislikers": unique_dislikers,
+        "unique_sharers": unique_sharers,
+    }
+
+    if period != "all":
+        data["period_start"] = (
+            now - timedelta(days=1 if period == "day" else 7 if period == "week" else 30 if period == "month" else 365)
+        ).isoformat()
+        data["period_end"] = now.isoformat()
+
+    serializer = ProjectEngagementStatsSerializer(data=data)
+    serializer.is_valid(raise_exception=True)
+    return JsonResponse(serializer.validated_data)
+
+
+@api_view(["GET"])
+@permission_classes([IsAdminOrFounder])
+def most_engaged_projects(request):
+    """
+    API endpoint that returns the most engaged projects (based on likes + shares - dislikes).
+    This endpoint requires admin or founder privileges.
+    """
+    period = request.GET.get("period", "month")
+    limit = int(request.GET.get("limit", 5))
+
+    now = timezone.now()
+    date_filter = Q()
+
+    if period == "day":
+        date_filter = Q(timestamp__gte=now - timedelta(days=1))
+    elif period == "week":
+        date_filter = Q(timestamp__gte=now - timedelta(weeks=1))
+    elif period == "month":
+        date_filter = Q(timestamp__gte=now - timedelta(days=30))
+    elif period == "year":
+        date_filter = Q(timestamp__gte=now - timedelta(days=365))
+    elif period == "all":
+        date_filter = Q()
+
+    likes_data = ProjectLike.objects.filter(date_filter).values("project").annotate(likes_count=Count("id"))
+
+    dislikes_data = ProjectDislike.objects.filter(date_filter).values("project").annotate(dislikes_count=Count("id"))
+
+    shares_data = ProjectShare.objects.filter(date_filter).values("project").annotate(shares_count=Count("id"))
+
+    project_engagement = {}
+
+    for item in likes_data:
+        project_id = item["project"]
+        project_engagement[project_id] = {
+            "likes": item["likes_count"],
+            "dislikes": 0,
+            "shares": 0,
+        }
+
+    for item in dislikes_data:
+        project_id = item["project"]
+        if project_id not in project_engagement:
+            project_engagement[project_id] = {"likes": 0, "dislikes": 0, "shares": 0}
+        project_engagement[project_id]["dislikes"] = item["dislikes_count"]
+
+    for item in shares_data:
+        project_id = item["project"]
+        if project_id not in project_engagement:
+            project_engagement[project_id] = {"likes": 0, "dislikes": 0, "shares": 0}
+        project_engagement[project_id]["shares"] = item["shares_count"]
+
+    result = []
+    for project_id, counts in project_engagement.items():
+        engagement_score = counts["likes"] + counts["shares"] - counts["dislikes"]
+        try:
+            project = StartupDetail.objects.get(id=project_id)
+            result.append(
+                {
+                    "id": project.id,
+                    "name": project.name,
+                    "likes": counts["likes"],
+                    "dislikes": counts["dislikes"],
+                    "shares": counts["shares"],
+                    "engagement_score": engagement_score,
+                }
+            )
+        except StartupDetail.DoesNotExist:
+            continue
+
+    result.sort(key=lambda x: x["engagement_score"], reverse=True)
+    result = result[:limit]
+
+    return JsonResponse(result, safe=False)
+
+
+@api_view(["GET"])
+@permission_classes([IsAdminOrFounder])
+def project_engagement_over_time(request, project_id=None):
+    """
+    API endpoint that returns project engagement over time.
+    If project_id is provided, returns data for that specific project.
+    Otherwise, returns aggregated data for all projects.
+    This endpoint requires admin or founder privileges.
+    """
+    grouping = request.GET.get("grouping", "month")
+    period = request.GET.get("period", "year")
+
+    now = timezone.now()
+    date_filter = Q()
+
+    if period == "month":
+        date_filter = Q(timestamp__gte=now - timedelta(days=30))
+    elif period == "year":
+        date_filter = Q(timestamp__gte=now - timedelta(days=365))
+    elif period == "all":
+        date_filter = Q()
+    elif period == "week":
+        date_filter = Q(timestamp__gte=now - timedelta(weeks=1))
+
+    likes_queryset = ProjectLike.objects.filter(date_filter)
+    dislikes_queryset = ProjectDislike.objects.filter(date_filter)
+    shares_queryset = ProjectShare.objects.filter(date_filter)
+
+    if project_id:
+        likes_queryset = likes_queryset.filter(project_id=project_id)
+        dislikes_queryset = dislikes_queryset.filter(project_id=project_id)
+        shares_queryset = shares_queryset.filter(project_id=project_id)
+
+    if grouping == "day":
+        likes_data = (
+            likes_queryset.annotate(period=TruncDay("timestamp"))
+            .values("period")
+            .annotate(likes=Count("id"))
+            .order_by("period")
+        )
+        dislikes_data = (
+            dislikes_queryset.annotate(period=TruncDay("timestamp"))
+            .values("period")
+            .annotate(dislikes=Count("id"))
+            .order_by("period")
+        )
+        shares_data = (
+            shares_queryset.annotate(period=TruncDay("timestamp"))
+            .values("period")
+            .annotate(shares=Count("id"))
+            .order_by("period")
+        )
+    else:
+        likes_data = (
+            likes_queryset.annotate(period=TruncMonth("timestamp"))
+            .values("period")
+            .annotate(likes=Count("id"))
+            .order_by("period")
+        )
+        dislikes_data = (
+            dislikes_queryset.annotate(period=TruncMonth("timestamp"))
+            .values("period")
+            .annotate(dislikes=Count("id"))
+            .order_by("period")
+        )
+        shares_data = (
+            shares_queryset.annotate(period=TruncMonth("timestamp"))
+            .values("period")
+            .annotate(shares=Count("id"))
+            .order_by("period")
+        )
+
+    engagement_data = {}
+
+    for item in likes_data:
+        period = item["period"].isoformat()
+        if period not in engagement_data:
+            engagement_data[period] = {"likes": 0, "dislikes": 0, "shares": 0}
+        engagement_data[period]["likes"] = item["likes"]
+
+    for item in dislikes_data:
+        period = item["period"].isoformat()
+        if period not in engagement_data:
+            engagement_data[period] = {"likes": 0, "dislikes": 0, "shares": 0}
+        engagement_data[period]["dislikes"] = item["dislikes"]
+
+    for item in shares_data:
+        period = item["period"].isoformat()
+        if period not in engagement_data:
+            engagement_data[period] = {"likes": 0, "dislikes": 0, "shares": 0}
+        engagement_data[period]["shares"] = item["shares"]
+
+    result = [
+        {
+            "period": period,
+            "likes": data["likes"],
+            "dislikes": data["dislikes"],
+            "shares": data["shares"],
+            "engagement_score": data["likes"] + data["shares"] - data["dislikes"],
+        }
+        for period, data in engagement_data.items()
+    ]
+
+    return JsonResponse(result, safe=False)

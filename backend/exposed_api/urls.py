@@ -6,8 +6,12 @@ from .founder_views import FounderDetailView
 from .investor_views import InvestorDetailView
 from .kpi_views import (
     monthly_stats,
+    most_engaged_projects,
     most_viewed_projects,
     new_signups,
+    project_engagement_count,
+    project_engagement_over_time,
+    project_engagement_stats,
     project_view_stats,
     project_views_count,
     project_views_over_time,
@@ -22,7 +26,7 @@ from .news_views import NewsDetailView, NewsListView
 from .opportunity_views import AIAnalysisView, OpportunitiesMatchesView
 from .partner_views import PartnerDetailView
 from .search_views import AdvancedSearchView
-from .user_views import AdminUserView
+from .user_views import AdminUserView, FounderUsersView, InvestorUsersView
 
 app_name = "exposed_api"
 
@@ -58,9 +62,12 @@ urlpatterns = [
     # User endpoints
     path("user/", user_views.get_current_user, name="current_user"),
     path("user/<int:user_id>/", user_views.user_detail, name="user_detail"),
+    path("users/chat_img_name/<int:user_id>/", user_views.user_chat_img_name, name="user_chat_img_name"),
     # Admin user management
     path("users/", AdminUserView.as_view(), name="admin_user_list"),
     path("users/<int:user_id>/", AdminUserView.as_view(), name="admin_user_detail"),
+    path("users/investors/", InvestorUsersView.as_view(), name="users_investors_list"),
+    path("users/founders/", FounderUsersView.as_view(), name="users_founders_list"),
     # Other endpoints
     path("projectViews/<int:user_id>/", views.project_views, name="project_views"),
     path("projectEngagement/<int:user_id>/", views.project_engagement, name="project_engagement"),
@@ -84,4 +91,20 @@ urlpatterns = [
         name="kpi_project_views_over_time_detail",
     ),
     path("projects/<int:project_id>/view-count/", project_views_count, name="project_views_count"),
+    # Project engagement endpoints
+    path("projects/<int:project_id>/like/", views.project_like, name="project_like"),
+    path("projects/<int:project_id>/dislike/", views.project_dislike, name="project_dislike"),
+    path("projects/<int:project_id>/share/", views.project_share, name="project_share"),
+    path("projectEngagement/<int:user_id>/", views.project_engagement_stats, name="project_engagement_stats"),
+    # KPI Project Engagement endpoints
+    path("kpi/project-engagement/", project_engagement_stats, name="kpi_project_engagement"),
+    path("kpi/project-engagement/<int:project_id>/", project_engagement_stats, name="kpi_project_engagement_detail"),
+    path("kpi/most-engaged-projects/", most_engaged_projects, name="kpi_most_engaged_projects"),
+    path("kpi/project-engagement-over-time/", project_engagement_over_time, name="kpi_project_engagement_over_time"),
+    path(
+        "kpi/project-engagement-over-time/<int:project_id>/",
+        project_engagement_over_time,
+        name="kpi_project_engagement_over_time_detail",
+    ),
+    path("projects/<int:project_id>/engagement-count/", project_engagement_count, name="project_engagement_count"),
 ]

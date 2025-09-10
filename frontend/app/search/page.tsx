@@ -256,7 +256,7 @@ export default function SearchPage() {
                       <button
                         onClick={handlePreviousPage}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:cursor-pointer"
+                        className="flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:cursor-pointer"
                       >
                         <ArrowLeft className="w-4 h-4" />
                       </button>
@@ -266,7 +266,7 @@ export default function SearchPage() {
                       <button
                         onClick={handleNextPage}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:cursor-pointer"
+                        className="flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:cursor-pointer"
                       >
                         <ArrowRight className="w-4 h-4" />
                       </button>
@@ -298,7 +298,7 @@ export default function SearchPage() {
                         {getTypeIcon(item.type)}
                         {getTypeLabel(item.type)}
                       </span>
-                      <button className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors cursor-pointer">
+                      <button className="flex items-center gap-1 text-xs bg-jeb-primary text-app-white hover:bg-jeb-hover px-2 py-1 rounded transition-colors cursor-pointer">
                         <Eye className="w-3 h-3" />
                         View Details
                       </button>
@@ -322,7 +322,7 @@ export default function SearchPage() {
                       <button
                         onClick={handlePreviousPage}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:cursor-pointer"
+                        className="flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:cursor-pointer"
                       >
                         <ArrowLeft className="w-4 h-4" />
                       </button>
@@ -336,7 +336,7 @@ export default function SearchPage() {
                       <button
                         onClick={handleNextPage}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:cursor-pointer"
+                        className="flex items-center gap-2 px-4 py-2 bg-jeb-primary text-app-white rounded-lg hover:bg-jeb-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:cursor-pointer"
                       >
                         <ArrowRight className="w-4 h-4" />
                       </button>
@@ -396,7 +396,7 @@ export default function SearchPage() {
                     {selectedItem.type === "event" && isEvent(itemDetails) && (
                       <div className="space-y-6">
                         {/* Event Details */}
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                        <div className="flex flex-wrap gap-4 text-sm text-app-text-secondary">
                           <div className="flex items-center gap-2">
                             <Calendar1 className="w-4 h-4" />
                             <span>
@@ -414,50 +414,50 @@ export default function SearchPage() {
                         </div>
 
                         {/* Event Description */}
-                        <div className="mt-6 pt-6 border-t border-gray-200">
-                          <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                        <div className="mt-6 pt-6 border-t border-app-border">
+                          <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                             Description
                           </h3>
                           <div className="prose prose-gray max-w-none">
                             <ReactMarkdown
                               components={{
                                 h1: ({ children }) => (
-                                  <h1 className="text-xl font-bold text-gray-900 mb-3">
+                                  <h1 className="text-xl font-bold text-app-text-primary mb-3">
                                     {children}
                                   </h1>
                                 ),
                                 h2: ({ children }) => (
-                                  <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                                  <h2 className="text-lg font-semibold text-app-text-primary mb-2">
                                     {children}
                                   </h2>
                                 ),
                                 h3: ({ children }) => (
-                                  <h3 className="text-base font-medium text-gray-700 mb-2">
+                                  <h3 className="text-base font-medium text-app-text-primary mb-2">
                                     {children}
                                   </h3>
                                 ),
                                 p: ({ children }) => (
-                                  <p className="text-gray-600 mb-3 leading-relaxed">
+                                  <p className="text-app-text-secondary mb-3 leading-relaxed">
                                     {children}
                                   </p>
                                 ),
                                 ul: ({ children }) => (
-                                  <ul className="list-disc list-inside mb-3 text-gray-600 space-y-1">
+                                  <ul className="list-disc list-inside mb-3 text-app-text-secondary space-y-1">
                                     {children}
                                   </ul>
                                 ),
                                 ol: ({ children }) => (
-                                  <ol className="list-decimal list-inside mb-3 text-gray-600 space-y-1">
+                                  <ol className="list-decimal list-inside mb-3 text-app-text-secondary space-y-1">
                                     {children}
                                   </ol>
                                 ),
                                 strong: ({ children }) => (
-                                  <strong className="font-semibold text-gray-800">
+                                  <strong className="font-semibold text-app-text-primary">
                                     {children}
                                   </strong>
                                 ),
                                 em: ({ children }) => (
-                                  <em className="italic text-gray-700">
+                                  <em className="italic text-app-text-secondary">
                                     {children}
                                   </em>
                                 ),
@@ -475,7 +475,7 @@ export default function SearchPage() {
                       isNewsItem(itemDetails) && (
                         <div className="space-y-6">
                           {/* News Metadata */}
-                          <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                          <div className="flex flex-wrap gap-4 text-sm text-app-text-secondary">
                             <div className="flex items-center gap-2">
                               <MapPin className="w-4 h-4" />
                               <span>{itemDetails.location}</span>
@@ -497,55 +497,55 @@ export default function SearchPage() {
                           </div>
 
                           {/* News Description */}
-                          <div className="mt-6 pt-6 border-t border-gray-200">
-                            <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                          <div className="mt-6 pt-6 border-t border-app-border">
+                            <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                               Article Content
                             </h3>
                             <div className="prose prose-gray max-w-none">
                               <ReactMarkdown
                                 components={{
                                   h1: ({ children }) => (
-                                    <h1 className="text-xl font-bold text-gray-900 mb-3">
+                                    <h1 className="text-xl font-bold text-app-text-primary mb-3">
                                       {children}
                                     </h1>
                                   ),
                                   h2: ({ children }) => (
-                                    <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                                    <h2 className="text-lg font-semibold text-app-text-primary mb-2">
                                       {children}
                                     </h2>
                                   ),
                                   h3: ({ children }) => (
-                                    <h3 className="text-base font-medium text-gray-700 mb-2">
+                                    <h3 className="text-base font-medium text-app-text-primary mb-2">
                                       {children}
                                     </h3>
                                   ),
                                   p: ({ children }) => (
-                                    <p className="text-gray-600 mb-3 leading-relaxed">
+                                    <p className="text-app-text-secondary mb-3 leading-relaxed">
                                       {children}
                                     </p>
                                   ),
                                   ul: ({ children }) => (
-                                    <ul className="list-disc list-inside mb-3 text-gray-600 space-y-1">
+                                    <ul className="list-disc list-inside mb-3 text-app-text-secondary space-y-1">
                                       {children}
                                     </ul>
                                   ),
                                   ol: ({ children }) => (
-                                    <ol className="list-decimal list-inside mb-3 text-gray-600 space-y-1">
+                                    <ol className="list-decimal list-inside mb-3 text-app-text-secondary space-y-1">
                                       {children}
                                     </ol>
                                   ),
                                   strong: ({ children }) => (
-                                    <strong className="font-semibold text-gray-800">
+                                    <strong className="font-semibold text-app-text-primary">
                                       {children}
                                     </strong>
                                   ),
                                   em: ({ children }) => (
-                                    <em className="italic text-gray-700">
+                                    <em className="italic text-app-text-secondary">
                                       {children}
                                     </em>
                                   ),
                                   code: ({ children }) => (
-                                    <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800">
+                                    <code className="bg-app-surface-hover px-1.5 py-0.5 rounded text-sm font-mono text-app-text-primary">
                                       {children}
                                     </code>
                                   ),
@@ -565,19 +565,19 @@ export default function SearchPage() {
                           {/* Project Status Badges */}
                           <div className="flex flex-wrap gap-3">
                             {itemDetails.sector && (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700 border border-blue-200">
+                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-app-blue-primary/10 text-app-blue-primary border border-app-blue-primary/20">
                                 <Building className="w-4 h-4" />
                                 {itemDetails.sector}
                               </span>
                             )}
                             {itemDetails.project_status && (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 border border-green-200">
+                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-app-green-primary/10 text-app-green-primary border border-app-green-primary/20">
                                 <CheckCircle className="w-4 h-4" />
                                 {itemDetails.project_status}
                               </span>
                             )}
                             {itemDetails.maturity && (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700 border border-purple-200">
+                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-app-purple-primary/10 text-app-purple-primary border border-app-purple-primary/20">
                                 <TrendingUp className="w-4 h-4" />
                                 {itemDetails.maturity}
                               </span>
@@ -589,20 +589,20 @@ export default function SearchPage() {
                             <div className="space-y-4">
                               {itemDetails.address && (
                                 <div>
-                                  <h3 className="font-heading text-sm font-semibold text-gray-700 mb-1">
+                                  <h3 className="font-heading text-sm font-semibold text-app-text-primary mb-1">
                                     Address
                                   </h3>
-                                  <p className="text-gray-900">
+                                  <p className="text-app-text-primary">
                                     {itemDetails.address}
                                   </p>
                                 </div>
                               )}
                               {itemDetails.name && (
                                 <div>
-                                  <h3 className="font-heading text-sm font-semibold text-gray-700 mb-1">
+                                  <h3 className="font-heading text-sm font-semibold text-app-text-primary mb-1">
                                     Project Name
                                   </h3>
-                                  <p className="text-gray-900">
+                                  <p className="text-app-text-primary">
                                     {itemDetails.name}
                                   </p>
                                 </div>
@@ -618,7 +618,7 @@ export default function SearchPage() {
                                     href={itemDetails.website_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-blue-600 hover:text-blue-800 transition-colors"
+                                    className="text-app-blue-primary hover:text-app-blue-primary/80 transition-colors"
                                   >
                                     {itemDetails.website_url}
                                   </a>
@@ -629,50 +629,50 @@ export default function SearchPage() {
 
                           {/* Project Description */}
                           {itemDetails.description && (
-                            <div className="mt-6 pt-6 border-t border-gray-200">
-                              <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4">
+                            <div className="mt-6 pt-6 border-t border-app-border">
+                              <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4">
                                 Description
                               </h3>
                               <div className="prose prose-gray max-w-none">
                                 <ReactMarkdown
                                   components={{
                                     h1: ({ children }) => (
-                                      <h1 className="text-xl font-bold text-gray-900 mb-3">
+                                      <h1 className="text-xl font-bold text-app-text-primary mb-3">
                                         {children}
                                       </h1>
                                     ),
                                     h2: ({ children }) => (
-                                      <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                                      <h2 className="text-lg font-semibold text-app-text-primary mb-2">
                                         {children}
                                       </h2>
                                     ),
                                     h3: ({ children }) => (
-                                      <h3 className="text-base font-medium text-gray-700 mb-2">
+                                      <h3 className="text-base font-medium text-app-text-primary mb-2">
                                         {children}
                                       </h3>
                                     ),
                                     p: ({ children }) => (
-                                      <p className="text-gray-600 mb-3 leading-relaxed">
+                                      <p className="text-app-text-secondary mb-3 leading-relaxed">
                                         {children}
                                       </p>
                                     ),
                                     ul: ({ children }) => (
-                                      <ul className="list-disc list-inside mb-3 text-gray-600 space-y-1">
+                                      <ul className="list-disc list-inside mb-3 text-app-text-secondary space-y-1">
                                         {children}
                                       </ul>
                                     ),
                                     ol: ({ children }) => (
-                                      <ol className="list-decimal list-inside mb-3 text-gray-600 space-y-1">
+                                      <ol className="list-decimal list-inside mb-3 text-app-text-secondary space-y-1">
                                         {children}
                                       </ol>
                                     ),
                                     strong: ({ children }) => (
-                                      <strong className="font-semibold text-gray-800">
+                                      <strong className="font-semibold text-app-text-primary">
                                         {children}
                                       </strong>
                                     ),
                                     em: ({ children }) => (
-                                      <em className="italic text-gray-700">
+                                      <em className="italic text-app-text-secondary">
                                         {children}
                                       </em>
                                     ),
@@ -687,9 +687,9 @@ export default function SearchPage() {
                           {/* Project Team */}
                           {itemDetails.founders &&
                             itemDetails.founders.length > 0 && (
-                              <div className="mt-6 pt-6 border-t border-gray-200">
-                                <h3 className="font-heading text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                  <Users className="w-5 h-5 text-blue-500" />
+                              <div className="mt-6 pt-6 border-t border-app-border">
+                                <h3 className="font-heading text-lg font-semibold text-app-text-primary mb-4 flex items-center gap-2">
+                                  <Users className="w-5 h-5 text-app-blue-primary" />
                                   Team Members
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -700,17 +700,17 @@ export default function SearchPage() {
                                     ) => (
                                       <div
                                         key={index}
-                                        className="bg-gray-50 rounded-lg p-4 border"
+                                        className="bg-app-surface-hover rounded-lg p-4 border border-app-border"
                                       >
                                         <div className="flex items-center gap-3">
-                                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                            <Users className="w-6 h-6 text-blue-600" />
+                                          <div className="w-12 h-12 bg-app-blue-primary/10 rounded-full flex items-center justify-center">
+                                            <Users className="w-6 h-6 text-app-blue-primary" />
                                           </div>
                                           <div>
-                                            <p className="font-medium text-gray-900">
+                                            <p className="font-medium text-app-text-primary">
                                               {founder.name}
                                             </p>
-                                            <p className="text-sm text-gray-600">
+                                            <p className="text-sm text-app-text-secondary">
                                               Team Member
                                             </p>
                                           </div>
@@ -726,7 +726,7 @@ export default function SearchPage() {
                   </div>
                 ) : (
                   <div className="flex justify-center items-center py-12">
-                    <p className="text-gray-600">
+                    <p className="text-app-text-secondary">
                       Failed to load details. Please try again.
                     </p>
                   </div>
