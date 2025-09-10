@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authenticatedFetch } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { getBackendUrl } from "@/lib/config";
 import { useEffect, useState } from "react";
 import { TbLoader3 } from "react-icons/tb";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,8 @@ export default function StartupDashboard() {
   const [isExporting, setIsExporting] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [projectViews, setProjectViews] = useState<number | null>(0);
+
+  const backendUrl = getBackendUrl();
 
   useEffect(() => {
     setIsDataLoading(true);
@@ -219,9 +222,9 @@ export default function StartupDashboard() {
                   <Card className="mb-8 col-span-full md:col-span-4 h-full">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-4">
-                        <Avatar className="h-20 w-20">
+                        <Avatar className="h-20 w-20 border-4 border-jeb-primary shadow-lg">
                           <AvatarImage
-                            src={userProfile?.pictureURL}
+                            src={userProfile?.pictureURL ? backendUrl + userProfile.pictureURL : undefined}
                             alt={userProfile?.name || ""}
                           />
                           <AvatarFallback className="text-2xl">
@@ -375,7 +378,7 @@ export default function StartupDashboard() {
                             >
                               <Avatar className="h-12 w-12">
                                 <AvatarImage
-                                  src={founder.FounderPictureURL}
+                                  src={backendUrl + founder.FounderPictureURL}
                                   alt={founder.FounderName}
                                 />
                                 <AvatarFallback>
@@ -397,17 +400,22 @@ export default function StartupDashboard() {
                   </Card>
 
                   {/* Views */}
-                  <Card className="col-span-8 sm:col-span-4 md:col-span-2">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-3">
-                        <div className="p-3 bg-app-blue-light rounded-lg">
-                          <Eye className="h-6 w-6 text-app-blue-primary" />
+                  <Card className="col-span-8 sm:col-span-4 md:col-span-2 relative overflow-hidden group border-0 bg-gradient-to-br from-jeb-five via-jeb-six to-jeb-seven">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0"></div>
+                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-jeb-eight/30 to-jeb-nine/30 rounded-full blur-2xl"></div>
+                    <CardContent className="p-2 flex items-center justify-center relative z-10">
+                      <div className="text-center space-y-5">
+                        <div className="relative inline-flex items-center justify-center">
+                          <div className="absolute inset-0 bg-gradient-to-r from-jeb-eight to-jeb-nine rounded-full blur-lg opacity-75"></div>
+                          <div className="relative p-4 bg-gradient-to-br from-jeb-eight to-jeb-nine rounded-full shadow-lg">
+                            <Eye className="h-10 w-10 text-white drop-shadow-sm" />
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-app-text-secondary">
-                            Project views
+                        <div className="space-y-0.5">
+                          <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">
+                            Project Views
                           </p>
-                          <p className="text-lg font-bold text-app-text-primary">
+                          <p className="text-3xl font-bold text-white drop-shadow-sm">
                             {projectViews || 0}
                           </p>
                         </div>
