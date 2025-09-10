@@ -66,6 +66,7 @@ export default function NewThreadChat(props: NewThreadChatProps) {
             onClick={() => {
               setSelectedInvestors([]);
             }}
+            className="cursor-pointer"
           >
             <Plus className="w-4 h-4" />
           </Button>
@@ -80,7 +81,7 @@ export default function NewThreadChat(props: NewThreadChatProps) {
           <Label htmlFor="investor-list">Select {props.variante === "founders" ? "founder" : "inventor"}(s)</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button id="investor-list" variant="outline">
+              <Button id="investor-list" variant="outline" className="cursor-pointer">
                 {!selectedInvestors || selectedInvestors.length === 0
                   ? `Select ${props.variante === "founders" ? "founder(s)" : "inventor(s)"}`
                   : selectedInvestors.length === 1
@@ -104,6 +105,7 @@ export default function NewThreadChat(props: NewThreadChatProps) {
                           : prev.filter((id) => id !== user.id)
                       );
                     }}
+                    className="cursor-pointer"
                   >
                     {user.name}
                   </DropdownMenuCheckboxItem>
@@ -121,7 +123,7 @@ export default function NewThreadChat(props: NewThreadChatProps) {
               Cancel
             </Button>
             <Button
-              className="bg-blue-600 hover:bg-blue-700 cursor-pointer flex-1"
+              className="bg-jeb-primary hover:bg-jeb-hover cursor-pointer flex-1"
               onClick={() => {
                 const selectedInvestorObjects = usersList?.filter(
                   (inv) => selectedInvestors.includes(inv.id)
