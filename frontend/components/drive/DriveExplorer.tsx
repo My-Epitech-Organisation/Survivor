@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { DriveFile, DriveFolder } from "@/types/drive";
 import { useDrive } from "@/contexts/DriveContext";
 import { downloadFile } from "@/lib/downloadUtils";
-import { isTextFile, isImageFile } from "@/lib/fileUtils";
+import { isTextFile, isImageFile, isVideoFile } from "@/lib/fileUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,7 @@ import {
   Eye,
   Edit,
   Image,
+  Video,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -173,7 +174,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
 
   // Preview and Edit handlers
   const handleFilePreview = (file: DriveFile) => {
-    if (isTextFile(file) || isImageFile(file)) {
+    if (isTextFile(file) || isImageFile(file) || isVideoFile(file)) {
       setPreviewFile(file);
     } else {
       handleFileDownload(file);
@@ -211,6 +212,11 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
     // Check if it's an image file first
     if (isImageFile(file)) {
       return <Image className="h-5 w-5 text-purple-500" />;
+    }
+
+    // Check if it's a video file
+    if (isVideoFile(file)) {
+      return <Video className="h-5 w-5 text-blue-500" />;
     }
 
     const extension = file.name.split(".").pop()?.toLowerCase();
@@ -518,6 +524,14 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                             </>
                           )}
                           {isImageFile(file) && (
+                            <DropdownMenuItem
+                              onClick={() => handleFilePreview(file)}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Preview
+                            </DropdownMenuItem>
+                          )}
+                          {isVideoFile(file) && (
                             <DropdownMenuItem
                               onClick={() => handleFilePreview(file)}
                             >

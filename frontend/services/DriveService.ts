@@ -296,6 +296,42 @@ export const DriveService = {
     }
   },
 
+  // Video file preview method
+  previewVideoFile: async (fileId: number): Promise<{
+    videoUrl: string;
+    fileType: string;
+    width?: number;
+    height?: number;
+    duration?: number;
+  }> => {
+    try {
+      const response = await api.get<{
+        video_url: string;
+        file_type: string;
+        width?: number;
+        height?: number;
+        duration?: number;
+      }>({
+        endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
+      });
+      
+      if (response.data && response.data.video_url) {
+        return {
+          videoUrl: response.data.video_url,
+          fileType: response.data.file_type,
+          width: response.data.width,
+          height: response.data.height,
+          duration: response.data.duration
+        };
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error previewing video file:', error);
+      throw error;
+    }
+  },
+
   updateTextFileContent: async (fileId: number, content: string): Promise<void> => {
     try {
       await api.put(`${DRIVE_API.FILES}${fileId}/update_content/`, {

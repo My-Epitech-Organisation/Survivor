@@ -21,3 +21,11 @@ class ImageFilePreviewSerializer(serializers.Serializer):
     file_type = serializers.CharField()
     width = serializers.IntegerField(required=False, allow_null=True)
     height = serializers.IntegerField(required=False, allow_null=True)
+
+class VideoFilePreviewSerializer(serializers.Serializer):
+    """Serializer for video file preview"""
+    video_url = serializers.URLField()
+    file_type = serializers.CharField()
+    width = serializers.IntegerField(required=False, allow_null=True)
+    height = serializers.IntegerField(required=False, allow_null=True)
+    duration = serializers.FloatField(required=False, allow_null=True)

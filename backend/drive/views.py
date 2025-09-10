@@ -31,8 +31,8 @@ from .serializers import (
     DriveShareSerializer,
     FileUploadSerializer,
 )
-from .preview_serializers import TextFileContentSerializer, TextFileUpdateSerializer, ImageFilePreviewSerializer
-from .utils import is_text_file, is_image_file
+from .preview_serializers import TextFileContentSerializer, TextFileUpdateSerializer, ImageFilePreviewSerializer, VideoFilePreviewSerializer
+from .utils import is_text_file, is_image_file, is_video_file
 
 
 class StartupDrivePermission(permissions.BasePermission):
@@ -523,6 +523,27 @@ class DriveFileViewSet(viewsets.ModelViewSet):
             }
             
             serializer = ImageFilePreviewSerializer(data)
+            return Response(serializer.data)
+        
+        # Check if it's a video file
+        elif is_video_file(file_obj.name, file_obj.file_type):
+            # For videos, we return the URL to the file
+            request_host = request.get_host()
+            protocol = 'https' if request.is_secure() else 'http'
+            
+            # Construct the absolute URL to the file
+            file_url = f"{protocol}://{request_host}{file_obj.file.url}"
+            
+            # Create response with video info
+            data = {
+                "video_url": file_url,
+                "file_type": file_obj.file_type,
+                "width": None,
+                "height": None,
+                "duration": None
+            }
+            
+            serializer = VideoFilePreviewSerializer(data)
             return Response(serializer.data)
         
         # Not a supported file type

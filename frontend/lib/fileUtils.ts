@@ -66,3 +66,32 @@ export const isImageFile = (file: DriveFile): boolean => {
   
   return extension ? imageExtensions.includes(extension) : false;
 };
+
+/**
+ * Determines if a file is a video file that can be previewed
+ * 
+ * @param file The drive file to check
+ * @returns true if the file is a video file, false otherwise
+ */
+export const isVideoFile = (file: DriveFile): boolean => {
+  // List of MIME types for video files
+  const videoFileTypes = [
+    'video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo',
+    'video/x-matroska', 'video/3gpp', 'video/x-flv', 'video/mpeg'
+  ];
+  
+  // Check if the file type is in our list
+  if (videoFileTypes.includes(file.file_type)) {
+    return true;
+  }
+  
+  // List of extensions for video files
+  const videoExtensions = [
+    'mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', '3gp', 'flv', 'mpeg', 'mpg', 'm4v'
+  ];
+  
+  // Check file extension
+  const extension = file.name.split('.').pop()?.toLowerCase();
+  
+  return extension ? videoExtensions.includes(extension) : false;
+};

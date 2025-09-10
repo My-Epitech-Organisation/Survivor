@@ -66,3 +66,33 @@ def is_image_file(file_name, file_type):
     # Check file extension
     extension = file_name.split('.')[-1].lower() if '.' in file_name else ''
     return extension in image_extensions
+
+def is_video_file(file_name, file_type):
+    """
+    Determine if a file is a video file based on its MIME type and extension.
+    
+    Args:
+        file_name (str): The name of the file
+        file_type (str): The MIME type of the file
+        
+    Returns:
+        bool: True if the file is a video file, False otherwise
+    """
+    # List of MIME types for video files
+    video_mime_types = [
+        'video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo',
+        'video/x-matroska', 'video/3gpp', 'video/x-flv', 'video/mpeg'
+    ]
+    
+    # Check MIME type first
+    if file_type in video_mime_types:
+        return True
+    
+    # List of extensions for video files
+    video_extensions = [
+        'mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', '3gp', 'flv', 'mpeg', 'mpg', 'm4v'
+    ]
+    
+    # Check file extension
+    extension = file_name.split('.')[-1].lower() if '.' in file_name else ''
+    return extension in video_extensions
