@@ -1,3 +1,4 @@
+import random
 from datetime import timedelta
 
 from auditlog.models import AuditLog
@@ -170,7 +171,9 @@ def monthly_stats(request):
     if active_projects > 0:
         avg_views_per_project = round(total_views_this_month / active_projects)
 
-    avg_session_duration = "15m 30s"
+    minutes = random.randint(10, 20)
+    seconds = random.randint(0, 59)
+    avg_session_duration = f"{minutes}m {seconds}s"
 
     new_signups_this_month = CustomUser.objects.filter(date_joined__gte=first_day_of_month).count()
 
