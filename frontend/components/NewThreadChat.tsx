@@ -62,7 +62,7 @@ export default function NewThreadChat(props: NewThreadChatProps) {
           <Button
             size="sm"
             variant="outline"
-            aria-label="Nouvelle conversation"
+            aria-label="New conversation"
             onClick={() => {
               setSelectedInvestors([]);
             }}
@@ -72,10 +72,9 @@ export default function NewThreadChat(props: NewThreadChatProps) {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nouvelle conversation</DialogTitle>
+            <DialogTitle>New conversation</DialogTitle>
             <DialogDescription>
-              Démarrez une nouvelle conversation en sélectionnant un
-              utilisateur.
+              Start a new conversation by selecting a user.
             </DialogDescription>
           </DialogHeader>
           <Label htmlFor="investor-list">Select {props.variante === "founders" ? "founder" : "inventor"}(s)</Label>
