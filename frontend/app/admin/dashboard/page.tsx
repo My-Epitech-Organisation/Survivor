@@ -145,24 +145,24 @@ export default function AdminDashboard() {
   const getActionColor = (type: string) => {
     switch (type) {
       case "user":
-        return "bg-green-100 text-green-800";
+        return "bg-app-green-primary/10 text-app-green-primary";
       case "project":
-        return "bg-blue-100 text-blue-800";
+        return "bg-app-blue-primary/10 text-app-blue-primary";
       case "event":
-        return "bg-purple-100 text-purple-800";
+        return "bg-app-purple-primary/10 text-app-purple-primary";
       case "news":
-        return "bg-amber-100 text-amber-800";
+        return "bg-app-orange-primary/10 text-app-orange-primary";
       // Keep these for backward compatibility
       case "signup":
-        return "bg-green-100 text-green-800";
+        return "bg-app-green-primary/10 text-app-green-primary";
       case "update":
-        return "bg-blue-100 text-blue-800";
+        return "bg-app-blue-primary/10 text-app-blue-primary";
       case "launch":
-        return "bg-orange-100 text-orange-800";
+        return "bg-app-orange-primary/10 text-app-orange-primary";
       case "verification":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-app-yellow-primary/10 text-app-yellow-primary";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-app-surface-hover text-app-text-secondary";
     }
   };
 
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
           {/* Error message */}
           {error && (
             <div
-              className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6"
+              className="bg-app-red-primary/10 border-l-4 border-app-red-primary text-app-red-primary p-4 mb-6"
               role="alert"
             >
               <p>{error}</p>
@@ -335,10 +335,10 @@ export default function AdminDashboard() {
                           {getActionIcon(action.type)}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-sm font-medium text-app-text-primary">
                             {action.action}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-app-text-secondary">
                             by {action.user}
                           </p>
                         </div>
@@ -350,7 +350,7 @@ export default function AdminDashboard() {
                   ))
                 ) : (
                   <div className="text-center py-6">
-                    <p className="text-gray-500">No recent actions found</p>
+                    <p className="text-app-text-secondary">No recent actions found</p>
                   </div>
                 )}
               </div>
@@ -365,31 +365,31 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Projects Launched</span>
+                <span className="text-sm text-app-text-secondary">Projects Launched</span>
                 <span className="text-lg font-semibold">
                   {monthlyStats.projectsLaunched}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Events Created</span>
+                <span className="text-sm text-app-text-secondary">Events Created</span>
                 <span className="text-lg font-semibold">
                   {monthlyStats.eventsCreated}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Active Sessions</span>
+                <span className="text-sm text-app-text-secondary">Active Sessions</span>
                 <span className="text-lg font-semibold">
                   {monthlyStats.activeSessions}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Total Views</span>
+                <span className="text-sm text-app-text-secondary">Total Views</span>
                 <span className="text-lg font-semibold">
                   {monthlyStats.totalViews}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-app-text-secondary">
                   Avg. Views Per Project
                 </span>
                 <span className="text-lg font-semibold">
@@ -397,7 +397,7 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-app-text-secondary">
                   Avg. Session Duration
                 </span>
                 <span className="text-lg font-semibold">
