@@ -80,25 +80,27 @@ export default function StartupDashboard() {
               projectData.data[0].ProjectId
             ) {
               try {
-          const projectViewsResponse = await authenticatedFetch(
-            `/kpi/project-views/${projectData.data[0].ProjectId}`
-          );
+                const projectViewsResponse = await authenticatedFetch(
+                  `/kpi/project-views/${projectData.data[0].ProjectId}`
+                );
 
-          if (!projectViewsResponse.ok) {
-            throw new Error("Failed to fetch project views");
-          }
+                if (!projectViewsResponse.ok) {
+                  throw new Error("Failed to fetch project views");
+                }
 
-          const projectViewsData = await projectViewsResponse.json();
-          setProjectViews(projectViewsData.total_views);
+                const projectViewsData = await projectViewsResponse.json();
+                setProjectViews(projectViewsData.total_views);
               } catch (err) {
-          console.error("Error fetching project views: ", err);
+                console.error("Error fetching project views: ", err);
               }
             }
           } catch (error) {
             console.error("Error fetching projects:", error);
           }
         } else {
-          console.warn("User is null or has no founderId, skipping project fetch");
+          console.warn(
+            "User is null or has no founderId, skipping project fetch"
+          );
         }
       } catch (error) {
         console.error("Error in data fetch sequence:", error);
@@ -223,7 +225,11 @@ export default function StartupDashboard() {
                       <CardTitle className="flex items-center gap-4">
                         <Avatar className="h-20 w-20 border-4 border-jeb-primary shadow-lg">
                           <AvatarImage
-                            src={userProfile?.pictureURL ? backendUrl + userProfile.pictureURL : undefined}
+                            src={
+                              userProfile?.pictureURL
+                                ? backendUrl + userProfile.pictureURL
+                                : undefined
+                            }
                             alt={userProfile?.name || ""}
                           />
                           <AvatarFallback className="text-2xl">
@@ -397,24 +403,20 @@ export default function StartupDashboard() {
                       </div>
                     </CardContent>
                   </Card>
-
                   {/* Views */}
-                  <Card className="col-span-8 sm:col-span-4 md:col-span-2 relative overflow-hidden group border-0 bg-gradient-to-br from-jeb-five via-jeb-six to-jeb-seven">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0"></div>
-                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-jeb-eight/30 to-jeb-nine/30 rounded-full blur-2xl"></div>
-                    <CardContent className="p-2 flex items-center justify-center relative z-10">
+                  <Card className="col-span-8 sm:col-span-4 md:col-span-2 relative overflow-hidden group">
+                    <CardContent className="p-6 flex items-center justify-center relative z-10">
                       <div className="text-center space-y-5">
                         <div className="relative inline-flex items-center justify-center">
-                          <div className="absolute inset-0 bg-gradient-to-r from-jeb-eight to-jeb-nine rounded-full blur-lg opacity-75"></div>
                           <div className="relative p-4 bg-gradient-to-br from-jeb-eight to-jeb-nine rounded-full shadow-lg">
                             <Eye className="h-10 w-10 text-white drop-shadow-sm" />
                           </div>
                         </div>
                         <div className="space-y-0.5">
-                          <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">
+                          <p className="text-xs font-semibold text-app-text-secondary uppercase tracking-wider">
                             Project Views
                           </p>
-                          <p className="text-3xl font-bold text-white drop-shadow-sm">
+                          <p className="text-3xl font-bold text-app-text-primary drop-shadow-sm">
                             {projectViews || 0}
                           </p>
                         </div>

@@ -238,7 +238,7 @@ export default function StartupProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
+    <div className="min-h-screen bg-app-surface flex flex-col">
       <StartupNavigation />
 
       <main className="px-4 sm:px-6 lg:px-8 py-12 flex-1 transition-all">
@@ -273,39 +273,39 @@ export default function StartupProfile() {
             <Card>
               <CardHeader>
                 <CardTitle className="font-heading text-2xl text-app-text-primary flex items-center gap-2">
-                  <FaEye className="text-blue-500" />
+                  <FaEye className="text-app-blue-primary" />
                   Visibility Statistics
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <FaEye className="text-3xl text-blue-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className="text-center p-4 bg-app-purple-light rounded-lg">
+                    <FaEye className="text-3xl text-app-blue-primary mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-app-blue-primary">
                       {(profileViews || 0).toLocaleString()}
                     </div>
-                    <div className="text-sm text-gray-600">Profile Views</div>
-                  </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
-                    <FaShare className="text-3xl text-purple-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-sm text-app-text-secondary">Profile Views</div>
+                    </div>
+                  <div className="text-center p-4 bg-app-purple-light rounded-lg">
+                    <FaShare className="text-3xl text-app-purple-primary mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-app-purple-primary">
                       {engagementStats.shares}
                     </div>
-                    <div className="text-sm text-gray-600">Shares</div>
+                    <div className="text-sm text-app-text-secondary">Shares</div>
                   </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <FaThumbsUp className="text-3xl text-green-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-green-600">
+                  <div className="text-center p-4 bg-app-purple-light rounded-lg">
+                    <FaThumbsUp className="text-3xl text-app-green-primary mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-app-green-primary">
                       {engagementStats.likes}
                     </div>
-                    <div className="text-sm text-gray-600">Likes</div>
+                    <div className="text-sm text-app-text-secondary">Likes</div>
                   </div>
-                  <div className="text-center p-4 bg-red-50 rounded-lg">
-                    <FaThumbsDown className="text-3xl text-red-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-red-600">
+                  <div className="text-center p-4 bg-app-purple-light rounded-lg">
+                    <FaThumbsDown className="text-3xl text-app-red-primary mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-app-red-primary">
                       {engagementStats.dislikes}
                     </div>
-                    <div className="text-sm text-gray-600">Dislikes</div>
+                    <div className="text-sm text-app-text-secondary">Dislikes</div>
                   </div>
                 </div>
               </CardContent>
@@ -462,7 +462,7 @@ export default function StartupProfile() {
                   </Label>
                   <textarea
                     id="description"
-                    className="w-full min-h-[120px] p-3 border border-gray-300 rounded-md resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full min-h-[120px] p-3 border border-app-border rounded-md resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                     value={getFormValue(formData.description)}
                     onChange={(e) =>
                       handleInputChange("description", e.target.value)
