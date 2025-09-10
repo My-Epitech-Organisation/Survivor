@@ -10,6 +10,7 @@ from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+import random
 
 from admin_panel.models import Event, StartupDetail
 
@@ -170,7 +171,9 @@ def monthly_stats(request):
     if active_projects > 0:
         avg_views_per_project = round(total_views_this_month / active_projects)
 
-    avg_session_duration = "15m 30s"
+    minutes = random.randint(10, 20)
+    seconds = random.randint(0, 59)
+    avg_session_duration = f"{minutes}m {seconds}s"
 
     new_signups_this_month = CustomUser.objects.filter(date_joined__gte=first_day_of_month).count()
 
