@@ -53,23 +53,22 @@ export default function StartupDashboard() {
       if (!isLoading && !user) {
         setIsDataLoading(false);
       }
-      return;
     }
 
     const fetchDataSequentially = async () => {
       try {
         const userProfileData: UserProfile = {
-          name: user.name,
-          pictureURL: user.userImage || "",
-          founderId: user.founderId || 0,
+          name: user ? user.name : "",
+          pictureURL: user?.userImage || "",
+          founderId: user?.founderId || 0,
           nbStartups: 0,
-          email: user.email,
-          investorId: user.startupId || 0,
-          id: user.id,
+          email: user?.email || "",
+          investorId: user?.startupId || 0,
+          id: user?.id || 0,
         };
         setUserProfile(userProfileData);
 
-        if (user.founderId) {
+        if (user && user.founderId) {
           try {
             const projectData = await api.get<ProjectDetailsProps[] | null>({
               endpoint: `/projects/founder/${user.founderId}`,
@@ -81,25 +80,25 @@ export default function StartupDashboard() {
               projectData.data[0].ProjectId
             ) {
               try {
-                const projectViewsResponse = await authenticatedFetch(
-                  `/kpi/project-views/${projectData.data[0].ProjectId}`
-                );
+          const projectViewsResponse = await authenticatedFetch(
+            `/kpi/project-views/${projectData.data[0].ProjectId}`
+          );
 
-                if (!projectViewsResponse.ok) {
-                  throw new Error("Failed to fetch project views");
-                }
+          if (!projectViewsResponse.ok) {
+            throw new Error("Failed to fetch project views");
+          }
 
-                const projectViewsData = await projectViewsResponse.json();
-                setProjectViews(projectViewsData.total_views);
+          const projectViewsData = await projectViewsResponse.json();
+          setProjectViews(projectViewsData.total_views);
               } catch (err) {
-                console.error("Error fetching project views: ", err);
+          console.error("Error fetching project views: ", err);
               }
             }
           } catch (error) {
             console.error("Error fetching projects:", error);
           }
         } else {
-          console.warn("User has no founderId, skipping project fetch");
+          console.warn("User is null or has no founderId, skipping project fetch");
         }
       } catch (error) {
         console.error("Error in data fetch sequence:", error);

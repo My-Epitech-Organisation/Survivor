@@ -62,13 +62,11 @@ export default function StartupProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const { user, isLoading } = useAuth();
   const [profileViews, setProfileViews] = useState<number | null>(null);
-
-  const visibilityStats = {
-    profileViews: 0,
+  const [engagementStats, setEngagementStats] = useState({
     likes: 0,
     dislikes: 0,
     shares: 0,
-  };
+  });
 
   const getFormValue = (value: string | null): string => value || "";
 
@@ -154,6 +152,29 @@ export default function StartupProfile() {
                 .catch((err) => {
                   console.error("Error fetching project views: ", err);
                   setProfileViews(0);
+                });
+
+              authenticatedFetch(`/projects/${data.id}/engagement-count/`)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Failed to fetch engagement stats");
+                  }
+                  return response.json();
+                })
+                .then((engagementData) => {
+                  setEngagementStats({
+                    likes: engagementData.total_likes,
+                    dislikes: engagementData.total_dislikes,
+                    shares: engagementData.total_shares,
+                  });
+                })
+                .catch((err) => {
+                  console.error("Error fetching engagement stats: ", err);
+                  setEngagementStats({
+                    likes: 0,
+                    dislikes: 0,
+                    shares: 0,
+                  });
                 });
             }
           }
@@ -268,21 +289,21 @@ export default function StartupProfile() {
                   <div className="text-center p-4 bg-purple-50 rounded-lg">
                     <FaShare className="text-3xl text-purple-500 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-purple-600">
-                      {visibilityStats.shares}
+                      {engagementStats.shares}
                     </div>
                     <div className="text-sm text-gray-600">Shares</div>
                   </div>
                   <div className="text-center p-4 bg-green-50 rounded-lg">
                     <FaThumbsUp className="text-3xl text-green-500 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-green-600">
-                      {visibilityStats.likes}
+                      {engagementStats.likes}
                     </div>
                     <div className="text-sm text-gray-600">Likes</div>
                   </div>
                   <div className="text-center p-4 bg-red-50 rounded-lg">
                     <FaThumbsDown className="text-3xl text-red-500 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-red-600">
-                      {visibilityStats.dislikes}
+                      {engagementStats.dislikes}
                     </div>
                     <div className="text-sm text-gray-600">Dislikes</div>
                   </div>
