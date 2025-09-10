@@ -49,6 +49,36 @@ class CurrentUserSerializer(serializers.ModelSerializer):
         return None
 
 
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating user profile (name, email, userImage only)
+    """
+    userImage = serializers.CharField(source="image", required=False, allow_blank=True, allow_null=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ["name", "email", "userImage"]
+
+    def validate_userImage(self, value):
+        if value in [None, ""]:
+            return None
+        prefix = "/api/media/"
+        if isinstance(value, str) and value.startswith(prefix):
+            return value[len(prefix) :]
+        return value
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        image_path = rep.get("userImage")
+        if image_path:
+            if image_path.startswith("/"):
+                image_path = image_path[1:]
+            rep["userImage"] = f"{settings.MEDIA_URL.rstrip('/')}/{image_path}"
+        else:
+            rep["userImage"] = None
+        return rep
+
+
 class AdminUserSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
@@ -132,14 +162,24 @@ class AdminUserSerializer(serializers.ModelSerializer):
         return None
 
 
-@api_view(["GET"])
+@api_view(["GET", "PUT"])
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
     """
     Get currently authenticated user details in the required format
+    Or update current user's profile (name, email, userImage only)
     """
-    serializer = CurrentUserSerializer(request.user)
-    return Response(serializer.data)
+    if request.method == "GET":
+        serializer = CurrentUserSerializer(request.user)
+        return Response(serializer.data)
+    elif request.method == "PUT":
+        serializer = UserProfileUpdateSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            # Return updated user data
+            updated_serializer = CurrentUserSerializer(request.user)
+            return Response(updated_serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])

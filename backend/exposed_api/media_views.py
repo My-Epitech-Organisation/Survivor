@@ -9,11 +9,12 @@ from django.core.files.base import ContentFile
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 
 @api_view(["POST"])
-@permission_classes([IsAdmin])
+@permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser, JSONParser])
 def upload_image(request):
     """
@@ -36,7 +37,7 @@ def upload_image(request):
         "url": "/media/images/filename.jpg"
     }
 
-    Only accessible by admin users.
+    Accessible by all authenticated users.
     """
     try:
         upload_dir = os.path.join(settings.MEDIA_ROOT, "images")
