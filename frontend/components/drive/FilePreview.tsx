@@ -47,8 +47,8 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium">{file.name}</h3>
-        <div className="flex space-x-2">
+        <h3 className="text-lg font-medium text-ellipsis overflow-hidden">{file.name}</h3>
+        <div className="flex space-x-2 shrink-0">
           <Button 
             variant="outline" 
             size="sm" 
@@ -76,9 +76,13 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
           {error}
         </div>
       ) : (
-        <pre className="bg-muted p-4 rounded-md overflow-auto max-h-[60vh] text-sm">
-          {content}
-        </pre>
+        <div className="bg-muted rounded-md overflow-hidden">
+          <div className="overflow-x-auto">
+            <pre className="p-4 min-w-fit max-h-[60vh] text-sm whitespace-pre">
+              {content}
+            </pre>
+          </div>
+        </div>
       )}
     </div>
   );

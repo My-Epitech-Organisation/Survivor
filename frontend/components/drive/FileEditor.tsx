@@ -93,11 +93,14 @@ export function FileEditor({ file, onClose, onSave, onPreviewRequest }: FileEdit
           {error}
         </div>
       ) : (
-        <Textarea
-          className="min-h-[60vh] font-mono text-sm w-full"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
+        <div className="relative w-full">
+          <Textarea
+            className="min-h-[60vh] font-mono text-sm w-full resize-y"
+            value={content}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
+            style={{ maxWidth: '100%', overflowX: 'auto' }}
+          />
+        </div>
       )}
     </div>
   );

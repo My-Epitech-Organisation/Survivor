@@ -265,7 +265,10 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 onOpenChange={setUploadDialogOpen}
               >
                 <DialogTrigger asChild>
-                  <Button size="sm">
+                  <Button 
+                    size="sm" 
+                    className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
+                  >
                     <UploadCloud className="h-4 w-4 mr-2" />
                     Upload
                   </Button>
@@ -550,7 +553,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
           {/* File Preview Dialog */}
           {previewFile && (
             <Dialog open={!!previewFile} onOpenChange={() => setPreviewFile(null)}>
-              <DialogContent className="max-w-4xl">
+              <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full">
                 <DialogHeader>
                   <DialogTitle>Preview File</DialogTitle>
                 </DialogHeader>
@@ -566,7 +569,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
           {/* File Editor Dialog */}
           {editFile && (
             <Dialog open={!!editFile} onOpenChange={() => setEditFile(null)}>
-              <DialogContent className="max-w-4xl">
+              <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full">
                 <DialogHeader>
                   <DialogTitle>Edit File</DialogTitle>
                 </DialogHeader>
