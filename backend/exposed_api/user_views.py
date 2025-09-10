@@ -255,3 +255,16 @@ class InvestorUsersView(APIView):
         users = CustomUser.objects.filter(investor_id__isnull=False)
         serializer = InvestorUserSerializer(users, many=True)
         return Response(serializer.data)
+
+
+class FounderUsersView(APIView):
+    """
+    Returns all users that are linked to a founder (founder_id is not null).
+    """
+
+    permission_classes = [IsNotRegularUser]
+
+    def get(self, request):
+        users = CustomUser.objects.filter(founder_id__isnull=False)
+        serializer = InvestorUserSerializer(users, many=True)
+        return Response(serializer.data)

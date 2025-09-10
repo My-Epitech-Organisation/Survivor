@@ -23,6 +23,7 @@ from .partner_views import PartnerDetailView
 from .search_views import AdvancedSearchView
 from .user_views import AdminUserView
 from .user_views import InvestorUsersView
+from .user_views import FounderUsersView
 
 app_name = "exposed_api"
 
@@ -58,6 +59,7 @@ urlpatterns = [
     path("users/", AdminUserView.as_view(), name="admin_user_list"),
     path("users/<int:user_id>/", AdminUserView.as_view(), name="admin_user_detail"),
     path("users/investors/", InvestorUsersView.as_view(), name="users_investors_list"),
+    path("users/founders/", FounderUsersView.as_view(), name="users_founders_list"),
     # Other endpoints
     path("projectViews/<int:user_id>/", views.project_views, name="project_views"),
     path("projectEngagement/<int:user_id>/", views.project_engagement, name="project_engagement"),
