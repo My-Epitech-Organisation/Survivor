@@ -50,24 +50,26 @@ export default function StartupDashboard() {
       if (!isLoading && !user) {
         setIsDataLoading(false);
       }
+      return;
     }
 
     const fetchDataSequentially = async () => {
       try {
-        const userProfileResponse = await authenticatedFetch(
-          user && user.id ? `/user/${user.id}` : "/user/0"
-        );
-        if (!userProfileResponse.ok) {
-          throw new Error("Failed to fetch user profile");
-        }
-
-        const userProfileData: UserProfile = await userProfileResponse.json();
+        const userProfileData: UserProfile = {
+          name: user.name,
+          pictureURL: user.userImage || "",
+          founderId: user.founderId || 0,
+          nbStartups: 0,
+          email: user.email,
+          investorId: user.startupId || 0,
+          id: user.id
+        };
         setUserProfile(userProfileData);
 
-        if (userProfileData.founderId) {
+        if (user.founderId) {
           try {
             const projectData = await api.get<ProjectDetailsProps[] | null>(
-              {endpoint:`/projects/founder/${userProfileData.founderId}`}
+              {endpoint:`/projects/founder/${user.founderId}`}
             );
             setProject(projectData.data);
             if (
