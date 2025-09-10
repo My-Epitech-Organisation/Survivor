@@ -35,12 +35,10 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
   const setupSocket = useCallback(() => {
     if (!conv || !user) return;
 
-    // Disconnect existing socket
     if (socketRef.current) {
       socketRef.current.disconnect();
     }
 
-    // Create new socket connection
     const backendUrl = getBackendUrl().replace('/api', '');
     const socket = io(backendUrl, {
       transports: ['websocket', 'polling'],
@@ -51,8 +49,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
 
     socket.on('connect', () => {
       console.log('🔗 Socket.IO connected:', socket.id);
-      
-      // Join the thread
+
       socket.emit('join_thread', {
         token: getToken(),
         thread_id: conv.id
@@ -87,7 +84,6 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
 
     socket.on('typing', (data) => {
       console.log('⌨️ Typing event:', data);
-      // Handle typing indicators here if needed
     });
 
     socket.on('error', (error) => {
@@ -135,7 +131,6 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
     }
   }, [conv]);
 
-  // Separate useEffect for Socket.IO setup - only when conv changes
   useEffect(() => {
     console.log("CONV changed: ",conv);
     if (conv && (!("created" in conv) || conv.created)) {
@@ -144,7 +139,6 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
     }
   }, [conv, setupSocket]);
 
-  // Cleanup socket on component unmount
   useEffect(() => {
     return () => {
       if (socketRef.current) {
@@ -174,7 +168,6 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
     }
   }, [messages]);
 
-  // Trigger message refresh when conv or token changes
   useEffect(() => {
     if (conv) {
       refreshThreadMessages();
@@ -217,7 +210,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
       ...(prev ?? []),
       message,
     ]);
-    // Send the new message to other ! using le truc d'Eliott a la manière d'une socket
+
     if (conv?.created == false) {
       const participantIds = conv.participants.map(p => p.id);
       const result = await api.post<NewThread>("/threads/", { "participants": participantIds, "message": message.content });
@@ -234,8 +227,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
           last_message: result.data.thread.last_message,
           unread_count: result.data.thread.unread_count
         });
-        
-        // After creating new thread, emit the message via Socket.IO
+
         if (socketRef.current) {
           socketRef.current.emit('send_message', {
             token: getToken(),
@@ -248,8 +240,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
       try {
         console.log("Je vais envoyer a l'id", conv.id);
         const resp = await api.post<MessageReceive>(`/threads/${conv.id}/messages/`, {body: message.content});
-        
-        // Also send via Socket.IO for real-time
+
         if (socketRef.current) {
           socketRef.current.emit('send_message', {
             token: getToken(),

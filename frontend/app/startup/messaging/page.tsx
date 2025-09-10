@@ -55,7 +55,7 @@ export default function StartupMessaging() {
                       variante="investors"
                       ref={sideBarRef} 
                       onSelect={(conv) => {
-                        console.log('Selected conversation:', conv); // Debug
+                        console.debug('Selected conversation:', conv);
                         setActiveThread(conv);
                       }} 
                     />
@@ -66,7 +66,7 @@ export default function StartupMessaging() {
                     <ChatComponent
                       ref={chatRef}
                       onNewConv={(thread) => {
-                        console.log('New conversation:', thread); // Debug
+                        console.debug('New conversation:', thread);
                         setActiveThread(thread);
                         sideBarRef.current?.refreshThreads();
                       }}
@@ -88,7 +88,7 @@ export default function StartupMessaging() {
                   <ChatSideBar
                     variante="investors"
                     onSelect={(conv) => {
-                      console.log('Mobile selected conversation:', conv); // Debug
+                      console.debug('Mobile selected conversation:', conv);
                       setActiveThread(conv);
                       setIsSidebarOpen(false);
                     }}
