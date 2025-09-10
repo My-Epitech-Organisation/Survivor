@@ -39,7 +39,9 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
   useEffect(() => {
     const fetchEngagementStats = async () => {
       try {
-        const response = await authenticatedFetch(`/projects/${props.ProjectId}/engagement-count/`);
+        const response = await authenticatedFetch(
+          `/projects/${props.ProjectId}/engagement-count/`
+        );
         if (response.ok) {
           const data = await response.json();
           setEngagementStats({
@@ -67,41 +69,52 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
       return;
     }
 
-    setIsLoading(prev => ({ ...prev, like: true }));
+    setIsLoading((prev) => ({ ...prev, like: true }));
     try {
       let method = "POST";
       let response;
 
       if (userInteractions.liked) {
-        response = await authenticatedFetch(`/projects/${props.ProjectId}/like/`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        response = await authenticatedFetch(
+          `/projects/${props.ProjectId}/like/`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         method = "DELETE";
       } else {
-        response = await authenticatedFetch(`/projects/${props.ProjectId}/like/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        response = await authenticatedFetch(
+          `/projects/${props.ProjectId}/like/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       }
 
       if (response.ok) {
-        if (method === "POST" || (method === "DELETE" && !userInteractions.liked)) {
-          setEngagementStats(prev => ({
+        if (
+          method === "POST" ||
+          (method === "DELETE" && !userInteractions.liked)
+        ) {
+          setEngagementStats((prev) => ({
             ...prev,
             likes: prev.likes + 1,
-            dislikes: userInteractions.disliked ? prev.dislikes - 1 : prev.dislikes,
+            dislikes: userInteractions.disliked
+              ? prev.dislikes - 1
+              : prev.dislikes,
           }));
           setUserInteractions({
             liked: true,
             disliked: false,
           });
         } else {
-          setEngagementStats(prev => ({
+          setEngagementStats((prev) => ({
             ...prev,
             likes: Math.max(0, prev.likes - 1),
           }));
@@ -135,7 +148,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
         className: "!text-white !bg-red-600 !border-red-500",
       });
     } finally {
-      setIsLoading(prev => ({ ...prev, like: false }));
+      setIsLoading((prev) => ({ ...prev, like: false }));
     }
   };
 
@@ -148,31 +161,40 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
       return;
     }
 
-    setIsLoading(prev => ({ ...prev, dislike: true }));
+    setIsLoading((prev) => ({ ...prev, dislike: true }));
     try {
       let method = "POST";
       let response;
 
       if (userInteractions.disliked) {
-        response = await authenticatedFetch(`/projects/${props.ProjectId}/dislike/`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        response = await authenticatedFetch(
+          `/projects/${props.ProjectId}/dislike/`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         method = "DELETE";
       } else {
-        response = await authenticatedFetch(`/projects/${props.ProjectId}/dislike/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        response = await authenticatedFetch(
+          `/projects/${props.ProjectId}/dislike/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       }
 
       if (response.ok) {
-        if (method === "POST" || (method === "DELETE" && !userInteractions.disliked)) {
-          setEngagementStats(prev => ({
+        if (
+          method === "POST" ||
+          (method === "DELETE" && !userInteractions.disliked)
+        ) {
+          setEngagementStats((prev) => ({
             ...prev,
             dislikes: prev.dislikes + 1,
             likes: userInteractions.liked ? prev.likes - 1 : prev.likes,
@@ -182,7 +204,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
             liked: false,
           });
         } else {
-          setEngagementStats(prev => ({
+          setEngagementStats((prev) => ({
             ...prev,
             dislikes: Math.max(0, prev.dislikes - 1),
           }));
@@ -216,7 +238,7 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
         className: "!text-white !bg-red-600 !border-red-500",
       });
     } finally {
-      setIsLoading(prev => ({ ...prev, dislike: false }));
+      setIsLoading((prev) => ({ ...prev, dislike: false }));
     }
   };
 
@@ -229,27 +251,27 @@ export default function ProjectDetails(props: ProjectDetailsProps) {
       return;
     }
 
-    setIsLoading(prev => ({ ...prev, share: true }));
+    setIsLoading((prev) => ({ ...prev, share: true }));
 
     try {
       const shareText = `
 🌟 ${props.ProjectName}
 
-${props.ProjectDescription || ''}
+${props.ProjectDescription || ""}
 
-🏷️ Sector: ${props.ProjectSector || 'Not specified'}
-📊 Status: ${props.ProjectStatus || 'Not specified'}
-🎯 Maturity: ${props.ProjectMaturity || 'Not specified'}
+🏷️ Sector: ${props.ProjectSector || "Not specified"}
+📊 Status: ${props.ProjectStatus || "Not specified"}
+🎯 Maturity: ${props.ProjectMaturity || "Not specified"}
 
 📞 Contact Information:
-${props.ProjectEmail ? `Email: ${props.ProjectEmail}` : ''}
-${props.ProjectPhone ? `Phone: ${props.ProjectPhone}` : ''}
-${props.ProjectAddress ? `Address: ${props.ProjectAddress}` : ''}
+${props.ProjectEmail ? `Email: ${props.ProjectEmail}` : ""}
+${props.ProjectPhone ? `Phone: ${props.ProjectPhone}` : ""}
+${props.ProjectAddress ? `Address: ${props.ProjectAddress}` : ""}
 
-${props.ProjectWebsite ? `🌐 Website: ${props.ProjectWebsite}` : ''}
-${props.ProjectSocial ? `📱 Social: ${props.ProjectSocial}` : ''}
+${props.ProjectWebsite ? `🌐 Website: ${props.ProjectWebsite}` : ""}
+${props.ProjectSocial ? `📱 Social: ${props.ProjectSocial}` : ""}
 
-${props.ProjectNeeds ? `💡 Current Needs: ${props.ProjectNeeds}` : ''}
+${props.ProjectNeeds ? `💡 Current Needs: ${props.ProjectNeeds}` : ""}
 
 ---
 Shared from JEB Incubator
@@ -257,13 +279,14 @@ Shared from JEB Incubator
 
       await navigator.clipboard.writeText(shareText);
 
-      setEngagementStats(prev => ({
+      setEngagementStats((prev) => ({
         ...prev,
         shares: prev.shares + 1,
       }));
 
       toast("Share Successful", {
-        description: "Project information copied to clipboard! You can now paste it anywhere to share.",
+        description:
+          "Project information copied to clipboard! You can now paste it anywhere to share.",
         className: "!text-white !bg-green-600 !border-green-500",
       });
 
@@ -275,18 +298,18 @@ Shared from JEB Incubator
         body: JSON.stringify({
           platform: "clipboard",
         }),
-      }).catch(error => {
+      }).catch((error) => {
         console.error("Error tracking share:", error);
       });
-
     } catch (error) {
       console.error("Error sharing project:", error);
       toast("Share Failed", {
-        description: "Failed to copy project information to clipboard. Please try again.",
+        description:
+          "Failed to copy project information to clipboard. Please try again.",
         className: "!text-white !bg-red-600 !border-red-500",
       });
     } finally {
-      setIsLoading(prev => ({ ...prev, share: false }));
+      setIsLoading((prev) => ({ ...prev, share: false }));
     }
   };
 
@@ -337,11 +360,20 @@ Shared from JEB Incubator
               userInteractions.liked
                 ? "bg-app-green-primary hover:bg-app-green-primary text-app-white"
                 : "bg-app-surface hover:bg-app-green-light text-app-green-primary border border-app-green-light"
-            } ${isLoading.like ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+            } ${
+              isLoading.like
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
+            }`}
           >
             <FaThumbsUp className="w-4 h-4 sm:w-5 sm:h-5" />
             <span className="text-sm sm:text-base">
-              {isLoading.like ? "..." : userInteractions.liked ? "Unlike" : "Like"} ({engagementStats.likes})
+              {isLoading.like
+                ? "..."
+                : userInteractions.liked
+                ? "Unlike"
+                : "Like"}{" "}
+              ({engagementStats.likes})
             </span>
           </Button>
 
@@ -352,11 +384,20 @@ Shared from JEB Incubator
               userInteractions.disliked
                 ? "bg-app-red-primary hover:bg-app-red-primary text-app-white"
                 : "bg-app-surface hover:bg-app-red-primary/10 text-app-red-primary border border-app-red-primary/20"
-            } ${isLoading.dislike ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+            } ${
+              isLoading.dislike
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
+            }`}
           >
             <FaThumbsDown className="w-4 h-4 sm:w-5 sm:h-5" />
             <span className="text-sm sm:text-base">
-              {isLoading.dislike ? "..." : userInteractions.disliked ? "Undislike" : "Dislike"} ({engagementStats.dislikes})
+              {isLoading.dislike
+                ? "..."
+                : userInteractions.disliked
+                ? "Undislike"
+                : "Dislike"}{" "}
+              ({engagementStats.dislikes})
             </span>
           </Button>
 
@@ -364,7 +405,9 @@ Shared from JEB Incubator
             onClick={handleShare}
             disabled={isLoading.share || !user}
             className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-medium transition-all duration-200 bg-app-surface hover:bg-app-purple-light text-app-purple-primary border border-app-purple-light ${
-              isLoading.share ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+              isLoading.share
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
             }`}
           >
             <FaShare className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -452,7 +495,7 @@ Shared from JEB Incubator
 
             <div className="space-y-4 md:space-y-6">
               <div>
-                                <dt className="text-xs md:text-sm font-medium text-app-text-muted mb-1 md:mb-2">
+                <dt className="text-xs md:text-sm font-medium text-app-text-muted mb-1 md:mb-2">
                   Email
                 </dt>
                 <dd className="text-base md:text-lg">
