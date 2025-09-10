@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import Image from "next/image";
 import { JEBLogo } from "./svg/JEBLogo";
 
 export default function Navigation() {
