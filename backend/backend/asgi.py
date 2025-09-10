@@ -16,12 +16,12 @@ from django.conf import settings
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django.setup()
 
-import socketio
-from django.contrib.auth import get_user_model
-from django.core.asgi import get_asgi_application
-from messaging.models import Message, Thread
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from rest_framework_simplejwt.tokens import AccessToken
+import socketio  # noqa: E402
+from django.contrib.auth import get_user_model  # noqa: E402
+from django.core.asgi import get_asgi_application  # noqa: E402
+from messaging.models import Message, Thread  # noqa: E402
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError  # noqa: E402
+from rest_framework_simplejwt.tokens import AccessToken  # noqa: E402
 
 django_asgi_app = get_asgi_application()
 
