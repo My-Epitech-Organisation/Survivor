@@ -9,7 +9,7 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { SelectWithLabel } from "./ui/selectWithLabel";
 import { SelectItem, SelectLabel } from "@/components/ui/select";
-import InputAvatar from "./ui/InputAvatar";
+import { InputAvatar } from "./ui/InputAvatar";
 import { Label } from "./ui/label";
 import { Combobox } from "./ui/comboBox";
 import { Founder } from "@/types/founders";

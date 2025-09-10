@@ -11,6 +11,8 @@ import { MessageCircleOff, MessageCircle } from 'lucide-react';
 import { getBackendUrl } from "@/lib/config";
 import { getToken } from "@/lib/api";
 import { io, Socket } from 'socket.io-client';
+import { IDAvatar } from "./ui/InputAvatar";
+import { MdGroups } from "react-icons/md";
 
 interface ChatComponentProps {
   onOpenConversations?: () => void;
@@ -275,10 +277,17 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
         )}
         {conv ? (
           <>
-            <Avatar className="w-10 h-10">
-              <AvatarImage src="/placeholder-avatar.jpg" alt={`${conv.participants.at(0)?.name} Logo`} />
-              <AvatarFallback>{conv.participants.at(0)?.name.charAt(0).toUpperCase()}</AvatarFallback>
-            </Avatar>
+            {conv.participants.length === 1 ? 
+            <>
+              <IDAvatar size={10} id={conv.participants.at(0)?.id ?? -1} />
+            </>
+            :
+            <>
+              <Avatar className="w-10 h-10">
+                <AvatarFallback><MdGroups/></AvatarFallback>
+              </Avatar>
+            </>
+            }
             <div className="min-w-0">
               <div className="font-semibold text-base truncate">{conv.participants.length == 1 ? conv.participants.at(0)?.name : conv.participants.map((user, index) => {return user.name + (index < conv.participants.length - 1 ? ", " : "")}).join("")}</div>
             </div>
@@ -302,10 +311,18 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
         {/* Message système */}
         {conv && (
           <div className="flex items-center gap-3 justify-center py-2">
-            <Avatar className="w-8 h-8">
-              <AvatarImage src="/placeholder-avatar.jpg" alt={conv.participants.at(0)?.name} />
-              <AvatarFallback>{conv.participants.at(0)?.name.charAt(0).toUpperCase()}</AvatarFallback>
-            </Avatar>
+            {conv.participants.length === 1 ? 
+            <>
+              <IDAvatar size={8} id={conv.participants.at(0)?.id ?? -1} />
+            </>
+            :
+            <>
+              <Avatar className="w-8 h-8">
+                <AvatarFallback><MdGroups/></AvatarFallback>
+              </Avatar>
+            </>
+            }
+
             <div>
               <span className="font-medium text-sm">{conv.participants.map((user, index) => {return user.name + (index < conv.participants.length - 1 ? ", " : "")}).join("")}</span>
               <span className="block text-xs text-muted-foreground">
@@ -328,10 +345,11 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
                   }`}
                 >
                   {!(message.userID === user?.id) && (
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src="/placeholder-avatar.jpg" alt="Eliott Tesnier" />
-                    <AvatarFallback>ET</AvatarFallback>
-                  </Avatar>
+                    <IDAvatar id={message.userID} />
+                  // <Avatar className="w-8 h-8">
+                  //   <AvatarImage src="/placeholder-avatar.jpg" alt={message.sender} />
+                  //   <AvatarFallback>ET</AvatarFallback>
+                  // </Avatar>
                   )}
                   <div
                   className={`rounded-2xl px-3 py-2 text-sm max-w-[85%] sm:max-w-[70%] lg:max-w-[60%] break-words whitespace-pre-wrap ${

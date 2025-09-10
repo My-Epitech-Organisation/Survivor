@@ -9,6 +9,8 @@ import { MessageCircleOff } from "lucide-react";
 import NewThreadChat from "./NewThreadChat";
 import { User } from "@/types/user";
 import { useAuth } from "@/contexts/AuthContext";
+import { IDAvatar } from "./ui/InputAvatar";
+import { MdGroups } from "react-icons/md";
 
 interface ChatSideBarProps {
   variante: "investors" | "founders"
@@ -101,19 +103,33 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
                   onClick={() => onSelect?.(thread)}
                   className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted/60 cursor-pointer transition-all duration-200 border border-transparent hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  <Avatar className="w-10 h-10 shrink-0">
-                    <AvatarImage
-                      src={
-                        "userImage" in (thread.participants.at(0) || {})
-                          ? `${getBackendUrl()}${(thread.participants.at(0) as User).userImage}.jpg`
-                          : undefined
-                      }
-                      alt={thread.participants.at(0)?.name}
-                    />
-                    <AvatarFallback>
-                      {thread.participants.at(0)?.name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  {thread.participants.length === 1 ?
+                  <>
+                    <IDAvatar size={10} className="shrink-0" id={thread.participants.at(0)?.id ?? -1}/>
+                    {/* <Avatar className="w-10 h-10 shrink-0">
+                      <AvatarImage
+                        src={
+                          "userImage" in (thread.participants.at(0) || {})
+                            ? `${getBackendUrl()}${(thread.participants.at(0) as User).userImage}`
+                            : undefined
+                        }
+                        alt={thread.participants.at(0)?.name}
+                      />
+                      <AvatarFallback>
+                        {thread.participants.at(0)?.name.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar> */}
+                  </>
+                  :
+                  <>
+                    <Avatar className="w-10 h-10 shrink-0">
+                      <AvatarFallback>
+                        <MdGroups></MdGroups>
+                      </AvatarFallback>
+                    </Avatar>
+                  </>
+                  }
+                  {/*  */}
 
                   <div className="flex-1 min-w-0 text-left">
                     <div className="flex items-center justify-between gap-2">
