@@ -68,7 +68,6 @@ export default function StartupNavigation() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <ThemeToggle />
             <button
               onClick={handleSwitchToPublic}
               className="font-heading font-medium text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
@@ -81,6 +80,7 @@ export default function StartupNavigation() {
             >
               Logout
             </button>
+            <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
@@ -117,9 +117,6 @@ export default function StartupNavigation() {
                 </Link>
               ))}
               <div className="border-t border-app-border pt-2 space-y-1">
-                <div className="px-3 py-2">
-                  <ThemeToggle />
-                </div>
                 <button
                   onClick={() => {
                     handleSwitchToPublic();
@@ -138,6 +135,9 @@ export default function StartupNavigation() {
                 >
                   Logout
                 </button>
+                <div className="px-3 py-2">
+                  <ThemeToggle />
+                </div>
               </div>
             </div>
           </div>

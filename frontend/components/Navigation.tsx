@@ -73,7 +73,6 @@ export default function Navigation() {
 
           {/* Desktop Login */}
           <div className="hidden md:flex w-fit pl-8 items-center space-x-4">
-            <ThemeToggle />
             {isAuthenticated ? (
               <>
                 {user?.role === "founder" && (
@@ -115,6 +114,7 @@ export default function Navigation() {
                 Login
               </Link>
             )}
+            <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
@@ -151,9 +151,6 @@ export default function Navigation() {
                 </Link>
               ))}
               <div className="border-t border-app-border-light pt-2 space-y-1">
-                <div className="px-3 py-2">
-                  <ThemeToggle />
-                </div>
                 {isAuthenticated ? (
                   <>
                     {user?.role === "founder" && (
@@ -208,6 +205,9 @@ export default function Navigation() {
                     Login
                   </Link>
                 )}
+                <div className="px-3 py-2">
+                  <ThemeToggle />
+                </div>
               </div>
             </div>
           </div>
