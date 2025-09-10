@@ -276,7 +276,7 @@ export default function ProfilePage() {
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3">
                       <div className="p-3 bg-app-purple-light rounded-lg">
-                        <Shield className="h-6 w-6 text-app-purple-primary" />
+                        <Shield className="h-6 w-6 text-jeb-primary" />
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium text-app-text-secondary">
