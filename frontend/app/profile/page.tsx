@@ -3,7 +3,6 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useEffect, useState, useRef } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { TbLoader3 } from "react-icons/tb";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -15,27 +14,44 @@ import { getBackendUrl } from "@/lib/config";
 import { Mail, UserRound, Shield, Pencil, Check, X, Lock } from "lucide-react";
 import api from "@/lib/api";
 import { User } from "@/types/user";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProfilePage() {
-  const { user, isLoading } = useAuth();
   const router = useRouter();
+  const {user, isLoading} = useAuth();
   const [userData, setUserData] = useState<User | undefined>();
   const [editingName, setEditingName] = useState(false);
   const [editingEmail, setEditingEmail] = useState(false);
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
+  const [isLoadingData, setIsLoading] = useState<boolean>(false);
   const [editedAvatar, setEditedAvatar] = useState("");
   const isInitializedRef = useRef(false);
 
+  const fetchMe = async () => {
+    setIsLoading(true);
+    try {
+      const res = await api.get<User>({ endpoint: "/user/"});
+      if (res.data)
+        setUserData(res.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
-    if (!user && !isLoading) {
-      router.push("/");
-    }
-    if (user) {
-      setUserData(user);
+    if (!isInitializedRef.current) {
       isInitializedRef.current = true;
+      fetchMe();
     }
-  }, [user, isLoading, router, useAuth]);
+  }, []);
+
+  useEffect(() => {
+    if (!user)
+      router.push("/");
+  }, [user])
 
   const editAndFetchMe = async (dataToSend?: User) => {
     try {
@@ -62,15 +78,15 @@ export default function ProfilePage() {
   };
 
   const startEditingName = () => {
-    if (user) {
-      setEditedName(user.name);
+    if (userData) {
+      setEditedName(userData.name);
       setEditingName(true);
     }
   };
 
   const startEditingEmail = () => {
-    if (user) {
-      setEditedEmail(user.email);
+    if (userData) {
+      setEditedEmail(userData.email);
       setEditingEmail(true);
     }
   };
@@ -105,7 +121,7 @@ export default function ProfilePage() {
     setEditedEmail("");
   };
 
-  if (isLoading || !user)
+  if (isLoadingData || !userData)
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -131,7 +147,7 @@ export default function ProfilePage() {
                   </h1>
                   <InputAvatar
                     url={userData?.userImage}
-                    defaultChar={user.name.charAt(0)}
+                    defaultChar={userData.name.charAt(0)}
                     size={20}
                     variente="modifiable"
                     onChange={handleAvatarChange}

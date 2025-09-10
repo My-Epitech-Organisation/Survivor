@@ -175,9 +175,9 @@ def get_current_user(request):
     elif request.method == "PUT":
         serializer = UserProfileUpdateSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            # Return updated user data
-            updated_serializer = CurrentUserSerializer(request.user)
+            user = serializer.save()
+            # Return updated user data using the saved user instance
+            updated_serializer = CurrentUserSerializer(user)
             return Response(updated_serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

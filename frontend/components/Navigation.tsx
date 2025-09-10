@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, UserRound, X } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
 
 export default function Navigation() {
@@ -36,6 +36,10 @@ export default function Navigation() {
 
   const handleSwitchToAdmin = () => {
     router.push("/admin/dashboard");
+  };
+
+  const handleSwitchToProfile = () => {
+    router.push("/profile");
   };
 
   return (
@@ -98,6 +102,12 @@ export default function Navigation() {
                     Admin Area
                   </button>
                 )}
+                <button
+                  onClick={handleSwitchToProfile}
+                  className="font-heading font-bold text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
+                >
+                  <UserRound/>
+                </button>
                 <button
                   onClick={handleLogout}
                   className="font-heading font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
@@ -184,6 +194,15 @@ export default function Navigation() {
                         Admin Area
                       </button>
                     )}
+                    <button
+                      onClick={() => {
+                        handleSwitchToProfile();
+                        setIsMenuOpen(false);
+                      }}
+                      className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover transition-colors"
+                    >
+                      Profile
+                    </button>
                     <button
                       onClick={() => {
                         handleLogout();
