@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { JEBLogo } from "./svg/JEBLogo";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -45,9 +46,10 @@ export default function Navigation() {
           <div className="flex items-center">
             <Link
               href="/"
-              className="text-3xl font-heading font-black italic text-jeb-primary hover:text-jeb-hover transition-colors"
+              className="flex items-center text-3xl font-heading font-black italic text-jeb-primary hover:text-jeb-hover transition-colors"
             >
-              JEB
+              <JEBLogo className="w-15 h-auto" color="currentColor" />
+              <span>JEB</span>
             </Link>
           </div>
 
