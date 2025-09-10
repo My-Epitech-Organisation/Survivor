@@ -7,16 +7,16 @@ from rest_framework.response import Response
 
 from admin_panel.models import Founder, StartupDetail
 
-from .models import ProjectView, ProjectDislike, ProjectLike, ProjectShare
+from .models import ProjectDislike, ProjectLike, ProjectShare, ProjectView
 from .serializers import (
     ProjectDetailSerializer,
-    ProjectEngagementSerializer,
-    ProjectSerializer,
-    ProjectViewsSerializer,
     ProjectDislikeSerializer,
+    ProjectEngagementSerializer,
     ProjectEngagementStatsSerializer,
     ProjectLikeSerializer,
+    ProjectSerializer,
     ProjectShareSerializer,
+    ProjectViewsSerializer,
 )
 
 
@@ -96,7 +96,7 @@ def record_project_like(request, project_id):
             project=project,
             user=user if user else None,
             ip_address=ip_address if not user else None,
-            session_key=session_key if not user else None
+            session_key=session_key if not user else None,
         ).first()
 
         if existing_like:
@@ -145,7 +145,7 @@ def record_project_dislike(request, project_id):
             project=project,
             user=user if user else None,
             ip_address=ip_address if not user else None,
-            session_key=session_key if not user else None
+            session_key=session_key if not user else None,
         ).first()
 
         if existing_dislike:
@@ -192,11 +192,7 @@ def record_project_share(request, project_id, platform=None):
             session_key = request.session.session_key
 
         ProjectShare.objects.create(
-            project=project,
-            user=user,
-            ip_address=ip_address,
-            session_key=session_key,
-            platform=platform
+            project=project, user=user, ip_address=ip_address, session_key=session_key, platform=platform
         )
 
         return {"success": True}
@@ -285,10 +281,7 @@ def project_like(request, project_id):
             return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
 
         if request.method == "POST":
-            existing_like = ProjectLike.objects.filter(
-                project=project,
-                user=user
-            ).first()
+            existing_like = ProjectLike.objects.filter(project=project, user=user).first()
 
             if existing_like:
                 return Response({"error": "You have already liked this project"}, status=status.HTTP_400_BAD_REQUEST)
@@ -298,17 +291,17 @@ def project_like(request, project_id):
             ProjectLike.objects.create(project=project, user=user, ip_address=request.META.get("REMOTE_ADDR"))
             return Response({"message": "Project liked successfully"}, status=status.HTTP_201_CREATED)
 
-        elif request.method == "DELETE":
+        if request.method == "DELETE":
             deleted_count, _ = ProjectLike.objects.filter(project=project, user=user).delete()
             if deleted_count > 0:
                 return Response({"message": "Like removed successfully"}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "You haven't liked this project"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "You haven't liked this project"}, status=status.HTTP_400_BAD_REQUEST)
 
     except StartupDetail.DoesNotExist:
         return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         import logging
+
         logger = logging.getLogger(__name__)
         logger.exception("Error handling project like")
         return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -331,30 +324,29 @@ def project_dislike(request, project_id):
             return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
 
         if request.method == "POST":
-            existing_dislike = ProjectDislike.objects.filter(
-                project=project,
-                user=user
-            ).first()
+            existing_dislike = ProjectDislike.objects.filter(project=project, user=user).first()
 
             if existing_dislike:
-                return Response({"error": "You have already disliked this project"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "You have already disliked this project"}, status=status.HTTP_400_BAD_REQUEST
+                )
 
             ProjectLike.objects.filter(project=project, user=user).delete()
 
             ProjectDislike.objects.create(project=project, user=user, ip_address=request.META.get("REMOTE_ADDR"))
             return Response({"message": "Project disliked successfully"}, status=status.HTTP_201_CREATED)
 
-        elif request.method == "DELETE":
+        if request.method == "DELETE":
             deleted_count, _ = ProjectDislike.objects.filter(project=project, user=user).delete()
             if deleted_count > 0:
                 return Response({"message": "Dislike removed successfully"}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "You haven't disliked this project"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "You haven't disliked this project"}, status=status.HTTP_400_BAD_REQUEST)
 
     except StartupDetail.DoesNotExist:
         return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         import logging
+
         logger = logging.getLogger(__name__)
         logger.exception("Error handling project dislike")
         return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -372,9 +364,8 @@ def project_share(request, project_id):
 
     if result["success"]:
         return Response({"message": "Project shared successfully"}, status=status.HTTP_201_CREATED)
-    else:
-        message = result.get("message", "Failed to share project")
-        return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
+    message = result.get("message", "Failed to share project")
+    return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])
@@ -391,6 +382,7 @@ def project_engagement_stats(request, user_id):
     if request.user.role == "founder" and request.user.founder_id:
         try:
             from admin_panel.models import Founder
+
             founder = Founder.objects.get(id=request.user.founder_id)
             projects = founder.startups.all()
         except Founder.DoesNotExist:
@@ -398,15 +390,30 @@ def project_engagement_stats(request, user_id):
     else:
         projects = StartupDetail.objects.all()
 
-    project_ids = projects.values_list('id', flat=True)
+    project_ids = projects.values_list("id", flat=True)
 
     total_likes = ProjectLike.objects.filter(project_id__in=project_ids).count()
     total_dislikes = ProjectDislike.objects.filter(project_id__in=project_ids).count()
     total_shares = ProjectShare.objects.filter(project_id__in=project_ids).count()
 
-    unique_likers = ProjectLike.objects.filter(project_id__in=project_ids).values('user', 'ip_address', 'session_key').distinct().count()
-    unique_dislikers = ProjectDislike.objects.filter(project_id__in=project_ids).values('user', 'ip_address', 'session_key').distinct().count()
-    unique_sharers = ProjectShare.objects.filter(project_id__in=project_ids).values('user', 'ip_address', 'session_key').distinct().count()
+    unique_likers = (
+        ProjectLike.objects.filter(project_id__in=project_ids)
+        .values("user", "ip_address", "session_key")
+        .distinct()
+        .count()
+    )
+    unique_dislikers = (
+        ProjectDislike.objects.filter(project_id__in=project_ids)
+        .values("user", "ip_address", "session_key")
+        .distinct()
+        .count()
+    )
+    unique_sharers = (
+        ProjectShare.objects.filter(project_id__in=project_ids)
+        .values("user", "ip_address", "session_key")
+        .distinct()
+        .count()
+    )
 
     data = {
         "total_likes": total_likes,

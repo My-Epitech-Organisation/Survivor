@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from admin_panel.models import Founder, StartupDetail
 
-from .models import ProjectDislike, ProjectLike, ProjectShare, ProjectView, ProjectLike, ProjectDislike, ProjectShare
+from .models import ProjectDislike, ProjectLike, ProjectShare, ProjectView
 
 
 class FounderSerializer(serializers.ModelSerializer):
@@ -485,7 +485,17 @@ class ProjectShareSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProjectShare
-        fields = ["id", "project", "project_name", "timestamp", "user", "user_email", "ip_address", "session_key", "platform"]
+        fields = [
+            "id",
+            "project",
+            "project_name",
+            "timestamp",
+            "user",
+            "user_email",
+            "ip_address",
+            "session_key",
+            "platform",
+        ]
         read_only_fields = ["timestamp"]
 
 

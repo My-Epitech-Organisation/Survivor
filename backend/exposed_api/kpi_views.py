@@ -13,8 +13,8 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 
 from admin_panel.models import Event, StartupDetail
 
-from .models import ProjectView, SiteStatistics, ProjectDislike, ProjectLike, ProjectShare
-from .serializers import ProjectViewStatsSerializer, ProjectEngagementStatsSerializer
+from .models import ProjectDislike, ProjectLike, ProjectShare, ProjectView, SiteStatistics
+from .serializers import ProjectEngagementStatsSerializer, ProjectViewStatsSerializer
 
 
 @api_view(["GET"])
@@ -371,19 +371,36 @@ def project_engagement_count(request, project_id):
     total_dislikes = ProjectDislike.objects.filter(project_id=project_id).count()
     total_shares = ProjectShare.objects.filter(project_id=project_id).count()
 
-    unique_likers = ProjectLike.objects.filter(project_id=project_id).values("user", "ip_address", "session_key").distinct().count()
-    unique_dislikers = ProjectDislike.objects.filter(project_id=project_id).values("user", "ip_address", "session_key").distinct().count()
-    unique_sharers = ProjectShare.objects.filter(project_id=project_id).values("user", "ip_address", "session_key").distinct().count()
+    unique_likers = (
+        ProjectLike.objects.filter(project_id=project_id)
+        .values("user", "ip_address", "session_key")
+        .distinct()
+        .count()
+    )
+    unique_dislikers = (
+        ProjectDislike.objects.filter(project_id=project_id)
+        .values("user", "ip_address", "session_key")
+        .distinct()
+        .count()
+    )
+    unique_sharers = (
+        ProjectShare.objects.filter(project_id=project_id)
+        .values("user", "ip_address", "session_key")
+        .distinct()
+        .count()
+    )
 
-    return JsonResponse({
-        "project_id": project_id,
-        "total_likes": total_likes,
-        "total_dislikes": total_dislikes,
-        "total_shares": total_shares,
-        "unique_likers": unique_likers,
-        "unique_dislikers": unique_dislikers,
-        "unique_sharers": unique_sharers,
-    })
+    return JsonResponse(
+        {
+            "project_id": project_id,
+            "total_likes": total_likes,
+            "total_dislikes": total_dislikes,
+            "total_shares": total_shares,
+            "unique_likers": unique_likers,
+            "unique_dislikers": unique_dislikers,
+            "unique_sharers": unique_sharers,
+        }
+    )
 
 
 @api_view(["GET"])
@@ -470,23 +487,11 @@ def most_engaged_projects(request):
     elif period == "all":
         date_filter = Q()
 
-    likes_data = (
-        ProjectLike.objects.filter(date_filter)
-        .values("project")
-        .annotate(likes_count=Count("id"))
-    )
+    likes_data = ProjectLike.objects.filter(date_filter).values("project").annotate(likes_count=Count("id"))
 
-    dislikes_data = (
-        ProjectDislike.objects.filter(date_filter)
-        .values("project")
-        .annotate(dislikes_count=Count("id"))
-    )
+    dislikes_data = ProjectDislike.objects.filter(date_filter).values("project").annotate(dislikes_count=Count("id"))
 
-    shares_data = (
-        ProjectShare.objects.filter(date_filter)
-        .values("project")
-        .annotate(shares_count=Count("id"))
-    )
+    shares_data = ProjectShare.objects.filter(date_filter).values("project").annotate(shares_count=Count("id"))
 
     project_engagement = {}
 
@@ -515,14 +520,16 @@ def most_engaged_projects(request):
         engagement_score = counts["likes"] + counts["shares"] - counts["dislikes"]
         try:
             project = StartupDetail.objects.get(id=project_id)
-            result.append({
-                "id": project.id,
-                "name": project.name,
-                "likes": counts["likes"],
-                "dislikes": counts["dislikes"],
-                "shares": counts["shares"],
-                "engagement_score": engagement_score,
-            })
+            result.append(
+                {
+                    "id": project.id,
+                    "name": project.name,
+                    "likes": counts["likes"],
+                    "dislikes": counts["dislikes"],
+                    "shares": counts["shares"],
+                    "engagement_score": engagement_score,
+                }
+            )
         except StartupDetail.DoesNotExist:
             continue
 
@@ -630,7 +637,7 @@ def project_engagement_over_time(request, project_id=None):
             "likes": data["likes"],
             "dislikes": data["dislikes"],
             "shares": data["shares"],
-            "engagement_score": data["likes"] + data["shares"] - data["dislikes"]
+            "engagement_score": data["likes"] + data["shares"] - data["dislikes"],
         }
         for period, data in engagement_data.items()
     ]

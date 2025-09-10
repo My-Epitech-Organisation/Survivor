@@ -203,7 +203,7 @@ class ProjectShare(models.Model):
         max_length=50,
         null=True,
         blank=True,
-        help_text="Platform where the project was shared (e.g., 'facebook', 'twitter', 'linkedin')"
+        help_text="Platform where the project was shared (e.g., 'facebook', 'twitter', 'linkedin')",
     )
 
     class Meta:
