@@ -33,9 +33,9 @@ export default function InvestorNavigation() {
           <div className="flex items-center">
             <Link
               href="/investor/messaging"
-              className="text-2xl font-bold text-blue-600"
+              className="text-3xl font-heading font-black italic text-jeb-primary hover:text-jeb-hover transition-colors"
             >
-              JEB <span className="text-sm text-gray-500">Investor</span>
+              JEB <span className="text-sm text-gray-500 not-italic">Investor</span>
             </Link>
           </div>
 
@@ -45,10 +45,10 @@ export default function InvestorNavigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`transition-colors ${
+                className={`font-heading transition-colors ${
                   pathname === item.href
-                    ? "text-blue-600 font-medium"
-                    : "text-gray-600 hover:text-blue-600"
+                    ? "text-jeb-primary font-semibold"
+                    : "text-app-text-secondary hover:text-jeb-primary font-medium"
                 }`}
               >
                 {item.label}
@@ -60,13 +60,13 @@ export default function InvestorNavigation() {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={handleSwitchToPublic}
-              className="text-gray-600 hover:text-blue-600 transition-colors"
+              className="font-heading font-medium text-gray-600 hover:text-jeb-primary transition-colors cursor-pointer"
             >
               Public Area
             </button>
             <button
               onClick={handleLogout}
-              className="font-bold text-gray-600 hover:text-red-600 transition-colors"
+              className="font-heading font-bold text-gray-600 hover:text-red-600 transition-colors cursor-pointer"
             >
               Logout
             </button>
@@ -76,7 +76,7 @@ export default function InvestorNavigation() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-blue-600 focus:outline-none focus:text-blue-600 transition-colors"
+              className="text-gray-600 hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -96,10 +96,10 @@ export default function InvestorNavigation() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  className={`font-heading block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     pathname === item.href
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                      ? "text-jeb-primary bg-blue-50"
+                      : "text-gray-600 hover:text-jeb-primary hover:bg-gray-50"
                   }`}
                 >
                   {item.label}
@@ -111,7 +111,7 @@ export default function InvestorNavigation() {
                     handleSwitchToPublic();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-jeb-primary hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Public Area
                 </button>
@@ -120,7 +120,7 @@ export default function InvestorNavigation() {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-red-600 hover:bg-gray-50 transition-colors"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-gray-600 hover:text-red-600 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Logout
                 </button>

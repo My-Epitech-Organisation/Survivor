@@ -50,25 +50,27 @@ export default function StartupDashboard() {
       if (!isLoading && !user) {
         setIsDataLoading(false);
       }
+      return;
     }
 
     const fetchDataSequentially = async () => {
       try {
-        const userProfileResponse = await authenticatedFetch(
-          user && user.id ? `/user/${user.id}` : "/user/0"
-        );
-        if (!userProfileResponse.ok) {
-          throw new Error("Failed to fetch user profile");
-        }
-
-        const userProfileData: UserProfile = await userProfileResponse.json();
+        const userProfileData: UserProfile = {
+          name: user.name,
+          pictureURL: user.userImage || "",
+          founderId: user.founderId || 0,
+          nbStartups: 0,
+          email: user.email,
+          investorId: user.startupId || 0,
+          id: user.id,
+        };
         setUserProfile(userProfileData);
 
-        if (userProfileData.founderId) {
+        if (user.founderId) {
           try {
-            const projectData = await api.get<ProjectDetailsProps[] | null>(
-              {endpoint:`/projects/founder/${userProfileData.founderId}`}
-            );
+            const projectData = await api.get<ProjectDetailsProps[] | null>({
+              endpoint: `/projects/founder/${user.founderId}`,
+            });
             setProject(projectData.data);
             if (
               projectData.data &&
@@ -156,7 +158,7 @@ export default function StartupDashboard() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
+    <div className="bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col min-h-screen">
       <StartupNavigation />
 
       <main className="px-4 sm:px-6 lg:px-8 py-12 flex-1 flex flex-col items-center">
@@ -172,7 +174,7 @@ export default function StartupDashboard() {
 
         {isLoading || isDataLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <TbLoader3 className="size-12 animate-spin text-app-blue-primary mb-4" />
+            <TbLoader3 className="size-12 animate-spin text-jeb-primary mb-4" />
             <p className="text-app-text-secondary text-lg">
               {isLoading
                 ? "Authentification approvement ..."
@@ -184,7 +186,7 @@ export default function StartupDashboard() {
             {!currentProject ? (
               <div className="text-center py-12">
                 <Building2 className="size-16 text-app-text-muted mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-app-text-primary mb-2">
+                <h2 className="font-heading text-2xl font-bold text-app-text-primary mb-2">
                   No Project Found
                 </h2>
                 <p className="text-app-text-secondary">
@@ -230,7 +232,7 @@ export default function StartupDashboard() {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <h2 className="text-3xl font-bold text-app-text-primary">
+                          <h2 className="font-heading text-3xl font-bold text-app-text-primary">
                             {userProfile?.name || ""}
                           </h2>
                           <p className="text-app-text-secondary text-lg mt-1">
