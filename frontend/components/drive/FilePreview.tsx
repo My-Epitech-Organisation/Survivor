@@ -7,6 +7,8 @@ import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
 import { Edit, X } from 'lucide-react';
+import { isTextFile, isImageFile } from '@/lib/fileUtils';
+import { ImagePreview } from './ImagePreview';
 
 interface FilePreviewProps {
   file: DriveFile;
@@ -21,6 +23,11 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
 
   useEffect(() => {
     const loadFileContent = async () => {
+      if (!isTextFile(file)) {
+        setIsLoading(false);
+        return;
+      }
+      
       setIsLoading(true);
       setError(null); // Reset error state
       
@@ -42,7 +49,12 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
     };
 
     loadFileContent();
-  }, [file.id]);
+  }, [file]);
+
+  // Render image preview if the file is an image
+  if (isImageFile(file)) {
+    return <ImagePreview file={file} onClose={onClose} />;
+  }
 
   return (
     <div className="w-full">

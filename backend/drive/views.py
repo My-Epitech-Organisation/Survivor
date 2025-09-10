@@ -31,8 +31,8 @@ from .serializers import (
     DriveShareSerializer,
     FileUploadSerializer,
 )
-from .text_serializers import TextFileContentSerializer, TextFileUpdateSerializer
-from .utils import is_text_file
+from .preview_serializers import TextFileContentSerializer, TextFileUpdateSerializer, ImageFilePreviewSerializer
+from .utils import is_text_file, is_image_file
 
 
 class StartupDrivePermission(permissions.BasePermission):
@@ -479,33 +479,56 @@ class DriveFileViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def preview(self, request, pk=None):
         """
-        Preview a text file's content.
+        Preview a file's content. Supports both text and image files.
         """
         file_obj = self.get_object()
         
-        if not is_text_file(file_obj.name, file_obj.file_type):
+        # Log preview activity
+        DriveActivity.objects.create(
+            startup=file_obj.startup,
+            user=request.user,
+            file=file_obj,
+            action="preview",
+            ip_address=request.META.get("REMOTE_ADDR"),
+        )
+        
+        # Check if it's a text file
+        if is_text_file(file_obj.name, file_obj.file_type):
+            try:
+                content = file_obj.file.read().decode('utf-8')
+                serializer = TextFileContentSerializer({"content": content})
+                return Response(serializer.data)
+            except UnicodeDecodeError:
+                return Response(
+                    {"error": "This file uses an encoding that is not supported for preview"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        # Check if it's an image file
+        elif is_image_file(file_obj.name, file_obj.file_type):
+            # For images, we return the URL to the file
+            request_host = request.get_host()
+            protocol = 'https' if request.is_secure() else 'http'
+            
+            # Construct the absolute URL to the file
+            file_url = f"{protocol}://{request_host}{file_obj.file.url}"
+            
+            # Create response with image info
+            data = {
+                "image_url": file_url,
+                "file_type": file_obj.file_type,
+                # Width and height could be added if we implement image dimension detection
+                "width": None,
+                "height": None
+            }
+            
+            serializer = ImageFilePreviewSerializer(data)
+            return Response(serializer.data)
+        
+        # Not a supported file type
+        else:
             return Response(
                 {"error": "This file type is not supported for preview"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        try:
-            content = file_obj.file.read().decode('utf-8')
-            
-            # Log preview activity
-            DriveActivity.objects.create(
-                startup=file_obj.startup,
-                user=request.user,
-                file=file_obj,
-                action="preview",
-                ip_address=request.META.get("REMOTE_ADDR"),
-            )
-            
-            serializer = TextFileContentSerializer({"content": content})
-            return Response(serializer.data)
-        except UnicodeDecodeError:
-            return Response(
-                {"error": "This file uses an encoding that is not supported for preview"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 

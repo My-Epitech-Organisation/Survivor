@@ -263,6 +263,39 @@ export const DriveService = {
     }
   },
 
+  // Image file preview method
+  previewImageFile: async (fileId: number): Promise<{
+    imageUrl: string;
+    fileType: string;
+    width?: number;
+    height?: number;
+  }> => {
+    try {
+      const response = await api.get<{
+        image_url: string;
+        file_type: string;
+        width?: number;
+        height?: number;
+      }>({
+        endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
+      });
+      
+      if (response.data && response.data.image_url) {
+        return {
+          imageUrl: response.data.image_url,
+          fileType: response.data.file_type,
+          width: response.data.width,
+          height: response.data.height
+        };
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error previewing image file:', error);
+      throw error;
+    }
+  },
+
   updateTextFileContent: async (fileId: number, content: string): Promise<void> => {
     try {
       await api.put(`${DRIVE_API.FILES}${fileId}/update_content/`, {

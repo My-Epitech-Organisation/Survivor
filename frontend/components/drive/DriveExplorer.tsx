@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { DriveFile, DriveFolder } from "@/types/drive";
 import { useDrive } from "@/contexts/DriveContext";
 import { downloadFile } from "@/lib/downloadUtils";
-import { isTextFile } from "@/lib/fileUtils";
+import { isTextFile, isImageFile } from "@/lib/fileUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   Eye,
   Edit,
+  Image,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -172,7 +173,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
 
   // Preview and Edit handlers
   const handleFilePreview = (file: DriveFile) => {
-    if (isTextFile(file)) {
+    if (isTextFile(file) || isImageFile(file)) {
       setPreviewFile(file);
     } else {
       handleFileDownload(file);
@@ -207,27 +208,27 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
   };
 
   const renderFileIcon = (file: DriveFile) => {
+    // Check if it's an image file first
+    if (isImageFile(file)) {
+      return <Image className="h-5 w-5 text-purple-500" />;
+    }
+
     const extension = file.name.split(".").pop()?.toLowerCase();
 
     switch (extension) {
       case "pdf":
-        return <File className="text-red-500" />;
+        return <File className="h-5 w-5 text-red-500" />;
       case "doc":
       case "docx":
-        return <File className="text-blue-500" />;
+        return <File className="h-5 w-5 text-blue-500" />;
       case "xls":
       case "xlsx":
-        return <File className="text-green-500" />;
+        return <File className="h-5 w-5 text-green-500" />;
       case "ppt":
       case "pptx":
-        return <File className="text-orange-500" />;
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
-        return <File className="text-purple-500" />;
+        return <File className="h-5 w-5 text-orange-500" />;
       default:
-        return <File className="text-gray-500" />;
+        return <File className="h-5 w-5 text-gray-500" />;
     }
   };
 
@@ -515,6 +516,14 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                                 Edit
                               </DropdownMenuItem>
                             </>
+                          )}
+                          {isImageFile(file) && (
+                            <DropdownMenuItem
+                              onClick={() => handleFilePreview(file)}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Preview
+                            </DropdownMenuItem>
                           )}
                           <DropdownMenuItem
                             onClick={() => handleFileDownload(file)}
