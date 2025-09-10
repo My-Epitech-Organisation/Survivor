@@ -1,16 +1,13 @@
 from django.test import TestCase
 from django.utils import timezone
+
 from authentication.models import CustomUser, PasswordResetToken
 
 
 class CustomUserModelTest(TestCase):
     def test_create_user(self):
         """Test creating a regular user"""
-        user = CustomUser.objects.create_user(
-            email="test@example.com",
-            name="Test User",
-            password="Password123!"
-        )
+        user = CustomUser.objects.create_user(email="test@example.com", name="Test User", password="Password123!")
         self.assertEqual(user.email, "test@example.com")
         self.assertEqual(user.name, "Test User")
         self.assertEqual(user.role, "user")
@@ -21,9 +18,7 @@ class CustomUserModelTest(TestCase):
     def test_create_superuser(self):
         """Test creating a superuser"""
         user = CustomUser.objects.create_superuser(
-            email="admin@example.com",
-            name="Admin User",
-            password="Password123!"
+            email="admin@example.com", name="Admin User", password="Password123!"
         )
         self.assertEqual(user.email, "admin@example.com")
         self.assertEqual(user.role, "admin")
@@ -32,21 +27,13 @@ class CustomUserModelTest(TestCase):
 
     def test_user_str(self):
         """Test string representation of user"""
-        user = CustomUser.objects.create_user(
-            email="test@example.com",
-            name="Test User",
-            password="Password123!"
-        )
+        user = CustomUser.objects.create_user(email="test@example.com", name="Test User", password="Password123!")
         self.assertEqual(str(user), "test@example.com")
 
 
 class PasswordResetTokenModelTest(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create_user(
-            email="test@example.com",
-            name="Test User",
-            password="Password123!"
-        )
+        self.user = CustomUser.objects.create_user(email="test@example.com", name="Test User", password="Password123!")
 
     def test_create_token(self):
         """Test creating a password reset token"""

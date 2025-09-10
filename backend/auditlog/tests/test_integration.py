@@ -1,7 +1,8 @@
-from django.test import TestCase
 from django.contrib.admin.sites import AdminSite
-from auditlog.models import AuditLog
+from django.test import TestCase
+
 from auditlog.admin import AuditLogAdmin
+from auditlog.models import AuditLog
 
 
 class AuditLogIntegrationTest(TestCase):

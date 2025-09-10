@@ -1,14 +1,15 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from rest_framework.test import APITestCase
+
+from authentication.models import PasswordResetToken
 from authentication.serializers import (
+    CustomTokenObtainPairSerializer,
+    PasswordResetConfirmSerializer,
+    PasswordResetRequestSerializer,
     UserRegistrationSerializer,
     UserSerializer,
-    PasswordResetRequestSerializer,
-    PasswordResetConfirmSerializer,
-    CustomTokenObtainPairSerializer
 )
-from authentication.models import PasswordResetToken
 
 User = get_user_model()
 
@@ -21,7 +22,7 @@ class UserRegistrationSerializerTest(TestCase):
             "name": "Test User",
             "password": "Password123!",
             "password_confirm": "Password123!",
-            "role": "user"
+            "role": "user",
         }
         serializer = UserRegistrationSerializer(data=data)
         self.assertTrue(serializer.is_valid())
@@ -35,7 +36,7 @@ class UserRegistrationSerializerTest(TestCase):
             "email": "test@example.com",
             "name": "Test User",
             "password": "Password123!",
-            "password_confirm": "Password456!"
+            "password_confirm": "Password456!",
         }
         serializer = UserRegistrationSerializer(data=data)
         self.assertFalse(serializer.is_valid())
@@ -44,11 +45,7 @@ class UserRegistrationSerializerTest(TestCase):
 
 class UserSerializerTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            email="test@example.com",
-            name="Test User",
-            password="Password123!"
-        )
+        self.user = User.objects.create_user(email="test@example.com", name="Test User", password="Password123!")
 
     def test_user_serialization(self):
         """Test user serialization"""
@@ -75,20 +72,12 @@ class PasswordResetRequestSerializerTest(TestCase):
 
 class PasswordResetConfirmSerializerTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            email="test@example.com",
-            name="Test User",
-            password="Password123!"
-        )
+        self.user = User.objects.create_user(email="test@example.com", name="Test User", password="Password123!")
         self.token = PasswordResetToken.objects.create(user=self.user)
 
     def test_valid_reset(self):
         """Test valid password reset"""
-        data = {
-            "token": self.token.token,
-            "password": "NewPassword123!",
-            "password_confirm": "NewPassword123!"
-        }
+        data = {"token": self.token.token, "password": "NewPassword123!", "password_confirm": "NewPassword123!"}
         serializer = PasswordResetConfirmSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
@@ -96,11 +85,7 @@ class PasswordResetConfirmSerializerTest(TestCase):
 
     def test_invalid_token(self):
         """Test invalid token"""
-        data = {
-            "token": "invalid-token",
-            "password": "NewPassword123!",
-            "password_confirm": "NewPassword123!"
-        }
+        data = {"token": "invalid-token", "password": "NewPassword123!", "password_confirm": "NewPassword123!"}
         serializer = PasswordResetConfirmSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertIn("token", serializer.errors)
@@ -108,11 +93,7 @@ class PasswordResetConfirmSerializerTest(TestCase):
 
 class CustomTokenObtainPairSerializerTest(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            email="test@example.com",
-            name="Test User",
-            password="Password123!"
-        )
+        self.user = User.objects.create_user(email="test@example.com", name="Test User", password="Password123!")
 
     def test_token_obtain(self):
         """Test obtaining token with custom serializer"""

@@ -16,6 +16,12 @@ class NewsDetail(models.Model):
     description = models.TextField(null=True, blank=True)
     image = models.CharField(max_length=255, null=True, blank=True)
 
+    def __str__(self):
+        """
+        String representation of the NewsDetail instance.
+        """
+        return f"NewsDetail {self.id}"
+
 
 # Event models
 class Event(models.Model):

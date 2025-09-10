@@ -20,7 +20,7 @@ from exposed_api.models import SiteStatistics
 from .utils import *
 
 # Check if signals should be disabled (for tests)
-DISABLE_SIGNALS = os.environ.get('DISABLE_SIGNALS', 'False').lower() == 'true'
+DISABLE_SIGNALS = os.environ.get("DISABLE_SIGNALS", "False").lower() == "true"
 
 # Flag to track if handlers have already run
 _handlers_executed = {

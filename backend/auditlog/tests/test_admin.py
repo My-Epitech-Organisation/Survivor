@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.test import TestCase
+
 from auditlog.admin import AuditLogAdmin
 from auditlog.models import AuditLog
 
@@ -12,11 +13,7 @@ class AuditLogAdminTest(TestCase):
         self.audit_log_admin = AuditLogAdmin(AuditLog, self.site)
 
         # Create test data
-        self.audit_log = AuditLog.objects.create(
-            action="Test action",
-            user="test_user",
-            type="user"
-        )
+        self.audit_log = AuditLog.objects.create(action="Test action", user="test_user", type="user")
 
     def test_list_display(self):
         """Test that the correct fields are displayed in the list view"""
