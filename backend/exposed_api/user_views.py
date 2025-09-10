@@ -156,6 +156,30 @@ def user_detail(request, user_id):
     return JsonResponse(serializer.data)
 
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def user_chat_img_name(request, user_id):
+    """
+    API endpoint that returns name and userImage for a specific user, formatted for chat.
+    """
+    try:
+        user = CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+        return JsonResponse({"error": f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    userImage = None
+    if user.image:
+        image_path = user.image
+        if image_path.startswith("/"):
+            image_path = image_path[1:]
+        userImage = f"{settings.MEDIA_URL.rstrip('/')}/{image_path}"
+    
+    return JsonResponse({
+        "name": user.name,
+        "userImage": userImage
+    })
+
+
 class AdminUserView(APIView):
     def post(self, request):
         """
