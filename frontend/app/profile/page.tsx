@@ -49,7 +49,7 @@ export default function ProfilePage() {
   }, []);
 
   useEffect(() => {
-    if (!user)
+    if (!user && !isLoading)
       router.push("/");
   }, [user])
 
