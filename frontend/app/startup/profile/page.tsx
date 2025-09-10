@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FaEdit, FaEye, FaThumbsUp, FaShare, FaUsers } from "react-icons/fa";
+import { FaEdit, FaEye, FaThumbsUp, FaThumbsDown, FaShare } from "react-icons/fa";
 import { FounderResponse } from "@/types/founders";
 import { ProjectDetails, ProjectProfileFormData } from "@/types/project";
 import { Founder } from "@/types/founders";
@@ -61,12 +61,13 @@ export default function StartupProfile() {
   const [isFounder, setIsFounder] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { user, isLoading } = useAuth();
+  const [profileViews, setProfileViews] = useState<number | null>(null);
 
   const visibilityStats = {
     profileViews: 0,
     likes: 0,
+    dislikes: 0,
     shares: 0,
-    followers: 0,
   };
 
   const getFormValue = (value: string | null): string => value || "";
@@ -138,6 +139,23 @@ export default function StartupProfile() {
           if (data) {
             setFormData(data);
             setOriginalFormData(data);
+
+            if (data.id) {
+              authenticatedFetch(`/kpi/project-views/${data.id}`)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Failed to fetch project views");
+                  }
+                  return response.json();
+                })
+                .then((viewsData) => {
+                  setProfileViews(viewsData.total_views);
+                })
+                .catch((err) => {
+                  console.error("Error fetching project views: ", err);
+                  setProfileViews(0);
+                });
+            }
           }
         });
       });
@@ -243,16 +261,9 @@ export default function StartupProfile() {
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
                     <FaEye className="text-3xl text-blue-500 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-blue-600">
-                      {visibilityStats.profileViews.toLocaleString()}
+                      {(profileViews || 0).toLocaleString()}
                     </div>
                     <div className="text-sm text-gray-600">Profile Views</div>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <FaThumbsUp className="text-3xl text-green-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-green-600">
-                      {visibilityStats.likes}
-                    </div>
-                    <div className="text-sm text-gray-600">Likes</div>
                   </div>
                   <div className="text-center p-4 bg-purple-50 rounded-lg">
                     <FaShare className="text-3xl text-purple-500 mx-auto mb-2" />
@@ -261,12 +272,19 @@ export default function StartupProfile() {
                     </div>
                     <div className="text-sm text-gray-600">Shares</div>
                   </div>
-                  <div className="text-center p-4 bg-orange-50 rounded-lg">
-                    <FaUsers className="text-3xl text-orange-500 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-orange-600">
-                      {visibilityStats.followers}
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <FaThumbsUp className="text-3xl text-green-500 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-green-600">
+                      {visibilityStats.likes}
                     </div>
-                    <div className="text-sm text-gray-600">Followers</div>
+                    <div className="text-sm text-gray-600">Likes</div>
+                  </div>
+                  <div className="text-center p-4 bg-red-50 rounded-lg">
+                    <FaThumbsDown className="text-3xl text-red-500 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-red-600">
+                      {visibilityStats.dislikes}
+                    </div>
+                    <div className="text-sm text-gray-600">Dislikes</div>
                   </div>
                 </div>
               </CardContent>
