@@ -12,7 +12,7 @@ export function ThemeToggle() {
       variant="outline"
       size="icon"
       onClick={toggleTheme}
-      className="fixed top-2 right-2 md:top-4 md:right-4 z-50 cursor-pointer hover:bg-app-surface-hover hover:scale-110 hover:shadow-lg transition-all duration-200"
+      className="fixed bottom-4 right-4 z-50 cursor-pointer hover:bg-app-surface-hover hover:scale-110 hover:shadow-lg transition-all duration-200 rounded-full"
     >
       {theme === "light" ? (
         <Moon className="h-[1.2rem] w-[1.2rem]" />
