@@ -16,6 +16,7 @@ interface DriveContextType {
   uploadFile: (startupId: number, file: File, folderId: number | null, description?: string) => Promise<void>;
   deleteFile: (fileId: number) => Promise<void>;
   deleteFolder: (folderId: number) => Promise<void>;
+  downloadFolder: (folderId: number, folderName: string) => Promise<void>;
   refreshCurrentFolder: () => Promise<void>;
   startupId: number | null;
   setStartupId: (id: number) => void;
@@ -158,6 +159,19 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     }
   };
 
+  const downloadFolder = async (folderId: number, folderName: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await DriveService.downloadFolder(folderId, folderName);
+    } catch (err) {
+      setError("Failed to download folder");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const refreshCurrentFolder = useCallback(async () => {
     await fetchFolderContents(currentFolder?.id || null);
   }, [fetchFolderContents, currentFolder]);
@@ -191,6 +205,7 @@ export const DriveProvider: React.FC<{ children: ReactNode, initialStartupId?: n
     uploadFile,
     deleteFile,
     deleteFolder,
+    downloadFolder,
     refreshCurrentFolder,
     startupId,
     setStartupId

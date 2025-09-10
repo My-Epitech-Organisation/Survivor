@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DriveFile } from '@/types/drive';
+import { DriveFile, DriveFolder } from '@/types/drive';
 import { useDrive } from '@/contexts/DriveContext';
 import { downloadFile } from '@/lib/downloadUtils';
 import { Card, CardContent } from '@/components/ui/card';
@@ -45,6 +45,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
     uploadFile,
     deleteFile,
     deleteFolder,
+    downloadFolder,
     refreshCurrentFolder,
     setStartupId
   } = useDrive();
@@ -111,6 +112,10 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
 
   const handleFileDownload = async (file: DriveFile) => {
     await downloadFile(file.id, file.name);
+  };
+
+  const handleFolderDownload = async (folder: DriveFolder) => {
+    await downloadFolder(folder.id, folder.name);
   };
 
   const renderFileIcon = (file: DriveFile) => {
@@ -279,6 +284,10 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
+                          <DropdownMenuItem onClick={() => handleFolderDownload(folder)}>
+                            <Download className="h-4 w-4 mr-2" />
+                            Download
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => deleteFolder(folder.id)}>
                             <Trash2 className="h-4 w-4 mr-2" />
                             Delete

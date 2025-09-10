@@ -3,6 +3,8 @@ import os
 import secrets
 import uuid
 from wsgiref.util import FileWrapper
+from zipfile import ZipFile
+from io import BytesIO
 
 from authentication.permissions import IsFounder
 from django.conf import settings
@@ -174,6 +176,67 @@ class DriveFolderViewSet(viewsets.ModelViewSet):
         )
 
         instance.delete()
+
+    @action(detail=True, methods=["get"])
+    def download(self, request, pk=None):
+        """
+        Download a folder as a compressed zip file.
+        """
+        folder = self.get_object()
+
+        DriveActivity.objects.create(
+            startup=folder.startup,
+            user=request.user,
+            folder=folder,
+            action="download",
+            ip_address=request.META.get("REMOTE_ADDR"),
+        )
+
+        files_count = self._count_files_in_folder(folder)
+        if files_count == 0:
+            return Response(
+                {"error": "The folder is empty and cannot be downloaded"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        zip_buffer = BytesIO()
+
+        with ZipFile(zip_buffer, 'w') as zip_file:
+            self._add_folder_to_zip(zip_file, folder, folder.name)
+
+        zip_buffer.seek(0)
+        zip_data = zip_buffer.getvalue()
+
+        response = HttpResponse(zip_data, content_type='application/zip')
+        response['Content-Disposition'] = f'attachment; filename="{folder.name}.zip"'
+        response['Content-Length'] = len(zip_data)
+        response['Content-Transfer-Encoding'] = 'binary'
+
+        return response
+
+    def _count_files_in_folder(self, folder):
+        """
+        Count total files in a folder and its subfolders.
+        """
+        count = DriveFile.objects.filter(folder=folder, is_archived=False).count()
+        subfolders = DriveFolder.objects.filter(parent=folder)
+        for subfolder in subfolders:
+            count += self._count_files_in_folder(subfolder)
+        return count
+
+    def _add_folder_to_zip(self, zip_file, folder, current_path):
+        """
+        Recursively add all files from a folder to the zip file.
+        """
+        files = DriveFile.objects.filter(folder=folder, is_archived=False)
+        for file_obj in files:
+            file_path = file_obj.file.path
+            if os.path.exists(file_path):
+                zip_file.write(file_path, os.path.join(current_path, file_obj.name))
+
+        subfolders = DriveFolder.objects.filter(parent=folder)
+        for subfolder in subfolders:
+            self._add_folder_to_zip(zip_file, subfolder, os.path.join(current_path, subfolder.name))
 
 
 class DriveFileViewSet(viewsets.ModelViewSet):

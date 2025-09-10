@@ -1,4 +1,5 @@
 import api from '../lib/api';
+import { getAPIUrl } from '../lib/config';
 import {
   DriveFile, DriveFolder, DriveShare, StorageStats,
   DriveFilesResponse, DriveFoldersResponse, DriveSharesResponse, DriveActivitiesResponse,
@@ -98,6 +99,43 @@ export const DriveService = {
   getDownloadUrl: (fileId: number): string => {
     const token = localStorage.getItem('authToken');
     return `/api${DRIVE_API.FILES}${fileId}/download/?token=${token}`;
+  },
+
+  downloadFolder: async (folderId: number, folderName: string): Promise<void> => {
+    const token = document.cookie
+      .split(";")
+      .find((cookie) => cookie.trim().startsWith("authToken="))
+      ?.split("=")[1];
+
+    if (!token) {
+      throw new Error('No auth token found');
+    }
+
+    const apiUrl = getAPIUrl();
+    const downloadUrl = `${apiUrl}/drive/folders/${folderId}/download/`;
+
+    const response = await fetch(downloadUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Download failed: ${response.statusText}`);
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${folderName}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    window.URL.revokeObjectURL(url);
   },
 
   getFolders: async (filters?: DriveFolderFilters): Promise<DriveFoldersResponse> => {

@@ -8,6 +8,7 @@ class DriveFolderSerializer(serializers.ModelSerializer):
 
     subfolders_count = serializers.SerializerMethodField()
     files_count = serializers.SerializerMethodField()
+    download_url = serializers.SerializerMethodField()
 
     class Meta:
         model = DriveFolder
@@ -21,8 +22,9 @@ class DriveFolderSerializer(serializers.ModelSerializer):
             "subfolders_count",
             "files_count",
             "path",
+            "download_url",
         ]
-        read_only_fields = ["created_at", "path"]
+        read_only_fields = ["created_at", "path", "download_url"]
 
     def get_subfolders_count(self, obj):
         """Get the number of subfolders"""
@@ -32,13 +34,29 @@ class DriveFolderSerializer(serializers.ModelSerializer):
         """Get the number of files in this folder"""
         return obj.files.count()
 
+    def get_download_url(self, obj):
+        """Get the download URL for the folder"""
+        request = self.context.get("request")
+        if request is None:
+            return None
+        return request.build_absolute_uri(f"/api/drive/folders/{obj.id}/download/")
+
 
 class DriveFolderListSerializer(serializers.ModelSerializer):
     """Lightweight serializer for listing folders"""
 
+    download_url = serializers.SerializerMethodField()
+
     class Meta:
         model = DriveFolder
-        fields = ["id", "name", "parent", "created_at"]
+        fields = ["id", "name", "parent", "created_at", "download_url"]
+
+    def get_download_url(self, obj):
+        """Get the download URL for the folder"""
+        request = self.context.get("request")
+        if request is None:
+            return None
+        return request.build_absolute_uri(f"/api/drive/folders/{obj.id}/download/")
 
 
 class DriveFileSerializer(serializers.ModelSerializer):
