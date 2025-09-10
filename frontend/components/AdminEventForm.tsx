@@ -386,7 +386,7 @@ export default function AdminEventForm({
           </Button>
         </DialogClose>
         <Button
-          className="w-full sm:w-auto px-6 py-2 bg-app-blue-primary hover:bg-app-blue-hover text-white rounded-lg shadow cursor-pointer font-bold"
+          className="w-full sm:w-auto px-6 py-2 bg-jeb-primary hover:bg-jeb-hover text-white rounded-lg shadow cursor-pointer font-bold"
           onClick={handleSubmit}
         >
           Save
