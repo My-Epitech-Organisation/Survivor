@@ -210,10 +210,10 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
         }),
         userID: user.id,
       }
-    // setMessages((prev) => [
-    //   ...(prev ?? []),
-    //   message,
-    // ]);
+    setMessages((prev) => [
+      ...(prev ?? []),
+      message,
+    ]);
     // Send the new message to other ! using le truc d'Eliott a la manière d'une socket
     if (conv?.created == false) {
       const participantIds = conv.participants.map(p => p.id);
