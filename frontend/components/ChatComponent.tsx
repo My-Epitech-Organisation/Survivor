@@ -137,9 +137,10 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
 
   // Separate useEffect for Socket.IO setup - only when conv changes
   useEffect(() => {
-    if (conv) {
+    console.log("CONV changed: ",conv);
+    if (conv && (!("created" in conv) || conv.created)) {
       const cleanup = setupSocket();
-      return cleanup; // Return cleanup function for useEffect
+      return cleanup;
     }
   }, [conv, setupSocket]);
 

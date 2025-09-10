@@ -133,11 +133,11 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
                     </p>
                   </div>
 
-                  {Number(thread.unread_count) > 0 && (
+                  {/* {Number(thread.unread_count) > 0 && (
                     <Badge variant="destructive" className="ml-2 shrink-0">
                       {thread.unread_count}
                     </Badge>
-                  )}
+                  )} */}
                 </button>
               ))
             )}
