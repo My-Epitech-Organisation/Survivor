@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from admin_panel.models import Founder, StartupDetail
 
-from .models import ProjectView
+from .models import ProjectDislike, ProjectLike, ProjectShare, ProjectView
 
 
 class FounderSerializer(serializers.ModelSerializer):
@@ -443,5 +443,72 @@ class ProjectViewStatsSerializer(serializers.Serializer):
     unique_users = serializers.IntegerField()
     unique_ips = serializers.IntegerField()
     unique_sessions = serializers.IntegerField()
+    period_start = serializers.DateTimeField(required=False)
+    period_end = serializers.DateTimeField(required=False)
+
+
+class ProjectLikeSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ProjectLike model.
+    """
+
+    project_name = serializers.CharField(source="project.name", read_only=True)
+    user_email = serializers.CharField(source="user.email", read_only=True)
+
+    class Meta:
+        model = ProjectLike
+        fields = ["id", "project", "project_name", "timestamp", "user", "user_email", "ip_address", "session_key"]
+        read_only_fields = ["timestamp"]
+
+
+class ProjectDislikeSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ProjectDislike model.
+    """
+
+    project_name = serializers.CharField(source="project.name", read_only=True)
+    user_email = serializers.CharField(source="user.email", read_only=True)
+
+    class Meta:
+        model = ProjectDislike
+        fields = ["id", "project", "project_name", "timestamp", "user", "user_email", "ip_address", "session_key"]
+        read_only_fields = ["timestamp"]
+
+
+class ProjectShareSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ProjectShare model.
+    """
+
+    project_name = serializers.CharField(source="project.name", read_only=True)
+    user_email = serializers.CharField(source="user.email", read_only=True)
+
+    class Meta:
+        model = ProjectShare
+        fields = [
+            "id",
+            "project",
+            "project_name",
+            "timestamp",
+            "user",
+            "user_email",
+            "ip_address",
+            "session_key",
+            "platform",
+        ]
+        read_only_fields = ["timestamp"]
+
+
+class ProjectEngagementStatsSerializer(serializers.Serializer):
+    """
+    Serializer for project engagement statistics (likes, dislikes, shares).
+    """
+
+    total_likes = serializers.IntegerField()
+    total_dislikes = serializers.IntegerField()
+    total_shares = serializers.IntegerField()
+    unique_likers = serializers.IntegerField()
+    unique_dislikers = serializers.IntegerField()
+    unique_sharers = serializers.IntegerField()
     period_start = serializers.DateTimeField(required=False)
     period_end = serializers.DateTimeField(required=False)
