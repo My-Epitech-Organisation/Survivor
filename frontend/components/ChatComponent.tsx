@@ -345,11 +345,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
                   }`}
                 >
                   {!(message.userID === user?.id) && (
-                    <IDAvatar id={message.userID} />
-                  // <Avatar className="w-8 h-8">
-                  //   <AvatarImage src="/placeholder-avatar.jpg" alt={message.sender} />
-                  //   <AvatarFallback>ET</AvatarFallback>
-                  // </Avatar>
+                    <IDAvatar size={8} id={message.userID} />
                   )}
                   <div
                   className={`rounded-2xl px-3 py-2 text-sm max-w-[85%] sm:max-w-[70%] lg:max-w-[60%] break-words whitespace-pre-wrap ${

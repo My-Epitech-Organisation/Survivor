@@ -106,19 +106,6 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
                   {thread.participants.length === 1 ?
                   <>
                     <IDAvatar size={10} className="shrink-0" id={thread.participants.at(0)?.id ?? -1}/>
-                    {/* <Avatar className="w-10 h-10 shrink-0">
-                      <AvatarImage
-                        src={
-                          "userImage" in (thread.participants.at(0) || {})
-                            ? `${getBackendUrl()}${(thread.participants.at(0) as User).userImage}`
-                            : undefined
-                        }
-                        alt={thread.participants.at(0)?.name}
-                      />
-                      <AvatarFallback>
-                        {thread.participants.at(0)?.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar> */}
                   </>
                   :
                   <>
