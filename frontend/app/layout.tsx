@@ -3,6 +3,7 @@ import { Montserrat, Open_Sans } from "next/font/google";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Toaster } from "@/components/ui/sonner"
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -34,6 +35,7 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>{children}</AuthProvider>
           <Toaster />
+          <ThemeToggle />
         </ThemeProvider>
       </body>
     </html>
