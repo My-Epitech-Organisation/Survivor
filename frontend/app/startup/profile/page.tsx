@@ -284,14 +284,14 @@ export default function StartupProfile() {
                       <Button
                         onClick={handleSave}
                         variant="default"
-                        className="bg-jeb-primary hover:bg-jeb-hover text-app-white cursor-pointer"
+                        className="bg-jeb-primary text-white font-bold px-4 py-2 rounded-md hover:bg-jeb-hover transition-colors cursor-pointer"
                       >
                         Save Changes
                       </Button>
                       <Button
                         onClick={handleCancel}
                         variant="outline"
-                        className="border-jeb-primary text-jeb-primary hover:text-jeb-hover hover:bg-jeb-light cursor-pointer"
+                        className="border-jeb-primary text-jeb-primary hover:text-jeb-hover hover:bg-jeb-light cursor-pointer font-bold"
                       >
                         Cancel
                       </Button>
@@ -299,8 +299,8 @@ export default function StartupProfile() {
                   ) : (
                     <Button
                       onClick={handleStartEditing}
-                      variant="outline"
-                      className="border-jeb-primary text-jeb-primary hover:text-jeb-hover hover:bg-jeb-light cursor-pointer"
+                      variant="default"
+                      className="bg-jeb-primary text-white font-bold px-4 py-2 rounded-md hover:bg-jeb-hover transition-colors cursor-pointer"
                     >
                       <FaEdit className="mr-2" />
                       Edit Profile
