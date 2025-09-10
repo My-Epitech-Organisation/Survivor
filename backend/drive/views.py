@@ -2,9 +2,9 @@ import mimetypes
 import os
 import secrets
 import uuid
+from io import BytesIO
 from wsgiref.util import FileWrapper
 from zipfile import ZipFile
-from io import BytesIO
 
 from authentication.permissions import IsFounder
 from django.conf import settings
@@ -195,22 +195,21 @@ class DriveFolderViewSet(viewsets.ModelViewSet):
         files_count = self._count_files_in_folder(folder)
         if files_count == 0:
             return Response(
-                {"error": "The folder is empty and cannot be downloaded"},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": "The folder is empty and cannot be downloaded"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         zip_buffer = BytesIO()
 
-        with ZipFile(zip_buffer, 'w') as zip_file:
+        with ZipFile(zip_buffer, "w") as zip_file:
             self._add_folder_to_zip(zip_file, folder, folder.name)
 
         zip_buffer.seek(0)
         zip_data = zip_buffer.getvalue()
 
-        response = HttpResponse(zip_data, content_type='application/zip')
-        response['Content-Disposition'] = f'attachment; filename="{folder.name}.zip"'
-        response['Content-Length'] = len(zip_data)
-        response['Content-Transfer-Encoding'] = 'binary'
+        response = HttpResponse(zip_data, content_type="application/zip")
+        response["Content-Disposition"] = f'attachment; filename="{folder.name}.zip"'
+        response["Content-Length"] = len(zip_data)
+        response["Content-Transfer-Encoding"] = "binary"
 
         return response
 

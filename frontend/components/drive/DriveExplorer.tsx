@@ -1,23 +1,31 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { DriveFile, DriveFolder } from '@/types/drive';
-import { useDrive } from '@/contexts/DriveContext';
-import { downloadFile } from '@/lib/downloadUtils';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { DriveFile, DriveFolder } from "@/types/drive";
+import { useDrive } from "@/contexts/DriveContext";
+import { downloadFile } from "@/lib/downloadUtils";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
-  Folder, File, ChevronRight, UploadCloud, FolderPlus,
-  Trash2, Download, MoreVertical, RefreshCw, ArrowLeft
-} from 'lucide-react';
+  Folder,
+  File,
+  ChevronRight,
+  UploadCloud,
+  FolderPlus,
+  Trash2,
+  Download,
+  MoreVertical,
+  RefreshCw,
+  ArrowLeft,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -25,8 +33,8 @@ import {
   DialogTitle,
   DialogFooter,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Spinner } from '@/components/ui/spinner';
+} from "@/components/ui/dialog";
+import { Spinner } from "@/components/ui/spinner";
 
 interface DriveExplorerProps {
   startupId: number;
@@ -47,20 +55,28 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
     deleteFolder,
     downloadFolder,
     refreshCurrentFolder,
-    setStartupId
+    setStartupId,
   } = useDrive();
 
-  const [newFolderName, setNewFolderName] = useState('');
+  const [newFolderName, setNewFolderName] = useState("");
   const [newFolderDialogOpen, setNewFolderDialogOpen] = useState(false);
 
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
-  const [fileDescription, setFileDescription] = useState('');
+  const [fileDescription, setFileDescription] = useState("");
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
-  const [folderMenuOpen, setFolderMenuOpen] = useState<{ [key: number]: boolean }>({});
-  const [fileMenuOpen, setFileMenuOpen] = useState<{ [key: number]: boolean }>({});
+  const [folderMenuOpen, setFolderMenuOpen] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [fileMenuOpen, setFileMenuOpen] = useState<{ [key: number]: boolean }>(
+    {}
+  );
 
-  const handleContextMenu = (e: React.MouseEvent, folder?: DriveFolder, file?: DriveFile) => {
+  const handleContextMenu = (
+    e: React.MouseEvent,
+    folder?: DriveFolder,
+    file?: DriveFile
+  ) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -86,7 +102,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
   React.useEffect(() => {
     if (startupId) {
       setStartupId(startupId);
-      console.log('DriveExplorer - Setting startup ID:', startupId);
+      console.log("DriveExplorer - Setting startup ID:", startupId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startupId]);
@@ -108,16 +124,21 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
   const handleCreateFolder = async () => {
     if (newFolderName.trim()) {
       await createFolder(startupId, newFolderName, currentFolder?.id || null);
-      setNewFolderName('');
+      setNewFolderName("");
       setNewFolderDialogOpen(false);
     }
   };
 
   const handleFileUpload = async () => {
     if (fileToUpload) {
-      await uploadFile(startupId, fileToUpload, currentFolder?.id || null, fileDescription);
+      await uploadFile(
+        startupId,
+        fileToUpload,
+        currentFolder?.id || null,
+        fileDescription
+      );
       setFileToUpload(null);
-      setFileDescription('');
+      setFileDescription("");
       setUploadDialogOpen(false);
     }
   };
@@ -145,24 +166,24 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
   };
 
   const renderFileIcon = (file: DriveFile) => {
-    const extension = file.name.split('.').pop()?.toLowerCase();
+    const extension = file.name.split(".").pop()?.toLowerCase();
 
     switch (extension) {
-      case 'pdf':
+      case "pdf":
         return <File className="text-red-500" />;
-      case 'doc':
-      case 'docx':
+      case "doc":
+      case "docx":
         return <File className="text-blue-500" />;
-      case 'xls':
-      case 'xlsx':
+      case "xls":
+      case "xlsx":
         return <File className="text-green-500" />;
-      case 'ppt':
-      case 'pptx':
+      case "ppt":
+      case "pptx":
         return <File className="text-orange-500" />;
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "gif":
         return <File className="text-purple-500" />;
       default:
         return <File className="text-gray-500" />;
@@ -174,7 +195,9 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
       {!startupId ? (
         <div className="flex flex-col items-center justify-center h-64">
           <Spinner className="mb-4" />
-          <p className="text-muted-foreground">Loading startup information...</p>
+          <p className="text-muted-foreground">
+            Loading startup information...
+          </p>
         </div>
       ) : (
         <>
@@ -183,17 +206,23 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
               {error}
             </div>
           )}
-
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Drive</h2>
             <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" onClick={refreshCurrentFolder}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={refreshCurrentFolder}
+              >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh
               </Button>
 
               {/* Upload File Dialog */}
-              <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+              <Dialog
+                open={uploadDialogOpen}
+                onOpenChange={setUploadDialogOpen}
+              >
                 <DialogTrigger asChild>
                   <Button size="sm">
                     <UploadCloud className="h-4 w-4 mr-2" />
@@ -207,10 +236,16 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
                       <Label htmlFor="file">Select File</Label>
-                      <Input id="file" type="file" onChange={handleFileChange} />
+                      <Input
+                        id="file"
+                        type="file"
+                        onChange={handleFileChange}
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="description">Description (optional)</Label>
+                      <Label htmlFor="description">
+                        Description (optional)
+                      </Label>
                       <Input
                         id="description"
                         value={fileDescription}
@@ -220,14 +255,24 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setUploadDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleFileUpload} disabled={!fileToUpload}>Upload</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setUploadDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={handleFileUpload} disabled={!fileToUpload}>
+                      Upload
+                    </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
 
               {/* New Folder Dialog */}
-              <Dialog open={newFolderDialogOpen} onOpenChange={setNewFolderDialogOpen}>
+              <Dialog
+                open={newFolderDialogOpen}
+                onOpenChange={setNewFolderDialogOpen}
+              >
                 <DialogTrigger asChild>
                   <Button size="sm" variant="outline">
                     <FolderPlus className="h-4 w-4 mr-2" />
@@ -250,36 +295,62 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setNewFolderDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleCreateFolder} disabled={!newFolderName.trim()}>Create</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setNewFolderDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleCreateFolder}
+                      disabled={!newFolderName.trim()}
+                    >
+                      Create
+                    </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
           </div>
-
           {/* Simple Breadcrumbs Navigation */}
           <div className="flex items-center space-x-2 text-sm">
             {currentFolder && (
-              <Button variant="outline" size="default" onClick={navigateToParent} className="cursor-pointer">
+              <Button
+                variant="outline"
+                size="default"
+                onClick={navigateToParent}
+                className="cursor-pointer"
+              >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back
               </Button>
             )}
             <div className="flex items-center">
-              <Button variant="outline" size="default" onClick={() => navigateToFolder(null)} className="cursor-pointer">
+              <Button
+                variant="outline"
+                size="default"
+                onClick={() => navigateToFolder(null)}
+                className="cursor-pointer"
+              >
                 Root
               </Button>
-              {breadcrumbs && breadcrumbs.map((folder) => (
-                <React.Fragment key={folder.id}>
-                  <ChevronRight className="h-4 w-4 mx-1" />
-                  <Button variant="outline" size="default" onClick={() => navigateToFolder(folder.id)} className="cursor-pointer">
-                    {folder.name}
-                  </Button>
-                </React.Fragment>
-              ))}
+              {breadcrumbs &&
+                breadcrumbs.map((folder) => (
+                  <React.Fragment key={folder.id}>
+                    <ChevronRight className="h-4 w-4 mx-1" />
+                    <Button
+                      variant="outline"
+                      size="default"
+                      onClick={() => navigateToFolder(folder.id)}
+                      className="cursor-pointer"
+                    >
+                      {folder.name}
+                    </Button>
+                  </React.Fragment>
+                ))}
             </div>
-          </div>          {isLoading ? (
+          </div>{" "}
+          {isLoading ? (
             <div className="flex items-center justify-center h-64">
               <Spinner />
             </div>
@@ -301,19 +372,29 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                       </div>
                       <DropdownMenu
                         open={folderMenuOpen[folder.id] || false}
-                        onOpenChange={(open) => handleFolderMenuOpenChange(folder.id, open)}
+                        onOpenChange={(open) =>
+                          handleFolderMenuOpenChange(folder.id, open)
+                        }
                       >
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => handleFolderDownload(folder)}>
+                          <DropdownMenuItem
+                            onClick={() => handleFolderDownload(folder)}
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => deleteFolder(folder.id)}>
+                          <DropdownMenuItem
+                            onClick={() => deleteFolder(folder.id)}
+                          >
                             <Trash2 className="h-4 w-4 mr-2" />
                             Delete
                           </DropdownMenuItem>
@@ -324,7 +405,9 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 ))
               ) : (
                 <div className="col-span-full text-muted-foreground">
-                  {isLoading ? '' : (
+                  {isLoading ? (
+                    ""
+                  ) : (
                     <div className="flex flex-col items-center py-6">
                       <Folder className="h-12 w-12 text-muted-foreground/50 mb-2" />
                       <p>No folders found in this location.</p>
@@ -357,7 +440,9 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                       </div>
                       <DropdownMenu
                         open={fileMenuOpen[file.id] || false}
-                        onOpenChange={(open) => handleFileMenuOpenChange(file.id, open)}
+                        onOpenChange={(open) =>
+                          handleFileMenuOpenChange(file.id, open)
+                        }
                       >
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
@@ -365,7 +450,9 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => handleFileDownload(file)}>
+                          <DropdownMenuItem
+                            onClick={() => handleFileDownload(file)}
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </DropdownMenuItem>
@@ -380,7 +467,9 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 ))
               ) : (
                 <div className="col-span-full text-muted-foreground">
-                  {isLoading ? '' : (
+                  {isLoading ? (
+                    ""
+                  ) : (
                     <div className="flex flex-col items-center py-6">
                       <File className="h-12 w-12 text-muted-foreground/50 mb-2" />
                       <p>No files found in this location.</p>
@@ -397,7 +486,6 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                   )}
                 </div>
               )}
-
             </div>
           )}
         </>
