@@ -261,27 +261,21 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
           {/* Simple Breadcrumbs Navigation */}
           <div className="flex items-center space-x-2 text-sm">
             {currentFolder && (
-              <Button variant="ghost" size="sm" onClick={navigateToParent}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="default" onClick={navigateToParent} className="cursor-pointer">
+                <ArrowLeft className="h-5 w-5 mr-2" />
                 Back
               </Button>
             )}
             <div className="flex items-center">
-              <span
-                className="hover:text-primary cursor-pointer"
-                onClick={() => navigateToFolder(null)}
-              >
+              <Button variant="outline" size="default" onClick={() => navigateToFolder(null)} className="cursor-pointer">
                 Root
-              </span>
+              </Button>
               {breadcrumbs && breadcrumbs.map((folder) => (
                 <React.Fragment key={folder.id}>
                   <ChevronRight className="h-4 w-4 mx-1" />
-                  <span
-                    className="hover:text-primary cursor-pointer"
-                    onClick={() => navigateToFolder(folder.id)}
-                  >
+                  <Button variant="outline" size="default" onClick={() => navigateToFolder(folder.id)} className="cursor-pointer">
                     {folder.name}
-                  </span>
+                  </Button>
                 </React.Fragment>
               ))}
             </div>
@@ -298,12 +292,10 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                     key={folder.id}
                     className="hover:shadow-md transition-shadow cursor-pointer"
                     onContextMenu={(e) => handleContextMenu(e, folder)}
+                    onClick={() => navigateToFolder(folder.id)}
                   >
                     <CardContent className="p-4 flex justify-between items-center">
-                      <div
-                        className="flex items-center space-x-2 flex-1"
-                        onClick={() => navigateToFolder(folder.id)}
-                      >
+                      <div className="flex items-center space-x-2 flex-1">
                         <Folder className="h-5 w-5 text-yellow-500" />
                         <span className="truncate">{folder.name}</span>
                       </div>
@@ -312,7 +304,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                         onOpenChange={(open) => handleFolderMenuOpenChange(folder.id, open)}
                       >
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
