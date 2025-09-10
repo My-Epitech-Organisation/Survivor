@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { Menu, UserRound, X } from "lucide-react";
+import { Menu, UserRound, X, LogOut } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
 
 export default function InvestorNavigation() {
@@ -146,7 +146,7 @@ export default function InvestorNavigation() {
                   }}
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-red-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
                 >
-                  Logout
+                  <LogOut/>
                 </button>
               </div>
             </div>

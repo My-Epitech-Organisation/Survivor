@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { Menu, UserRound, X } from "lucide-react";
+import { LogOut, Menu, UserRound, X } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
 
 export default function StartupNavigation() {
@@ -87,7 +87,7 @@ export default function StartupNavigation() {
               onClick={handleLogout}
               className="font-heading font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
             >
-              Logout
+              <LogOut>
             </button>
           </div>
 

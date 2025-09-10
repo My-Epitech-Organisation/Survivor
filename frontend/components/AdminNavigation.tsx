@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { Menu, X, UserRound } from "lucide-react";
+import { Menu, X, UserRound, LogOut } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
 
 export default function AdminNavigation() {
@@ -150,7 +150,7 @@ export default function AdminNavigation() {
                   }}
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-red-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
                 >
-                  Logout
+                  <LogOut/>
                 </button>
               </div>
             </div>
