@@ -305,7 +305,11 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={handleFileUpload} disabled={!fileToUpload}>
+                    <Button 
+                      className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
+                      onClick={handleFileUpload} 
+                      disabled={!fileToUpload}
+                    >
                       Upload
                     </Button>
                   </DialogFooter>
@@ -346,6 +350,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                       Cancel
                     </Button>
                     <Button
+                      className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
                       onClick={handleCreateFolder}
                       disabled={!newFolderName.trim()}
                     >

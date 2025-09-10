@@ -66,7 +66,7 @@ export function FileEditor({ file, onClose, onSave, onPreviewRequest }: FileEdit
             Preview
           </Button>
           <Button 
-            variant="default" 
+            className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
             size="sm" 
             onClick={handleSave}
             disabled={isSaving}
