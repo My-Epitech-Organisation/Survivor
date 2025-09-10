@@ -6,8 +6,12 @@ from .founder_views import FounderDetailView
 from .investor_views import InvestorDetailView
 from .kpi_views import (
     monthly_stats,
+    most_engaged_projects,
     most_viewed_projects,
     new_signups,
+    project_engagement_count,
+    project_engagement_over_time,
+    project_engagement_stats,
     project_view_stats,
     project_views_count,
     project_views_over_time,
@@ -84,4 +88,20 @@ urlpatterns = [
         name="kpi_project_views_over_time_detail",
     ),
     path("projects/<int:project_id>/view-count/", project_views_count, name="project_views_count"),
+    # Project engagement endpoints
+    path("projects/<int:project_id>/like/", views.project_like, name="project_like"),
+    path("projects/<int:project_id>/dislike/", views.project_dislike, name="project_dislike"),
+    path("projects/<int:project_id>/share/", views.project_share, name="project_share"),
+    path("projectEngagement/<int:user_id>/", views.project_engagement_stats, name="project_engagement_stats"),
+    # KPI Project Engagement endpoints
+    path("kpi/project-engagement/", project_engagement_stats, name="kpi_project_engagement"),
+    path("kpi/project-engagement/<int:project_id>/", project_engagement_stats, name="kpi_project_engagement_detail"),
+    path("kpi/most-engaged-projects/", most_engaged_projects, name="kpi_most_engaged_projects"),
+    path("kpi/project-engagement-over-time/", project_engagement_over_time, name="kpi_project_engagement_over_time"),
+    path(
+        "kpi/project-engagement-over-time/<int:project_id>/",
+        project_engagement_over_time,
+        name="kpi_project_engagement_over_time_detail",
+    ),
+    path("projects/<int:project_id>/engagement-count/", project_engagement_count, name="project_engagement_count"),
 ]
