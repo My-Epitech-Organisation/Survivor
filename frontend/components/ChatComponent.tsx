@@ -10,6 +10,7 @@ import Router from "next/router";
 import { MessageCircleOff, MessageCircle } from 'lucide-react';
 import { getBackendUrl } from "@/lib/config";
 import { getToken } from "@/lib/api";
+import { io, Socket } from 'socket.io-client';
 
 interface ChatComponentProps {
   onOpenConversations?: () => void;
@@ -28,96 +29,78 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
   const [inputValue, setInputValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const socketRef = useRef<Socket | null>(null);
   const {user, isLoading} = useAuth();
 
-  const setSSE = () => {
-    if (!conv) return;
-    const eventSource = new EventSource(`${getBackendUrl()}/api/threads/${conv.id}/events/?token=${getToken()}`);
-    console.log("🔄 Setting up SSE connection for thread:", conv.id);
-    console.log("📡 SSE URL:", `${getBackendUrl()}/api/threads/${conv.id}/events/?token=${getToken()}`);
+  const setupSocket = useCallback(() => {
+    if (!conv || !user) return;
 
-    eventSource.onopen = () => {
-      console.log("🔗 SSE connection opened successfully");
-    };
+    // Disconnect existing socket
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+    }
 
-    eventSource.onmessage = (event) => {
-      console.log("📨 Generic SSE message received:", event);
-      console.log("📨 Event data:", event.data);
-      console.log("📨 Event type:", event.type);
-      console.log("📨 Event lastEventId:", event.lastEventId);
-    };
-
-    eventSource.addEventListener("message", (event) => {
-      console.log("📨 SSE Message event received:", event);
-      console.log("📨 Message data:", event.data);
-      try {
-        const data = JSON.parse(event.data);
-        console.log("📨 Parsed message data:", data);
-        // Uncomment when ready to process messages
-        // const newMessage: Message = {
-        //   id: String(data.id),
-        //   sender: data.sender_id,
-        //   content: data.body,
-        //   timestamp: new Date(data.created_at).toLocaleString([], {
-        //     day: "2-digit",
-        //     month: "2-digit",
-        //     hour: "2-digit",
-        //     minute: "2-digit",
-        //   }),
-        //   userID: data.sender_id,
-        // };
-        // setMessages((prev) => [...(prev ?? []), newMessage]);
-      } catch (error) {
-        console.error("❌ Error parsing message data:", error);
-      }
+    // Create new socket connection
+    const backendUrl = getBackendUrl().replace('/api', '');
+    const socket = io(backendUrl, {
+      transports: ['websocket', 'polling'],
+      upgrade: true,
     });
 
-    eventSource.addEventListener("connected", (event) => {
-      console.log("🔗 SSE Connected event received:", event);
-      console.log("🔗 Connection data:", event.data);
-      try {
-        const data = JSON.parse(event.data);
-        console.log("🔗 Parsed connection data:", data);
-        console.log("🔗 Connection confirmed for user", data.user_id, "in thread", data.thread_id);
-      } catch (error) {
-        console.error("❌ Error parsing connection data:", error);
-      }
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+      console.log('🔗 Socket.IO connected:', socket.id);
+      
+      // Join the thread
+      socket.emit('join_thread', {
+        token: getToken(),
+        thread_id: conv.id
+      });
     });
 
-    eventSource.addEventListener("typing", (event) => {
-      console.log("⌨️ SSE Typing event received:", event);
-      console.log("⌨️ Typing data:", event.data);
-      try {
-        const data = JSON.parse(event.data);
-        console.log("⌨️ Parsed typing data:", data);
-      } catch (error) {
-        console.error("❌ Error parsing typing data:", error);
-      }
+    socket.on('connected', (data) => {
+      console.log('✅ Joined thread:', data);
     });
 
-    eventSource.addEventListener("read_receipt", (event) => {
-      console.log("👁️ SSE Read receipt event received:", event);
-      console.log("👁️ Read receipt data:", event.data);
-      try {
-        const data = JSON.parse(event.data);
-        console.log("👁️ Parsed read receipt data:", data);
-      } catch (error) {
-        console.error("❌ Error parsing read receipt data:", error);
-      }
+    socket.on('joined_thread', (data) => {
+      console.log('✅ Successfully joined thread:', data.thread_id);
     });
 
-    eventSource.onerror = (err) => {
-      console.error("❌ SSE connection error:", err);
-      console.error("❌ Error target:", err.target);
-      console.error("❌ Error type:", err.type);
-      eventSource.close();
-    };
+    socket.on('new_message', (data) => {
+      console.log('📨 New message received:', data);
+      const newMessage: Message = {
+        id: String(data.id),
+        sender: data.sender_name || `User ${data.sender_id}`,
+        content: data.body,
+        timestamp: new Date(data.created_at).toLocaleString([], {
+          day: "2-digit",
+          month: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        userID: data.sender_id,
+      };
+      setMessages((prev) => [...(prev ?? []), newMessage]);
+    });
+
+    socket.on('typing', (data) => {
+      console.log('⌨️ Typing event:', data);
+      // Handle typing indicators here if needed
+    });
+
+    socket.on('error', (error) => {
+      console.error('❌ Socket.IO error:', error);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('🔌 Socket.IO disconnected');
+    });
 
     return () => {
-      console.log("🔌 Closing SSE connection");
-      eventSource.close();
+      socket.disconnect();
     };
-  }
+  }, [conv, user]);
 
   const refreshThreadMessages = useCallback(async () => {
     if (!conv || (conv.created == false)) return;
@@ -150,12 +133,23 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
     }
   }, [conv]);
 
-  // Separate useEffect for SSE setup - only when conv changes
+  // Separate useEffect for Socket.IO setup - only when conv changes
   useEffect(() => {
     if (conv) {
-      setSSE();
+      const cleanup = setupSocket();
+      return cleanup; // Return cleanup function for useEffect
     }
-  }, [conv]);
+  }, [conv, setupSocket]);
+
+  // Cleanup socket on component unmount
+  useEffect(() => {
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, []);
 
   const clearThreadsMessages = useCallback(async () => {
       try {
@@ -216,10 +210,10 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
         }),
         userID: user.id,
       }
-    setMessages((prev) => [
-      ...(prev ?? []),
-      message,
-    ]);
+    // setMessages((prev) => [
+    //   ...(prev ?? []),
+    //   message,
+    // ]);
     // Send the new message to other ! using le truc d'Eliott a la manière d'une socket
     if (conv?.created == false) {
       const participantIds = conv.participants.map(p => p.id);
@@ -237,11 +231,29 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
           last_message: result.data.thread.last_message,
           unread_count: result.data.thread.unread_count
         });
+        
+        // After creating new thread, emit the message via Socket.IO
+        if (socketRef.current) {
+          socketRef.current.emit('send_message', {
+            token: getToken(),
+            thread_id: result.data.thread.id,
+            body: message.content
+          });
+        }
       }
     } else {
       try {
         console.log("Je vais envoyer a l'id", conv.id);
         const resp = await api.post<MessageReceive>(`/threads/${conv.id}/messages/`, {body: message.content});
+        
+        // Also send via Socket.IO for real-time
+        if (socketRef.current) {
+          socketRef.current.emit('send_message', {
+            token: getToken(),
+            thread_id: conv.id,
+            body: message.content
+          });
+        }
       } catch (error) {
         console.error(error);
       }
@@ -404,5 +416,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
   );
 }
 );
+
+ChatComponent.displayName = "ChatComponent";
 
 export default ChatComponent;

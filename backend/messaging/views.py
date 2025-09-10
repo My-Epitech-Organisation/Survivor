@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import time
@@ -400,6 +401,7 @@ def update_typing_status(request, thread_id):
         404: OpenApiResponse(description="Thread not found"),
     },
 )
+
 @require_GET
 @csrf_exempt
 def thread_events(request, thread_id):
@@ -410,7 +412,11 @@ def thread_events(request, thread_id):
     logger.info(f"🚀 Thread events SSE requested for thread {thread_id}")
     logger.debug(f"📋 Query parameters: {dict(request.GET)}")
     logger.debug(f"📋 Headers: {dict(request.META)}")
-    
+
+    logger.info(f"📍 SSE request path: {request.path}")
+    logger.info(f"📍 Full URL: {request.build_absolute_uri()}")
+    logger.info(f"📍 Thread ID from URL: {thread_id}")
+
     user = authenticate_user_from_jwt(request)
     logger.info(f"Thread events requested: thread_id={thread_id}, user={user.id if user else 'None'}")
 
@@ -433,120 +439,116 @@ def thread_events(request, thread_id):
     last_event_id = request.META.get("HTTP_LAST_EVENT_ID") or request.GET.get("last_event_id")
     logger.info(f"Thread events: Starting SSE stream for thread {thread_id}, last_event_id={last_event_id}")
 
-    # Function to generate SSE events
-    def event_stream():
+    async def event_stream(thread, user):
+        """
+        SSE event stream for a thread.
+        Events: message, typing, read_receipt
+        """
         last_message_id = None
-        last_typing_check = None
         last_read_check = None
         cycle_count = 0
 
-        if last_event_id:
-            try:
-                # Format is expected to be "message:123" or similar
-                event_type, event_id = last_event_id.split(":", 1)
-                if event_type == "message":
-                    last_message_id = int(event_id)
-                    logger.info(f"Thread events: Resuming from message ID {last_message_id}")
-            except (ValueError, TypeError):
-                logger.warning(f"Thread events: Invalid last_event_id format: {last_event_id}")
-                pass
+        # Initial retry config for SSE client
+        yield "retry: 1000\n\n"
 
         while True:
-            # Check for new messages - This is highest priority and checked every cycle
-            if last_message_id:
-                new_messages = thread.messages.filter(id__gt=last_message_id).order_by("id")
-            else:
-                new_messages = thread.messages.order_by("-id")[:5]
-                new_messages = reversed(list(new_messages))
+            try:
+                messages_found = False
 
-            messages_found = False
-            for message in new_messages:
-                messages_found = True
-                logger.info(f"Thread events: Sending message event: ID={message.id}, sender={message.sender.id}")
-                data = {
-                    "type": "message",
-                    "id": message.id,
-                    "sender_id": message.sender.id,
-                    "body": message.body,
-                    "created_at": message.created_at.isoformat(),
-                }
+                # --- Messages ---
+                if last_message_id:
+                    new_messages = thread.messages.filter(id__gt=last_message_id).order_by("id")
+                else:
+                    # First connection, take last 5 messages
+                    new_messages = thread.messages.order_by("-id")[:5]
+                    new_messages = list(reversed(new_messages))
 
-                last_message_id = message.id
+                if new_messages:
+                    logger.info(f"Thread {thread.id}: Found {len(new_messages)} new messages to send")
+                for message in new_messages:
+                    messages_found = True
+                    last_message_id = message.id  # update so we don't resend
 
-                # Format as SSE
-                event_data = f"id:message:{message.id}\n"
-                event_data += f"event:message\n"
-                event_data += f"data:{json.dumps(data)}\n\n"
+                    data = {
+                        "type": "message",
+                        "id": message.id,
+                        "sender_id": message.sender.id,
+                        "sender_name": message.sender.name,
+                        "body": message.body,
+                        "created_at": message.created_at.isoformat(),
+                    }
 
-                yield event_data
-
-            # Check for typing indicators every 500ms (every cycle)
-            typing_indicators = TypingIndicator.objects.filter(
-                thread=thread,
-                is_typing=True,
-                started_at__gte=timezone.now() - timezone.timedelta(seconds=5),  # Auto-expire after 5 seconds
-            ).exclude(user=user)
-
-            if typing_indicators.exists():
-                logger.debug(f"Thread events: Sending typing event for {typing_indicators.count()} users")
-                typing_users = [
-                    {"id": indicator.user.id, "name": indicator.user.name} for indicator in typing_indicators
-                ]
-
-                data = {"type": "typing", "users": typing_users}
-
-                # Format as SSE
-                event_data = f"event:typing\n"
-                event_data += f"data:{json.dumps(data)}\n\n"
-
-                yield event_data
-
-            last_typing_check = timezone.now()
-
-            # Check for read receipts every 1 second (every 2 cycles)
-            if not last_read_check or cycle_count % 2 == 0:
-                read_receipts = ReadReceipt.objects.filter(
-                    thread=thread, read_at__gte=timezone.now() - timezone.timedelta(seconds=10)
-                ).exclude(user=user)
-
-                if read_receipts.exists():
-                    logger.debug(f"Thread events: Sending read receipt event for {read_receipts.count()} receipts")
-                    receipt_data = [
-                        {
-                            "user_id": receipt.user.id,
-                            "name": receipt.user.name,
-                            "last_read_message_id": receipt.last_read_message.id,
-                            "read_at": receipt.read_at.isoformat(),
-                        }
-                        for receipt in read_receipts
-                    ]
-
-                    data = {"type": "read_receipt", "receipts": receipt_data}
-
-                    # Format as SSE
-                    event_data = f"event:read_receipt\n"
-                    event_data += f"data:{json.dumps(data)}\n\n"
-
+                    event_data = (
+                        f"id:message:{message.id}\n"
+                        f"event: message\n"
+                        f"data:{json.dumps(data, separators=(',', ':'))}\n\n"
+                    )
                     yield event_data
 
-                last_read_check = timezone.now()
+                # --- Typing indicators ---
+                typing_indicators = TypingIndicator.objects.filter(
+                    thread=thread,
+                    is_typing=True,
+                    started_at__gte=timezone.now() - timezone.timedelta(seconds=5),
+                ).exclude(user=user)
 
-            if not messages_found and cycle_count % 4 == 0:
-                logger.debug("Thread events: Sending heartbeat")
-                yield ": heartbeat\n\n"
+                if typing_indicators.exists():
+                    typing_users = [{"id": t.user.id, "name": t.user.name} for t in typing_indicators]
+                    data = {"type": "typing", "users": typing_users}
+                    event_data = (
+                        f"id:typing:{int(time.time())}\n"
+                        f"event: typing\n"
+                        f"data:{json.dumps(data, separators=(',', ':'))}\n\n"
+                    )
+                    yield event_data
 
-            cycle_count = (cycle_count + 1) % 100
-            time.sleep(0.1)
+                # --- Read receipts (every ~1s = every 10 cycles at 0.1s loop) ---
+                if not last_read_check or cycle_count % 10 == 0:
+                    read_receipts = ReadReceipt.objects.filter(
+                        thread=thread,
+                        read_at__gte=timezone.now() - timezone.timedelta(seconds=10),
+                    ).exclude(user=user)
 
-    response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
+                    if read_receipts.exists():
+                        receipt_data = [
+                            {
+                                "user_id": r.user.id,
+                                "name": r.user.name,
+                                "last_read_message_id": r.last_read_message.id,
+                                "read_at": r.read_at.isoformat(),
+                            }
+                            for r in read_receipts
+                        ]
+                        data = {"type": "read_receipt", "receipts": receipt_data}
+                        event_data = (
+                            f"id:read_receipt:{int(time.time())}\n"
+                            f"event: read_receipt\n"
+                            f"data:{json.dumps(data, separators=(',', ':'))}\n\n"
+                        )
+                        yield event_data
 
-    # Add SSE-specific headers - optimized for real-time performance
+                    last_read_check = timezone.now()
+
+                # --- Heartbeat (every ~15s) ---
+                if not messages_found and cycle_count % 150 == 0:
+                    yield ": heartbeat\n\n"
+
+                cycle_count = (cycle_count + 1) % 1000
+                time.sleep(0.1)
+
+            except Exception as e:
+                logger.error(f"Error in SSE loop: {e}")
+                data = {"type": "error", "message": str(e)}
+                yield f"event: error\ndata:{json.dumps(data, separators=(',', ':'))}\n\n"
+                break
+        await asyncio.sleep(1)
+
+    logger.info(f"🎬 Starting event_stream for thread {thread_id}, user {user.id}")
+    response = StreamingHttpResponse(event_stream(thread, user.id), content_type="text/event-stream")
     response["Cache-Control"] = "no-cache, no-transform"
     response["Connection"] = "keep-alive"
     response["X-Accel-Buffering"] = "no"
-    response["Transfer-Encoding"] = "chunked"
     response["Access-Control-Allow-Origin"] = "*"
 
-    # Quicker reconnection for better user experience
-    response["Retry"] = "1000"  # 1 second
+    logger.info(f"✅ SSE stream established for thread {thread_id}, user {user.id}")
     return response
