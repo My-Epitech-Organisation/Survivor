@@ -277,7 +277,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
         )}
         {conv ? (
           <>
-            {conv.participants.length === 1 ? 
+            {conv.participants.length === 1 ?
             <>
               <IDAvatar size={10} id={conv.participants.at(0)?.id ?? -1} />
             </>
@@ -311,7 +311,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
         {/* Message système */}
         {conv && (
           <div className="flex items-center gap-3 justify-center py-2">
-            {conv.participants.length === 1 ? 
+            {conv.participants.length === 1 ?
             <>
               <IDAvatar size={8} id={conv.participants.at(0)?.id ?? -1} />
             </>

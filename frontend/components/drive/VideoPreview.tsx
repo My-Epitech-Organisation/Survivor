@@ -25,7 +25,7 @@ export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
   const [error, setError] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  
+
   const isMobile = useIsMobile();
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -33,7 +33,7 @@ export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
     const loadVideoContent = async () => {
       setIsLoading(true);
       setError(null); // Reset error state
-      
+
       try {
         const videoData = await DriveService.previewVideoFile(file.id);
         setVideoUrl(videoData.videoUrl);
@@ -124,7 +124,7 @@ export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
     <div className="w-full">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
         <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[60%]">{file.name}</h3>
-        
+
         {isMobile ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -164,9 +164,9 @@ export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
           </DropdownMenu>
         ) : (
           <div className="flex flex-wrap justify-end gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleTogglePlay}
             >
               {isPlaying ? (
@@ -175,9 +175,9 @@ export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
                 <><Play className="h-4 w-4 mr-2" /> Play</>
               )}
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleToggleMute}
             >
               {isMuted ? (
@@ -186,17 +186,17 @@ export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
                 <><Volume2 className="h-4 w-4 mr-2" /> Mute</>
               )}
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleFullscreen}
             >
               <Maximize className="h-4 w-4 mr-2" />
               Fullscreen
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleDownload}
             >
               <Download className="h-4 w-4 mr-2" />
@@ -205,7 +205,7 @@ export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
           </div>
         )}
       </div>
-      
+
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Spinner />
@@ -215,17 +215,17 @@ export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
           {error}
         </div>
       ) : (
-        <div 
-          className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" 
-          style={{ 
+        <div
+          className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden"
+          style={{
             minHeight: isMobile ? '40vh' : '60vh',
-            maxHeight: isMobile ? '50vh' : '70vh' 
+            maxHeight: isMobile ? '50vh' : '70vh'
           }}
         >
           <div className="w-full h-full flex justify-center items-center">
-            <video 
+            <video
               ref={videoRef}
-              src={videoUrl} 
+              src={videoUrl}
               className="max-w-full w-full h-auto object-contain"
               style={{
                 maxHeight: isMobile ? '40vh' : '60vh',

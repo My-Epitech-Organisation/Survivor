@@ -49,7 +49,7 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
     const loadPdfContent = async () => {
       setIsLoading(true);
       setError(null); // Reset error state
-      
+
       try {
         const pdfData = await DriveService.previewPdfFile(file.id);
         setPdfUrl(pdfData.pdfUrl);
@@ -85,7 +85,7 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
 
   const changePage = (offset: number) => {
     if (!numPages) return;
-    
+
     const newPageNumber = pageNumber + offset;
     if (newPageNumber >= 1 && newPageNumber <= numPages) {
       setPageNumber(newPageNumber);
@@ -102,7 +102,7 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
   const zoomOut = () => {
     setScale(prevScale => Math.max(prevScale - 0.2, 0.5));
   };
-  
+
   const handleDownload = () => {
     if (pdfUrl) {
       const link = document.createElement('a');
@@ -134,28 +134,28 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
           scrollbar-width: thin;
           scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
         }
-        
+
         .pdf-container::-webkit-scrollbar {
           width: 8px;
           height: 8px;
         }
-        
+
         .pdf-container::-webkit-scrollbar-track {
           background: transparent;
         }
-        
+
         .pdf-container::-webkit-scrollbar-thumb {
           background-color: rgba(155, 155, 155, 0.5);
           border-radius: 4px;
         }
-        
+
         .pdf-container::-webkit-scrollbar-thumb:hover {
           background-color: rgba(155, 155, 155, 0.8);
         }
       `}</style>
       <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
         <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[60%]">{file.name}</h3>
-        
+
         {isMobile ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -181,27 +181,27 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
           </DropdownMenu>
         ) : (
           <div className="flex flex-wrap justify-end gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={zoomOut}
               disabled={scale <= 0.5}
             >
               <ZoomOut className="h-4 w-4 mr-2" />
               Zoom Out
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={zoomIn}
               disabled={scale >= 2.5}
             >
               <ZoomIn className="h-4 w-4 mr-2" />
               Zoom In
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleDownload}
             >
               <Download className="h-4 w-4 mr-2" />
@@ -210,7 +210,7 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
           </div>
         )}
       </div>
-      
+
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Spinner />
@@ -234,8 +234,8 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
               className="pdf-document"
               options={documentOptions}
             >
-              <Page 
-                pageNumber={pageNumber} 
+              <Page
+                pageNumber={pageNumber}
                 scale={scale}
                 className="page"
                 renderTextLayer={!isMobile} // Disable text layer on mobile for better performance
@@ -244,7 +244,7 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
               />
             </Document>
           </div>
-          
+
           {numPages && (
             <div className="flex justify-center items-center flex-wrap gap-2 mt-4">
               <Button

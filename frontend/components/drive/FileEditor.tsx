@@ -100,7 +100,7 @@ export function FileEditor({ file, _onClose, onSave, onPreviewRequest }: FileEdi
     <div className="w-full max-w-full overflow-hidden">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-2 max-w-full">
         <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-[50%] sm:max-w-[50%]">Editing: {file.name}</h3>
-        
+
         {isMobile ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -122,18 +122,18 @@ export function FileEditor({ file, _onClose, onSave, onPreviewRequest }: FileEdi
           </DropdownMenu>
         ) : (
           <div className="flex flex-wrap justify-end gap-1 shrink-0 max-w-[50%]">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => onPreviewRequest(file)}
               className="text-xs px-2 py-1 h-auto"
             >
               <Eye className="h-3 w-3 mr-1" />
               Preview
             </Button>
-            <Button 
+            <Button
               className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors text-xs px-2 py-1 h-auto"
-              size="sm" 
+              size="sm"
               onClick={handleSave}
               disabled={isSaving}
             >
@@ -143,7 +143,7 @@ export function FileEditor({ file, _onClose, onSave, onPreviewRequest }: FileEdi
           </div>
         )}
       </div>
-      
+
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Spinner />
@@ -195,18 +195,18 @@ export function FileEditor({ file, _onClose, onSave, onPreviewRequest }: FileEdi
     word-wrap: break-word;
     box-sizing: border-box !important;
   }
-  
+
   .cm-scroller {
     overflow: auto !important;
     max-width: 100% !important;
   }
-  
+
   .cm-content {
     word-wrap: break-word;
     white-space: pre-wrap;
     max-width: 100% !important;
   }
-  
+
   .cm-gutters {
     min-height: 100% !important;
   }
@@ -215,17 +215,17 @@ export function FileEditor({ file, _onClose, onSave, onPreviewRequest }: FileEdi
   .cm-editor .cm-scroller, .cm-editor .cm-content {
     max-width: calc(100vw - 40px) !important;
   }
-  
+
   @media (max-width: 640px) {
     .cm-editor {
       font-size: 14px;
     }
-    
+
     .cm-gutters {
       padding-right: 8px !important;
     }
   }
-  
+
   /* Corrections pour le Dialog */
   .dialog-content {
     max-width: 100% !important;

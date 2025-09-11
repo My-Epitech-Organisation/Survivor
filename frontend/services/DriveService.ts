@@ -251,7 +251,7 @@ export const DriveService = {
       const response = await api.get<{content: string}>({
         endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
       });
-      
+
       if (response.data && response.data.content !== undefined) {
         return response.data.content;
       } else {
@@ -279,7 +279,7 @@ export const DriveService = {
       }>({
         endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
       });
-      
+
       if (response.data && response.data.image_url) {
         return {
           imageUrl: response.data.image_url,
@@ -314,7 +314,7 @@ export const DriveService = {
       }>({
         endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
       });
-      
+
       if (response.data && response.data.video_url) {
         return {
           videoUrl: response.data.video_url,
@@ -348,7 +348,7 @@ export const DriveService = {
       }>({
         endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
       });
-      
+
       if (response.data && response.data.pdf_url) {
         return {
           pdfUrl: response.data.pdf_url,

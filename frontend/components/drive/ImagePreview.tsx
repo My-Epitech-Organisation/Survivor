@@ -31,7 +31,7 @@ export function ImagePreview({ file, _onClose }: ImagePreviewProps) {
     const loadImageContent = async () => {
       setIsLoading(true);
       setError(null); // Reset error state
-      
+
       try {
         const imageData = await DriveService.previewImageFile(file.id);
         setImageUrl(imageData.imageUrl);
@@ -86,7 +86,7 @@ export function ImagePreview({ file, _onClose }: ImagePreviewProps) {
     <div className="w-full">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
         <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[60%]">{file.name}</h3>
-        
+
         {isMobile ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -116,33 +116,33 @@ export function ImagePreview({ file, _onClose }: ImagePreviewProps) {
           </DropdownMenu>
         ) : (
           <div className="flex flex-wrap justify-end gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleZoomIn}
             >
               <ZoomIn className="h-4 w-4 mr-2" />
               Zoom In
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleZoomOut}
             >
               <ZoomOut className="h-4 w-4 mr-2" />
               Zoom Out
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleRotate}
             >
               <RotateCw className="h-4 w-4 mr-2" />
               Rotate
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleDownload}
             >
               <Download className="h-4 w-4 mr-2" />
@@ -151,7 +151,7 @@ export function ImagePreview({ file, _onClose }: ImagePreviewProps) {
           </div>
         )}
       </div>
-      
+
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Spinner />
@@ -161,22 +161,22 @@ export function ImagePreview({ file, _onClose }: ImagePreviewProps) {
           {error}
         </div>
       ) : (
-        <div 
-          className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" 
-          style={{ 
+        <div
+          className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden"
+          style={{
             minHeight: isMobile ? '40vh' : '60vh',
-            touchAction: 'manipulation' 
+            touchAction: 'manipulation'
           }}
         >
-          <div 
+          <div
             className="relative overflow-hidden w-full h-full flex justify-center items-center"
             style={{ contain: 'content' }}
           >
-            <img 
-              src={imageUrl} 
+            <img
+              src={imageUrl}
               alt={file.name}
               className="max-w-full object-contain transition-all duration-200"
-              style={{ 
+              style={{
                 transform: `scale(${zoom}) rotate(${rotation}deg)`,
                 maxHeight: isMobile ? '40vh' : '60vh',
                 height: 'auto',

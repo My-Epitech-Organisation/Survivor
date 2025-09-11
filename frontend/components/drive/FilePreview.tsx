@@ -36,10 +36,10 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
         setIsLoading(false);
         return;
       }
-      
+
       setIsLoading(true);
       setError(null); // Reset error state
-      
+
       try {
         const fileContent = await DriveService.previewTextFile(file.id);
         setContent(fileContent);
@@ -87,7 +87,7 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
     <div className="w-full">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
         <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[70%]">{file.name}</h3>
-        
+
         {isMobile ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -105,9 +105,9 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
           </DropdownMenu>
         ) : (
           <div className="flex space-x-2 shrink-0">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => onEditRequest(file)}
             >
               <Edit className="h-4 w-4 mr-2" />
@@ -116,7 +116,7 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
           </div>
         )}
       </div>
-      
+
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Spinner />

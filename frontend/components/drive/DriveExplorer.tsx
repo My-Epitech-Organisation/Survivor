@@ -218,7 +218,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
     if (isVideoFile(file)) {
       return <Video className="h-5 w-5 text-blue-500" />;
     }
-    
+
     // Check if it's a PDF file
     if (isPdfFile(file)) {
       return <File className="h-5 w-5 text-red-500" />;
@@ -275,8 +275,8 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 onOpenChange={setUploadDialogOpen}
               >
                 <DialogTrigger asChild>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
                   >
                     <UploadCloud className="h-4 w-4 mr-2" />
@@ -315,9 +315,9 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                     >
                       Cancel
                     </Button>
-                    <Button 
+                    <Button
                       className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
-                      onClick={handleFileUpload} 
+                      onClick={handleFileUpload}
                       disabled={!fileToUpload}
                     >
                       Upload
@@ -596,8 +596,8 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 <DialogHeader>
                   <DialogTitle>Preview File</DialogTitle>
                 </DialogHeader>
-                <FilePreview 
-                  file={previewFile} 
+                <FilePreview
+                  file={previewFile}
                   onClose={handleClosePreview}
                   onEditRequest={handleEditRequest}
                 />
@@ -612,8 +612,8 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 <DialogHeader>
                   <DialogTitle>Edit File</DialogTitle>
                 </DialogHeader>
-                <FileEditor 
-                  file={editFile} 
+                <FileEditor
+                  file={editFile}
                   onClose={handleCloseEditor}
                   onSave={handleSaveFile}
                   onPreviewRequest={handlePreviewRequest}
