@@ -29,6 +29,10 @@ const Protectedroutes: RouteRoles[] = [
     route: "/investor",
     rolesAuth: ["investor"],
   },
+  {
+    route: "/profile",
+    rolesAuth: ["investor", "admin", "user", "founder"],
+  },
 ];
 
 export async function middleware(request: NextRequest) {
@@ -68,5 +72,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/projects/:path*", "/admin/:path*", "/startup/:path*", "/investor/:path*"],
+  matcher: ["/projects/:path*", "/admin/:path*", "/startup/:path*", "/investor/:path*", "/profile"],
 };
