@@ -55,11 +55,9 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
         setPdfUrl(pdfData.pdfUrl);
       } catch (err: unknown) {
         console.error('Error loading PDF:', err);
-        // Vérifier si l'erreur est de type Error (type standard)
         if (err instanceof Error) {
           setError(err.message);
         }
-        // Vérifier si l'erreur a une structure de réponse HTTP (comme axios)
         else if (typeof err === 'object' && err !== null && 'response' in err) {
           const axiosError = err as { response?: { status?: number, data?: { error?: string } } };
           if (axiosError.response?.status === 404) {
@@ -115,7 +113,6 @@ export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
     }
   };
 
-  // Memoize options to prevent unnecessary re-renders
   const documentOptions = useMemo(() => ({
     cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/cmaps/',
     cMapPacked: true,

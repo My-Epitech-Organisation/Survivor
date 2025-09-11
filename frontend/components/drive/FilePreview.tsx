@@ -45,11 +45,9 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
         setContent(fileContent);
       } catch (err: unknown) {
         console.error('Error loading file content:', err);
-        // Vérifier si l'erreur est de type Error (type standard)
         if (err instanceof Error) {
           setError(err.message);
         }
-        // Vérifier si l'erreur a une structure de réponse HTTP (comme axios)
         else if (typeof err === 'object' && err !== null && 'response' in err) {
           const axiosError = err as { response?: { status?: number, data?: { error?: string } } };
           if (axiosError.response?.status === 404) {

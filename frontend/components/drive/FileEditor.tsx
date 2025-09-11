@@ -38,7 +38,6 @@ export function FileEditor({ file, _onClose, onSave, onPreviewRequest }: FileEdi
   const [error, setError] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
-  // Déterminer le langage en fonction de l'extension du fichier
   const getLanguage = () => {
     const ext = file.name.split('.').pop()?.toLowerCase();
     switch (ext) {
@@ -188,8 +187,6 @@ export function FileEditor({ file, _onClose, onSave, onPreviewRequest }: FileEdi
   );
 }
 
-// CSS personnalisé pour assurer que CodeMirror est responsive
-// Cela sera ajouté à la fin du composant
 { }
 <style jsx global>{`
   .cm-editor {
