@@ -6,10 +6,11 @@ import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
 import { Edit, MoreVertical } from 'lucide-react';
-import { isTextFile, isImageFile, isVideoFile, isPdfFile } from '@/lib/fileUtils';
+import { isTextFile, isImageFile, isVideoFile, isPdfFile, isPythonFile } from '@/lib/fileUtils';
 import { ImagePreview } from './ImagePreview';
 import { VideoPreview } from './VideoPreview';
 import { PdfPreview } from './PdfPreview';
+import { PythonFilePreview } from './PythonFilePreview';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 import {
   DropdownMenu,
@@ -32,7 +33,12 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
 
   useEffect(() => {
     const loadFileContent = async () => {
-      if (!isTextFile(file)) {
+      console.log("File type:", file.file_type);
+      console.log("File name:", file.name);
+      console.log("isTextFile:", isTextFile(file));
+      console.log("isPythonFile:", isPythonFile(file));
+
+      if (!isTextFile(file) && !isPythonFile(file)) {
         setIsLoading(false);
         return;
       }
@@ -81,6 +87,27 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
   // Render PDF preview if the file is a PDF
   if (isPdfFile(file)) {
     return <PdfPreview file={file} _onClose={onClose} />;
+  }
+
+  // Render Python preview if the file is a Python file
+  if (isPythonFile(file)) {
+    if (isLoading) {
+      return (
+        <div className="flex justify-center py-8">
+          <Spinner />
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="bg-destructive/15 text-destructive p-4 rounded-md">
+          {error}
+        </div>
+      );
+    }
+
+    return <PythonFilePreview file={file} content={content} onClose={onClose} onEditRequest={onEditRequest} />;
   }
 
   return (
