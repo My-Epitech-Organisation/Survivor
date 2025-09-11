@@ -1,8 +1,8 @@
 from auditlog.models import AuditLog
 from authentication.permissions import IsAdmin
+from django.db.models import Count
 from django.http import JsonResponse
 from django.utils import timezone
-from django.db.models import Count
 from drf_spectacular.utils import OpenApiExample, OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes

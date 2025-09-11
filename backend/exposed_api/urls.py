@@ -40,7 +40,11 @@ urlpatterns = [
     path("projects/", project_views.ProjectDetailView.as_view(), name="project_create_or_list"),
     path("projects/<int:_id>/", project_views.ProjectDetailView.as_view(), name="project_detail_or_crud"),
     path("projects/founder/<int:founder_id>/", project_views.projects_by_founder, name="projects_by_founder"),
-    path("projects/most-liked-projects/<int:nb_projects>/", project_views.most_liked_projects, name="most_liked_projects"),
+    path(
+        "projects/most-liked-projects/<int:nb_projects>/",
+        project_views.most_liked_projects,
+        name="most_liked_projects",
+    ),
     # Events endpoints
     path("events/", EventListView.as_view(), name="events_list"),
     path("events/<int:event_id>/", EventDetailView.as_view(), name="event_detail"),

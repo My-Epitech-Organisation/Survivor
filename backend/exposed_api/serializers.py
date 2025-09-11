@@ -171,10 +171,12 @@ class ProjectDetailGetWithLikesSerializer(ProjectDetailGetSerializer):
     """
     Extended serializer for ProjectDetailGet with likes count
     """
+
     likes_count = serializers.IntegerField(source="nb_likes", read_only=True)
-    
+
     class Meta(ProjectDetailGetSerializer.Meta):
-        fields = ProjectDetailGetSerializer.Meta.fields + ["likes_count"]
+        fields = ProjectDetailGetSerializer.Meta.fields
+        fields.append("likes_count")
 
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
