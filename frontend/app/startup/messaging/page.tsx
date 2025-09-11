@@ -86,6 +86,7 @@ export default function StartupMessaging() {
                 <div className="h-[calc(100dvh-56px)] overflow-y-auto">
                   <ChatSideBar
                     variante="investors"
+                    ref={sideBarRef} 
                     onSelect={(conv) => {
                       console.debug('Mobile selected conversation:', conv);
                       setActiveThread(conv);

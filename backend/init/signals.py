@@ -222,3 +222,74 @@ def fetch_partners(sender, **kwargs):
 
     except Exception as e:
         print(f"Error during partner data management: {e}")
+
+
+# Thread and Message signals for Socket.IO notifications
+import socketio  # noqa: E402
+from django.conf import settings  # noqa: E402
+from django.db.models.signals import post_delete, post_save  # noqa: E402
+from messaging.models import Message, Thread  # noqa: E402
+
+
+@receiver(post_save, sender=Thread)
+def thread_created_or_updated(sender, instance, created, **kwargs):
+    if DISABLE_SIGNALS:
+        return
+
+    try:
+        from backend.asgi import sio
+    except ImportError:
+        return
+
+    participants = []
+    for participant in instance.participants.all():
+        participants.append({"id": participant.id, "name": participant.name, "email": participant.email})
+
+    event_data = {
+        "thread_id": instance.id,
+        "participants": participants,
+        "created_at": instance.created_at.isoformat() if created else None,
+        "last_message_at": instance.last_message_at.isoformat(),
+    }
+
+    for participant in instance.participants.all():
+        room_name = f"user_{participant.id}_threads"
+        try:
+            from asgiref.sync import async_to_sync
+
+            async_to_sync(sio.emit)("thread_created" if created else "thread_updated", event_data, room=room_name)
+        except Exception:
+            pass
+
+
+@receiver(post_save, sender=Message)
+def message_created(sender, instance, created, **kwargs):
+    if DISABLE_SIGNALS or not created:
+        return
+
+    try:
+        from backend.asgi import sio
+    except ImportError:
+        return
+
+    event_data = {
+        "thread_id": instance.thread.id,
+        "message_id": instance.id,
+        "sender_id": instance.sender.id,
+        "body": instance.body,
+        "created_at": instance.created_at.isoformat(),
+    }
+
+    participants = list(instance.thread.participants.exclude(id=instance.sender.id))
+
+    for participant in participants:
+        room_name = f"user_{participant.id}_threads"
+        try:
+            from asgiref.sync import async_to_sync
+
+            async_to_sync(sio.emit)("message_received", event_data, room=room_name)
+        except Exception:
+            pass
+
+    instance.thread.last_message_at = instance.created_at
+    instance.thread.save(update_fields=["last_message_at"])
