@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { LogOut, Menu, UserRound, X } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
 
 export default function Navigation() {
@@ -38,6 +38,10 @@ export default function Navigation() {
     router.push("/admin/dashboard");
   };
 
+  const handleSwitchToProfile = () => {
+    router.push("/profile");
+  };
+
   return (
     <nav className="bg-app-surface shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,7 +58,7 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8 items-center">
+          <div className="hidden lg:flex space-x-8 items-center">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -71,7 +75,7 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Login */}
-          <div className="hidden md:flex w-fit pl-8 items-center space-x-4">
+          <div className="hidden lg:flex w-fit pl-8 items-center space-x-4">
             {isAuthenticated ? (
               <>
                 {user?.role === "founder" && (
@@ -99,10 +103,18 @@ export default function Navigation() {
                   </button>
                 )}
                 <button
+                  onClick={handleSwitchToProfile}
+                  className={`font-heading font-bold text-app-text-secondary hover:text-jeb-hover transition-colors cursor-pointer ${
+                    pathname === "/profile" && "text-jeb-primary"
+                  }`}
+                >
+                  <UserRound />
+                </button>
+                <button
                   onClick={handleLogout}
                   className="font-heading font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
                 >
-                  Logout
+                  <LogOut />
                 </button>
               </>
             ) : (
@@ -116,7 +128,7 @@ export default function Navigation() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-app-text-secondary hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
@@ -132,7 +144,7 @@ export default function Navigation() {
 
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-app-border-light bg-app-surface">
+          <div className="lg:hidden border-t border-app-border-light bg-app-surface">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link
@@ -184,6 +196,15 @@ export default function Navigation() {
                         Admin Area
                       </button>
                     )}
+                    <button
+                      onClick={() => {
+                        handleSwitchToProfile();
+                        setIsMenuOpen(false);
+                      }}
+                      className="font-heading block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover transition-colors"
+                    >
+                      Profile
+                    </button>
                     <button
                       onClick={() => {
                         handleLogout();

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, UserRound, X, LogOut } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
 
 export default function InvestorNavigation() {
@@ -13,9 +13,7 @@ export default function InvestorNavigation() {
   const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navItems = [
-    { href: "/investor/messaging", label: "Messaging" },
-  ];
+  const navItems = [{ href: "/investor/messaging", label: "Messaging" }];
 
   const handleLogout = () => {
     logout();
@@ -24,6 +22,10 @@ export default function InvestorNavigation() {
 
   const handleSwitchToPublic = () => {
     router.push("/");
+  };
+
+  const handleSwitchToProfile = () => {
+    router.push("/profile");
   };
 
   return (
@@ -40,12 +42,14 @@ export default function InvestorNavigation() {
                 <JEBLogo className="w-15 h-auto" color="currentColor" />
                 JEB
               </div>
-              <span className="ml-2 text-sm text-app-text-secondary group-hover:text-jeb-hover not-italic mb-1 transition-colors">Investor</span>
+              <span className="ml-2 text-sm text-app-text-secondary group-hover:text-jeb-hover not-italic mb-1 transition-colors">
+                Investor
+              </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8 items-center">
+          <div className="hidden lg:flex space-x-8 items-center">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -62,7 +66,7 @@ export default function InvestorNavigation() {
           </div>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-4">
             <button
               onClick={handleSwitchToPublic}
               className="font-heading font-medium text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
@@ -70,15 +74,23 @@ export default function InvestorNavigation() {
               Public Area
             </button>
             <button
+              onClick={handleSwitchToProfile}
+              className={`font-heading font-bold text-app-text-secondary hover:text-jeb-hover transition-colors cursor-pointer ${
+                pathname === "/profile" && "text-jeb-primary"
+              }`}
+            >
+              <UserRound />
+            </button>
+            <button
               onClick={handleLogout}
               className="font-heading font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
             >
-              Logout
+              <LogOut />
             </button>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-app-text-secondary hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
@@ -94,7 +106,7 @@ export default function InvestorNavigation() {
 
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-app-border bg-app-surface">
+          <div className="lg:hidden border-t border-app-border bg-app-surface">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link
@@ -119,6 +131,15 @@ export default function InvestorNavigation() {
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
                 >
                   Public Area
+                </button>
+                <button
+                  onClick={() => {
+                    handleSwitchToProfile();
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
+                >
+                  Profile
                 </button>
                 <button
                   onClick={() => {

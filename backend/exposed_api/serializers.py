@@ -167,6 +167,18 @@ class ProjectDetailGetSerializer(serializers.ModelSerializer):
         ]
 
 
+class ProjectDetailGetWithLikesSerializer(ProjectDetailGetSerializer):
+    """
+    Extended serializer for ProjectDetailGet with likes count
+    """
+
+    likes_count = serializers.IntegerField(source="nb_likes", read_only=True)
+
+    class Meta(ProjectDetailGetSerializer.Meta):
+        fields = ProjectDetailGetSerializer.Meta.fields.copy()
+        fields.append("likes_count")
+
+
 class ProjectDetailSerializer(serializers.ModelSerializer):
     """
     Serializer for the project detail endpoint for POST and PUT operations.

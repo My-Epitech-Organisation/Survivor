@@ -1,5 +1,6 @@
 from auditlog.models import AuditLog
 from authentication.permissions import IsAdmin
+from django.db.models import Count
 from django.http import JsonResponse
 from django.utils import timezone
 from drf_spectacular.utils import OpenApiExample, OpenApiParameter, extend_schema
@@ -12,7 +13,12 @@ from rest_framework.views import APIView
 
 from admin_panel.models import Founder, StartupDetail
 
-from .serializers import ProjectDetailGetSerializer, ProjectDetailSerializer, ProjectSerializer
+from .serializers import (
+    ProjectDetailGetSerializer,
+    ProjectDetailGetWithLikesSerializer,
+    ProjectDetailSerializer,
+    ProjectSerializer,
+)
 from .views import record_project_view
 
 
@@ -57,6 +63,51 @@ def projects_by_founder(request, founder_id):
         return JsonResponse(serializer.data, safe=False)
     except Founder.DoesNotExist:
         return JsonResponse({"error": f"Founder with id {founder_id} not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@extend_schema(
+    summary="Get top most liked projects",
+    description="Retreives the complete details of the most liked projects",
+    parameters=[
+        OpenApiParameter(
+            name="nb_projects", description="The number of projects we want to retreive", required=True, type=int
+        )
+    ],
+    responses={
+        200: ProjectDetailGetSerializer(many=True),
+        500: OpenApiExample("Server error", value={"error": "Internal server error"}),
+    },
+    tags=["Projects"],
+)
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def most_liked_projects(request, nb_projects):
+    """
+    Get the top <nb_projects> projects sorted by number of likes.
+
+    Retreives complete details of the most liked projects.
+
+    Parameters:
+        request: HTTP request object
+        nb_projects: The number of projects we want to retreive
+
+    Returns:
+        JSON response with list of projects
+    """
+    try:
+        projects = (
+            StartupDetail.objects.all()
+            .prefetch_related("likes")
+            .annotate(nb_likes=Count("likes"))
+            .order_by("-nb_likes")[:nb_projects]
+        )
+
+        serializer = ProjectDetailGetWithLikesSerializer(projects, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

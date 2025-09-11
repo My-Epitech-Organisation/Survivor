@@ -36,11 +36,11 @@ function getCategoryIcon(cat: string) {
 
 function getCategoryColor(cat: string) {
   const colors: Record<string, string> = {
-    award: "text-app-orange-primary bg-app-orange-light border-app-orange-light",
-    launch: "text-app-red-primary bg-app-red-primary/10 border-app-red-primary/20",
-    partnership: "text-app-green-primary bg-app-green-light border-app-green-light",
-    funding: "text-app-yellow-primary bg-app-yellow-light border-app-yellow-light",
-    default: "text-app-text-secondary bg-app-surface-hover border-app-border-light",
+    award: "text-app-orange-primary bg-app-orange-primary/10 border-app-orange-primary/10",
+    launch: "text-app-red-primary bg-app-red-primary/10 border-app-red-primary/10",
+    partnership: "text-app-green-primary bg-app-green-primary/10 border-app-green-primary/10",
+    funding: "text-app-yellow-primary bg-app-yellow-primary/10 border-app-yellow-primary/10",
+    default: "text-app-text-secondary bg-app-surface-hover/10 border-app-border-primary/10",
   };
   return colors[cat.toLowerCase()] || colors.default;
 }

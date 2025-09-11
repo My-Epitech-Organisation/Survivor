@@ -1,10 +1,33 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import MostLikedProjects from "@/components/MostLikedProjects";
+import { ProjectService, MostLikedProject } from "@/services/ProjectService";
 
 export default function Home() {
+  const [mostLikedProjects, setMostLikedProjects] = useState<
+    MostLikedProject[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMostLikedProjects = async () => {
+      try {
+        setIsLoading(true);
+        const projects = await ProjectService.getMostLikedProjects(5);
+        setMostLikedProjects(projects);
+      } catch (error) {
+        console.error("Error fetching most liked projects:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMostLikedProjects();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-jeb-gradient-from to-jeb-gradient-to/50 flex flex-col">
@@ -14,7 +37,8 @@ export default function Home() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-16">
           <h1 className="font-heading text-5xl md:text-6xl font-bold text-app-text-primary mb-6">
-            Welcome to <span className="font-black italic text-jeb-primary">JEB</span>
+            Welcome to{" "}
+            <span className="font-black italic text-jeb-primary">JEB</span>
           </h1>
           <p className="text-xl text-app-text-secondary max-w-3xl mx-auto mb-8">
             Your comprehensive platform for managing projects, staying updated
@@ -27,9 +51,9 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           <Link href="/projects" className="group">
             <div className="bg-app-surface rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-              <div className="w-12 h-12 bg-app-blue-muted rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-app-purple-light rounded-lg flex items-center justify-center mb-4">
                 <svg
-                  className="w-6 h-6 text-app-blue-primary"
+                  className="w-6 h-6 text-app-purple-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -54,9 +78,9 @@ export default function Home() {
 
           <Link href="/news" className="group">
             <div className="bg-app-surface rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-              <div className="w-12 h-12 bg-app-green-light rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-app-purple-light rounded-lg flex items-center justify-center mb-4">
                 <svg
-                  className="w-6 h-6 text-app-green-primary"
+                  className="w-6 h-6 text-app-purple-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -108,9 +132,9 @@ export default function Home() {
 
           <Link href="/search" className="group">
             <div className="bg-app-surface rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-              <div className="w-12 h-12 bg-app-orange-light rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-app-purple-light rounded-lg flex items-center justify-center mb-4">
                 <svg
-                  className="w-6 h-6 text-app-orange-primary"
+                  className="w-6 h-6 text-app-purple-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -135,9 +159,9 @@ export default function Home() {
 
           <Link href="/about" className="group">
             <div className="bg-app-surface rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-              <div className="w-12 h-12 bg-app-indigo-light rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-app-purple-light rounded-lg flex items-center justify-center mb-4">
                 <svg
-                  className="w-6 h-6 text-app-indigo-primary"
+                  className="w-6 h-6 text-app-purple-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -159,6 +183,89 @@ export default function Home() {
               </p>
             </div>
           </Link>
+        </div>
+
+        {/* Most Liked Projects Section */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <h2 className="font-heading text-3xl font-bold text-app-text-primary">
+                Most <span className="text-jeb-primary">Liked</span> Projects
+              </h2>
+            </div>
+            <p className="text-app-text-secondary max-w-2xl mx-auto">
+              Discover the community&apos;s favorite projects and see what&apos;s trending
+              in the JEB ecosystem.
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            {isLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-app-surface rounded-lg shadow-md p-6 animate-pulse"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-8 h-8 bg-jeb-light rounded-full"></div>
+                          <div className="h-5 bg-app-border-light rounded w-48"></div>
+                        </div>
+                        <div className="space-y-2 mb-3">
+                          <div className="h-4 bg-app-border-light rounded w-full"></div>
+                          <div className="h-4 bg-app-border-light rounded w-3/4"></div>
+                        </div>
+                        <div className="flex gap-2 mb-3">
+                          <div className="h-6 bg-app-border-light rounded-full w-16"></div>
+                          <div className="h-6 bg-app-border-light rounded-full w-20"></div>
+                          <div className="h-6 bg-app-border-light rounded-full w-18"></div>
+                        </div>
+                        <div className="flex gap-4">
+                          <div className="h-4 bg-app-border-light rounded w-24"></div>
+                          <div className="h-4 bg-app-border-light rounded w-16"></div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-2 ml-4">
+                        <div className="flex items-center gap-1">
+                          <div className="w-5 h-5 bg-app-border-light rounded"></div>
+                          <div className="h-4 bg-app-border-light rounded w-8"></div>
+                        </div>
+                        <div className="w-5 h-5 bg-app-border-light rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <MostLikedProjects projects={mostLikedProjects} />
+            )}
+
+            {!isLoading && mostLikedProjects.length > 0 && (
+              <div className="text-center mt-8">
+                <Link
+                  href="/projects"
+                  className="inline-flex items-center gap-2 bg-jeb-primary text-app-white px-6 py-3 rounded-lg font-medium hover:bg-jeb-hover transition-colors"
+                >
+                  View All Projects
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Call to Action */}

@@ -122,7 +122,7 @@ export default function Projects() {
           </div>
 
           {/* Projects Grid */}
-          <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+          <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-6">
             {filteredProjects.map((project) => (
               <ProjectOverview
                 key={project.ProjectId}

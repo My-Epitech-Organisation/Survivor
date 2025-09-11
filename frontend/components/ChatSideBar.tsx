@@ -4,12 +4,13 @@ import { useEffect, useState, forwardRef, useCallback, useImperativeHandle } fro
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import api from "@/lib/api";
 import { Thread } from "@/types/chat";
-import { MessageCircleOff } from "lucide-react";
+import { MessageCircleOff, RefreshCw, Wifi, WifiOff } from "lucide-react";
 import NewThreadChat from "./NewThreadChat";
 import { User } from "@/types/user";
 import { useAuth } from "@/contexts/AuthContext";
 import { IDAvatar } from "./ui/InputAvatar";
 import { MdGroups } from "react-icons/md";
+import { getThreadWebSocket, WebSocketEvent } from "@/lib/websocket";
 
 interface ChatSideBarProps {
   variante: "investors" | "founders"
@@ -23,6 +24,8 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
   ({ onSelect, variante }, ref) => {
     const [isThreadLoading, setIsThreadLoading] = useState<boolean>(false);
     const [listThreads, setListThreads] = useState<Thread[] | null>(null);
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+    const [isWebSocketConnected, setIsWebSocketConnected] = useState<boolean>(false);
     const {user, isLoading} = useAuth();
 
     const fetchThreads = useCallback(async () => {
@@ -68,7 +71,12 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
     };
 
     const refreshThreads = useCallback(async () => {
-      await fetchThreads();
+      setIsRefreshing(true);
+      try {
+        await fetchThreads();
+      } finally {
+        setIsRefreshing(false);
+      }
     }, [fetchThreads]);
 
     useImperativeHandle(ref, () => ({
@@ -79,11 +87,65 @@ const ChatSideBar = forwardRef<ChatSideBarHandle, ChatSideBarProps>(
       fetchThreads();
     }, [fetchThreads]);
 
+    // WebSocket connection and event handling
+    useEffect(() => {
+      const ws = getThreadWebSocket();
+
+      const checkConnection = () => {
+        setIsWebSocketConnected(ws.isConnected());
+      };
+
+      const connectionInterval = setInterval(checkConnection, 1000);
+      checkConnection();
+
+      const handleThreadCreated = (event: WebSocketEvent) => {
+        refreshThreads();
+      };
+
+      const handleThreadUpdated = (event: WebSocketEvent) => {
+        refreshThreads();
+      };
+
+      const handleMessageReceived = (event: WebSocketEvent) => {
+        refreshThreads();
+      };
+
+      ws.addEventListener('thread_created', handleThreadCreated);
+      ws.addEventListener('thread_updated', handleThreadUpdated);
+      ws.addEventListener('message_received', handleMessageReceived);
+
+      return () => {
+        clearInterval(connectionInterval);
+        ws.removeEventListener('thread_created', handleThreadCreated);
+        ws.removeEventListener('thread_updated', handleThreadUpdated);
+        ws.removeEventListener('message_received', handleMessageReceived);
+      };
+    }, [refreshThreads]);
+
     return (
       <div className="h-full flex flex-col">
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Conversations</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold">Conversations</h2>
+              {isWebSocketConnected ? (
+                <span title="WebSocket connected">
+                  <Wifi className="w-4 h-4 text-green-500" />
+                </span>
+              ) : (
+                <span title="WebSocket disconnected">
+                  <WifiOff className="w-4 h-4 text-red-500" />
+                </span>
+              )}
+              <button
+                onClick={refreshThreads}
+                disabled={isRefreshing}
+                className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-50"
+                title="Refresh conversations"
+              >
+                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
             <NewThreadChat variante={variante} onSumbit={handleNewThread} />
           </div>
         </div>
