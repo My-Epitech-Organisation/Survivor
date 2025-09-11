@@ -132,3 +132,12 @@ export interface DriveFolderFilters {
   page?: number;
   page_size?: number;
 }
+
+// File content types
+export interface TextFileContent {
+  content: string;
+}
+
+export interface TextFileUpdateRequest {
+  content: string;
+}

@@ -191,6 +191,8 @@ class DriveActivity(models.Model):
         ("share", "Share"),
         ("unshare", "Unshare"),
         ("create_folder", "Create Folder"),
+        ("preview", "Preview"),
+        ("edit", "Edit"),
     ]
 
     startup = models.ForeignKey(

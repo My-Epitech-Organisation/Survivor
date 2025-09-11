@@ -52,11 +52,11 @@ export default function StartupMessaging() {
                   <aside className="hidden lg:flex flex-col flex-1 min-h-0 h-full border-r">
                     <ChatSideBar
                       variante="founders"
-                      ref={sideBarRef} 
+                      ref={sideBarRef}
                       onSelect={(conv) => {
                         console.log('Selected conversation:', conv); // Debug
                         setActiveThread(conv);
-                      }} 
+                      }}
                     />
                   </aside>
 
@@ -85,7 +85,7 @@ export default function StartupMessaging() {
                 </SheetHeader>
                 <div className="h-[calc(100dvh-56px)] overflow-y-auto">
                   <ChatSideBar
-                      ref={sideBarRef} 
+                      ref={sideBarRef}
                       variante="founders"
                       onSelect={(conv) => {
                         console.log('Mobile selected conversation:', conv); // Debug

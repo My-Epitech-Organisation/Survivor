@@ -1,0 +1,37 @@
+/* PDF preview styles */
+.pdf-document {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.page {
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background-color: white;
+}
+
+.pdf-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+}
+
+.pdf-scroll-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.pdf-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pdf-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 4px;
+  border: 2px solid transparent;
+}
+
+.pdf-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(155, 155, 155, 0.8);
+}

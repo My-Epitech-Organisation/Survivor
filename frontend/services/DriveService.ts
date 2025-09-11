@@ -243,5 +243,136 @@ export const DriveService = {
 
   deleteShare: async (shareId: number): Promise<void> => {
     await api.delete(`${DRIVE_API.SHARES}${shareId}/`);
+  },
+
+  // Text file preview and edit methods
+  previewTextFile: async (fileId: number): Promise<string> => {
+    try {
+      const response = await api.get<{content: string}>({
+        endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
+      });
+
+      if (response.data && response.data.content !== undefined) {
+        return response.data.content;
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error previewing text file:', error);
+      throw error;
+    }
+  },
+
+  // Image file preview method
+  previewImageFile: async (fileId: number): Promise<{
+    imageUrl: string;
+    fileType: string;
+    width?: number;
+    height?: number;
+  }> => {
+    try {
+      const response = await api.get<{
+        image_url: string;
+        file_type: string;
+        width?: number;
+        height?: number;
+      }>({
+        endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
+      });
+
+      if (response.data && response.data.image_url) {
+        return {
+          imageUrl: response.data.image_url,
+          fileType: response.data.file_type,
+          width: response.data.width,
+          height: response.data.height
+        };
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error previewing image file:', error);
+      throw error;
+    }
+  },
+
+  // Video file preview method
+  previewVideoFile: async (fileId: number): Promise<{
+    videoUrl: string;
+    fileType: string;
+    width?: number;
+    height?: number;
+    duration?: number;
+  }> => {
+    try {
+      const response = await api.get<{
+        video_url: string;
+        file_type: string;
+        width?: number;
+        height?: number;
+        duration?: number;
+      }>({
+        endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
+      });
+
+      if (response.data && response.data.video_url) {
+        return {
+          videoUrl: response.data.video_url,
+          fileType: response.data.file_type,
+          width: response.data.width,
+          height: response.data.height,
+          duration: response.data.duration
+        };
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error previewing video file:', error);
+      throw error;
+    }
+  },
+
+  // PDF file preview method
+  previewPdfFile: async (fileId: number): Promise<{
+    pdfUrl: string;
+    fileType: string;
+    pageCount?: number;
+    fileName: string;
+  }> => {
+    try {
+      const response = await api.get<{
+        pdf_url: string;
+        file_type: string;
+        page_count?: number;
+        file_name: string;
+      }>({
+        endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
+      });
+
+      if (response.data && response.data.pdf_url) {
+        return {
+          pdfUrl: response.data.pdf_url,
+          fileType: response.data.file_type,
+          pageCount: response.data.page_count,
+          fileName: response.data.file_name
+        };
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error previewing PDF file:', error);
+      throw error;
+    }
+  },
+
+  updateTextFileContent: async (fileId: number, content: string): Promise<void> => {
+    try {
+      await api.put(`${DRIVE_API.FILES}${fileId}/update_content/`, {
+        content
+      });
+    } catch (error) {
+      console.error('Error updating text file content:', error);
+      throw error;
+    }
   }
 };

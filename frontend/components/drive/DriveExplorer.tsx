@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { DriveFile, DriveFolder } from "@/types/drive";
 import { useDrive } from "@/contexts/DriveContext";
 import { downloadFile } from "@/lib/downloadUtils";
+import { isTextFile, isImageFile, isVideoFile, isPdfFile } from "@/lib/fileUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +18,10 @@ import {
   MoreVertical,
   RefreshCw,
   ArrowLeft,
+  Eye,
+  Edit,
+  Image,
+  Video,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -35,6 +40,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
+import { FilePreview } from "./FilePreview";
+import { FileEditor } from "./FileEditor";
 
 interface DriveExplorerProps {
   startupId: number;
@@ -64,6 +71,10 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [fileDescription, setFileDescription] = useState("");
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+
+  // Preview and Edit states
+  const [previewFile, setPreviewFile] = useState<DriveFile | null>(null);
+  const [editFile, setEditFile] = useState<DriveFile | null>(null);
 
   const [folderMenuOpen, setFolderMenuOpen] = useState<{
     [key: number]: boolean;
@@ -161,32 +172,72 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
     await downloadFile(file.id, file.name);
   };
 
+  // Preview and Edit handlers
+  const handleFilePreview = (file: DriveFile) => {
+    if (isTextFile(file) || isImageFile(file) || isVideoFile(file) || isPdfFile(file)) {
+      setPreviewFile(file);
+    } else {
+      handleFileDownload(file);
+    }
+  };
+
+  const handleClosePreview = () => {
+    setPreviewFile(null);
+  };
+
+  const handleEditRequest = (file: DriveFile) => {
+    setPreviewFile(null);
+    setEditFile(file);
+  };
+
+  const handleCloseEditor = () => {
+    setEditFile(null);
+  };
+
+  const handleSaveFile = async () => {
+    await refreshCurrentFolder();
+    setEditFile(null);
+  };
+
+  const handlePreviewRequest = (file: DriveFile) => {
+    setEditFile(null);
+    setPreviewFile(file);
+  };
+
   const handleFolderDownload = async (folder: DriveFolder) => {
     await downloadFolder(folder.id, folder.name);
   };
 
   const renderFileIcon = (file: DriveFile) => {
+    // Check if it's an image file first
+    if (isImageFile(file)) {
+      return <Image className="h-5 w-5 text-purple-500" />;
+    }
+
+    // Check if it's a video file
+    if (isVideoFile(file)) {
+      return <Video className="h-5 w-5 text-blue-500" />;
+    }
+
+    // Check if it's a PDF file
+    if (isPdfFile(file)) {
+      return <File className="h-5 w-5 text-red-500" />;
+    }
+
     const extension = file.name.split(".").pop()?.toLowerCase();
 
     switch (extension) {
-      case "pdf":
-        return <File className="text-red-500" />;
       case "doc":
       case "docx":
-        return <File className="text-blue-500" />;
+        return <File className="h-5 w-5 text-blue-500" />;
       case "xls":
       case "xlsx":
-        return <File className="text-green-500" />;
+        return <File className="h-5 w-5 text-green-500" />;
       case "ppt":
       case "pptx":
-        return <File className="text-orange-500" />;
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
-        return <File className="text-purple-500" />;
+        return <File className="h-5 w-5 text-orange-500" />;
       default:
-        return <File className="text-gray-500" />;
+        return <File className="h-5 w-5 text-gray-500" />;
     }
   };
 
@@ -224,7 +275,10 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 onOpenChange={setUploadDialogOpen}
               >
                 <DialogTrigger asChild>
-                  <Button size="sm">
+                  <Button
+                    size="sm"
+                    className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
+                  >
                     <UploadCloud className="h-4 w-4 mr-2" />
                     Upload
                   </Button>
@@ -261,7 +315,11 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={handleFileUpload} disabled={!fileToUpload}>
+                    <Button
+                      className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
+                      onClick={handleFileUpload}
+                      disabled={!fileToUpload}
+                    >
                       Upload
                     </Button>
                   </DialogFooter>
@@ -302,6 +360,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                       Cancel
                     </Button>
                     <Button
+                      className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
                       onClick={handleCreateFolder}
                       disabled={!newFolderName.trim()}
                     >
@@ -430,8 +489,9 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 files.map((file) => (
                   <Card
                     key={file.id}
-                    className="hover:shadow-md transition-shadow"
+                    className="hover:shadow-md transition-shadow cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
                     onContextMenu={(e) => handleContextMenu(e, undefined, file)}
+                    onClick={() => handleFilePreview(file)}
                   >
                     <CardContent className="p-4 flex justify-between items-center">
                       <div className="flex items-center space-x-2 flex-1 truncate">
@@ -445,11 +505,51 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                         }
                       >
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+                          {isTextFile(file) && (
+                            <>
+                              <DropdownMenuItem
+                                onClick={() => handleFilePreview(file)}
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                Preview
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleEditRequest(file)}
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          {isImageFile(file) && (
+                            <DropdownMenuItem
+                              onClick={() => handleFilePreview(file)}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Preview
+                            </DropdownMenuItem>
+                          )}
+                          {isVideoFile(file) && (
+                            <DropdownMenuItem
+                              onClick={() => handleFilePreview(file)}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Preview
+                            </DropdownMenuItem>
+                          )}
+                          {isPdfFile(file) && (
+                            <DropdownMenuItem
+                              onClick={() => handleFilePreview(file)}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Preview
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem
                             onClick={() => handleFileDownload(file)}
                           >
@@ -487,6 +587,39 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 </div>
               )}
             </div>
+          )}
+
+          {/* File Preview Dialog */}
+          {previewFile && (
+            <Dialog open={!!previewFile} onOpenChange={() => setPreviewFile(null)}>
+              <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full max-w-[95vw] overflow-hidden dialog-content">
+                <DialogHeader>
+                  <DialogTitle>Preview File</DialogTitle>
+                </DialogHeader>
+                <FilePreview
+                  file={previewFile}
+                  onClose={handleClosePreview}
+                  onEditRequest={handleEditRequest}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
+
+          {/* File Editor Dialog */}
+          {editFile && (
+            <Dialog open={!!editFile} onOpenChange={() => setEditFile(null)}>
+              <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full max-w-[95vw] overflow-hidden dialog-content">
+                <DialogHeader>
+                  <DialogTitle>Edit File</DialogTitle>
+                </DialogHeader>
+                <FileEditor
+                  file={editFile}
+                  _onClose={handleCloseEditor}
+                  onSave={handleSaveFile}
+                  onPreviewRequest={handlePreviewRequest}
+                />
+              </DialogContent>
+            </Dialog>
           )}
         </>
       )}

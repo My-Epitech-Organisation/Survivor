@@ -8,6 +8,7 @@ from zipfile import ZipFile
 
 from authentication.permissions import IsFounder
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.db.models import Q, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -21,6 +22,13 @@ from rest_framework.views import APIView
 from admin_panel.models import StartupDetail
 
 from .models import DriveActivity, DriveFile, DriveFolder, DriveShare
+from .preview_serializers import (
+    ImageFilePreviewSerializer,
+    PDFFilePreviewSerializer,
+    TextFileContentSerializer,
+    TextFileUpdateSerializer,
+    VideoFilePreviewSerializer,
+)
 from .serializers import (
     DriveActivitySerializer,
     DriveFileListSerializer,
@@ -30,6 +38,7 @@ from .serializers import (
     DriveShareSerializer,
     FileUploadSerializer,
 )
+from .utils import is_image_file, is_pdf_file, is_text_file, is_video_file
 
 
 class StartupDrivePermission(permissions.BasePermission):
@@ -472,6 +481,127 @@ class DriveFileViewSet(viewsets.ModelViewSet):
 
         instance.file.delete(save=False)
         instance.delete()
+
+    @action(detail=True, methods=["get"])
+    def preview(self, request, pk=None):
+        """
+        Preview a file's content. Supports both text and image files.
+        """
+        file_obj = self.get_object()
+
+        # Log preview activity
+        DriveActivity.objects.create(
+            startup=file_obj.startup,
+            user=request.user,
+            file=file_obj,
+            action="preview",
+            ip_address=request.META.get("REMOTE_ADDR"),
+        )
+
+        # Check if it's a text file
+        if is_text_file(file_obj.name, file_obj.file_type):
+            try:
+                content = file_obj.file.read().decode("utf-8")
+                serializer = TextFileContentSerializer({"content": content})
+                return Response(serializer.data)
+            except UnicodeDecodeError:
+                return Response(
+                    {"error": "This file uses an encoding that is not supported for preview"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        elif is_image_file(file_obj.name, file_obj.file_type):
+            request_host = request.get_host()
+            protocol = "https" if request.is_secure() else "http"
+
+            file_url = f"{protocol}://{request_host}{file_obj.file.url}"
+
+            data = {
+                "image_url": file_url,
+                "file_type": file_obj.file_type,
+                "width": None,
+                "height": None,
+            }
+
+            serializer = ImageFilePreviewSerializer(data)
+            return Response(serializer.data)
+
+        elif is_video_file(file_obj.name, file_obj.file_type):
+            request_host = request.get_host()
+            protocol = "https" if request.is_secure() else "http"
+
+            file_url = f"{protocol}://{request_host}{file_obj.file.url}"
+
+            data = {
+                "video_url": file_url,
+                "file_type": file_obj.file_type,
+                "width": None,
+                "height": None,
+                "duration": None,
+            }
+
+            serializer = VideoFilePreviewSerializer(data)
+            return Response(serializer.data)
+
+        elif is_pdf_file(file_obj.name, file_obj.file_type):
+            request_host = request.get_host()
+            protocol = "https" if request.is_secure() else "http"
+
+            file_url = f"{protocol}://{request_host}{file_obj.file.url}"
+
+            data = {
+                "pdf_url": file_url,
+                "file_type": file_obj.file_type,
+                "page_count": None,
+                "file_name": file_obj.name,
+            }
+
+            serializer = PDFFilePreviewSerializer(data)
+            return Response(serializer.data)
+
+        else:
+            return Response(
+                {"error": "This file type is not supported for preview"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    @action(detail=True, methods=["put"])
+    def update_content(self, request, pk=None):
+        """
+        Update the content of a text file.
+        """
+        file_obj = self.get_object()
+
+        if not is_text_file(file_obj.name, file_obj.file_type):
+            return Response(
+                {"error": "This file type is not supported for editing"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = TextFileUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                content = serializer.validated_data["content"]
+
+                file_obj.file.save(file_obj.name, ContentFile(content.encode("utf-8")), save=False)
+
+                file_obj.size = file_obj.file.size
+                file_obj.save()
+
+                DriveActivity.objects.create(
+                    startup=file_obj.startup,
+                    user=request.user,
+                    file=file_obj,
+                    action="edit",
+                    details={"old_size": file_obj.size, "new_size": file_obj.file.size},
+                    ip_address=request.META.get("REMOTE_ADDR"),
+                )
+
+                return Response({"status": "File content updated successfully"})
+            except Exception as e:
+                return Response(
+                    {"error": f"Failed to update file content: {e!s}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DriveShareViewSet(viewsets.ModelViewSet):
