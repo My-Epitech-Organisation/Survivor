@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, UserRound, LogOut } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
 
 export default function AdminNavigation() {
@@ -28,6 +28,10 @@ export default function AdminNavigation() {
 
   const handleSwitchToPublic = () => {
     router.push("/");
+  };
+
+  const handleSwitchToProfile = () => {
+    router.push("/profile");
   };
 
   return (
@@ -72,6 +76,12 @@ export default function AdminNavigation() {
               className="font-heading font-medium text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
             >
               Public Area
+            </button>
+            <button
+              onClick={handleSwitchToProfile}
+              className="font-heading font-bold text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
+            >
+              Profile
             </button>
             <button
               onClick={handleLogout}
@@ -126,12 +136,21 @@ export default function AdminNavigation() {
                 </button>
                 <button
                   onClick={() => {
+                    handleSwitchToProfile();
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
+                >
+                  <UserRound/>
+                </button>
+                <button
+                  onClick={() => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-red-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
                 >
-                  Logout
+                  <LogOut/>
                 </button>
               </div>
             </div>

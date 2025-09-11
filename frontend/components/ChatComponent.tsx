@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useRef, useState, useImperativeHandle, forwardRef } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Paperclip, ArrowLeft, SendHorizontal } from "lucide-react";
 import api from "@/lib/api";
 import { Thread, Message, ThreadDetails, MessageReceive, NewThread } from "@/types/chat";
