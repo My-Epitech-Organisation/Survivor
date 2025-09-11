@@ -592,7 +592,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
           {/* File Preview Dialog */}
           {previewFile && (
             <Dialog open={!!previewFile} onOpenChange={() => setPreviewFile(null)}>
-              <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full">
+              <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full max-w-[95vw] overflow-hidden dialog-content">
                 <DialogHeader>
                   <DialogTitle>Preview File</DialogTitle>
                 </DialogHeader>
@@ -608,7 +608,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
           {/* File Editor Dialog */}
           {editFile && (
             <Dialog open={!!editFile} onOpenChange={() => setEditFile(null)}>
-              <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full">
+              <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full max-w-[95vw] overflow-hidden dialog-content">
                 <DialogHeader>
                   <DialogTitle>Edit File</DialogTitle>
                 </DialogHeader>
