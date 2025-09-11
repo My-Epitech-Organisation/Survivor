@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState, forwardRef, useCallback, useImperativeHandle } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 import api from "@/lib/api";
 import { Thread } from "@/types/chat";
-import { getBackendUrl } from "@/lib/config";
 import { MessageCircleOff } from "lucide-react";
 import NewThreadChat from "./NewThreadChat";
 import { User } from "@/types/user";

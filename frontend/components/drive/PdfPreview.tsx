@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, MoreVertical } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, MoreVertical } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { pdfjs } from 'react-pdf';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 import {
   DropdownMenu,

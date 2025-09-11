@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { Save, X, Eye, MoreVertical } from 'lucide-react';
+import { Save, Eye, MoreVertical } from 'lucide-react';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
@@ -190,7 +190,7 @@ export function FileEditor({ file, onClose, onSave, onPreviewRequest }: FileEdit
 
 // CSS personnalisé pour assurer que CodeMirror est responsive
 // Cela sera ajouté à la fin du composant
-{/* eslint-disable-next-line react/no-unknown-property */}
+{ }
 <style jsx global>{`
   .cm-editor {
     max-width: 100% !important;

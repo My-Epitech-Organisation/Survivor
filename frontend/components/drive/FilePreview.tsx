@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { Edit, X, MoreVertical } from 'lucide-react';
+import { Edit, MoreVertical } from 'lucide-react';
 import { isTextFile, isImageFile, isVideoFile, isPdfFile } from '@/lib/fileUtils';
 import { ImagePreview } from './ImagePreview';
 import { VideoPreview } from './VideoPreview';

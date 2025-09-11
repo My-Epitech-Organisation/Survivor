@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { X, ZoomIn, ZoomOut, RotateCw, Download, MoreVertical } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCw, Download, MoreVertical } from 'lucide-react';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 import {
   DropdownMenu,

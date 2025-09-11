@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { X, Volume2, VolumeX, Maximize, Pause, Play, Download, MoreVertical } from 'lucide-react';
+import { Volume2, VolumeX, Maximize, Pause, Play, Download, MoreVertical } from 'lucide-react';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 import {
   DropdownMenu,
