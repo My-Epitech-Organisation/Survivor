@@ -105,6 +105,8 @@ ignore = [
     "PT009",  # Use assert in pytest
     "SIM102", # Use a single `if` statement instead of nested `if` statements
     "PLR0911",  # Too many return statements
+    "E722",
+    "SIM105"
 ]
 
 # Allow autofix for all enabled rules (when '--fix') is provided
