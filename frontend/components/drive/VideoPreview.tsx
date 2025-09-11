@@ -222,7 +222,7 @@ export function VideoPreview({ file, onClose }: VideoPreviewProps) {
               style={{
                 maxHeight: isMobile ? '40vh' : '60vh',
               }}
-              controls={isMobile} // Show native controls on mobile for better UX
+              controls={true} // Show native controls on mobile for better UX
               controlsList="nodownload"
               preload="metadata"
               onPlay={handleVideoPlay}
