@@ -614,7 +614,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                 </DialogHeader>
                 <FileEditor
                   file={editFile}
-                  onClose={handleCloseEditor}
+                  _onClose={handleCloseEditor}
                   onSave={handleSaveFile}
                   onPreviewRequest={handlePreviewRequest}
                 />
