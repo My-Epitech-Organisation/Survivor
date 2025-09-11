@@ -75,13 +75,13 @@ export default function MostLikedProjects({
               </p>
 
               <div className="flex flex-wrap gap-2 mb-3">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-jeb-light text-jeb-primary">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-app-blue-light text-app-blue-primary">
                   {project.ProjectSector}
                 </span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-app-blue-light text-app-blue-primary">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-app-purple-light text-app-purple-primary">
                   {project.ProjectMaturity}
                 </span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-app-yellow-light text-app-yellow-primary">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-app-yellow-light text-app-orange-primary">
                   {project.ProjectStatus}
                 </span>
               </div>

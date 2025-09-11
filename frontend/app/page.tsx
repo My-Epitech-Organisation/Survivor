@@ -51,9 +51,9 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           <Link href="/projects" className="group">
             <div className="bg-app-surface rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-              <div className="w-12 h-12 bg-app-blue-muted rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-app-purple-light rounded-lg flex items-center justify-center mb-4">
                 <svg
-                  className="w-6 h-6 text-app-blue-primary"
+                  className="w-6 h-6 text-app-purple-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -78,9 +78,9 @@ export default function Home() {
 
           <Link href="/news" className="group">
             <div className="bg-app-surface rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-              <div className="w-12 h-12 bg-app-green-light rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-app-purple-light rounded-lg flex items-center justify-center mb-4">
                 <svg
-                  className="w-6 h-6 text-app-green-primary"
+                  className="w-6 h-6 text-app-purple-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -132,9 +132,9 @@ export default function Home() {
 
           <Link href="/search" className="group">
             <div className="bg-app-surface rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-              <div className="w-12 h-12 bg-app-orange-light rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-app-purple-light rounded-lg flex items-center justify-center mb-4">
                 <svg
-                  className="w-6 h-6 text-app-orange-primary"
+                  className="w-6 h-6 text-app-purple-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -159,9 +159,9 @@ export default function Home() {
 
           <Link href="/about" className="group">
             <div className="bg-app-surface rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-              <div className="w-12 h-12 bg-app-indigo-light rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-app-purple-light rounded-lg flex items-center justify-center mb-4">
                 <svg
-                  className="w-6 h-6 text-app-indigo-primary"
+                  className="w-6 h-6 text-app-purple-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
