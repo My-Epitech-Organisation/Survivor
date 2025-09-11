@@ -175,7 +175,7 @@ class ProjectDetailGetWithLikesSerializer(ProjectDetailGetSerializer):
     likes_count = serializers.IntegerField(source="nb_likes", read_only=True)
 
     class Meta(ProjectDetailGetSerializer.Meta):
-        fields = ProjectDetailGetSerializer.Meta.fields
+        fields = ProjectDetailGetSerializer.Meta.fields.copy()
         fields.append("likes_count")
 
 
