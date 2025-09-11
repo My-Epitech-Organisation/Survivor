@@ -91,20 +91,30 @@ export default function ProfilePage() {
 
   const saveName = () => {
     console.log("Saving name:", editedName);
+    if (editedName.trim() === "") {
+      alert("Name cannot be empty");
+      return;
+    }
     if (userData) {
       const updatedData = { ...userData, name: editedName };
       setUserData(updatedData);
       editAndFetchMe(updatedData);
+      fetchMe();
     }
     setEditingName(false);
   };
 
   const saveEmail = () => {
     console.log("Saving email:", editedEmail);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editedEmail)) {
+      alert("Invalid email address");
+      return;
+    }
     if (userData) {
       const updatedData = { ...userData, email: editedEmail };
       setUserData(updatedData);
       editAndFetchMe(updatedData);
+      fetchMe();
     }
     setEditingEmail(false);
   };
