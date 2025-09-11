@@ -23,7 +23,6 @@ export default function ProfilePage() {
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
   const [isLoadingData, setIsLoading] = useState<boolean>(false);
-  const [editedAvatar, setEditedAvatar] = useState("");
   const isInitializedRef = useRef(false);
 
   const fetchMe = async () => {
