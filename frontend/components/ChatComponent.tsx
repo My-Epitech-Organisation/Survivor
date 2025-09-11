@@ -386,7 +386,7 @@ const ChatComponent = forwardRef<ChatComponentHandle, ChatComponentProps>(({ onO
       {conv && (
         <div className="border-t p-2 bg-background sticky bottom-0 z-10 pb-[env(safe-area-inset-bottom)]">
           <div className="flex gap-2 items-end w-full">
-            <Button size="icon" variant="outline" className="cursor-pointer shrink-0 h-[44px]">
+            <Button size="icon" variant="outline" className="cursor-pointer shrink-0 h-[44px]" onClick={() => alert("Feature not available, coming soon...")}>
               <Paperclip className="w-5 h-5" />
             </Button>
             <div className="relative flex-1">

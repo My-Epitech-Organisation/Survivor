@@ -105,6 +105,22 @@ async def leave_thread(sid, data):
 
 
 @sio.event
+async def join_threads(sid, data):
+    token = data.get("token")
+
+    user = await authenticate_user_async(token)
+    if not user:
+        await sio.emit("error", {"message": "Authentication failed"}, room=sid)
+        return
+
+    await sio.enter_room(sid, f"user_{user.id}_threads")
+    connected_users[sid] = {"user": user, "threads_room": True}
+
+    await sio.emit("connected", {"message": "Joined threads notifications"}, room=sid)
+    print(f"✅ [SOCKET.IO] User {user.id} joined threads notifications room")
+
+
+@sio.event
 async def send_message(sid, data):
     """Send a message to a thread"""
     if sid not in connected_users:
@@ -187,3 +203,6 @@ async def typing_stop(sid, data):
 application = socketio.ASGIApp(sio, django_asgi_app)
 
 print("✅ [DJANGO] Socket.IO server configured successfully")
+
+# Export sio for use in signals
+__all__ = ["sio"]
