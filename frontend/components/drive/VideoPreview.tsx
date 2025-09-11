@@ -16,10 +16,10 @@ import {
 
 interface VideoPreviewProps {
   file: DriveFile;
-  onClose: () => void;
+  _onClose: () => void; // Préfixé avec _ pour indiquer qu'il n'est pas utilisé
 }
 
-export function VideoPreview({ file, onClose }: VideoPreviewProps) {
+export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
   const [videoUrl, setVideoUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,14 +37,24 @@ export function VideoPreview({ file, onClose }: VideoPreviewProps) {
       try {
         const videoData = await DriveService.previewVideoFile(file.id);
         setVideoUrl(videoData.videoUrl);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error loading video:', err);
-        if (err.response?.status === 404) {
-          setError('Video preview endpoint not found. Please make sure the backend API is properly configured.');
-        } else if (err.response?.data?.error) {
-          setError(err.response.data.error);
+        // Vérifier si l'erreur est de type Error (type standard)
+        if (err instanceof Error) {
+          setError(err.message);
+        }
+        // Vérifier si l'erreur a une structure de réponse HTTP (comme axios)
+        else if (typeof err === 'object' && err !== null && 'response' in err) {
+          const axiosError = err as { response?: { status?: number, data?: { error?: string } } };
+          if (axiosError.response?.status === 404) {
+            setError('Video preview endpoint not found. Please make sure the backend API is properly configured.');
+          } else if (axiosError.response?.data?.error) {
+            setError(axiosError.response.data.error);
+          } else {
+            setError('Failed to load video. Please try again later.');
+          }
         } else {
-          setError('Failed to load video. Please try again later.');
+          setError('An unexpected error occurred');
         }
       } finally {
         setIsLoading(false);

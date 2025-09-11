@@ -43,14 +43,24 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
       try {
         const fileContent = await DriveService.previewTextFile(file.id);
         setContent(fileContent);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error loading file content:', err);
-        if (err.response?.status === 404) {
-          setError('File preview endpoint not found. Please make sure the backend API is properly configured.');
-        } else if (err.response?.data?.error) {
-          setError(err.response.data.error);
+        // Vérifier si l'erreur est de type Error (type standard)
+        if (err instanceof Error) {
+          setError(err.message);
+        }
+        // Vérifier si l'erreur a une structure de réponse HTTP (comme axios)
+        else if (typeof err === 'object' && err !== null && 'response' in err) {
+          const axiosError = err as { response?: { status?: number, data?: { error?: string } } };
+          if (axiosError.response?.status === 404) {
+            setError('File preview endpoint not found. Please make sure the backend API is properly configured.');
+          } else if (axiosError.response?.data?.error) {
+            setError(axiosError.response.data.error);
+          } else {
+            setError('Failed to load file content. Please try again later.');
+          }
         } else {
-          setError('Failed to load file content. Please try again later.');
+          setError('An unexpected error occurred');
         }
       } finally {
         setIsLoading(false);
@@ -62,17 +72,17 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
 
   // Render image preview if the file is an image
   if (isImageFile(file)) {
-    return <ImagePreview file={file} onClose={onClose} />;
+    return <ImagePreview file={file} _onClose={onClose} />;
   }
 
   // Render video preview if the file is a video
   if (isVideoFile(file)) {
-    return <VideoPreview file={file} onClose={onClose} />;
+    return <VideoPreview file={file} _onClose={onClose} />;
   }
 
   // Render PDF preview if the file is a PDF
   if (isPdfFile(file)) {
-    return <PdfPreview file={file} onClose={onClose} />;
+    return <PdfPreview file={file} _onClose={onClose} />;
   }
 
   return (

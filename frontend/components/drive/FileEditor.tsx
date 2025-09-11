@@ -26,12 +26,12 @@ import {
 
 interface FileEditorProps {
   file: DriveFile;
-  onClose: () => void;
+  _onClose: () => void; // Préfixé avec _ pour indiquer qu'il n'est pas utilisé
   onSave: () => void;
   onPreviewRequest: (file: DriveFile) => void;
 }
 
-export function FileEditor({ file, onClose, onSave, onPreviewRequest }: FileEditorProps) {
+export function FileEditor({ file, _onClose, onSave, onPreviewRequest }: FileEditorProps) {
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);

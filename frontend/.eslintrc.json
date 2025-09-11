@@ -17,6 +17,7 @@
       }
     ]
   },
+  "ignorePatterns": ["public/*.min.js", "node_modules/", "dist/", ".next/"],
   "overrides": [
     {
       "files": ["components/pdf/**/*.tsx"],

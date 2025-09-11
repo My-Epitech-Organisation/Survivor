@@ -32,7 +32,7 @@ if grep -q "\"eslint\"" package.json || grep -q "\"lint\"" package.json; then
 else
     echo -e "${YELLOW}ESLint not configured in package.json. Installing and running basic check...${NC}"
     npm install --save-dev eslint
-    npx eslint . --ext .js,.jsx,.ts,.tsx
+    npx eslint . --ext .js,.jsx,.ts,.tsx --quiet
 fi
 
 echo -e "${GREEN}=========================================================="

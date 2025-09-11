@@ -33,10 +33,10 @@ const Page = dynamic(() => import('react-pdf').then(mod => mod.Page), {
 
 interface PdfPreviewProps {
   file: DriveFile;
-  onClose: () => void;
+  _onClose: () => void; // Préfixé avec _ pour indiquer qu'il n'est pas utilisé
 }
 
-export function PdfPreview({ file, onClose }: PdfPreviewProps) {
+export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
   const isMobile = useIsMobile(); // Call the hook at the top level
   const [pdfUrl, setPdfUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -53,14 +53,24 @@ export function PdfPreview({ file, onClose }: PdfPreviewProps) {
       try {
         const pdfData = await DriveService.previewPdfFile(file.id);
         setPdfUrl(pdfData.pdfUrl);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error loading PDF:', err);
-        if (err.response?.status === 404) {
-          setError('PDF preview endpoint not found. Please make sure the backend API is properly configured.');
-        } else if (err.response?.data?.error) {
-          setError(err.response.data.error);
+        // Vérifier si l'erreur est de type Error (type standard)
+        if (err instanceof Error) {
+          setError(err.message);
+        }
+        // Vérifier si l'erreur a une structure de réponse HTTP (comme axios)
+        else if (typeof err === 'object' && err !== null && 'response' in err) {
+          const axiosError = err as { response?: { status?: number, data?: { error?: string } } };
+          if (axiosError.response?.status === 404) {
+            setError('PDF preview endpoint not found. Please make sure the backend API is properly configured.');
+          } else if (axiosError.response?.data?.error) {
+            setError(axiosError.response.data.error);
+          } else {
+            setError('Failed to load PDF. Please try again later.');
+          }
         } else {
-          setError('Failed to load PDF. Please try again later.');
+          setError('An unexpected error occurred');
         }
       } finally {
         setIsLoading(false);
