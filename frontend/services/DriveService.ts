@@ -65,6 +65,7 @@ export const DriveService = {
   },
 
   uploadFile: async (startupId: number, fileData: FileUpload): Promise<DriveFile> => {
+    console.log('Starting file upload for:', fileData.file.name, 'size:', fileData.file.size);
     const formData = new FormData();
     formData.append('file', fileData.file);
 
@@ -76,7 +77,14 @@ export const DriveService = {
       formData.append('description', fileData.description);
     }
 
-    return api.postFormData<DriveFile>(`${DRIVE_API.FILES}upload/?startup=${startupId}`, formData);
+    try {
+      const result = await api.postFormData<DriveFile>(`${DRIVE_API.FILES}upload/?startup=${startupId}`, formData);
+      console.log('Upload successful:', result);
+      return result;
+    } catch (error) {
+      console.error('Upload failed with error:', error);
+      throw error;
+    }
   },
 
   updateFile: async (fileId: number, data: Partial<DriveFile>): Promise<DriveFile | null> => {

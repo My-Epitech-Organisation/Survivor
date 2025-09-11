@@ -142,21 +142,29 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
 
   const handleFileUpload = async () => {
     if (fileToUpload) {
-      await uploadFile(
-        startupId,
-        fileToUpload,
-        currentFolder?.id || null,
-        fileDescription
-      );
-      setFileToUpload(null);
-      setFileDescription("");
-      setUploadDialogOpen(false);
+      try {
+        console.log("Uploading file:", fileToUpload.name);
+        await uploadFile(
+          startupId,
+          fileToUpload,
+          currentFolder?.id || null,
+          fileDescription
+        );
+        console.log("File uploaded successfully");
+        setFileToUpload(null);
+        setFileDescription("");
+        setUploadDialogOpen(false);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFileToUpload(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      console.log("Selected file:", selectedFile.name, selectedFile.type, selectedFile.size);
+      setFileToUpload(selectedFile);
     }
   };
 
@@ -294,7 +302,12 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                         id="file"
                         type="file"
                         onChange={handleFileChange}
+                        accept="*/*"
+                        capture="environment"
                       />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Tap to select a file from your device
+                      </p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="description">

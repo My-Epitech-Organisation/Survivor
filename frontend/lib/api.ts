@@ -199,20 +199,35 @@ export const api = {
         headers["Authorization"] = `Bearer ${token}`;
       }
 
+      console.log("Sending form data request to:", url);
+
       const response = await fetch(url, {
         method: "POST",
         headers,
-        body: formData
+        body: formData,
+        credentials: "include"
       });
 
+      const responseText = await response.text();
+      console.log("Response status:", response.status);
+      console.log("Response headers:", JSON.stringify([...response.headers.entries()]));
+
       if (!response.ok) {
+        console.error(`API request failed: ${response.statusText}`, responseText);
         throw new Error(`API request failed: ${response.statusText}`);
       }
 
-      const responseData = await response.json();
+      let responseData;
+      try {
+        responseData = responseText ? JSON.parse(responseText) : {};
+      } catch (parseError) {
+        console.error("Error parsing JSON response:", parseError, responseText);
+        throw new Error("Invalid JSON response");
+      }
+
       return responseData;
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Error in API request:", error);
       throw error;
     }
   },
