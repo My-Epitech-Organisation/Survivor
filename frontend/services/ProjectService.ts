@@ -1,4 +1,4 @@
-import { api, authenticatedFetch } from "../lib/api";
+import { authenticatedFetch } from "../lib/api";
 import { ProjectDetailsProps } from "@/types/project";
 
 export interface MostLikedProject extends ProjectDetailsProps {

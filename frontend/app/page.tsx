@@ -194,7 +194,7 @@ export default function Home() {
               </h2>
             </div>
             <p className="text-app-text-secondary max-w-2xl mx-auto">
-              Discover the community's favorite projects and see what's trending
+              Discover the community&apos;s favorite projects and see what&apos;s trending
               in the JEB ecosystem.
             </p>
           </div>

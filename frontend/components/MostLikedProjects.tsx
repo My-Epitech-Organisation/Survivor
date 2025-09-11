@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { MostLikedProject } from "@/services/ProjectService";
 
 interface MostLikedProjectsProps {
