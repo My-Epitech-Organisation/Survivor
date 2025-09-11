@@ -1,4 +1,4 @@
-package com.example.jeb
+package com.example.survivor
 
 import android.os.Bundle
 import android.webkit.WebSettings
