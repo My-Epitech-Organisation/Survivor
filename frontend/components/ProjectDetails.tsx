@@ -429,17 +429,6 @@ Shared from JEB Incubator
             </h2>
 
             <div className="space-y-3 sm:space-y-4 md:space-y-6">
-              {/* {props.ProjectId && (
-                <div>
-                  <dt className="text-xs sm:text-xs md:text-sm font-medium text-app-text-muted mb-0.5 sm:mb-1 md:mb-2">
-                    Project ID
-                  </dt>
-                  <dd className="text-sm sm:text-base md:text-lg text-app-text-primary">
-                    #{props.ProjectId}
-                  </dd>
-                </div>
-              )} */}
-
               {props.ProjectLegalStatus && (
                 <div>
                   <dt className="text-xs sm:text-xs md:text-sm font-medium text-app-text-muted mb-0.5 sm:mb-1 md:mb-2">
