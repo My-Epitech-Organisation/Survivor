@@ -7,7 +7,7 @@
 3. News, Filters: (Berlin)
 4. Events: (Mars 2026)
 5. Advanced search; (DeepTech)
-6. About ??
+6. About
 7. Création d'un compte
 8. Login sur ce users
 9. Changement de profile; Modification de la photo de profile; name, email
