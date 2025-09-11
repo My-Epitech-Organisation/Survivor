@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { DriveFile, DriveFolder } from "@/types/drive";
 import { useDrive } from "@/contexts/DriveContext";
 import { downloadFile } from "@/lib/downloadUtils";
-import { isTextFile, isImageFile, isVideoFile } from "@/lib/fileUtils";
+import { isTextFile, isImageFile, isVideoFile, isPdfFile } from "@/lib/fileUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -174,7 +174,7 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
 
   // Preview and Edit handlers
   const handleFilePreview = (file: DriveFile) => {
-    if (isTextFile(file) || isImageFile(file) || isVideoFile(file)) {
+    if (isTextFile(file) || isImageFile(file) || isVideoFile(file) || isPdfFile(file)) {
       setPreviewFile(file);
     } else {
       handleFileDownload(file);
@@ -218,12 +218,15 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
     if (isVideoFile(file)) {
       return <Video className="h-5 w-5 text-blue-500" />;
     }
+    
+    // Check if it's a PDF file
+    if (isPdfFile(file)) {
+      return <File className="h-5 w-5 text-red-500" />;
+    }
 
     const extension = file.name.split(".").pop()?.toLowerCase();
 
     switch (extension) {
-      case "pdf":
-        return <File className="h-5 w-5 text-red-500" />;
       case "doc":
       case "docx":
         return <File className="h-5 w-5 text-blue-500" />;
@@ -532,6 +535,14 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                             </DropdownMenuItem>
                           )}
                           {isVideoFile(file) && (
+                            <DropdownMenuItem
+                              onClick={() => handleFilePreview(file)}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Preview
+                            </DropdownMenuItem>
+                          )}
+                          {isPdfFile(file) && (
                             <DropdownMenuItem
                               onClick={() => handleFilePreview(file)}
                             >

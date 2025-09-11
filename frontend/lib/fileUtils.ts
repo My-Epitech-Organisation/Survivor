@@ -95,3 +95,31 @@ export const isVideoFile = (file: DriveFile): boolean => {
   
   return extension ? videoExtensions.includes(extension) : false;
 };
+
+/**
+ * Determines if a file is a PDF file that can be previewed
+ * 
+ * @param file The drive file to check
+ * @returns true if the file is a PDF file, false otherwise
+ */
+export const isPdfFile = (file: DriveFile): boolean => {
+  // List of MIME types for PDF files
+  const pdfFileTypes = [
+    'application/pdf'
+  ];
+  
+  // Check if the file type is in our list
+  if (pdfFileTypes.includes(file.file_type)) {
+    return true;
+  }
+  
+  // List of extensions for PDF files
+  const pdfExtensions = [
+    'pdf'
+  ];
+  
+  // Check file extension
+  const extension = file.name.split('.').pop()?.toLowerCase();
+  
+  return extension ? pdfExtensions.includes(extension) : false;
+};

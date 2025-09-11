@@ -1,0 +1,211 @@
+"use client";
+
+import React, { useState, useEffect, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { DriveFile } from '@/types/drive';
+import { DriveService } from '@/services/DriveService';
+import { Spinner } from '@/components/ui/spinner';
+import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { pdfjs } from 'react-pdf';
+
+// Import required CSS files for text and annotation layers
+import 'react-pdf/dist/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+
+// Load the built-in worker
+import 'pdfjs-dist/build/pdf.worker.min.mjs';
+
+// Use dynamic imports to prevent SSR issues
+const Document = dynamic(() => import('react-pdf').then(mod => mod.Document), {
+  ssr: false,
+});
+
+const Page = dynamic(() => import('react-pdf').then(mod => mod.Page), {
+  ssr: false,
+});
+
+interface PdfPreviewProps {
+  file: DriveFile;
+  onClose: () => void;
+}
+
+export function PdfPreview({ file, onClose }: PdfPreviewProps) {
+  const [pdfUrl, setPdfUrl] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [scale, setScale] = useState<number>(1.0);
+
+  useEffect(() => {
+    const loadPdfContent = async () => {
+      setIsLoading(true);
+      setError(null); // Reset error state
+      
+      try {
+        const pdfData = await DriveService.previewPdfFile(file.id);
+        setPdfUrl(pdfData.pdfUrl);
+      } catch (err: any) {
+        console.error('Error loading PDF:', err);
+        if (err.response?.status === 404) {
+          setError('PDF preview endpoint not found. Please make sure the backend API is properly configured.');
+        } else if (err.response?.data?.error) {
+          setError(err.response.data.error);
+        } else {
+          setError('Failed to load PDF. Please try again later.');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPdfContent();
+  }, [file.id]);
+
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setPageNumber(1);
+  };
+
+  const changePage = (offset: number) => {
+    if (!numPages) return;
+    
+    const newPageNumber = pageNumber + offset;
+    if (newPageNumber >= 1 && newPageNumber <= numPages) {
+      setPageNumber(newPageNumber);
+    }
+  };
+
+  const previousPage = () => changePage(-1);
+  const nextPage = () => changePage(1);
+
+  const zoomIn = () => {
+    setScale(prevScale => Math.min(prevScale + 0.2, 2.5));
+  };
+
+  const zoomOut = () => {
+    setScale(prevScale => Math.max(prevScale - 0.2, 0.5));
+  };
+  
+  const handleDownload = () => {
+    if (pdfUrl) {
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = file.name;
+      link.target = '_blank';
+      link.click();
+    }
+  };
+
+  // Memoize options to prevent unnecessary re-renders
+  const documentOptions = useMemo(() => ({
+    cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/cmaps/',
+    cMapPacked: true,
+    standardFontDataUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/standard_fonts/',
+  }), []);
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-medium text-ellipsis overflow-hidden">{file.name}</h3>
+        <div className="flex space-x-2 shrink-0">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={zoomOut}
+            disabled={scale <= 0.5}
+          >
+            <ZoomOut className="h-4 w-4 mr-2" />
+            Zoom Out
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={zoomIn}
+            disabled={scale >= 2.5}
+          >
+            <ZoomIn className="h-4 w-4 mr-2" />
+            Zoom In
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleDownload}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <Spinner />
+        </div>
+      ) : error ? (
+        <div className="bg-destructive/15 text-destructive p-4 rounded-md">
+          {error}
+        </div>
+      ) : (
+        <div>
+          <div className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" style={{ minHeight: '60vh' }}>
+            <Document
+              file={pdfUrl}
+              onLoadSuccess={onDocumentLoadSuccess}
+              onLoadError={(err) => {
+                console.error('Error loading PDF document:', err);
+                setError('Failed to load PDF: ' + err.message);
+              }}
+              loading={<Spinner />}
+              error={<div className="text-destructive">Failed to load PDF document.</div>}
+              className="pdf-document"
+              options={documentOptions}
+            >
+              <Page 
+                pageNumber={pageNumber} 
+                scale={scale}
+                className="page"
+                renderTextLayer={true}
+                renderAnnotationLayer={true}
+              />
+            </Document>
+          </div>
+          
+          {numPages && (
+            <div className="flex justify-center items-center space-x-4 mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={previousPage}
+                disabled={pageNumber <= 1}
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                Previous
+              </Button>
+              <p className="text-sm">
+                Page {pageNumber} of {numPages}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={nextPage}
+                disabled={pageNumber >= (numPages || 1)}
+              >
+                Next
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

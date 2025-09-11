@@ -332,6 +332,39 @@ export const DriveService = {
     }
   },
 
+  // PDF file preview method
+  previewPdfFile: async (fileId: number): Promise<{
+    pdfUrl: string;
+    fileType: string;
+    pageCount?: number;
+    fileName: string;
+  }> => {
+    try {
+      const response = await api.get<{
+        pdf_url: string;
+        file_type: string;
+        page_count?: number;
+        file_name: string;
+      }>({
+        endpoint: `${DRIVE_API.FILES}${fileId}/preview/`
+      });
+      
+      if (response.data && response.data.pdf_url) {
+        return {
+          pdfUrl: response.data.pdf_url,
+          fileType: response.data.file_type,
+          pageCount: response.data.page_count,
+          fileName: response.data.file_name
+        };
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error previewing PDF file:', error);
+      throw error;
+    }
+  },
+
   updateTextFileContent: async (fileId: number, content: string): Promise<void> => {
     try {
       await api.put(`${DRIVE_API.FILES}${fileId}/update_content/`, {

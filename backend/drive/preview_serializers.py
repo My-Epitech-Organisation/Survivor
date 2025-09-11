@@ -29,3 +29,10 @@ class VideoFilePreviewSerializer(serializers.Serializer):
     width = serializers.IntegerField(required=False, allow_null=True)
     height = serializers.IntegerField(required=False, allow_null=True)
     duration = serializers.FloatField(required=False, allow_null=True)
+
+class PDFFilePreviewSerializer(serializers.Serializer):
+    """Serializer for PDF file preview"""
+    pdf_url = serializers.URLField()
+    file_type = serializers.CharField()
+    page_count = serializers.IntegerField(required=False, allow_null=True)
+    file_name = serializers.CharField()

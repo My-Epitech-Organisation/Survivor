@@ -7,9 +7,10 @@ import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
 import { Edit, X } from 'lucide-react';
-import { isTextFile, isImageFile, isVideoFile } from '@/lib/fileUtils';
+import { isTextFile, isImageFile, isVideoFile, isPdfFile } from '@/lib/fileUtils';
 import { ImagePreview } from './ImagePreview';
 import { VideoPreview } from './VideoPreview';
+import { PdfPreview } from './PdfPreview';
 
 interface FilePreviewProps {
   file: DriveFile;
@@ -60,6 +61,11 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
   // Render video preview if the file is a video
   if (isVideoFile(file)) {
     return <VideoPreview file={file} onClose={onClose} />;
+  }
+
+  // Render PDF preview if the file is a PDF
+  if (isPdfFile(file)) {
+    return <PdfPreview file={file} onClose={onClose} />;
   }
 
   return (

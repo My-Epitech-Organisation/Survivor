@@ -31,8 +31,8 @@ from .serializers import (
     DriveShareSerializer,
     FileUploadSerializer,
 )
-from .preview_serializers import TextFileContentSerializer, TextFileUpdateSerializer, ImageFilePreviewSerializer, VideoFilePreviewSerializer
-from .utils import is_text_file, is_image_file, is_video_file
+from .preview_serializers import TextFileContentSerializer, TextFileUpdateSerializer, ImageFilePreviewSerializer, VideoFilePreviewSerializer, PDFFilePreviewSerializer
+from .utils import is_text_file, is_image_file, is_video_file, is_pdf_file
 
 
 class StartupDrivePermission(permissions.BasePermission):
@@ -544,6 +544,26 @@ class DriveFileViewSet(viewsets.ModelViewSet):
             }
             
             serializer = VideoFilePreviewSerializer(data)
+            return Response(serializer.data)
+        
+        # Check if it's a PDF file
+        elif is_pdf_file(file_obj.name, file_obj.file_type):
+            # For PDFs, we return the URL to the file
+            request_host = request.get_host()
+            protocol = 'https' if request.is_secure() else 'http'
+            
+            # Construct the absolute URL to the file
+            file_url = f"{protocol}://{request_host}{file_obj.file.url}"
+            
+            # Create response with PDF info
+            data = {
+                "pdf_url": file_url,
+                "file_type": file_obj.file_type,
+                "page_count": None,  # Could be implemented with PyPDF2 if needed
+                "file_name": file_obj.name
+            }
+            
+            serializer = PDFFilePreviewSerializer(data)
             return Response(serializer.data)
         
         # Not a supported file type
