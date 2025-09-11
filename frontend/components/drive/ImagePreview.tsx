@@ -6,7 +6,14 @@ import { Button } from '@/components/ui/button';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { X, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCw, Download, MoreVertical } from 'lucide-react';
+import { useIsMobile } from '@/hooks/useMediaQuery';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ImagePreviewProps {
   file: DriveFile;
@@ -14,6 +21,7 @@ interface ImagePreviewProps {
 }
 
 export function ImagePreview({ file, onClose }: ImagePreviewProps) {
+  const isMobile = useIsMobile(); // Call the hook at the top level
   const [imageUrl, setImageUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,43 +65,94 @@ export function ImagePreview({ file, onClose }: ImagePreviewProps) {
     setRotation((prevRotation) => (prevRotation + 90) % 360);
   };
 
+  const handleDownload = () => {
+    if (imageUrl) {
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.download = file.name;
+      link.target = '_blank';
+      link.click();
+    }
+  };
+
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-ellipsis overflow-hidden">{file.name}</h3>
-        <div className="flex space-x-2 shrink-0">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleZoomIn}
-          >
-            <ZoomIn className="h-4 w-4 mr-2" />
-            Zoom In
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleZoomOut}
-          >
-            <ZoomOut className="h-4 w-4 mr-2" />
-            Zoom Out
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleRotate}
-          >
-            <RotateCw className="h-4 w-4 mr-2" />
-            Rotate
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+        <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[60%]">{file.name}</h3>
+        
+        {isMobile ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleZoomIn}>
+                <ZoomIn className="h-4 w-4 mr-2" />
+                Zoom In
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleZoomOut}>
+                <ZoomOut className="h-4 w-4 mr-2" />
+                Zoom Out
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleRotate}>
+                <RotateCw className="h-4 w-4 mr-2" />
+                Rotate
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDownload}>
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onClose}>
+                <X className="h-4 w-4 mr-2" />
+                Close
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleZoomIn}
+            >
+              <ZoomIn className="h-4 w-4 mr-2" />
+              Zoom In
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleZoomOut}
+            >
+              <ZoomOut className="h-4 w-4 mr-2" />
+              Zoom Out
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRotate}
+            >
+              <RotateCw className="h-4 w-4 mr-2" />
+              Rotate
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleDownload}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClose}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
       
       {isLoading ? (
@@ -105,15 +164,30 @@ export function ImagePreview({ file, onClose }: ImagePreviewProps) {
           {error}
         </div>
       ) : (
-        <div className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" style={{ minHeight: '60vh' }}>
-          <img 
-            src={imageUrl} 
-            alt={file.name}
-            className="max-w-full max-h-[60vh] object-contain transition-all duration-200"
-            style={{ 
-              transform: `scale(${zoom}) rotate(${rotation}deg)`,
-            }}
-          />
+        <div 
+          className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" 
+          style={{ 
+            minHeight: isMobile ? '40vh' : '60vh',
+            touchAction: 'manipulation' 
+          }}
+        >
+          <div 
+            className="relative overflow-hidden w-full h-full flex justify-center items-center"
+            style={{ contain: 'content' }}
+          >
+            <img 
+              src={imageUrl} 
+              alt={file.name}
+              className="max-w-full object-contain transition-all duration-200"
+              style={{ 
+                transform: `scale(${zoom}) rotate(${rotation}deg)`,
+                maxHeight: isMobile ? '40vh' : '60vh',
+                height: 'auto',
+                width: 'auto'
+              }}
+              loading="lazy"
+            />
+          </div>
         </div>
       )}
     </div>

@@ -5,7 +5,14 @@ import { Button } from '@/components/ui/button';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { X, Volume2, VolumeX, Maximize, Pause, Play } from 'lucide-react';
+import { X, Volume2, VolumeX, Maximize, Pause, Play, Download, MoreVertical } from 'lucide-react';
+import { useIsMobile } from '@/hooks/useMediaQuery';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface VideoPreviewProps {
   file: DriveFile;
@@ -19,6 +26,7 @@ export function VideoPreview({ file, onClose }: VideoPreviewProps) {
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   
+  const isMobile = useIsMobile();
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -80,49 +88,124 @@ export function VideoPreview({ file, onClose }: VideoPreviewProps) {
     setIsPlaying(false);
   };
 
+  const handleDownload = () => {
+    if (videoUrl) {
+      const link = document.createElement('a');
+      link.href = videoUrl;
+      link.download = file.name;
+      link.target = '_blank';
+      link.click();
+    }
+  };
+
+  const handlePictureInPicture = async () => {
+    if (videoRef.current && document.pictureInPictureEnabled) {
+      try {
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+        } else {
+          await videoRef.current.requestPictureInPicture();
+        }
+      } catch (error) {
+        console.error('Picture-in-Picture failed:', error);
+      }
+    }
+  };
+
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-ellipsis overflow-hidden">{file.name}</h3>
-        <div className="flex space-x-2 shrink-0">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleTogglePlay}
-          >
-            {isPlaying ? (
-              <><Pause className="h-4 w-4 mr-2" /> Pause</>
-            ) : (
-              <><Play className="h-4 w-4 mr-2" /> Play</>
-            )}
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleToggleMute}
-          >
-            {isMuted ? (
-              <><VolumeX className="h-4 w-4 mr-2" /> Unmute</>
-            ) : (
-              <><Volume2 className="h-4 w-4 mr-2" /> Mute</>
-            )}
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleFullscreen}
-          >
-            <Maximize className="h-4 w-4 mr-2" />
-            Fullscreen
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+        <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[60%]">{file.name}</h3>
+        
+        {isMobile ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleTogglePlay}>
+                {isPlaying ? (
+                  <><Pause className="h-4 w-4 mr-2" /> Pause</>
+                ) : (
+                  <><Play className="h-4 w-4 mr-2" /> Play</>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleToggleMute}>
+                {isMuted ? (
+                  <><VolumeX className="h-4 w-4 mr-2" /> Unmute</>
+                ) : (
+                  <><Volume2 className="h-4 w-4 mr-2" /> Mute</>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleFullscreen}>
+                <Maximize className="h-4 w-4 mr-2" />
+                Fullscreen
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handlePictureInPicture}>
+                <Maximize className="h-4 w-4 mr-2" />
+                Picture-in-Picture
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDownload}>
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onClose}>
+                <X className="h-4 w-4 mr-2" />
+                Close
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleTogglePlay}
+            >
+              {isPlaying ? (
+                <><Pause className="h-4 w-4 mr-2" /> Pause</>
+              ) : (
+                <><Play className="h-4 w-4 mr-2" /> Play</>
+              )}
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleToggleMute}
+            >
+              {isMuted ? (
+                <><VolumeX className="h-4 w-4 mr-2" /> Unmute</>
+              ) : (
+                <><Volume2 className="h-4 w-4 mr-2" /> Mute</>
+              )}
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleFullscreen}
+            >
+              <Maximize className="h-4 w-4 mr-2" />
+              Fullscreen
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleDownload}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClose}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
       
       {isLoading ? (
@@ -134,17 +217,29 @@ export function VideoPreview({ file, onClose }: VideoPreviewProps) {
           {error}
         </div>
       ) : (
-        <div className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" style={{ minHeight: '60vh' }}>
-          <video 
-            ref={videoRef}
-            src={videoUrl} 
-            className="max-w-full max-h-[60vh]"
-            controls
-            controlsList="nodownload"
-            preload="metadata"
-            onPlay={handleVideoPlay}
-            onPause={handleVideoPause}
-          />
+        <div 
+          className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" 
+          style={{ 
+            minHeight: isMobile ? '40vh' : '60vh',
+            maxHeight: isMobile ? '50vh' : '70vh' 
+          }}
+        >
+          <div className="w-full h-full flex justify-center items-center">
+            <video 
+              ref={videoRef}
+              src={videoUrl} 
+              className="max-w-full w-full h-auto object-contain"
+              style={{
+                maxHeight: isMobile ? '40vh' : '60vh',
+              }}
+              controls={isMobile} // Show native controls on mobile for better UX
+              controlsList="nodownload"
+              preload="metadata"
+              onPlay={handleVideoPlay}
+              onPause={handleVideoPause}
+              playsInline // Better mobile experience
+            />
+          </div>
         </div>
       )}
     </div>

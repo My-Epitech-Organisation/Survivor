@@ -5,9 +5,16 @@ import { Button } from '@/components/ui/button';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, MoreVertical } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { pdfjs } from 'react-pdf';
+import { useIsMobile } from '@/hooks/useMediaQuery';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Import required CSS files for text and annotation layers
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -31,6 +38,7 @@ interface PdfPreviewProps {
 }
 
 export function PdfPreview({ file, onClose }: PdfPreviewProps) {
+  const isMobile = useIsMobile(); // Call the hook at the top level
   const [pdfUrl, setPdfUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -107,43 +115,72 @@ export function PdfPreview({ file, onClose }: PdfPreviewProps) {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-ellipsis overflow-hidden">{file.name}</h3>
-        <div className="flex space-x-2 shrink-0">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={zoomOut}
-            disabled={scale <= 0.5}
-          >
-            <ZoomOut className="h-4 w-4 mr-2" />
-            Zoom Out
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={zoomIn}
-            disabled={scale >= 2.5}
-          >
-            <ZoomIn className="h-4 w-4 mr-2" />
-            Zoom In
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleDownload}
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Download
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+        <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[60%]">{file.name}</h3>
+        
+        {isMobile ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={zoomOut} disabled={scale <= 0.5}>
+                <ZoomOut className="h-4 w-4 mr-2" />
+                Zoom Out
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={zoomIn} disabled={scale >= 2.5}>
+                <ZoomIn className="h-4 w-4 mr-2" />
+                Zoom In
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDownload}>
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onClose}>
+                <X className="h-4 w-4 mr-2" />
+                Close
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={zoomOut}
+              disabled={scale <= 0.5}
+            >
+              <ZoomOut className="h-4 w-4 mr-2" />
+              Zoom Out
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={zoomIn}
+              disabled={scale >= 2.5}
+            >
+              <ZoomIn className="h-4 w-4 mr-2" />
+              Zoom In
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleDownload}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClose}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
       
       {isLoading ? (
@@ -156,7 +193,13 @@ export function PdfPreview({ file, onClose }: PdfPreviewProps) {
         </div>
       ) : (
         <div>
-          <div className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" style={{ minHeight: '60vh' }}>
+          <div 
+            className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" 
+            style={{ 
+              minHeight: isMobile ? '40vh' : '60vh',
+              maxHeight: isMobile ? '50vh' : '70vh'
+            }}
+          >
             <Document
               file={pdfUrl}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -173,24 +216,26 @@ export function PdfPreview({ file, onClose }: PdfPreviewProps) {
                 pageNumber={pageNumber} 
                 scale={scale}
                 className="page"
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
+                renderTextLayer={!isMobile} // Disable text layer on mobile for better performance
+                renderAnnotationLayer={!isMobile} // Disable annotations on mobile for better performance
+                width={isMobile ? window.innerWidth - 40 : undefined} // Adjust width on mobile
               />
             </Document>
           </div>
           
           {numPages && (
-            <div className="flex justify-center items-center space-x-4 mt-4">
+            <div className="flex justify-center items-center flex-wrap gap-2 mt-4">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={previousPage}
                 disabled={pageNumber <= 1}
+                className="min-w-[100px]"
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
                 Previous
               </Button>
-              <p className="text-sm">
+              <p className="text-sm px-2">
                 Page {pageNumber} of {numPages}
               </p>
               <Button
@@ -198,6 +243,7 @@ export function PdfPreview({ file, onClose }: PdfPreviewProps) {
                 size="sm"
                 onClick={nextPage}
                 disabled={pageNumber >= (numPages || 1)}
+                className="min-w-[100px]"
               >
                 Next
                 <ChevronRight className="h-4 w-4 ml-2" />

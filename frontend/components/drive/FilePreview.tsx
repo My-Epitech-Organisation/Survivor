@@ -6,11 +6,18 @@ import { Button } from '@/components/ui/button';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { Edit, X } from 'lucide-react';
+import { Edit, X, MoreVertical } from 'lucide-react';
 import { isTextFile, isImageFile, isVideoFile, isPdfFile } from '@/lib/fileUtils';
 import { ImagePreview } from './ImagePreview';
 import { VideoPreview } from './VideoPreview';
 import { PdfPreview } from './PdfPreview';
+import { useIsMobile } from '@/hooks/useMediaQuery';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface FilePreviewProps {
   file: DriveFile;
@@ -22,6 +29,7 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const loadFileContent = async () => {
@@ -70,25 +78,46 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-ellipsis overflow-hidden">{file.name}</h3>
-        <div className="flex space-x-2 shrink-0">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => onEditRequest(file)}
-          >
-            <Edit className="h-4 w-4 mr-2" />
-            Edit
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+        <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[70%]">{file.name}</h3>
+        
+        {isMobile ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onEditRequest(file)}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onClose}>
+                <X className="h-4 w-4 mr-2" />
+                Close
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex space-x-2 shrink-0">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onEditRequest(file)}
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClose}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
       
       {isLoading ? (
@@ -102,7 +131,7 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
       ) : (
         <div className="bg-muted rounded-md overflow-hidden">
           <div className="overflow-x-auto">
-            <pre className="p-4 min-w-fit max-h-[60vh] text-sm whitespace-pre">
+            <pre className="p-4 text-sm whitespace-pre-wrap sm:whitespace-pre sm:max-h-[60vh] max-h-[50vh] overflow-y-auto">
               {content}
             </pre>
           </div>

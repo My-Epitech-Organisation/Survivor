@@ -6,7 +6,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { DriveFile } from '@/types/drive';
 import { DriveService } from '@/services/DriveService';
 import { Spinner } from '@/components/ui/spinner';
-import { Save, X, Eye } from 'lucide-react';
+import { Save, X, Eye, MoreVertical } from 'lucide-react';
+import { useIsMobile } from '@/hooks/useMediaQuery';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface FileEditorProps {
   file: DriveFile;
@@ -20,6 +27,7 @@ export function FileEditor({ file, onClose, onSave, onPreviewRequest }: FileEdit
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const loadFileContent = async () => {
@@ -54,34 +62,59 @@ export function FileEditor({ file, onClose, onSave, onPreviewRequest }: FileEdit
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium">Editing: {file.name}</h3>
-        <div className="flex space-x-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => onPreviewRequest(file)}
-          >
-            <Eye className="h-4 w-4 mr-2" />
-            Preview
-          </Button>
-          <Button 
-            className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
-            size="sm" 
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            {isSaving ? <Spinner className="h-4 w-4 mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-            Save
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+        <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[60%]">Editing: {file.name}</h3>
+        
+        {isMobile ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onPreviewRequest(file)}>
+                <Eye className="h-4 w-4 mr-2" />
+                Preview
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSave} disabled={isSaving}>
+                {isSaving ? <Spinner className="h-4 w-4 mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                Save
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onClose}>
+                <X className="h-4 w-4 mr-2" />
+                Close
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onPreviewRequest(file)}
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Preview
+            </Button>
+            <Button 
+              className="bg-jeb-primary text-app-white hover:bg-jeb-hover transition-colors"
+              size="sm" 
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? <Spinner className="h-4 w-4 mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+              Save
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClose}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
       
       {isLoading ? (
@@ -95,10 +128,18 @@ export function FileEditor({ file, onClose, onSave, onPreviewRequest }: FileEdit
       ) : (
         <div className="relative w-full">
           <Textarea
-            className="min-h-[60vh] font-mono text-sm w-full resize-y"
+            className="min-h-[40vh] sm:min-h-[60vh] font-mono text-sm w-full resize-y"
             value={content}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
-            style={{ maxWidth: '100%', overflowX: 'auto' }}
+            style={{ 
+              maxWidth: '100%', 
+              overflowX: 'auto',
+              fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, monospace',
+              lineHeight: '1.5',
+              tabSize: '2'
+            }}
+            spellCheck={false}
+            data-gramm="false"
           />
         </div>
       )}
