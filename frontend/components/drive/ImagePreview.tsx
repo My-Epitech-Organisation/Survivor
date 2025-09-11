@@ -104,10 +104,7 @@ export function ImagePreview({ file, onClose }: ImagePreviewProps) {
                 <Download className="h-4 w-4 mr-2" />
                 Download
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onClose}>
-                <X className="h-4 w-4 mr-2" />
-                Close
-              </DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
@@ -143,13 +140,6 @@ export function ImagePreview({ file, onClose }: ImagePreviewProps) {
             >
               <Download className="h-4 w-4 mr-2" />
               Download
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onClose}
-            >
-              <X className="h-4 w-4" />
             </Button>
           </div>
         )}

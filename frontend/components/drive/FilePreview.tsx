@@ -93,10 +93,7 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onClose}>
-                <X className="h-4 w-4 mr-2" />
-                Close
-              </DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
@@ -108,13 +105,6 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
             >
               <Edit className="h-4 w-4 mr-2" />
               Edit
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onClose}
-            >
-              <X className="h-4 w-4" />
             </Button>
           </div>
         )}

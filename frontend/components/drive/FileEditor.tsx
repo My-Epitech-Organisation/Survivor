@@ -81,10 +81,7 @@ export function FileEditor({ file, onClose, onSave, onPreviewRequest }: FileEdit
                 {isSaving ? <Spinner className="h-4 w-4 mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                 Save
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onClose}>
-                <X className="h-4 w-4 mr-2" />
-                Close
-              </DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
@@ -106,13 +103,8 @@ export function FileEditor({ file, onClose, onSave, onPreviewRequest }: FileEdit
               {isSaving ? <Spinner className="h-4 w-4 mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Save
             </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onClose}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+              {isSaving ? <Spinner className="h-4 w-4 mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+              Save
           </div>
         )}
       </div>
