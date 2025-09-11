@@ -4,7 +4,12 @@ import React, { useState } from "react";
 import { DriveFile, DriveFolder } from "@/types/drive";
 import { useDrive } from "@/contexts/DriveContext";
 import { downloadFile } from "@/lib/downloadUtils";
-import { isTextFile, isImageFile, isVideoFile, isPdfFile } from "@/lib/fileUtils";
+import {
+  isTextFile,
+  isImageFile,
+  isVideoFile,
+  isPdfFile,
+} from "@/lib/fileUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -174,7 +179,12 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
 
   // Preview and Edit handlers
   const handleFilePreview = (file: DriveFile) => {
-    if (isTextFile(file) || isImageFile(file) || isVideoFile(file) || isPdfFile(file)) {
+    if (
+      isTextFile(file) ||
+      isImageFile(file) ||
+      isVideoFile(file) ||
+      isPdfFile(file)
+    ) {
       setPreviewFile(file);
     } else {
       handleFileDownload(file);
@@ -257,9 +267,9 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
               {error}
             </div>
           )}
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
             <h2 className="text-2xl font-bold">Drive</h2>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-x-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -505,11 +515,17 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
                         }
                       >
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+                        <DropdownMenuContent
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           {isTextFile(file) && (
                             <>
                               <DropdownMenuItem
@@ -588,10 +604,12 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
               )}
             </div>
           )}
-
           {/* File Preview Dialog */}
           {previewFile && (
-            <Dialog open={!!previewFile} onOpenChange={() => setPreviewFile(null)}>
+            <Dialog
+              open={!!previewFile}
+              onOpenChange={() => setPreviewFile(null)}
+            >
               <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full max-w-[95vw] overflow-hidden dialog-content">
                 <DialogHeader>
                   <DialogTitle>Preview File</DialogTitle>
@@ -604,7 +622,6 @@ export function DriveExplorer({ startupId }: DriveExplorerProps) {
               </DialogContent>
             </Dialog>
           )}
-
           {/* File Editor Dialog */}
           {editFile && (
             <Dialog open={!!editFile} onOpenChange={() => setEditFile(null)}>
