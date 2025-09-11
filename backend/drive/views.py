@@ -29,6 +29,7 @@ from .preview_serializers import (
     TextFileUpdateSerializer,
     VideoFilePreviewSerializer,
 )
+from .python_executor import execute_python_code
 from .python_serializers import (
     PythonExecutionRequestSerializer,
     PythonExecutionResultSerializer,
@@ -42,8 +43,7 @@ from .serializers import (
     DriveShareSerializer,
     FileUploadSerializer,
 )
-from .utils import is_image_file, is_pdf_file, is_text_file, is_video_file, is_python_file
-from .python_executor import execute_python_code
+from .utils import is_image_file, is_pdf_file, is_python_file, is_text_file, is_video_file
 
 
 class StartupDrivePermission(permissions.BasePermission):
@@ -617,10 +617,7 @@ class DriveFileViewSet(viewsets.ModelViewSet):
 
         # Check if it's a Python file
         if not is_python_file(file_obj.name, file_obj.file_type):
-            return Response(
-                {"error": "This file is not a Python file"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "This file is not a Python file"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Get code to execute - either from file or from request
         serializer = PythonExecutionRequestSerializer(data=request.data)
@@ -632,10 +629,7 @@ class DriveFileViewSet(viewsets.ModelViewSet):
             try:
                 code_content = file_obj.file.read().decode("utf-8")
             except UnicodeDecodeError:
-                return Response(
-                    {"error": "Failed to decode file content"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Failed to decode file content"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Log the execution activity
         DriveActivity.objects.create(
