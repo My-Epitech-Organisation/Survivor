@@ -130,8 +130,8 @@ export function FilePreview({ file, onClose, onEditRequest }: FilePreviewProps) 
         </div>
       ) : (
         <div className="bg-muted rounded-md overflow-hidden">
-          <div className="overflow-x-auto">
-            <pre className="p-4 text-sm whitespace-pre-wrap sm:whitespace-pre sm:max-h-[60vh] max-h-[50vh] overflow-y-auto">
+          <div className="overflow-x-auto w-full">
+            <pre className="p-4 text-sm whitespace-pre-wrap max-w-full max-h-[50vh] sm:max-h-[60vh] overflow-y-auto break-words">
               {content}
             </pre>
           </div>

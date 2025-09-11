@@ -34,6 +34,43 @@
   bottom: 0;
 }
 
+/* Style pour les barres de défilement */
+.pdf-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+}
+
+.pdf-scroll-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.pdf-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pdf-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 4px;
+}
+
+.pdf-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(155, 155, 155, 0.8);
+}
+
+/* Ensure page fits within viewport */
+@media (max-width: 640px) {
+  .react-pdf__Page {
+    width: 100% !important;
+    height: auto !important;
+  }
+  
+  .react-pdf__Page__canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
 /* Ensure page fits within viewport */
 @media (max-width: 640px) {
   .react-pdf__Page {

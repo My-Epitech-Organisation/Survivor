@@ -115,6 +115,38 @@ export function PdfPreview({ file, onClose }: PdfPreviewProps) {
 
   return (
     <div className="w-full">
+      <style jsx>{`
+        .pdf-container {
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          background-color: rgba(229, 231, 235, 0.5);
+          border-radius: 0.375rem;
+          overflow: auto;
+          height: ${isMobile ? '50vh' : '70vh'};
+          position: relative;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+        }
+        
+        .pdf-container::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        
+        .pdf-container::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        
+        .pdf-container::-webkit-scrollbar-thumb {
+          background-color: rgba(155, 155, 155, 0.5);
+          border-radius: 4px;
+        }
+        
+        .pdf-container::-webkit-scrollbar-thumb:hover {
+          background-color: rgba(155, 155, 155, 0.8);
+        }
+      `}</style>
       <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
         <h3 className="text-lg font-medium text-ellipsis overflow-hidden max-w-full sm:max-w-[60%]">{file.name}</h3>
         
@@ -193,13 +225,7 @@ export function PdfPreview({ file, onClose }: PdfPreviewProps) {
         </div>
       ) : (
         <div>
-          <div 
-            className="flex justify-center items-center bg-muted/50 rounded-md overflow-hidden" 
-            style={{ 
-              minHeight: isMobile ? '40vh' : '60vh',
-              maxHeight: isMobile ? '50vh' : '70vh'
-            }}
-          >
+          <div className="pdf-container">
             <Document
               file={pdfUrl}
               onLoadSuccess={onDocumentLoadSuccess}
