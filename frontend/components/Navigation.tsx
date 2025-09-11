@@ -58,7 +58,7 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8 items-center">
+          <div className="hidden lg:flex space-x-8 items-center">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -75,7 +75,7 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Login */}
-          <div className="hidden md:flex w-fit pl-8 items-center space-x-4">
+          <div className="hidden lg:flex w-fit pl-8 items-center space-x-4">
             {isAuthenticated ? (
               <>
                 {user?.role === "founder" && (
@@ -104,15 +104,17 @@ export default function Navigation() {
                 )}
                 <button
                   onClick={handleSwitchToProfile}
-                  className="font-heading font-bold text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
+                  className={`font-heading font-bold text-app-text-secondary hover:text-jeb-hover transition-colors cursor-pointer ${
+                    pathname === "/profile" && "text-jeb-primary"
+                  }`}
                 >
-                  <UserRound/>
+                  <UserRound />
                 </button>
                 <button
                   onClick={handleLogout}
                   className="font-heading font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
                 >
-                  <LogOut/>
+                  <LogOut />
                 </button>
               </>
             ) : (
@@ -126,7 +128,7 @@ export default function Navigation() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-app-text-secondary hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
@@ -142,7 +144,7 @@ export default function Navigation() {
 
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-app-border-light bg-app-surface">
+          <div className="lg:hidden border-t border-app-border-light bg-app-surface">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link

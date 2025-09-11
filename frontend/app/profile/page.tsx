@@ -178,7 +178,7 @@ export default function ProfilePage() {
                             <Button
                               size="sm"
                               onClick={saveName}
-                              className="p-2 h-8 w-8"
+                              className="p-2 h-8 w-8 cursor-pointer"
                               variant="ghost"
                             >
                               <Check className="h-4 w-4 text-green-600" />
@@ -186,7 +186,7 @@ export default function ProfilePage() {
                             <Button
                               size="sm"
                               onClick={cancelNameEdit}
-                              className="p-2 h-8 w-8"
+                              className="p-2 h-8 w-8 cursor-pointer"
                               variant="ghost"
                             >
                               <X className="h-4 w-4 text-red-600" />
@@ -200,7 +200,7 @@ export default function ProfilePage() {
                             <Button
                               size="sm"
                               onClick={startEditingName}
-                              className="p-2 h-8 w-8"
+                              className="p-2 h-8 w-8 cursor-pointer"
                               variant="ghost"
                             >
                               <Pencil className="h-4 w-4 text-app-text-secondary" />
@@ -235,7 +235,7 @@ export default function ProfilePage() {
                             <Button
                               size="sm"
                               onClick={saveEmail}
-                              className="p-2 h-8 w-8"
+                              className="p-2 h-8 w-8 cursor-pointer"
                               variant="ghost"
                             >
                               <Check className="h-4 w-4 text-green-600" />
@@ -243,7 +243,7 @@ export default function ProfilePage() {
                             <Button
                               size="sm"
                               onClick={cancelEmailEdit}
-                              className="p-2 h-8 w-8"
+                              className="p-2 h-8 w-8 cursor-pointer"
                               variant="ghost"
                             >
                               <X className="h-4 w-4 text-red-600" />
@@ -257,7 +257,7 @@ export default function ProfilePage() {
                             <Button
                               size="sm"
                               onClick={startEditingEmail}
-                              className="p-2 h-8 w-8"
+                              className="p-2 h-8 w-8 cursor-pointer"
                               variant="ghost"
                             >
                               <Pencil className="h-4 w-4 text-app-text-secondary" />

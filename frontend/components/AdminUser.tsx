@@ -87,7 +87,7 @@ export default function AdminUser(props: AdminUserProps) {
           <Dialog>
             <DialogTrigger asChild>
               <button
-                className="p-2 rounded-full hover:bg-app-blue-primary/10 transition-colors w-full flex items-center justify-center cursor-pointer"
+                className="p-2 rounded-full hover:bg-jeb-hover/10 transition-colors w-full flex items-center justify-center cursor-pointer"
                 aria-label="Edit"
                 title={`Edit ${props.user.name}`}
               >

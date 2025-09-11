@@ -337,7 +337,7 @@ Shared from JEB Incubator
           )}
           {props.ProjectStatus && (
             <div className="bg-app-surface rounded-full px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 lg:py-3 shadow-sm border border-app-border-light">
-              <span className="text-app-green-primary font-medium text-xs sm:text-sm md:text-base">
+              <span className="text-app-orange-primary font-medium text-xs sm:text-sm md:text-base">
                 {props.ProjectStatus}
               </span>
             </div>
@@ -501,7 +501,7 @@ Shared from JEB Incubator
                 <dd className="text-base md:text-lg">
                   <a
                     href={`mailto:${props.ProjectEmail}`}
-                    className="text-app-green-primary hover:text-app-green-primary transition-colors break-all"
+                    className="text-jeb-primary hover:text-jeb-hover transition-colors break-all"
                   >
                     {props.ProjectEmail}
                   </a>
@@ -515,7 +515,7 @@ Shared from JEB Incubator
                 <dd className="text-base md:text-lg">
                   <a
                     href={`tel:${props.ProjectPhone}`}
-                    className="text-app-green-primary hover:text-app-green-primary transition-colors"
+                    className="text-jeb-primary hover:text-jeb-hover transition-colors"
                   >
                     {props.ProjectPhone}
                   </a>
@@ -543,7 +543,7 @@ Shared from JEB Incubator
                       href={props.ProjectWebsite}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-app-green-primary hover:text-app-green-primary transition-colors break-all"
+                      className="text-jeb-primary hover:text-jeb-hover transition-colors break-all"
                     >
                       {props.ProjectWebsite}
                     </a>
@@ -561,7 +561,7 @@ Shared from JEB Incubator
                       href={props.ProjectSocial}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-app-green-primary hover:text-app-green-primary transition-colors break-all"
+                      className="text-jeb-primary hover:text-jeb-hover transition-colors break-all"
                     >
                       {(() => {
                         try {

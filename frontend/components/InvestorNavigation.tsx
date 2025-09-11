@@ -13,9 +13,7 @@ export default function InvestorNavigation() {
   const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navItems = [
-    { href: "/investor/messaging", label: "Messaging" },
-  ];
+  const navItems = [{ href: "/investor/messaging", label: "Messaging" }];
 
   const handleLogout = () => {
     logout();
@@ -44,12 +42,14 @@ export default function InvestorNavigation() {
                 <JEBLogo className="w-15 h-auto" color="currentColor" />
                 JEB
               </div>
-              <span className="ml-2 text-sm text-app-text-secondary group-hover:text-jeb-hover not-italic mb-1 transition-colors">Investor</span>
+              <span className="ml-2 text-sm text-app-text-secondary group-hover:text-jeb-hover not-italic mb-1 transition-colors">
+                Investor
+              </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8 items-center">
+          <div className="hidden lg:flex space-x-8 items-center">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -66,7 +66,7 @@ export default function InvestorNavigation() {
           </div>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-4">
             <button
               onClick={handleSwitchToPublic}
               className="font-heading font-medium text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
@@ -75,20 +75,22 @@ export default function InvestorNavigation() {
             </button>
             <button
               onClick={handleSwitchToProfile}
-              className="font-heading font-bold text-app-text-secondary hover:text-jeb-primary transition-colors cursor-pointer"
+              className={`font-heading font-bold text-app-text-secondary hover:text-jeb-hover transition-colors cursor-pointer ${
+                pathname === "/profile" && "text-jeb-primary"
+              }`}
             >
-              Profile
+              <UserRound />
             </button>
             <button
               onClick={handleLogout}
               className="font-heading font-bold text-app-text-secondary hover:text-app-red-primary transition-colors cursor-pointer"
             >
-              Logout
+              <LogOut />
             </button>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-app-text-secondary hover:text-jeb-primary focus:outline-none focus:text-jeb-primary transition-colors"
@@ -104,7 +106,7 @@ export default function InvestorNavigation() {
 
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-app-border bg-app-surface">
+          <div className="lg:hidden border-t border-app-border bg-app-surface">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link
@@ -137,7 +139,7 @@ export default function InvestorNavigation() {
                   }}
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-jeb-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
                 >
-                  <UserRound/>
+                  Profile
                 </button>
                 <button
                   onClick={() => {
@@ -146,7 +148,7 @@ export default function InvestorNavigation() {
                   }}
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-bold text-app-text-secondary hover:text-app-red-primary hover:bg-app-surface-hover transition-colors cursor-pointer"
                 >
-                  <LogOut/>
+                  Logout
                 </button>
               </div>
             </div>
