@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from .models import DriveActivity
 
+
 def preview_file_action(self, request, pk=None):
     """
     Preview a text file's content.
