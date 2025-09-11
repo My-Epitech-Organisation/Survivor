@@ -16,7 +16,7 @@ import {
 
 interface VideoPreviewProps {
   file: DriveFile;
-  _onClose: () => void; // Préfixé avec _ pour indiquer qu'il n'est pas utilisé
+  _onClose: () => void;
 }
 
 export function VideoPreview({ file, _onClose }: VideoPreviewProps) {
