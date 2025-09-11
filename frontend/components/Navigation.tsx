@@ -3,15 +3,23 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
-import { LogOut, Menu, UserRound, X } from "lucide-react";
+import { useState,  useEffect, useRef } from "react";
+import { LogOut, Menu, X } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
+import { IDAvatar } from "./ui/InputAvatar";
+import { User } from "@/types/user";
+import api, { getToken } from "@/lib/api";
+import { TbLoader3 } from "react-icons/tb";
 
 export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const [userData, setUserData] = useState<User | undefined>();
+  const isInitializedRef = useRef(false);
+  const [isLoadingData, setIsLoading] = useState<boolean>(false);
+  const token = getToken();
 
   const navItems = [
     { href: "/", label: "Home" },
@@ -41,6 +49,37 @@ export default function Navigation() {
   const handleSwitchToProfile = () => {
     router.push("/profile");
   };
+
+
+  const fetchMe = async () => {
+    setIsLoading(true);
+    try {
+      const res = await api.get<User>({ endpoint: "/user/"});
+      if (res.data)
+        setUserData(res.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+      fetchMe();
+    }
+  }, []);
+
+  if (isLoadingData)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <TbLoader3 className="size-12 animate-spin text-jeb-primary mb-4" />
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
 
   return (
     <nav className="bg-app-surface shadow-sm border-b">
@@ -76,8 +115,9 @@ export default function Navigation() {
 
           {/* Desktop Login */}
           <div className="hidden lg:flex w-fit pl-8 items-center space-x-4">
-            {isAuthenticated ? (
+            {isAuthenticated && userData ? (
               <>
+              {console.log(user?.role)}
                 {user?.role === "founder" && (
                   <button
                     onClick={handleSwitchToStartup}
@@ -108,7 +148,7 @@ export default function Navigation() {
                     pathname === "/profile" && "text-jeb-primary"
                   }`}
                 >
-                  <UserRound />
+                  <IDAvatar id={userData.id}/>
                 </button>
                 <button
                   onClick={handleLogout}

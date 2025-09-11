@@ -3,15 +3,22 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
-import { Menu, UserRound, X, LogOut } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, LogOut } from "lucide-react";
 import { JEBLogo } from "./svg/JEBLogo";
+import { IDAvatar } from "./ui/InputAvatar";
+import { User } from "@/types/user";
+import api from "@/lib/api";
+import { TbLoader3 } from "react-icons/tb";
 
 export default function InvestorNavigation() {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isInitializedRef = useRef(false);
+  const [isLoadingData, setIsLoading] = useState<boolean>(false);
+  const [userData, setUserData] = useState<User | undefined>();
 
   const navItems = [{ href: "/investor/messaging", label: "Messaging" }];
 
@@ -27,6 +34,36 @@ export default function InvestorNavigation() {
   const handleSwitchToProfile = () => {
     router.push("/profile");
   };
+
+  const fetchMe = async () => {
+    setIsLoading(true);
+    try {
+      const res = await api.get<User>({ endpoint: "/user/"});
+      if (res.data)
+        setUserData(res.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+      fetchMe();
+    }
+  }, []);
+
+  if (isLoadingData || !userData)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <TbLoader3 className="size-12 animate-spin text-jeb-primary mb-4" />
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
 
   return (
     <nav className="bg-app-surface shadow-sm border-b border-app-border">
@@ -79,7 +116,7 @@ export default function InvestorNavigation() {
                 pathname === "/profile" && "text-jeb-primary"
               }`}
             >
-              <UserRound />
+              <IDAvatar id={userData.id}/>
             </button>
             <button
               onClick={handleLogout}
