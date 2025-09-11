@@ -58,8 +58,7 @@ export class ThreadWebSocket {
         }
       });
 
-      this.socket.on('connected', (data) => {
-      });
+      this.socket.on('connected', ()=>{});
 
       this.socket.on('thread_created', (data) => {
         this.notifyListeners('thread_created', {

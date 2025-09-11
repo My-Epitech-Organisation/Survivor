@@ -175,7 +175,7 @@ export function PythonFilePreview({ file, content, onClose, onEditRequest }: Pyt
             {isEdited && (
               <div className="mt-2 text-xs text-muted-foreground flex justify-between">
                 <span>
-                  Code has been modified but not saved. Click the "Edit" button to save changes or "Run" to execute without saving.
+                  Code has been modified but not saved. Click the &quot;Edit&quot; button to save changes or &quot;Run&quot; to execute without saving.
                 </span>
                 <Button
                   variant="ghost"
@@ -232,7 +232,7 @@ export function PythonFilePreview({ file, content, onClose, onEditRequest }: Pyt
               </div>
             ) : (
               <div className="h-[50vh] sm:h-[60vh] flex items-center justify-center text-muted-foreground">
-                Click the "Run" button to execute this Python file and see the output here.
+                Click the &quot;Run&quot; button to execute this Python file and see the output here.
               </div>
             )}
           </div>
