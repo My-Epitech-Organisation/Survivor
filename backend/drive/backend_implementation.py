@@ -5,10 +5,6 @@ from rest_framework.response import Response
 
 from .models import DriveActivity
 
-# ----------------------------------------------
-# Ajouter ces classes au fichier text_serializers.py
-# ----------------------------------------------
-
 
 class TextFileContentSerializer(serializers.Serializer):
     """Serializer for text file content"""
@@ -23,15 +19,9 @@ class TextFileUpdateSerializer(serializers.Serializer):
 
     def validate(self, data):
         """Validate that the content is valid"""
-        # Add any validation for file content here
         if len(data["content"].encode("utf-8")) > 10 * 1024 * 1024:  # 10 MB limit
             raise serializers.ValidationError("File content exceeds maximum size of 10 MB")
         return data
-
-
-# ----------------------------------------------
-# Ajouter ces méthodes à la classe DriveFileViewSet dans views.py
-# ----------------------------------------------
 
 
 @action(detail=True, methods=["get"])
@@ -41,7 +31,6 @@ def preview(self, request, pk=None):
     """
     file_obj = self.get_object()
 
-    # Check if file is a text file
     text_mime_types = [
         "text/plain",
         "text/html",
@@ -88,7 +77,6 @@ def update_content(self, request, pk=None):
     """
     file_obj = self.get_object()
 
-    # Check if file is a text file
     text_mime_types = [
         "text/plain",
         "text/html",
@@ -112,14 +100,11 @@ def update_content(self, request, pk=None):
         try:
             content = serializer.validated_data["content"]
 
-            # Save the new content to the file
             file_obj.file.save(file_obj.name, ContentFile(content.encode("utf-8")), save=False)
 
-            # Update file size
             file_obj.size = file_obj.file.size
             file_obj.save()
 
-            # Log edit activity
             DriveActivity.objects.create(
                 startup=file_obj.startup,
                 user=request.user,
@@ -136,12 +121,3 @@ def update_content(self, request, pk=None):
             )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# ----------------------------------------------
-# Ajouter cette option à ACTION_CHOICES dans la classe DriveActivity
-# ----------------------------------------------
-
-# Dans le modèle DriveActivity, modifier ACTION_CHOICES pour ajouter :
-# ("preview", "Preview"),
-# ("edit", "Edit"),
