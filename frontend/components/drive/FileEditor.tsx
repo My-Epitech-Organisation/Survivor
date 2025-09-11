@@ -26,7 +26,7 @@ import {
 
 interface FileEditorProps {
   file: DriveFile;
-  _onClose: () => void; // Préfixé avec _ pour indiquer qu'il n'est pas utilisé
+  _onClose: () => void;
   onSave: () => void;
   onPreviewRequest: (file: DriveFile) => void;
 }

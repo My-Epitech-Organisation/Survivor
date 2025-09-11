@@ -1,4 +1,4 @@
-/* Styles pour la visionneuse PDF */
+/* PDF preview styles */
 .pdf-document {
   display: flex;
   flex-direction: column;
@@ -12,7 +12,6 @@
   background-color: white;
 }
 
-/* Style pour les barres de défilement */
 .pdf-scroll-container {
   scrollbar-width: thin;
   scrollbar-color: rgba(155, 155, 155, 0.5) transparent;

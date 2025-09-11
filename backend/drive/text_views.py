@@ -5,9 +5,6 @@ from rest_framework.response import Response
 
 from .models import DriveActivity
 
-# Note: This file contains actions to be added to the DriveFileViewSet class
-
-
 def preview_file_action(self, request, pk=None):
     """
     Preview a text file's content.
@@ -16,7 +13,6 @@ def preview_file_action(self, request, pk=None):
 
     file_obj = self.get_object()
 
-    # Check if file is a text file
     text_mime_types = [
         "text/plain",
         "text/html",
@@ -38,7 +34,6 @@ def preview_file_action(self, request, pk=None):
     try:
         content = file_obj.file.read().decode("utf-8")
 
-        # Log preview activity
         DriveActivity.objects.create(
             startup=file_obj.startup,
             user=request.user,
@@ -64,7 +59,6 @@ def update_file_content_action(self, request, pk=None):
 
     file_obj = self.get_object()
 
-    # Check if file is a text file
     text_mime_types = [
         "text/plain",
         "text/html",
@@ -88,14 +82,11 @@ def update_file_content_action(self, request, pk=None):
         try:
             content = serializer.validated_data["content"]
 
-            # Save the new content to the file
             file_obj.file.save(file_obj.name, ContentFile(content.encode("utf-8")), save=False)
 
-            # Update file size
             file_obj.size = file_obj.file.size
             file_obj.save()
 
-            # Log edit activity
             DriveActivity.objects.create(
                 startup=file_obj.startup,
                 user=request.user,
@@ -114,7 +105,6 @@ def update_file_content_action(self, request, pk=None):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Add these methods to DriveFileViewSet:
 """
 # In DriveFileViewSet class:
 

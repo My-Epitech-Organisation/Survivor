@@ -15,7 +15,6 @@ class TextFileUpdateSerializer(serializers.Serializer):
 
     def validate(self, data):
         """Validate that the content is valid"""
-        # Add any validation for file content here
         if len(data["content"].encode("utf-8")) > 10 * 1024 * 1024:  # 10 MB limit
             raise serializers.ValidationError("File content exceeds maximum size of 10 MB")
         return data

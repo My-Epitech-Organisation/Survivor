@@ -34,7 +34,6 @@
   bottom: 0;
 }
 
-/* Style pour les barres de défilement */
 .pdf-scroll-container {
   scrollbar-width: thin;
   scrollbar-color: rgba(155, 155, 155, 0.5) transparent;

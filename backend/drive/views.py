@@ -510,20 +510,15 @@ class DriveFileViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        # Check if it's an image file
         elif is_image_file(file_obj.name, file_obj.file_type):
-            # For images, we return the URL to the file
             request_host = request.get_host()
             protocol = "https" if request.is_secure() else "http"
 
-            # Construct the absolute URL to the file
             file_url = f"{protocol}://{request_host}{file_obj.file.url}"
 
-            # Create response with image info
             data = {
                 "image_url": file_url,
                 "file_type": file_obj.file_type,
-                # Width and height could be added if we implement image dimension detection
                 "width": None,
                 "height": None,
             }
@@ -531,16 +526,12 @@ class DriveFileViewSet(viewsets.ModelViewSet):
             serializer = ImageFilePreviewSerializer(data)
             return Response(serializer.data)
 
-        # Check if it's a video file
         elif is_video_file(file_obj.name, file_obj.file_type):
-            # For videos, we return the URL to the file
             request_host = request.get_host()
             protocol = "https" if request.is_secure() else "http"
 
-            # Construct the absolute URL to the file
             file_url = f"{protocol}://{request_host}{file_obj.file.url}"
 
-            # Create response with video info
             data = {
                 "video_url": file_url,
                 "file_type": file_obj.file_type,
@@ -552,27 +543,22 @@ class DriveFileViewSet(viewsets.ModelViewSet):
             serializer = VideoFilePreviewSerializer(data)
             return Response(serializer.data)
 
-        # Check if it's a PDF file
         elif is_pdf_file(file_obj.name, file_obj.file_type):
-            # For PDFs, we return the URL to the file
             request_host = request.get_host()
             protocol = "https" if request.is_secure() else "http"
 
-            # Construct the absolute URL to the file
             file_url = f"{protocol}://{request_host}{file_obj.file.url}"
 
-            # Create response with PDF info
             data = {
                 "pdf_url": file_url,
                 "file_type": file_obj.file_type,
-                "page_count": None,  # Could be implemented with PyPDF2 if needed
+                "page_count": None,
                 "file_name": file_obj.name,
             }
 
             serializer = PDFFilePreviewSerializer(data)
             return Response(serializer.data)
 
-        # Not a supported file type
         else:
             return Response(
                 {"error": "This file type is not supported for preview"}, status=status.HTTP_400_BAD_REQUEST
@@ -595,14 +581,11 @@ class DriveFileViewSet(viewsets.ModelViewSet):
             try:
                 content = serializer.validated_data["content"]
 
-                # Save the new content to the file
                 file_obj.file.save(file_obj.name, ContentFile(content.encode("utf-8")), save=False)
 
-                # Update file size
                 file_obj.size = file_obj.file.size
                 file_obj.save()
 
-                # Log edit activity
                 DriveActivity.objects.create(
                     startup=file_obj.startup,
                     user=request.user,

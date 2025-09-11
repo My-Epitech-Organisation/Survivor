@@ -33,7 +33,7 @@ const Page = dynamic(() => import('react-pdf').then(mod => mod.Page), {
 
 interface PdfPreviewProps {
   file: DriveFile;
-  _onClose: () => void; // Préfixé avec _ pour indiquer qu'il n'est pas utilisé
+  _onClose: () => void;
 }
 
 export function PdfPreview({ file, _onClose }: PdfPreviewProps) {
