@@ -168,3 +168,28 @@ def is_pdf_file(file_name, file_type):
     # Check file extension
     extension = file_name.split(".")[-1].lower() if "." in file_name else ""
     return extension in pdf_extensions
+
+
+def is_python_file(file_name, file_type):
+    """
+    Determine if a file is a Python file based on its MIME type and extension.
+
+    Args:
+        file_name (str): The name of the file
+        file_type (str): The MIME type of the file
+
+    Returns:
+        bool: True if the file is a Python file, False otherwise
+    """
+    python_mime_types = [
+        "text/x-python",
+        "application/x-python",
+    ]
+
+    if file_type in python_mime_types:
+        return True
+
+    python_extensions = ["py"]
+
+    extension = file_name.split(".")[-1].lower() if "." in file_name else ""
+    return extension in python_extensions

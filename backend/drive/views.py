@@ -29,6 +29,11 @@ from .preview_serializers import (
     TextFileUpdateSerializer,
     VideoFilePreviewSerializer,
 )
+from .python_executor import execute_python_code
+from .python_serializers import (
+    PythonExecutionRequestSerializer,
+    PythonExecutionResultSerializer,
+)
 from .serializers import (
     DriveActivitySerializer,
     DriveFileListSerializer,
@@ -38,7 +43,7 @@ from .serializers import (
     DriveShareSerializer,
     FileUploadSerializer,
 )
-from .utils import is_image_file, is_pdf_file, is_text_file, is_video_file
+from .utils import is_image_file, is_pdf_file, is_python_file, is_text_file, is_video_file
 
 
 class StartupDrivePermission(permissions.BasePermission):
@@ -602,6 +607,45 @@ class DriveFileViewSet(viewsets.ModelViewSet):
                 )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=["post"])
+    def execute(self, request, pk=None):
+        """
+        Execute a Python file and return the results.
+        """
+        file_obj = self.get_object()
+
+        # Check if it's a Python file
+        if not is_python_file(file_obj.name, file_obj.file_type):
+            return Response({"error": "This file is not a Python file"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get code to execute - either from file or from request
+        serializer = PythonExecutionRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            # Use the code from the request if provided
+            code_content = serializer.validated_data["code"]
+        else:
+            # Otherwise, use the code from the file
+            try:
+                code_content = file_obj.file.read().decode("utf-8")
+            except UnicodeDecodeError:
+                return Response({"error": "Failed to decode file content"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Log the execution activity
+        DriveActivity.objects.create(
+            startup=file_obj.startup,
+            user=request.user,
+            file=file_obj,
+            action="execute",
+            ip_address=request.META.get("REMOTE_ADDR"),
+        )
+
+        # Execute the Python code
+        result = execute_python_code(code_content)
+
+        # Return the execution results
+        result_serializer = PythonExecutionResultSerializer(result)
+        return Response(result_serializer.data)
 
 
 class DriveShareViewSet(viewsets.ModelViewSet):

@@ -123,3 +123,28 @@ export const isPdfFile = (file: DriveFile): boolean => {
 
   return extension ? pdfExtensions.includes(extension) : false;
 };
+
+/**
+ * Determines if a file is a Python file that can be executed
+ *
+ * @param file The drive file to check
+ * @returns true if the file is a Python file, false otherwise
+ */
+export const isPythonFile = (file: DriveFile): boolean => {
+  const pythonFileTypes = [
+    'text/x-python',
+    'application/x-python'
+  ];
+
+  if (pythonFileTypes.includes(file.file_type)) {
+    return true;
+  }
+
+  const pythonExtensions = [
+    'py'
+  ];
+
+  const extension = file.name.split('.').pop()?.toLowerCase();
+
+  return extension ? pythonExtensions.includes(extension) : false;
+};

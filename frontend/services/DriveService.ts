@@ -374,5 +374,38 @@ export const DriveService = {
       console.error('Error updating text file content:', error);
       throw error;
     }
+  },
+
+  executePythonFile: async (
+    fileId: number,
+    code?: string
+  ): Promise<{
+    output: string;
+    error: string;
+    exitCode: number;
+  }> => {
+    try {
+      const response = await api.post<{
+        output: string;
+        error: string;
+        exit_code: number;
+      }>(
+        `${DRIVE_API.FILES}${fileId}/execute/`,
+        code ? { code } : {}
+      );
+
+      if (response.data) {
+        return {
+          output: response.data.output,
+          error: response.data.error,
+          exitCode: response.data.exit_code
+        };
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error executing Python file:', error);
+      throw error;
+    }
   }
 };
